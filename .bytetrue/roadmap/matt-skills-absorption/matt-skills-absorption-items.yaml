@@ -11,7 +11,7 @@ items:
 
   - slug: onboard-context-setup
     title: Add domain and project-management setup to bt-onboard
-    status: planned
+    status: done
     minimal_loop: false
     depends_on:
       - grill-docs-completion

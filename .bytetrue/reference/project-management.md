@@ -29,6 +29,32 @@ sync_policy: ask
 
 ---
 
+## Current Project Configuration
+
+本节记录当前项目实际选择；规则章节里的 YAML 是默认语义。当前 ByteTrue 自举项目暂不自动同步外部 tracker，因此 provider 保持 `local`。
+
+```yaml
+provider: local # local | github | gitlab
+provider_status: configured
+sync_policy: ask
+
+repository:
+  remote_url: https://github.com/ByteTrue/skills.git
+  tracker_url: https://github.com/ByteTrue/skills/issues
+
+cli:
+  gh:
+    installed: true
+    auth: ok
+  glab:
+    installed: false
+    auth: unknown
+```
+
+如果后续决定让 ByteTrue 自身也同步到 GitHub Issues，可把 provider 改为 `github`，并通过 `bt-tracker` publish/link/triage。
+
+---
+
 ## External Tracker Role
 
 external tracker 只承载团队可见的协作对象：

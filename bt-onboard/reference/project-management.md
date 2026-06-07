@@ -29,6 +29,32 @@ sync_policy: ask
 
 ---
 
+## Current Project Configuration
+
+`bt-onboard` 维护本节。规则章节里的 YAML 是默认语义；本节才表示当前项目实际选择。
+
+```yaml
+provider: local # local | github | gitlab
+provider_status: not_configured # configured | not_configured
+sync_policy: ask
+
+repository:
+  remote_url: TODO
+  tracker_url: TODO
+
+cli:
+  gh:
+    installed: unknown # true | false | unknown
+    auth: unknown # ok | failed | unknown
+  glab:
+    installed: unknown # true | false | unknown
+    auth: unknown # ok | failed | unknown
+```
+
+如果用户选择 `github` / `gitlab` 但 CLI 未安装或未登录，保留 provider 选择，同时把 `provider_status` 标为 `not_configured`；不要中止 onboard。
+
+---
+
 ## External Tracker Role
 
 external tracker 只承载团队可见的协作对象：
