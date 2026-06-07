@@ -31,7 +31,7 @@ items:
 
   - slug: issue-diagnosis-discipline
     title: Add complex bug diagnosis discipline to issue workflow
-    status: planned
+    status: done
     minimal_loop: false
     depends_on: []
     covers:
