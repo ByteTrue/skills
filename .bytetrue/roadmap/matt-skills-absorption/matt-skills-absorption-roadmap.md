@@ -1,7 +1,7 @@
 ---
 doc_type: roadmap
 slug: matt-skills-absorption
-status: active
+status: completed
 created: 2026-06-07
 last_reviewed: 2026-06-07
 tags: [bytetrue, matt-skills, additive, workflow-integration]
