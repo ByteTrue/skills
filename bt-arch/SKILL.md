@@ -84,6 +84,8 @@ Phase 6：落盘（backfill/update）或 等用户拍板（check）
 
 **backfill / update 额外**（详见 `reference.md` "读取清单"）：目标模块代码入口和核心文件 + 用户素材 + 相关 compound 沉淀（decision / explore / learning）+ 相关已有 feature 方案。**update 专项**：当前 doc 全文 + `last_reviewed` 之后的代码变更（`git log` 粗扫）。
 
+若输入来自 `bt-explore module-overview` / `zoom-out`，优先复用其中的模块边界、调用方地图和证据；仍需按本技能规则补齐 `file:line` 锚点。
+
 **check 额外**（按子目标）：
 - `design-internal` / `design-vs-code`：方案 doc 全文 + 架构相关 doc
 - `design-vs-code` 再额外：与 design 第 2/3 节直接对应的代码
@@ -129,6 +131,7 @@ Phase 6：落盘（backfill/update）或 等用户拍板（check）
 5. **可执行建议**（check）——具体到"改哪里、怎么改"，但不落盘
 6. **单目标**（所有模式）
 7. **不改代码、不动 spec**（所有模式）——只写架构 doc 或出报告。发现代码 / 方案 / decision 有问题记成"观察项"
+9. **只记现状不写目标态**——`improve-codebase-architecture` 产生的 deep module / seam / adapter 候选，只有在代码已落地后才进入 architecture；未落地目标态归 `bt-roadmap` / `bt-refactor design` / `bt-grill`。
 8. **不发散**——范围外问题不扩展，记观察项
 
 ---
@@ -167,6 +170,8 @@ Phase 6：落盘（backfill/update）或 等用户拍板（check）
 | `bt-issue-analyze` 读者 | 根因分析读本技能 doc 定位模块边界 |
 | `bt-onboard` 创建者 | onboard 建 `ARCHITECTURE.md` 占位，之后由本技能填实 |
 | `bt-roadmap` 配合 | architecture 记现状、roadmap 记规划。roadmap 起草读本技能 doc 理解现状但不改它；目标态架构归 roadmap |
+| `bt-explore` 配合 | `zoom-out` / module-overview 先给模块和调用方地图；本技能把稳定现状回填成长期 architecture 文档 |
+| `bt-grill` 配合 | 架构候选还没问透时先 grill；拍板并落地后本技能只记录实际现状 |
 
 ---
 

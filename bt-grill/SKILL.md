@@ -92,6 +92,14 @@ with-docs 模式下，要拿 `.bytetrue/requirements/`、`.bytetrue/architecture
 - 有没有现有架构已经支持的路径？
 - 有没有已有 decision 明确禁止或倾向某方向？
 
+
+架构候选 / refactor 方案要额外拷问 Matt `improve-codebase-architecture` 的判断点：
+
+- 这个模块是在变 **deep**（小接口隐藏更多复杂度），还是只是多了一层 **shallow** 转发？
+- seam / adapter 边界在哪里？哪些复杂性被关在 adapter 后面？
+- deletion test 结果是什么：删掉这个模块后，复杂度是消失，还是散回多个调用方？
+- public interface 是否足以作为行为测试面？如果测试只能碰私有实现，说明 seam 可能没切对。
+- 这属于行为等价 refactor、feature 目标态，还是 architecture 文档现状更新？三者不要混。
 提问格式：
 
 > 这里我看到两个路线：A 更快但会积累 X，B 慢一点但和现有 `{doc/code}` 更一致。我的推荐是 B，因为 {理由}。你要选 B，还是有必须走 A 的约束？

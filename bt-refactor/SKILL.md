@@ -85,6 +85,13 @@ scan（扫优化点清单）→ design（和用户定做哪几条 + 顺序）→
 - **L3 结构拆分**：组件 > 300 行 / 文件承担多件事 / 容器与展示混在一起 / 相同逻辑多组件各写一份（前端）；Controller 直接调 DB / Service 缺失 / Repository 被绕开（后端）
 - **L4 性能**：重复计算（可 memo）/ N+1 查询 / 列表无虚拟化或分页 / 事件监听无清理 / 大对象深响应（Vue）
 
+
+架构改善候选使用 Matt `improve-codebase-architecture` 的判断语言，但只作为 refactor 候选，不直接扩大范围：
+
+- **deep module / shallow module**：优先让小接口隐藏真实复杂度；浅转发层、万能 util、只改名不降复杂度的包装层要谨慎。
+- **seam / adapter**：重构可以提炼 seam 或 adapter，但必须保持行为不变；如果 seam 会改变调用语义，超出 refactor。
+- **deletion test**：删除一个模块后，复杂度若只是散回调用方，说明它可能有存在价值；复杂度若直接消失，可能是无意义中间层。
+- **interface as test surface**：重构后的 public interface 应该更容易作为行为测试面，而不是迫使测试下沉到私有实现。
 完整方法库在 `reference/methods.md`，扫描时全量加载作匹配表。
 
 ### 产出格式
@@ -113,6 +120,13 @@ scan（扫优化点清单）→ design（和用户定做哪几条 + 顺序）→
 4. **整体 review**：整稿交用户，放行后 `status: approved`
 5. **抽 checklist**：steps 对应执行顺序，checks 对应每步退出信号
 
+
+架构类条目在 design 中额外写清：
+
+- 要变深的 module 是哪个，现有 interface 为什么 shallow。
+- seam / adapter 边界在哪里，哪些调用方不应感知变化。
+- deletion test 的结论。
+- 行为等价如何通过 public interface / existing tests 自证。
 ### design 文件结构
 
 ```markdown
@@ -162,6 +176,8 @@ summary: {本次要做的几条是什么，一句话}
    - HUMAN 验证：**停下来**汇报"第 N 步已完成，请在 {具体页面 / 操作} 目视确认，确认后我继续"。用户不明确说"继续"就不推进
 3. **偏离当场记**——执行中发现方案没考虑的情况（如有个调用方在动态 import 里），**停下来汇报不发挥**。和用户对齐后追加到 apply-notes，必要时回阶段 2 改 design
 4. **行为等价自检**——每步结束额外问"这一步有没有可能改了外部可观察行为？" 有怀疑就退回当步
+
+架构 deepening 的硬边界：只允许行为等价的 seam / adapter 提炼；一旦要改公开语义、调用协议、模块职责归属，停止 apply，改走 `bt-grill` 问清楚后再决定是 `bt-roadmap`、`bt-feat` 还是更大的 refactor。
 
 ### apply-notes 格式
 

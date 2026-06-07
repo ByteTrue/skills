@@ -56,3 +56,15 @@ External tracker 的 issue 是更宽的协作载体，可表示：
 - **absorb / 吸收**：把 Matt skill 的方法论、检查点、模板或纪律融入 ByteTrue 生命周期；不是复制 skill 改名。
 - **engineering + productivity scope**：本次只吸收 Matt skills 中选定的 10 个能力：`grill-me`、`grill-with-docs`、`setup-matt-pocock-skills`、`to-prd`、`to-issues`、`triage`、`diagnose`、`tdd`、`improve-codebase-architecture`、`zoom-out`。
 - **excluded skills**：`caveman`、`write-a-skill`、`prototype`、`handoff` 不进入本次吸收范围。
+
+---
+
+## Architecture Improvement Terms
+
+- **deep module**：小而稳定的 public interface 背后隐藏较多复杂度，调用方不需要理解内部细节。
+- **shallow module**：接口和实现一样复杂，常见表现是只转发、只改名、只增加一层无意义 wrapper。
+- **seam**：行为可以被替换、测试、隔离的位置；好的 seam 能让测试通过 public interface 表达行为。
+- **adapter**：seam 后面的具体实现，用来把外部系统或复杂细节关在边界内。
+- **deletion test**：想象删掉某模块；复杂度若只是散回多个调用方，说明它可能承担真实职责；复杂度若直接消失，说明它可能是浅层包装。
+- **architecture friction candidate**：架构改善候选。它只是候选，不等于可以直接改；先按 `bt-audit` / `bt-refactor` / `bt-grill` 判断是否进入对应流程。
+- **zoom-out**：上升一层看模块边界、调用方地图、public interface 和依赖关系；在 ByteTrue 中由 `bt-explore module-overview` 承接。

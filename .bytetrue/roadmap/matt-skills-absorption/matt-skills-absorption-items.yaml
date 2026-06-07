@@ -47,7 +47,7 @@ items:
 
   - slug: architecture-language-integration
     title: Add architecture improvement language to audit/refactor/explore
-    status: planned
+    status: done
     minimal_loop: false
     depends_on:
       - grill-docs-completion
