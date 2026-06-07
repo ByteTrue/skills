@@ -23,7 +23,7 @@ Tired of OpenSpec's flimsiness, Oh-My-OpenAgent's over-engineering, and Superpow
 ## Install
 
 ```bash
-npx skills add https://github.com/liuzhengdongfortest/ByteTrue
+npx skills add https://github.com/ByteTrue/skills
 ```
 
 One command to start working:

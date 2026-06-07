@@ -23,7 +23,7 @@
 ## 安装
 
 ```bash
-npx skills add https://github.com/liuzhengdongfortest/ByteTrue
+npx skills add https://github.com/ByteTrue/skills
 ```
 
 只需要一键，开始工作：
@@ -144,7 +144,7 @@ ByteTrue 顺着软件编码的真实流程来设计，把开发活动建模成 *
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/chart?repos=liuzhengdongfortest/ByteTrue&type=date&legend=top-left)](https://www.star-history.com/?repos=liuzhengdongfortest%2FByteTrue&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/chart?repos=ByteTrue/skills&type=date&legend=top-left)](https://www.star-history.com/?repos=ByteTrue%2Fskills&type=date&legend=top-left)
 
 <div align="center">
 
