@@ -20,7 +20,7 @@ items:
 
   - slug: tracker-bridge
     title: Add bt-tracker for external tracker publish/link/triage
-    status: planned
+    status: done
     minimal_loop: false
     depends_on:
       - onboard-context-setup
