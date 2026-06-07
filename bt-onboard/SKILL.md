@@ -39,6 +39,9 @@ description: 把新仓库或有零散文档的仓库接入 ByteTrue 体系，两
 │   └── validate-yaml.py
 └── reference/                  跨子技能共享参考（onboard 释放）
     ├── shared-conventions.md
+    ├── system-overview.md
+    ├── domain-context.md       术语 / domain glossary / grill-with-docs 共识
+    ├── project-management.md   external tracker / labels / sync policy
     ├── tools.md
     └── maintainer-notes.md
 ```

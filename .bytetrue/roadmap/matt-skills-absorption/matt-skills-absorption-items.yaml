@@ -1,0 +1,56 @@
+roadmap: matt-skills-absorption
+items:
+  - slug: grill-docs-completion
+    title: Complete bt-grill with-docs absorption
+    status: done
+    minimal_loop: true
+    depends_on: []
+    covers:
+      - grill-me
+      - grill-with-docs
+
+  - slug: onboard-context-setup
+    title: Add domain and project-management setup to bt-onboard
+    status: planned
+    minimal_loop: false
+    depends_on:
+      - grill-docs-completion
+    covers:
+      - setup-matt-pocock-skills
+
+  - slug: tracker-bridge
+    title: Add bt-tracker for external tracker publish/link/triage
+    status: planned
+    minimal_loop: false
+    depends_on:
+      - onboard-context-setup
+    covers:
+      - to-prd
+      - to-issues
+      - triage
+
+  - slug: issue-diagnosis-discipline
+    title: Add complex bug diagnosis discipline to issue workflow
+    status: planned
+    minimal_loop: false
+    depends_on: []
+    covers:
+      - diagnose
+
+  - slug: implementation-tdd-discipline
+    title: Add TDD discipline to feature and issue implementation
+    status: planned
+    minimal_loop: false
+    depends_on: []
+    covers:
+      - tdd
+
+  - slug: architecture-language-integration
+    title: Add architecture improvement language to audit/refactor/explore
+    status: planned
+    minimal_loop: false
+    depends_on:
+      - grill-docs-completion
+    covers:
+      - improve-codebase-architecture
+      - zoom-out

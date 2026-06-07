@@ -50,6 +50,11 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 │                          验完不强制清理，结论回写到对应 brainstorm note
 ├── tools/                 跨工作流共享脚本（onboard 从技能包释放）
 └── reference/             共享参考文档（onboard 从技能包释放）
+    ├── shared-conventions.md   目录结构 / frontmatter / 阶段衔接口径
+    ├── system-overview.md      ByteTrue 体系总览
+    ├── domain-context.md       canonical terms / domain glossary / 术语边界
+    ├── project-management.md   external tracker / labels / sync policy
+    └── tools.md                共享脚本用法
 ```
 
 ### 命名规则
