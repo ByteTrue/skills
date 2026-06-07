@@ -12,7 +12,7 @@ Tired of OpenSpec's flimsiness, Oh-My-OpenAgent's over-engineering, and Superpow
 
 <p>
   <img src="https://img.shields.io/badge/status-beta-F59E0B?style=flat-square" alt="Status"/>
-  <img src="https://img.shields.io/badge/skills-22-6366F1?style=flat-square" alt="Skills"/>
+  <img src="https://img.shields.io/badge/skills-28-6366F1?style=flat-square" alt="Skills"/>
   <img src="https://img.shields.io/badge/license-MIT-10B981?style=flat-square" alt="License"/>
 </p>
 
@@ -32,7 +32,7 @@ One command to start working:
 /bt-onboard
 ```
 
-For daily use, when you don't know which skill fits, call the root entry:
+For daily use, when you do not know which skill fits, call the root entry:
 
 ```bash
 /bt
@@ -44,297 +44,101 @@ For daily use, when you don't know which skill fits, call the root entry:
 
 ## Why
 
-I was building a new harness agent ([MA](https://github.com/liuzhengdongfortest/MA)) — vibe-coding at first, just writing designs and requirements while AI wrote the code. It carried most features, until Codex repeatedly failed on a problem I thought was simple, making the same mistake in the same place. That's when I knew the project needed a workflow to keep moving.
+I was building a new harness agent ([MA](https://github.com/liuzhengdongfortest/MA)) — vibe-coding at first, just writing designs and requirements while AI wrote the code. It carried most features, until Codex repeatedly failed on a problem I thought was simple, making the same mistake in the same place. That was when I knew the project needed a workflow to keep moving.
 
-I surveyed OpenSpec, SuperPowers, Oh-My-OpenAgent — none felt right:
+I surveyed OpenSpec, SuperPowers, and Oh-My-OpenAgent — none felt right:
 
-- **OpenSpec** — too thin, no compounding, specs too abstract for humans to read
-- **SuperPowers** — no process discipline, you never know which one to use
-- **Oh-My-OpenAgent** — too heavy, philosophically treats "human intervention = failure"
+- **OpenSpec** was too thin, with no compounding, and the generated specs were too abstract for humans to read
+- **SuperPowers** had no process discipline, so you never knew which one to use
+- **Oh-My-OpenAgent** was too heavy and treats “human intervention = failure”
 
 ByteTrue's goal is **to solve real software implementation and coding problems for serious engineering** — not to coin a new term or chase trends.
 
 ---
 
-## The core difference: what gets orchestrated
+## The core difference
 
-Mainstream AI coding frameworks — Superpowers, CCW, Oh-My-OpenAgent — are all doing **the same thing**:
+Most AI coding frameworks are doing one thing: **orchestrating agents better**.
 
-> **Orchestrating agents better.** Get them to team up, collaborate, brainstorm, run pipelines, hand off automatically. The entity at the center is always the **Agent**.
+ByteTrue goes the other way: **what gets orchestrated is the lifecycle of the software itself**. The entities at the center are requirements, architecture, roadmaps, features, issues, refactors, audits, and durable knowledge.
 
-ByteTrue goes the **other way**:
-
-> **What gets orchestrated isn't agents — it's the lifecycle of the software itself.** The entities at the center are **the elements that make up software**: every requirement, every architectural decision, every feature, every bug, every constraint left in history.
-
-<table>
-<tr><th></th><th>Agent-orchestration camp</th><th>ByteTrue</th></tr>
-<tr><td><b>Core entity</b></td><td>Agent / Role / Team</td><td>Requirement / Architecture / Feature / Issue / Decision</td></tr>
-<tr><td><b>Main question</b></td><td>How do agents divide work, hand off, coordinate?</td><td>How do requirements, constraints, decisions get recorded, retrieved, reused?</td></tr>
-<tr><td><b>Where state lives</b></td><td>Agent sessions / message buses / queues</td><td>The <code>.bytetrue/</code> file tree in your project (readable by both humans and AI)</td></tr>
-<tr><td><b>Pain it solves</b></td><td>One agent isn't enough; need coordination to scale</td><td>Software complexity overflows context; tacit knowledge gets lost; requirements drift</td></tr>
-<tr><td><b>Role of humans</b></td><td>The less the better — full automation is the ideal</td><td>Human-in-the-loop — the programmer owns the whole; AI is an efficient executor</td></tr>
-</table>
+| Dimension | Agent-orchestration camp | ByteTrue |
+|-----------|--------------------------|----------|
+| Core entity | Agent / Role / Team | Requirement / Architecture / Roadmap / Feature / Issue |
+| Main question | How do agents divide work, hand off, and coordinate? | How do requirements, constraints, and decisions get recorded, retrieved, and reused? |
+| Where state lives | Sessions / message buses / queues | The `.bytetrue/` file tree in the project |
+| Role of humans | The less the better; full automation is ideal | Human-in-the-loop; the programmer owns the whole |
 
 ![](./asset/ByteTrueVSAgent.png)
 
-**Neither direction is wrong.**
-
-If your task is "run an end-to-end automated pipeline with AI" or "have multiple agents debate a plan," the agent-orchestration camp fits better.
-
-If your task is "maintain serious software that iterates over years" or "make sure a requirement written today can still be accurately recalled three months later" — then ByteTrue's software-element-centric model fits better.
-
-I built ByteTrue because I believe **the chaos of software engineering isn't really about agents not being strong enough — it's about elements not being organized**. No matter how strong the agent, it can't save a project that's lost its requirements, architecture, and history.
-
 ---
 
-## Design: 6 entities + 3 flows
+## Design: 8 entities + 3 flows
 
-ByteTrue models real coding work as **6 entities** and **3 flows**.
+ByteTrue models real coding work as **8 entities** and **3 flows**.
 
-### 6 entities
+### 8 entities
 
 | Entity | Slug | What it does |
-|------|------|--------|
-| **Requirement** | requirements | Original user stories, the discussion and trade-offs at the time. The escape hatch — when code rots, you can throw it all out and let AI regenerate from these |
-| **Architecture** | architecture | What the system's orchestration layer looks like to deliver the requirements. Concise, unified, **for humans to read** — not for AI to talk to itself |
-| **Roadmap** | roadmap | "I want a permission system" — too big to throw at AI as a feature; cut it into a roadmap and advance step by step |
-| **Feature** | feature | The actual engineering execution. Human and AI collaborate, jointly responsible for design / implementation / acceptance |
-| **Issue** | issue | The bug list after release. AI and human solve it together |
-| **Compound** | compound | The compounding-engineering knowledge base — pitfalls, good practices, technical decisions |
+|--------|------|--------------|
+| **Requirement** | requirements | Capability intent, boundaries, and user stories |
+| **Architecture** | architecture | What the system looks like now and why it is organized this way |
+| **Roadmap** | roadmap | Up-front planning for large initiatives, module breakdowns, and contracts |
+| **Feature** | features | The design / impl / accept loop for new capabilities |
+| **Issue** | issues | The report / analyze / fix loop for bugs |
+| **Refactor** | refactors | Behavior-preserving structural improvements |
+| **Audit** | audits | Proactive scans for bugs, performance, maintainability, and architecture drift |
+| **Compound** | compound | The compounding knowledge base for learning / trick / decision / explore |
 
 ### 3 flows
 
 | Flow | Key skill chain | Notes |
-|------|------------|------|
-| **Feature delivery** | `bt-feat` → `bt-feat-design` → `bt-feat-impl` → `bt-feat-accept` | Think it through → integrated design → step-by-step coding → acceptance. Whatever order suits you |
-| **Issue fixing** | `bt-issue-report` → `bt-issue-analyze` → `bt-issue-fix` | Tell AI what's wrong → AI finds the root cause → AI fixes precisely |
-| **Refactoring** | `bt-refactor` (beta) | Architectural rot doesn't happen overnight. AI assists, but **humans refactor**. Still iterating — feedback welcome |
+|------|-----------------|-------|
+| **Feature delivery** | `bt-feat` → `bt-feat-design` → `bt-feat-impl` → `bt-feat-accept` | Think it through → design → code → accept |
+| **Issue fixing** | `bt-issue-report` → `bt-issue-analyze` → `bt-issue-fix` | Record the problem → find root cause → apply a precise fix |
+| **Refactoring** | `bt-refactor` / `bt-refactor-ff` | Behavior-preserving structural improvement |
 
 ---
 
 ## Skill catalog
 
-<table>
-<tr><th>Group</th><th>Skill</th><th>Purpose</th></tr>
-<tr><td><b>Root entry</b></td><td><code>bt</code></td><td>Unified entry — introduces the system and routes open-ended intents to the right bt-* skill. Call it when you don't know which one fits</td></tr>
-<tr><td><b>Onboard</b></td><td><code>bt-onboard</code></td><td>Bring ByteTrue into a new repo or one with scattered docs</td></tr>
-<tr><td rowspan="2"><b>Requirement & architecture</b></td><td><code>bt-req</code></td><td>Curate / accumulate raw requirement docs</td></tr>
-<tr><td><code>bt-arch</code></td><td>Draft or update architecture docs under <code>.bytetrue/architecture/</code></td></tr>
-<tr><td><b>Roadmap</b></td><td><code>bt-roadmap</code></td><td>Up-front planning for a big chunk of work: high-level design + interface contracts + sub-feature breakdown</td></tr>
-<tr><td rowspan="2"><b>Discussion entry</b></td><td><code>bt-brainstorm</code></td><td>Triage when ideas are still fuzzy: route to design / continue in a feature / hand off to roadmap / bt-grill</td></tr>
-<tr><td><code>bt-grill</code></td><td>Plan grilling / stress-test: reads <code>.bytetrue/</code> docs and code context by default; explicit <code>--lite</code> falls back to pure grill-me</td></tr>
-<tr><td rowspan="5"><b>Feature flow</b></td><td><code>bt-feat</code></td><td>Sub-flow entry for new features</td></tr>
-<tr><td><code>bt-feat-design</code></td><td>Draft <code>{slug}-design.md</code> as the single input for what follows</td></tr>
-<tr><td><code>bt-feat-impl</code></td><td>Code in the order the design lays out</td></tr>
-<tr><td><code>bt-feat-accept</code></td><td>Verify implementation against the design layer by layer; close the loop</td></tr>
-<tr><td><code>bt-feat-ff</code></td><td>Ultra-light lane: no design, no phases, AI just does it</td></tr>
-<tr><td rowspan="4"><b>Issue flow</b></td><td><code>bt-issue</code></td><td>Sub-flow entry for issue fixing</td></tr>
-<tr><td><code>bt-issue-report</code></td><td>Turn the problem in your head into a reproducible, traceable report</td></tr>
-<tr><td><code>bt-issue-analyze</code></td><td>Find root cause, assess fix risk, propose options</td></tr>
-<tr><td><code>bt-issue-fix</code></td><td>Targeted fix + verification + write fix-note</td></tr>
-<tr><td rowspan="2"><b>Refactor flow</b></td><td><code>bt-refactor</code></td><td>(beta) Main refactor flow</td></tr>
-<tr><td><code>bt-refactor-ff</code></td><td>(beta) Light refactor lane</td></tr>
-<tr><td rowspan="3"><b>Knowledge sink</b></td><td><code>bt-learn</code></td><td>Sink pitfalls / good practices into learning docs</td></tr>
-<tr><td><code>bt-trick</code></td><td>Curate reusable patterns / library usage as prescriptive references</td></tr>
-<tr><td><code>bt-decide</code></td><td>Record settled tech choices, architectural decisions, long-term constraints as permanent docs</td></tr>
-<tr><td rowspan="2"><b>Explore & docs</b></td><td><code>bt-explore</code></td><td>Targeted code exploration; sink "ask → read → conclude" into evidence</td></tr>
-<tr><td><code>bt-guide</code> / <code>bt-libdoc</code></td><td>Outward-facing developer guides / library reference docs</td></tr>
-</table>
+| Group | Skill | Purpose |
+|------|------|------|
+| Root entry | `bt` | Unified entry — introduces the system and routes open-ended intent to the right sub-skill |
+| Onboard | `bt-onboard` | Bring ByteTrue into a new repo or one with scattered docs |
+| Requirement & architecture | `bt-req`, `bt-arch` | Capture capability intent and maintain current-state architecture |
+| Roadmap | `bt-roadmap` | Up-front planning for a large chunk of work, including contracts and breakdowns |
+| Discussion entry | `bt-brainstorm`, `bt-grill` | Fuzzy-idea triage and plan grilling / stress-tests |
+| Feature flow | `bt-feat`, `bt-feat-design`, `bt-feat-impl`, `bt-feat-accept`, `bt-feat-ff` | The full loop for new capabilities |
+| Issue flow | `bt-issue`, `bt-issue-report`, `bt-issue-analyze`, `bt-issue-fix` | The full loop for bug fixing |
+| Refactor flow | `bt-refactor`, `bt-refactor-ff` | Structural improvements and light refactors |
+| Audit & collaboration | `bt-audit`, `bt-tracker` | System audits plus publish / link / triage against external trackers |
+| Knowledge sink | `bt-learn`, `bt-trick`, `bt-decide`, `bt-note` | Pitfalls, patterns, decisions, and project-level reminders |
+| Explore & docs | `bt-explore`, `bt-guide`, `bt-libdoc` | Code exploration, guides, and library docs |
 
 ---
 
-## Workflow at a glance
+## Continue reading
 
-ByteTrue's skills aren't a single linear pipeline — they're **layered + event-driven**:
+The full workflow diagram, runtime tree, design philosophy, and roadmap live here:
 
+- [ByteTrue Deep Dive（English）](./docs/README.deep-dive.en.md)
+- [ByteTrue Deep Dive（中文）](./docs/README.deep-dive.md)
+
+If you are ready to start, run:
+
+```bash
+/bt-onboard
 ```
-═══════════════════════════════════════════════════════════════════════
- Root entry · routing                              (callable any time)
-───────────────────────────────────────────────────────────────────────
-   bt ──▶ Introduce the system / route open-ended intent to a sub-skill
-          (does nothing itself — only triages and points)
-═══════════════════════════════════════════════════════════════════════
-                              │
-              ┌───────────────┼───────────────┐
-              ▼               ▼               ▼
-        (not onboarded)  (onboarded)    (just want to learn)
-         go to phase 0   jump to L1~4 / cross-cut    quick read
-              │
-              ▼
-═══════════════════════════════════════════════════════════════════════
- Phase 0 · Onboard                            (runs once per project)
-───────────────────────────────────────────────────────────────────────
-   bt-onboard ──▶ Generate .bytetrue/ skeleton + release reference/, tools/
-═══════════════════════════════════════════════════════════════════════
-                              │
-                              ▼
-═══════════════════════════════════════════════════════════════════════
- Layer 1 · Long-lived archive ("what the system looks like now")
-───────────────────────────────────────────────────────────────────────
-   bt-req   ──▶ .bytetrue/requirements/{slug}.md
-   bt-arch  ──▶ .bytetrue/architecture/ARCHITECTURE.md
-                                       └─ {type}-{slug}.md (subsystems)
-═══════════════════════════════════════════════════════════════════════
-                              │
-                              ▼
-═══════════════════════════════════════════════════════════════════════
- Layer 2 · Planning ("how we plan to deliver this big thing next")
-───────────────────────────────────────────────────────────────────────
-   bt-roadmap ──▶ .bytetrue/roadmap/{slug}/
-                  Turn "I want X" into a complete up-front plan:
-                    ① High-level design — module / component split
-                    ② Architectural detail — interface contracts
-                    ③ Sub-features      — broken into executable units
-                  ② is a hard input for feature-design
-                  (Small needs skip this layer and go straight to L3)
-═══════════════════════════════════════════════════════════════════════
-                              │
-                              ▼
-═══════════════════════════════════════════════════════════════════════
-Discussion entry (optional · enter when fuzzy or when a plan needs grilling)
-───────────────────────────────────────────────────────────────────────
-                          ┌── case 1 clear enough ──▶ bt-feat-design
-   bt-brainstorm ────────▶├── case 2 small + decided ─▶ feature flow
-                          ├── case 3 big + ready ─────▶ bt-roadmap
-                          └── case 4 needs grilling ──▶ bt-grill
-                              │
-                              ▼
-═══════════════════════════════════════════════════════════════════════
- Layer 3 · Execution flows (pick one per event type)
-───────────────────────────────────────────────────────────────────────
-
-  ▸ Event: new capability                                  ┌──────────┐
-       bt-feat-design ──▶ bt-feat-impl ──▶ bt-feat-accept  │ features │
-       bt-feat-ff     ──(light lane, skips design/accept)─▶│ /YYYY-…/ │
-                                                            └──────────┘
-
-  ▸ Event: fix a defect                                     ┌──────────┐
-       bt-issue-report ──▶ bt-issue-analyze ──▶ bt-issue-fix│  issues  │
-                                                            │ /YYYY-…/ │
-                                                            └──────────┘
-
-  ▸ Event: code rot (beta)                                  ┌──────────┐
-       bt-refactor / bt-refactor-ff                         │refactors │
-                                                            │ /YYYY-…/ │
-                                                            └──────────┘
-═══════════════════════════════════════════════════════════════════════
-                              │
-                ▼ trigger any time something is worth recording ▼
-═══════════════════════════════════════════════════════════════════════
- Cross-cut · Knowledge sink (compounding engineering)
-───────────────────────────────────────────────────────────────────────
-   bt-learn   ──▶ ┐
-   bt-trick   ──▶ ├─▶ .bytetrue/compound/YYYY-MM-DD-{doc_type}-{slug}.md
-   bt-decide  ──▶ │     doc_type ∈ { learning, trick, decision, explore }
-   bt-explore ──▶ ┘
-                   ↑
-          Next bt-arch / bt-feat-design / bt-issue-analyze
-          reads back compound/ so experience is reused
-═══════════════════════════════════════════════════════════════════════
-```
-
-**How to read this diagram:**
-
-- **Vertical = layers**, not strict time order — Layer 1 is refreshed repeatedly, Layer 2 is only entered for big needs
-- **Layer 3 is event-driven**: new need → feature flow, bug → issue flow, rot → refactor flow
-- **Cross-cut is the flywheel**: any flow can trigger a sink when something is worth keeping; the next round of work reads it back. This is the physical implementation of ByteTrue's "compounding"
 
 ---
 
-## Runtime structure
+## Current status
 
-After `/bt-onboard`, a `.bytetrue/` directory appears at your project root — the aggregate root for all ByteTrue artifacts and the **only** workspace each skill reads/writes at runtime.
-
-```
-your-project/
-├── .bytetrue/
-│   ├── requirements/                     # Requirement entities ("why this capability exists")
-│   │   └── {slug}.md                     # One file per capability, flat (no grouping)
-│   │
-│   ├── architecture/                     # Architecture entities ("what structure delivers it")
-│   │   ├── ARCHITECTURE.md               # Architecture entry point / index
-│   │   └── {type}-{slug}.md              # Subsystem architecture doc (auto-grouped at ≥6 of same type)
-│   │
-│   ├── roadmap/                          # Roadmaps ("how we plan to walk next")
-│   │   └── {slug}/
-│   │       ├── {slug}-roadmap.md         # Main doc: background / breakdown / sequencing
-│   │       ├── {slug}-items.yaml         # Machine-readable sub-feature list, acceptance writes status back
-│   │       └── drafts/                   # Optional: drafts / research
-│   │
-│   ├── features/                         # Feature flow aggregate root
-│   │   └── YYYY-MM-DD-{slug}/            # One directory per feature
-│   │       ├── {slug}-brainstorm.md      # Optional (bt-brainstorm output)
-│   │       ├── {slug}-design.md          # Design (bt-feat-design)
-│   │       ├── {slug}-checklist.yaml     # Progress checklist (impl runs it, accept writes back)
-│   │       └── {slug}-acceptance.md      # Acceptance report (bt-feat-accept)
-│   │
-│   ├── issues/                           # Issue flow aggregate root
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-report.md          # Issue report
-│   │       ├── {slug}-analysis.md        # Root-cause analysis (only when non-obvious)
-│   │       └── {slug}-fix-note.md        # Fix record
-│   │
-│   ├── refactors/                        # Refactor flow aggregate root (beta)
-│   │   └── YYYY-MM-DD-{slug}/
-│   │       ├── {slug}-scan.md
-│   │       ├── {slug}-refactor-design.md
-│   │       ├── {slug}-checklist.yaml
-│   │       └── {slug}-apply-notes.md
-│   │
-│   ├── compound/                         # Knowledge sink (compounding engineering), unified directory
-│   │   └── YYYY-MM-DD-{doc_type}-{slug}.md
-│   │       # doc_type ∈ {learning, trick, decision, explore}
-│   │
-│   ├── tools/                            # Cross-workflow shared scripts (released by onboard)
-│   └── reference/                        # Shared reference docs (released by onboard)
-│       ├── shared-conventions.md         # Cross-skill conventions / paths / metadata
-│       ├── system-overview.md            # ByteTrue system overview + scenario routing
-│       └── ...
-│
-└── AGENTS.md                             # At project root, not under .bytetrue/
-```
-
-**Key points:**
-
-- All artifacts aggregate under `.bytetrue/`, so "how did we handle that feature / bug last time" is three seconds away
-- `requirements/` and `architecture/` are **long-lived archives** (current state only); `roadmap/` is the **planning layer** (what's next) — deliberately separated
-- `features/` `issues/` `refactors/` use `YYYY-MM-DD-{slug}/` to bundle all related specs in one directory, no crossing
-- `compound/` is the **single** knowledge sink directory — learning / trick / decision / explore are distinguished by the `doc_type` field, not by sub-directories. Easier to search
-- `reference/` is copied in by `bt-onboard` from the skill package; to change shared conventions, edit the templates under `bt-onboard/reference/` — new projects pick up the new version on onboard
-
-### Hard constraint
-
-> A skill is an independent install unit. At runtime, **each skill can only see files inside its own package**. References like `B-skill/reference/xxx.md` written in skill A's SKILL.md are **simply unreachable** at runtime.
->
-> Cross-skill shared references must go through the "working project" layer: `bt-onboard` copies them from the skill package to the project's `.bytetrue/reference/`, and other skills read them via the project-relative path.
-
-To change shared conventions, edit the templates under `bt-onboard/reference/`; new projects pick them up at onboard time.
-
----
-
-## Design philosophy
-
-ByteTrue takes the **opposite** philosophy from OMO:
-
-- OMO says: any human intervention is a failure signal
-- ByteTrue says: **the programmer is in the loop of software coding** — you may not understand the black-box implementation, but you must own the whole, and dive in when needed
-
-Software architecture must be **evolvable**, **observable**, **controllable**.
-
-This may matter less as AI gets stronger, but **right now this makes programmers comfortable in reality** — and that's the value.
-
-ByteTrue is modeled for real-world development scenarios, aiming to handle common dev problems through a closed-loop system. **Most existing frameworks model around AI, not around humans.** I think their authors have strong AI-driving skills but aren't seriously building software — they lack the basic ability to organize requirements and design, and they lack respect for code implementation.
-
----
-
-## Roadmap
-
-ByteTrue adapts to model capability. If a future model nails a module reliably, that module gets removed.
-
-- [ ] Refactor flow needs hardening (`bt-refactor` is still beta)
-- [ ] Absorb Matt Pocock skills' project-management capabilities: `triage` / `to-prd` / `to-issues` / review / PR finishing, as additive ByteTrue `bt-*` skills
-
-Issues welcome — share your real-world dev pain and refactoring experience.
+- `bt-grill` already absorbs `grill-me` and `grill-with-docs`
+- `bt-tracker` already absorbs `to-prd`, `to-issues`, and `triage`
+- `bt-refactor` is still beta and will keep hardening
+- Next work leans toward collaboration finishers like review and PR finishing
 
 ---
 

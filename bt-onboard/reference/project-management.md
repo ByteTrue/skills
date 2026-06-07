@@ -189,6 +189,10 @@ labels:
     meaning: Agent can pick this up without more human clarification
     external: ready-for-agent
 
+  needs_triage:
+    meaning: Incoming external issue still waiting for maintainer triage
+    external: needs-triage
+
   needs_info:
     meaning: Blocked on more user/team information
     external: needs-info

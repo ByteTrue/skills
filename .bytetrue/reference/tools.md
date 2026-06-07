@@ -86,7 +86,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=cur
 
 ## 2. validate-yaml.py
 
-YAML 语法校验工具。用于验证 frontmatter 语法和必填字段。
+YAML 语法校验工具。用于验证 frontmatter 语法和必填字段。依赖 `PyYAML`；若环境未安装，会明确失败而不是给出不可靠的“通过”结果。
 
 ```bash
 # 校验单个文件的 YAML 语法

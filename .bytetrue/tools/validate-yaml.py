@@ -7,8 +7,8 @@ Scans markdown files for YAML frontmatter (--- ... ---) and checks:
   2. YAML syntax is valid (parseable without errors)
   3. (Optional) Required fields are present (--require flag)
 
-Designed for AI agent use: structured output, exit code reflects pass/fail,
-no required external dependencies (falls back to builtin parser if PyYAML unavailable).
+Designed for AI agent use: structured output, exit code reflects pass/fail.
+Requires PyYAML for reliable syntax validation.
 
 Usage examples:
   # Validate all .md files under .bytetrue/features
@@ -38,9 +38,10 @@ from pathlib import Path
 # through some IDEs) raise io.UnsupportedOperation — a ValueError + OSError
 # subclass — and we just leave the original encoding in place.
 for _stream in (sys.stdout, sys.stderr):
-    if hasattr(_stream, "reconfigure"):
+    reconfigure = getattr(_stream, "reconfigure", None)
+    if callable(reconfigure):
         try:
-            _stream.reconfigure(encoding="utf-8")
+            reconfigure(encoding="utf-8")
         except (OSError, ValueError):
             pass
 
@@ -54,27 +55,7 @@ try:
     import yaml  # type: ignore
     _HAS_PYYAML = True
 except ImportError:
-    pass
-
-
-def _builtin_parse_yaml(text: str) -> dict:
-    """Minimal YAML parser for flat key-value frontmatter (no nested structures)."""
-    result: dict = {}
-    for line in text.splitlines():
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#") or ":" not in stripped:
-            continue
-        key, _, raw = stripped.partition(":")
-        val = raw.strip()
-        # Inline list
-        if val.startswith("[") and val.endswith("]"):
-            inner = val[1:-1]
-            result[key.strip()] = [
-                item.strip().strip("'\"") for item in inner.split(",") if item.strip()
-            ]
-        else:
-            result[key.strip()] = val.strip("'\"") if val else ""
-    return result
+    yaml = None  # type: ignore[assignment]
 
 
 def parse_yaml_text(text: str) -> tuple[dict | None, str | None]:
@@ -82,23 +63,22 @@ def parse_yaml_text(text: str) -> tuple[dict | None, str | None]:
     Parse a YAML string. Returns (parsed_dict, None) on success,
     or (None, error_message) on failure.
     """
-    if _HAS_PYYAML:
-        try:
-            result = yaml.safe_load(text)
-            if result is None:
-                return {}, None
-            if not isinstance(result, dict):
-                return None, f"Expected a mapping, got {type(result).__name__}"
-            return result, None
-        except yaml.YAMLError as exc:
-            return None, str(exc)
-    else:
-        # Builtin fallback — can only detect gross syntax issues
-        try:
-            result = _builtin_parse_yaml(text)
-            return result, None
-        except Exception as exc:
-            return None, str(exc)
+    yaml_module = yaml
+    if yaml_module is None:
+        return None, (
+            "PyYAML is required for syntax validation but is not installed. "
+            "Install with: pip install pyyaml"
+        )
+
+    try:
+        result = yaml_module.safe_load(text)
+        if result is None:
+            return {}, None
+        if not isinstance(result, dict):
+            return None, f"Expected a mapping, got {type(result).__name__}"
+        return result, None
+    except yaml_module.YAMLError as exc:
+        return None, str(exc)
 
 
 # ---------------------------------------------------------------------------
@@ -159,14 +139,6 @@ def _check_required(parsed: dict | None, required_fields: list[str] | None, resu
             result.errors.append(f"Missing required field: '{field}'")
 
 
-def _warn_if_builtin(result: ValidationResult) -> None:
-    if not _HAS_PYYAML:
-        result.warnings.append(
-            "PyYAML not installed — using builtin fallback parser "
-            "(may miss some syntax errors). Install with: pip install pyyaml"
-        )
-
-
 def _validate_file(
     file_path: Path,
     required_fields: list[str] | None,
@@ -190,6 +162,10 @@ def _validate_file(
     else:
         yaml_text = text
 
+    if yaml_text is None:
+        result.errors.append("YAML syntax error: empty YAML content")
+        return result
+
     parsed, parse_err = parse_yaml_text(yaml_text)
     if parse_err:
         result.errors.append(f"YAML syntax error: {parse_err}")
@@ -197,7 +173,6 @@ def _validate_file(
 
     result.fields = list(parsed.keys()) if parsed else []
     _check_required(parsed, required_fields, result)
-    _warn_if_builtin(result)
     return result
 
 
