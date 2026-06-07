@@ -63,25 +63,25 @@
 
 ### 推进顺序
 
-1. **数据结构铺底**：为 `RequestMessage`、`WireResponse`、`ProviderResponse`、`WireStreamDelta`、`ProviderProgressEvent` 增加 reasoning 字段/变体。  
+1. **数据结构铺底**：为 `RequestMessage`、`WireResponse`、`ProviderResponse`、`WireStreamDelta`、`ProviderProgressEvent` 增加 reasoning 字段/变体。
    退出信号：`cargo check -p march-core` 至少推进到所有新增字段编译错误清完，非 DeepSeek provider 构造函数默认 `None`。
 
-2. **OpenAI message serialization / parsing**：实现 assistant `reasoning_content` 序列化、stream parse、non-stream parse，并删除正文 fallback。  
+2. **OpenAI message serialization / parsing**：实现 assistant `reasoning_content` 序列化、stream parse、non-stream parse，并删除正文 fallback。
    退出信号：新增单元测试证明 `reasoning_content` 不会出现在 `content`，但会出现在 response reasoning 字段。
 
-3. **DeepSeek request policy 与 preset 更新**：更新 DeepSeek base URL / suggested models / model capabilities / 前端 URL 默认值，插入 thinking request 字段并跳过采样参数。  
+3. **DeepSeek request policy 与 preset 更新**：更新 DeepSeek base URL / suggested models / model capabilities / 前端 URL 默认值，插入 thinking request 字段并跳过采样参数。
    退出信号：单元测试构造 DeepSeek V4 request body，断言含 `thinking.enabled`、`reasoning_effort=high`，且不含 `temperature` / `top_p` / penalties。
 
-4. **Provider delivery reasoning collector**：stream collector 分别累积 reasoning 和正文，并向上发 `ProviderProgressEvent::ReasoningDelta`。  
+4. **Provider delivery reasoning collector**：stream collector 分别累积 reasoning 和正文，并向上发 `ProviderProgressEvent::ReasoningDelta`。
    退出信号：stream parse + delivery 层测试证明 reasoning delta 被累计到 `ProviderResponse.reasoning_content`，content 仍独立。
 
-5. **Agent/UI 事件链路**：新增 `AssistantReasoningPreview`，打通 messaging 层和 persisted timeline。  
+5. **Agent/UI 事件链路**：新增 `AssistantReasoningPreview`，打通 messaging 层和 persisted timeline。
    退出信号：后端事件单测或 reducer 测试证明 reasoning delta 写入 `PersistedAssistantMessage.reasoning`，UI event field 为 `reasoning`。
 
-6. **Tool-call 轮内回传**：agent runner 在追加 assistant tool-call transient message 时带 `response.reasoning_content`。  
+6. **Tool-call 轮内回传**：agent runner 在追加 assistant tool-call transient message 时带 `response.reasoning_content`。
    退出信号：构造一轮 provider response `{ reasoning_content, tool_calls }` 后，下一次 serialized messages 中的 assistant tool-call message 包含相同 reasoning。
 
-7. **文档和回归验证**：更新架构文档并跑测试。  
+7. **文档和回归验证**：更新架构文档并跑测试。
    退出信号：`cargo test -p march-core` 或定向测试通过；design 中列出的官方约束在 `reasoning.md` / `provider.md` 中有对应长期说明。
 
 ### 测试设计
