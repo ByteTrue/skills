@@ -1,6 +1,6 @@
 ---
 name: bt-brainstorm
-description: 想法还模糊时的讨论入口，做分诊后路由到 feature-design / feature-brainstorm / roadmap。AI 是思考伙伴不是记录员。触发：用户说"有个想法还没想清楚"、"先 brainstorm 一下"、"聊一聊这块"、"方向还在摇摆"。不处理 bug 和重构。
+description: 想法还模糊时的讨论入口，做分诊后路由到 feature-design / feature-brainstorm / roadmap / bt-grill。AI 是思考伙伴不是记录员。触发：用户说"有个想法还没想清楚"、"先 brainstorm 一下"、"聊一聊这块"、"方向还在摇摆"。显式要 grill / stress-test / 把方案问透时转 `bt-grill`。不处理 bug 和重构。
 ---
 
 # bt-brainstorm
@@ -26,9 +26,9 @@ brainstorm 是"讨论层"统一入口。
 | **case 1：已经够清楚** | 不限 | 一句话能说清做什么 / 为谁 / 怎么算成功 / 不做什么 | 不落盘，直接 `bt-feat-design` |
 | **case 2：小需求** | 单 feature | 知道要解决什么问题，对解法 / 边界还摇摆 | `.bytetrue/features/{feature}/{slug}-brainstorm.md` → `bt-feat-design` |
 | **case 3：大需求，拆解 ready** | 多 feature | 心里已有大致模块划分，想直接做拆解和接口契约 | 不落盘，移交 `bt-roadmap` |
-| **case 4：大需求，想 grill** | 多 feature | 还不想拆——想先 grill、发散、产生想法存着 | `.bytetrue/brainstorms/{slug}/brainstorm.md` → 之后 `bt-roadmap` 读到 |
+| **case 4：大需求，想被拷问** | 多 feature | 还不想拆——想先 grill / stress-test / 把计划问透 | 移交 `bt-grill`（默认 with-docs）；收束后再决定是否落 `.bytetrue/brainstorms/{slug}/brainstorm.md` 或进 `bt-roadmap` |
 
-判错 case 不是灾难——**允许升降级**。case 2 聊着发现范围越聊越大切 case 3/4，case 3 聊着发现需要先 grill 切 case 4，case 4 grill 完可以直接拆切 case 3，当场切换出口。
+判错 case 不是灾难——**允许升降级**。case 2 聊着发现范围越聊越大切 case 3/4，case 3 聊着发现需要先拷问切 case 4，case 4 经 `bt-grill` 问透后可以直接拆切 case 3，当场切换出口。
 
 ### 开聊前检查
 
@@ -57,7 +57,7 @@ brainstorm 是"讨论层"统一入口。
 
 > 复述一下看对不对——你想解决的问题是 {P}，打算做 X 包含 a/b/c。这里 a/b/c 合起来更像一个 feature 能搞定，还是三件互相有依赖的事要分几轮？
 
-用户自己拆成多件 → 多 feature 规模，追问"想直接拆 roadmap 还是先 grill 存着？"→ case 3 或 case 4；a/b/c 是同一件事的不同面 → case 2；用户听完复述说"对就是这个想清楚了"→ case 1。
+用户自己拆成多件 → 多 feature 规模，追问"想直接拆 roadmap，还是先走 `bt-grill` 把方案问透？"→ case 3 或 case 4；a/b/c 是同一件事的不同面 → case 2；用户听完复述说"对就是这个想清楚了"→ case 1。
 
 **判 case 信号**（用户说不清就 AI 自判）：
 
@@ -68,9 +68,9 @@ brainstorm 是"讨论层"统一入口。
 
 ---
 
-## 怎么聊（case 2 & case 4 共享工具箱）
+## 怎么聊（case 2 的轻量讨论工具箱）
 
-以下对话方法对 case 2 和 case 4 通用。case 2 最终要收敛到一个选定方向，case 4 可以更开放、不强制收敛。
+以下对话方法主要用于 case 2：目标大致明确但解法 / 边界还摇摆。若讨论中出现显式 grill、范围跨多个 feature、或连续复述仍对不上，立刻移交 `bt-grill`。
 
 ### 两条核心姿态
 
@@ -88,20 +88,15 @@ brainstorm 是"讨论层"统一入口。
 
 1. **挖问题**——按姿态 1 把"真正要解决的问题"问清楚，能用一句话复述、用户说"对就是这个"为止。**这一步价值最高不要急着跳过**
 
-   **grill 档**（按需启动，默认不开）
+   **显式 grill 信号**
 
-   默认走轻问——一次复述对上就推进。下面任一信号出现切到 grill 档加深：
+   下面任一信号出现时，不在 `bt-brainstorm` 内部继续追问，而是移交 `bt-grill`：
 
-   - **显式请求**：用户说"多问几轮 / 帮我问清楚再开始 / grill 我"
-   - **隐式信号**：连续两次复述被"差不多但不太对"驳回；同一概念用不同词反复互指（"权限 / 角色 / 租户"换着说指同一件事）；用户自己也说不清楚
-   - **只在 case 2 / case 4 启动**——case 1 已清楚硬 grill 反人性，case 3 用户已 ready 拆解不需要 grill
+   - **显式请求**：用户说"多问几轮 / 帮我问清楚再开始 / grill 我 / stress-test / 拷问方案"。
+   - **隐式信号**：连续两次复述被"差不多但不太对"驳回；同一概念用不同词反复互指（"权限 / 角色 / 租户"换着说指同一件事）；用户自己也说不清楚。
+   - **范围信号**：问题明显跨多个 feature，但用户还没有模块边界或依赖顺序。
 
-   grill 档硬约束（防止没完没了）：
-
-   - 最多 3-5 轮重点问题，一轮没拿到新增信息就退到发散
-   - 每轮**一个问题 + 2-4 个有区别度的候选**让用户挑，不让 TA 自由作文
-   - 遇到"得写起来才知道"的问题：标成 open question 直接跳过，不死磕
-   - 用户开始敷衍 / 说"先这样吧 / 差不多了" → 立刻退到收敛，别再追问
+   移交时带上已聊到的：真问题、用户方案、冲突术语、已知约束、你看到的最大风险。`bt-grill` 默认会读 `.bytetrue/` 文档和代码上下文；用户显式 `--lite` / `--no-docs` 才走纯对话。
 
 2. **发散**——确认问题后再谈方案。提 2-3 个具体候选方向（用户带的方案算其中一个），每个 1-2 句描述 / 价值 / 代价。**至少有一个反直觉候选**（反转 / 去掉常见约束 / 跨领域类比）。所有候选呈现完再给推荐——先锚定再补别的会污染用户判断
 3. **收敛**——选定方向后轻轻勾勒：核心行为？明显不做？最大未知？给 design 热身不是替 design 决定
@@ -156,7 +151,7 @@ case 1 / case 3 也能借这个动作（不强求落 brainstorm note），逻辑
 **怎么聊**：按上节"怎么聊"工具箱推进——挖问题 → 发散 → 收敛。收敛到选定方向后落盘。
 
 **升降级**：
-- 聊着发现规模超出单 feature → "这规模超出单 feature，你想直接拆 roadmap 还是先 grill 存着？"→ case 3 或 case 4
+- 聊着发现规模超出单 feature → "这规模超出单 feature，你想直接拆 roadmap，还是先走 `bt-grill` 问透后再拆？"→ case 3 或 case 4
 - 聊着发现已经全清楚 → case 1
 
 **落盘**：收敛完成后写 `.bytetrue/features/{feature}/{slug}-brainstorm.md`。
@@ -187,39 +182,28 @@ case 1 / case 3 也能借这个动作（不强求落 brainstorm note），逻辑
 
 ---
 
-### case 4：大需求 → brainstorms 创意空间
+### case 4：大需求 → bt-grill 拷问后再决定
 
-**信号**：多 feature 规模，但用户说不清模块边界、想先发散探索——"帮我问问清楚"、"先把想法理一理存着"、"方向还乱，聊开了再说"。
+**信号**：多 feature 规模，但用户说不清模块边界、想先发散探索——"帮我问问清楚"、"先把想法理一理"、"方向还乱，聊开了再说"，或显式说 "grill / stress-test / 拷问方案"。
 
-这是创意空间，不是设计文档。目标是产生可留存的想法、方向和洞察，供后续 roadmap 消费。
+**处理**：移交 `bt-grill`，不要在 `bt-brainstorm` 内维护第二套 grill 流程。
 
-**怎么聊**：启动 grill 档（见上节"对话节奏 > grill 档"），同时自由发散——聊方案、聊类比、聊技术可能性、聊限制。对话比 case 2 更开放，不急着收敛。
+移交摘要包含：
 
-**升降级**：
-- grill 完感觉够清楚了想直接拆 → case 3，落 brainstorm.md 后移交 roadmap
-- 聊着发现其实一个 feature 能装下 → case 2
-- 聊着发现已经全清楚 → case 1
+1. 用户想解决的真实问题（如果已问出来）。
+2. 用户当前方案或直觉。
+3. 已暴露的术语冲突 / 范围不清 / 依赖不清。
+4. 已知 ByteTrue 上下文线索（相关 requirement / architecture / roadmap / compound，如已读到）。
+5. 你认为最该先问的一个问题。
 
-**落盘**：用户说"先这样"/"差不多了"/"存一下"，或 AI 判断 grill 已到 3-5 轮上限，主动说"这块我先帮你落到 brainstorms 里，之后 roadmap 会读到"。
+`bt-grill` 收束后再决定出口：
 
-路径：`.bytetrue/brainstorms/{slug}/`
+- 够清楚且是单 feature → 回 `bt-feat-design`；必要时由用户要求落 feature brainstorm。
+- 够清楚但跨多个 feature → 回 `bt-roadmap`。
+- 产生了可留存创意但还不 ready → 可按原 open brainstorm 模板落 `.bytetrue/brainstorms/{slug}/brainstorm.md`。
+- 愿景、架构、长期约束已拍板 → 提示 `bt-req` / `bt-arch` / `bt-decide`。
 
-```
-.bytetrue/brainstorms/{slug}/
-└── brainstorm.md    创意记录
-```
-
-目录不存在就创建。slug 根据方向自拟英文小写连字符。
-
-文档模板见同目录 `reference.md` 的"open brainstorm 模板"。
-
-- `doc_type: brainstorm` 区别于 case 2 的 `feature-brainstorm`
-- 比 case 2 模板更自由——不要求"选定方向"，允许保留多个倾向
-- 不需要"考虑过的方向"那种结构化对比——那是 design 前的事，这里只是创意记录
-
-**和 roadmap 的衔接**：`bt-roadmap` 启动时会搜 `.bytetrue/brainstorms/` 看有没有相关 brainstorm。如果有，roadmap 把 brainstorm 当输入材料读，不重复分诊直接拆。
-
-**退出**：落盘后告诉用户"想法存到 `{路径}` 了，准备好了就触发 `bt-roadmap`，它会读到这份脑暴记录"。如果 grill 过程中愿景（用户故事 / 痛点 / 边界）已经比较清楚了，提示用户可以先 `bt-req draft` 把愿景落成 requirement，后续 roadmap 拆解和 design 都有稳定对齐基准
+**退出**：告诉用户"这块需要先问透，我建议切到 `bt-grill`。它会默认读取 `.bytetrue/` 文档和代码上下文；如果你只想纯对话，用 `bt-grill --lite`。"
 
 ---
 
@@ -229,7 +213,7 @@ case 1 / case 3 也能借这个动作（不强求落 brainstorm note），逻辑
 2. **不替用户决定规模**——case 2 / 3 / 4 边界模糊就问用户"你脑子里这块是一个 feature 能装下的规模吗，还是需要先 grill 存着"
 3. **不落盘非 case 2 / case 4 产物**——case 1 / 3 不写文件
 4. **不处理 bug / 重构**
-5. **不在 case 1 / 3 启动 grill 档**——case 1 已清楚硬 grill 反人性，case 3 用户已 ready 拆解不需要 grill
+5. **不在本技能内部维护 grill 流程**——显式 grill / stress-test / 拷问方案统一转 `bt-grill`
 6. **别自己顺手开始写 design 或 roadmap**——阶段间的人工 checkpoint 是 ByteTrue 整套流程的硬约束
 
 ---
@@ -241,7 +225,7 @@ case 1 / case 3 也能借这个动作（不强求落 brainstorm note），逻辑
 - case 1 硬凑 brainstorm note——用户已清楚还写一份模板，后人误以为这里发生过有价值讨论
 - case 3 自己做拆解——越俎代庖，那是 roadmap 的产物
 - 升降级信号不理——范围扩大还继续 case 2，最后落一份塞不下所有子模块的 note
-- 把 case 4 当 case 3 处理——用户想 grill 存着，却直接移交 roadmap 把未成形的想法硬拆成 feature
+- 把 case 4 当 case 3 处理——用户想被问透，却直接移交 roadmap 把未成形的想法硬拆成 feature
 - 把 case 3 当 case 4 处理——用户已经 ready 拆解，却强行 grill 拖延节奏
 - 一次只给一个方案让用户评价——用户被锚定提不出别的方向
 - 复述用户方案就落盘——记录员心态，AI 没提供思考伙伴的价值

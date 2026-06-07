@@ -121,7 +121,8 @@ ByteTrue models real coding work as **6 entities** and **3 flows**.
 <tr><td rowspan="2"><b>Requirement & architecture</b></td><td><code>bt-req</code></td><td>Curate / accumulate raw requirement docs</td></tr>
 <tr><td><code>bt-arch</code></td><td>Draft or update architecture docs under <code>.bytetrue/architecture/</code></td></tr>
 <tr><td><b>Roadmap</b></td><td><code>bt-roadmap</code></td><td>Up-front planning for a big chunk of work: high-level design + interface contracts + sub-feature breakdown</td></tr>
-<tr><td><b>Discussion entry</b></td><td><code>bt-brainstorm</code></td><td>Triage when ideas are still fuzzy: route to design / continue in a feature / hand off to roadmap</td></tr>
+<tr><td rowspan="2"><b>Discussion entry</b></td><td><code>bt-brainstorm</code></td><td>Triage when ideas are still fuzzy: route to design / continue in a feature / hand off to roadmap / bt-grill</td></tr>
+<tr><td><code>bt-grill</code></td><td>Plan grilling / stress-test: reads <code>.bytetrue/</code> docs and code context by default; explicit <code>--lite</code> falls back to pure grill-me</td></tr>
 <tr><td rowspan="5"><b>Feature flow</b></td><td><code>bt-feat</code></td><td>Sub-flow entry for new features</td></tr>
 <tr><td><code>bt-feat-design</code></td><td>Draft <code>{slug}-design.md</code> as the single input for what follows</td></tr>
 <tr><td><code>bt-feat-impl</code></td><td>Code in the order the design lays out</td></tr>
@@ -190,12 +191,12 @@ ByteTrue's skills aren't a single linear pipeline — they're **layered + event-
                               │
                               ▼
 ═══════════════════════════════════════════════════════════════════════
- Discussion entry (optional · enter when fuzzy, route after triage)
+Discussion entry (optional · enter when fuzzy or when a plan needs grilling)
 ───────────────────────────────────────────────────────────────────────
                           ┌── case 1 clear enough ──▶ bt-feat-design
-   bt-brainstorm ────────▶┼── case 2 small + decided ─▶ feature flow
-                          └── case 3 big with one word ─▶ bt-roadmap
-═══════════════════════════════════════════════════════════════════════
+   bt-brainstorm ────────▶├── case 2 small + decided ─▶ feature flow
+                          ├── case 3 big + ready ─────▶ bt-roadmap
+                          └── case 4 needs grilling ──▶ bt-grill
                               │
                               ▼
 ═══════════════════════════════════════════════════════════════════════
@@ -331,7 +332,7 @@ ByteTrue is modeled for real-world development scenarios, aiming to handle commo
 ByteTrue adapts to model capability. If a future model nails a module reliably, that module gets removed.
 
 - [ ] Refactor flow needs hardening (`bt-refactor` is still beta)
-- [ ] …
+- [ ] Absorb Matt Pocock skills' project-management capabilities: `triage` / `to-prd` / `to-issues` / review / PR finishing, as additive ByteTrue `bt-*` skills
 
 Issues welcome — share your real-world dev pain and refactoring experience.
 
