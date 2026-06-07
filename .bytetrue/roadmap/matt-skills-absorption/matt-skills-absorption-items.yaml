@@ -39,7 +39,7 @@ items:
 
   - slug: implementation-tdd-discipline
     title: Add TDD discipline to feature and issue implementation
-    status: planned
+    status: done
     minimal_loop: false
     depends_on: []
     covers:

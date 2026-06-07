@@ -94,6 +94,21 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 最常见违规是"顺手把下一步也做了"——每步都对应独立可验证的退出信号，两步合做意味着出问题时不知道是哪一步引入的、回滚也回不到干净中间态。
 
+
+### TDD / vertical slice 纪律（按需启用）
+
+以下情况启用 TDD 纪律：用户明确要求 TDD、design 第 3.1 节建议 TDD、实现涉及复杂业务逻辑、或变更 regression-sensitive。简单 UI / 文案 / 配置改动不强制。
+
+启用后按 Matt `tdd` 的节奏执行：
+
+1. 选一个最小 vertical slice / tracer bullet，不按“先写完全部测试再写全部实现”的 horizontal slicing 推进。
+2. 每轮只写一个行为测试，测试 public interface / 可观察行为，不测 private method / 内部 collaborator。
+3. 先确认测试失败（red），再写最少代码让它通过（green）。
+4. 当前测试变绿前不做 refactor；**never refactor while red**。
+5. 全绿后才允许小步 refactor，每次 refactor 后重跑相关测试。
+6. 继续下一条行为：one test → minimal code → repeat。
+
+如果 design 第 3.1 节缺失但实现时发现非常适合 TDD，不要绕过 design：停下来补第 3.1 节或和用户确认“按 TDD 模式执行”。
 ### 不做方案外的改动
 
 发现值得重构的点（参考 `.bytetrue/reference/shared-conventions.md` 第 7 节"写代码时的反射检查"），只要**不在本次功能影响面内**就记成后续 issue：
@@ -162,6 +177,9 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 **Fastforward design**：对照第 2 节验收标准逐条核对
 ```
 
+### TDD / red-green 证据
+{未启用：原因 / 已启用：逐条列 red test → minimal code → green evidence；如发生 refactor，列 refactor 后重跑的测试命令}
+
 汇报后停等 review。
 
 ---
@@ -174,6 +192,8 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 **测试通过 ≠ 验收场景满足**——前者只说明你写的用例过了，不说明每条场景都有用例覆盖。
 
+启用 TDD 时，测试落地顺序必须跟实现同步：一个行为测试 red → 最小实现 green → 下一条行为。不要先堆一批 pending tests，也不要红灯时顺手重构。
+
 类型系统保证的（如 TypeScript 签名直接排除某种调用），汇报里说"类型签名已落地，编译期保证"。
 
 ---
@@ -184,6 +204,7 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 - [ ] 完成汇报已输出，用户 review 通过
 - [ ] 没有未处理的"需要叫停"信号
 - [ ] 第 3 节关键场景每条都有证据 / 测试覆盖（fastforward 对照第 2 节）
+- [ ] 若启用 TDD，red/green/refactor 证据已在完成汇报中列出
 - [ ] 没有"顺手发现"被偷偷修掉（都进 issue 列表）
 - [ ] 没有方案外文件改动（或已同步更新方案 doc）
 
@@ -209,3 +230,6 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 - 用户 review 还没通过就自己进入验收阶段
 - 关键场景清单一条都没落证据
 - 把 paradigm 维度 steps 当 file:line 读——steps 是切片策略不是改动清单；step 内部偷偷拆子步骤而不跟用户对齐 = 绕过 review
+- 启用 TDD 时先写一堆测试再写实现——这会退化成 horizontal slicing，不是 tracer bullet
+- 测 private method / 内部实现细节——测试应该通过 public interface / 可观察行为表达需求
+- red 状态下顺手重构——先让当前测试变绿，全绿后再重构

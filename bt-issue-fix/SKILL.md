@@ -73,6 +73,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 - 测 public interface / 可观察行为，不测私有实现细节。
 - 选最高层、最接近用户行为的 seam；不要为了测试方便新增低层专用接口。
 - 先确认 test 能复现 bug（red），再写最小修复让它通过（green）。
+- 当前 regression test 变绿前不做 refactor；红灯时只做让测试通过的最小修复，全部相关测试绿灯后才允许整理代码。
 - 没有合适 seam 时不要硬造脆弱测试；在 `{slug}-fix-note.md` 里说明原因，并可把“缺少 seam”记为后续 `bt-refactor` / `bt-arch` 候选。
 
 简单 bug / 纯配置 / 纯文案修复可以不写 regression test，但必须在验证结果里说明用什么证据代替。
@@ -177,5 +178,6 @@ fix-note 必须额外记录：
 - 有合适 seam 却不写 regression test，也不说明原因
 - 临时 debug 前缀没 grep 清理
 - fix-note 只写“已修复”，没有 regression coverage 和 mini post-mortem
+- regression test 还红着就顺手重构——先 green，再 refactor，再重跑测试
 - 收尾时没问用户是否代为 commit
 - 用户没明确同意就 `git commit`
