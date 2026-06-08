@@ -22,6 +22,8 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 
 > 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md` 第 0 节。
 
+> **读完本节后，先跳到「退出后」节看完收尾清单再回来填验收模板**——退出后清单比验收模板更容易被跳过，你有义务一次性问完 7 项。
+
 ---
 
 ## 跟 design 的章节强依赖

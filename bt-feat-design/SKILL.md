@@ -13,6 +13,8 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 
 > 共享路径和命名约定看 `.bytetrue/reference/shared-conventions.md`。本阶段一般 feature 目录已经由 brainstorm 创建好了；没有的话在这一步建。
 
+> **读完本节后，先跳到「退出后」节看完收尾清单再回来写方案**——退出后第 1 步就是 tracker 同步，你有义务一次性问完。
+
 本阶段有三个入口：
 
 - **正式起草**：用户已经能讲清楚需求（或已经填好 `{slug}-intent.md`），直接进"流程"一节走完整起草。
