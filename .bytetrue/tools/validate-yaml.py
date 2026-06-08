@@ -7,8 +7,8 @@ Scans markdown files for YAML frontmatter (--- ... ---) and checks:
   2. YAML syntax is valid (parseable without errors)
   3. (Optional) Required fields are present (--require flag)
 
-Designed for AI agent use: structured output, exit code reflects pass/fail.
-Requires PyYAML for reliable syntax validation.
+Designed for AI agent use: structured output, exit code reflects pass/fail,
+no required external dependencies (falls back to builtin parser if PyYAML unavailable).
 
 Usage examples:
   # Validate all .md files under .bytetrue/features
@@ -27,9 +27,12 @@ Usage examples:
   python .bytetrue/tools/validate-yaml.py --file docs/api/manifest.yaml --yaml-only
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys
+from contextlib import suppress
 from pathlib import Path
 
 # Force UTF-8 stdout/stderr on Windows where default codepage (e.g. GBK / cp936)
@@ -40,10 +43,8 @@ from pathlib import Path
 for _stream in (sys.stdout, sys.stderr):
     reconfigure = getattr(_stream, "reconfigure", None)
     if callable(reconfigure):
-        try:
+        with suppress(OSError, ValueError):
             reconfigure(encoding="utf-8")
-        except (OSError, ValueError):
-            pass
 
 
 # ---------------------------------------------------------------------------
@@ -53,9 +54,30 @@ for _stream in (sys.stdout, sys.stderr):
 _HAS_PYYAML = False
 try:
     import yaml  # type: ignore
+
     _HAS_PYYAML = True
 except ImportError:
     yaml = None  # type: ignore[assignment]
+
+
+def _builtin_parse_yaml(text: str) -> dict:
+    """Minimal YAML parser for flat key-value frontmatter (no nested structures)."""
+    result: dict = {}
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or ":" not in stripped:
+            continue
+        key, _, raw = stripped.partition(":")
+        val = raw.strip()
+        # Inline list
+        if val.startswith("[") and val.endswith("]"):
+            inner = val[1:-1]
+            result[key.strip()] = [
+                item.strip().strip("'\"") for item in inner.split(",") if item.strip()
+            ]
+        else:
+            result[key.strip()] = val.strip("'\"") if val else ""
+    return result
 
 
 def parse_yaml_text(text: str) -> tuple[dict | None, str | None]:
@@ -64,26 +86,29 @@ def parse_yaml_text(text: str) -> tuple[dict | None, str | None]:
     or (None, error_message) on failure.
     """
     yaml_module = yaml
-    if yaml_module is None:
-        return None, (
-            "PyYAML is required for syntax validation but is not installed. "
-            "Install with: pip install pyyaml"
-        )
-
-    try:
-        result = yaml_module.safe_load(text)
-        if result is None:
-            return {}, None
-        if not isinstance(result, dict):
-            return None, f"Expected a mapping, got {type(result).__name__}"
-        return result, None
-    except yaml_module.YAMLError as exc:
-        return None, str(exc)
+    if _HAS_PYYAML and yaml_module is not None:
+        try:
+            result = yaml_module.safe_load(text)
+            if result is None:
+                return {}, None
+            if not isinstance(result, dict):
+                return None, f"Expected a mapping, got {type(result).__name__}"
+            return result, None
+        except yaml_module.YAMLError as exc:
+            return None, str(exc)
+    else:
+        # Builtin fallback — can only detect gross syntax issues
+        try:
+            result = _builtin_parse_yaml(text)
+            return result, None
+        except Exception as exc:
+            return None, str(exc)
 
 
 # ---------------------------------------------------------------------------
 # Frontmatter extraction
 # ---------------------------------------------------------------------------
+
 
 def extract_frontmatter(text: str) -> tuple[str | None, str | None]:
     """
@@ -96,7 +121,10 @@ def extract_frontmatter(text: str) -> tuple[str | None, str | None]:
 
     end = text.find("\n---", 3)
     if end == -1:
-        return None, "No closing '---' delimiter found (frontmatter block not terminated)"
+        return (
+            None,
+            "No closing '---' delimiter found (frontmatter block not terminated)",
+        )
 
     fm_text = text[3:end].strip()
     if not fm_text:
@@ -108,6 +136,7 @@ def extract_frontmatter(text: str) -> tuple[str | None, str | None]:
 # ---------------------------------------------------------------------------
 # Validation logic
 # ---------------------------------------------------------------------------
+
 
 class ValidationResult:
     def __init__(self, file_path: str):
@@ -131,12 +160,22 @@ class ValidationResult:
         return d
 
 
-def _check_required(parsed: dict | None, required_fields: list[str] | None, result: ValidationResult) -> None:
+def _check_required(
+    parsed: dict | None, required_fields: list[str] | None, result: ValidationResult
+) -> None:
     if not required_fields:
         return
     for field in required_fields:
         if field not in (parsed or {}):
             result.errors.append(f"Missing required field: '{field}'")
+
+
+def _warn_if_builtin(result: ValidationResult) -> None:
+    if not _HAS_PYYAML:
+        result.warnings.append(
+            "PyYAML not installed — using builtin fallback parser "
+            "(may miss some syntax errors). Install with: pip install pyyaml"
+        )
 
 
 def _validate_file(
@@ -173,6 +212,7 @@ def _validate_file(
 
     result.fields = list(parsed.keys()) if parsed else []
     _check_required(parsed, required_fields, result)
+    _warn_if_builtin(result)
     return result
 
 
@@ -189,6 +229,7 @@ def validate_yaml_file(file_path, required_fields=None, base_dir=None):
 # ---------------------------------------------------------------------------
 # Output
 # ---------------------------------------------------------------------------
+
 
 def print_text_results(results: list[ValidationResult]) -> None:
     passed = sum(1 for r in results if r.ok)
@@ -224,25 +265,39 @@ def print_json_results(results: list[ValidationResult]) -> None:
 # Entry point
 # ---------------------------------------------------------------------------
 
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Validate YAML frontmatter in markdown files or pure YAML files.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--dir", type=str, help="Directory to scan recursively for .md files")
+    source.add_argument(
+        "--dir", type=str, help="Directory to scan recursively for .md files"
+    )
     source.add_argument("--file", type=str, help="Single file to validate")
-    parser.add_argument("--require", action="append", default=[], metavar="FIELD",
-                        help="Require this field in frontmatter (repeatable)")
-    parser.add_argument("--json", action="store_true", dest="json_output",
-                        help="Output results as JSON")
-    parser.add_argument("--yaml-only", action="store_true",
-                        help="Treat input as pure YAML (not markdown with frontmatter). "
-                             "Use for .yaml/.yml files like manifest.yaml.")
+    parser.add_argument(
+        "--require",
+        action="append",
+        default=[],
+        metavar="FIELD",
+        help="Require this field in frontmatter (repeatable)",
+    )
+    parser.add_argument(
+        "--json", action="store_true", dest="json_output", help="Output results as JSON"
+    )
+    parser.add_argument(
+        "--yaml-only",
+        action="store_true",
+        help="Treat input as pure YAML (not markdown with frontmatter). "
+        "Use for .yaml/.yml files like manifest.yaml.",
+    )
     return parser
 
 
-def _validate_single(path_str: str, require: list[str], yaml_only: bool) -> list[ValidationResult]:
+def _validate_single(
+    path_str: str, require: list[str], yaml_only: bool
+) -> list[ValidationResult]:
     fp = Path(path_str)
     if not fp.exists():
         print(f"Error: File not found: {fp}", file=sys.stderr)
