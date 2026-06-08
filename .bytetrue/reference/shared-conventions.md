@@ -168,21 +168,39 @@ planned  → dropped      （bt-roadmap update 模式，用户决定不做时改
 
 ## 3. 阶段收尾推荐
 
+带 `bt-tracker` 的条目统一遵守 `.bytetrue/reference/project-management.md` 的 `sync_policy`：只预览并询问，用户确认前不创建 / 更新 / 关闭外部 issue；provider 是 `local` 时只说明未配置外部 tracker。
+
+**roadmap** 收尾按顺序判断：
+
+1. `bt-tracker`：同步 / 绑定 roadmap PRD 和本次变更涉及的 syncable roadmap items（planned / in-progress / done；dropped 仅更新已绑定外部 issue）
+
+**feature-design** 收尾按顺序判断：
+
+1. `bt-tracker`：同步 / 绑定 approved feature design；roadmap 起头时同时更新 / 绑定对应 roadmap item
+
 **feature-acceptance** 收尾按顺序判断：
 
 1. `bt-learn`：沉淀经验
 2. `bt-decide`：长期约束 / 选型
-3. `bt-guide`：开发者 / 用户指南
-4. `bt-libdoc`：公开 API 参考
-5. `scoped-commit`
+3. `bt-tracker`：用 feature design + acceptance report/checklist 更新 / 绑定外部 task；roadmap 起头时同步 done roadmap item 状态
+4. `bt-guide`：开发者 / 用户指南
+5. `bt-libdoc`：公开 API 参考
+6. `bt-note`：attention.md 候选
+7. `scoped-commit`
+
+**issue-report** 收尾按顺序判断：
+
+1. `bt-tracker`：同步 / 绑定 confirmed bug issue
 
 **issue-fix** 收尾按顺序判断：
 
 1. `bt-learn`：坑点
 2. `bt-decide`：暴露的长期约束
-3. `scoped-commit`
+3. `bt-tracker`：更新 / 绑定 / 请求关闭外部 bug issue；没有绑定时可补同步
+4. `bt-note`：attention.md 候选
+5. `scoped-commit`
 
-**feature-ff** 收尾按顺序判断（比标准 acceptance 短，没有 architecture / req 回写动作）：
+**feature-ff** 收尾按顺序判断（没有 syncable source，默认不触发 tracker）：
 
 1. `bt-learn`：动手过程暴露的坑
 2. `bt-decide`：动手过程拍板的长期约束

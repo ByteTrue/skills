@@ -237,6 +237,16 @@ AI 默认翻车的姿势是**不思考就往眼前最顺手的文件里加**。
 
 ---
 
+## 退出后
+
+告诉用户："feature design 已 approved，checklist 已就绪。下一步阶段 2 实现，触发 `bt-feat-impl`。"
+
+按 `shared-conventions.md` 第 3 节"feature-design"收尾推荐顺序一句话提示（用户"不用"立即跳过）：
+
+1. approved feature design 需要团队协作投影 → "要同步或绑定外部 tracker 吗？（`bt-tracker`）"；roadmap 起头时同时提示可更新 / 绑定对应 roadmap item；用户确认前不创建 / 更新外部 issue
+
+---
+
 ## 容易踩的坑
 
 - 没读相关架构 / 术语没 grep 就动笔——方案跟现有代码对不上、术语冲突后 git blame 找十倍时间

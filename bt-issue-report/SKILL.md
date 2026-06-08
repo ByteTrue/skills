@@ -141,6 +141,10 @@ tags: []
 
 告诉用户："问题报告已就绪。下一步阶段 2 根因分析，触发 `bt-issue-analyze`。"
 
+按 `shared-conventions.md` 第 3 节"issue-report"收尾推荐顺序一句话提示（用户"不用"立即跳过）：
+
+1. confirmed bug issue 需要团队协作投影 → "要同步或绑定外部 tracker 吗？（`bt-tracker`）"；用户确认前不创建 / 更新外部 issue
+
 别自己顺手开始分析根因——阶段间的人工 checkpoint 是工作流硬约束。
 
 ---

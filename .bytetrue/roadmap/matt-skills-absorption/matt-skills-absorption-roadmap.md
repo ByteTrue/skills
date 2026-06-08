@@ -77,7 +77,7 @@ ByteTrue 版 `CONTEXT.md`，承载：
 职责：
 
 - `setup`：读取/维护 `project-management.md`。
-- `publish`：把 confirmed ByteTrue 产物发布到 GitHub/GitLab/local tracker。
+- `publish`：把符合可同步源和可同步状态映射的 ByteTrue 产物发布到 GitHub/GitLab/local tracker。
 - `link`：绑定已有 external issue。
 - `triage`：读取 external incoming issues，给出分诊和路由建议。
 

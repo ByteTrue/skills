@@ -185,6 +185,16 @@ feature-design 发现接口契约不合理 / 漏了 / 描述不准 → **回 `bt
 
 ---
 
+## 退出后
+
+告诉用户："roadmap 已就绪。后续每条子 feature 走 `bt-feat-design`，roadmap 里的接口契约是硬约束输入。"
+
+按 `shared-conventions.md` 第 3 节"roadmap"收尾推荐顺序一句话提示（用户"不用"立即跳过）：
+
+1. roadmap PRD / 本次变更涉及的 syncable roadmap items（planned / in-progress / done；dropped 仅更新已绑定外部 issue）需要团队协作投影 → "要同步或绑定外部 tracker 吗？（`bt-tracker`）"；用户确认前不创建 / 更新外部 issue
+
+---
+
 ## 和其他工作流的关系
 
 | 方向 | 关系 |

@@ -93,6 +93,13 @@ not_syncable_by_default:
     reason: requirement 是愿景输入材料，默认不单独发布外部 tracker
 ```
 
+可同步状态映射：
+
+- `roadmap_prd`：`status: active | completed | paused` 视为已 review 的规划口径，可 publish / update；`draft` 不同步。
+- `roadmap_item`：`status: planned | in-progress | done` 可 publish / update；`dropped` 只更新已绑定外部 issue 的状态，不默认新建。
+- `feature_design`：`status: approved` 可 publish / update。
+- `bug_issue`：`status: confirmed` 可 publish / update。
+
 PRD 不作为新的本地实体；本地不新增 `.bytetrue/prds/`。
 
 ---
@@ -126,7 +133,7 @@ actions:
 
 ## Sync Policy
 
-默认策略：只同步 confirmed / approved / accepted 的 ByteTrue 产物，并在外部副作用前询问用户。
+默认策略：只同步 `syncable_sources` 中且符合可同步状态映射的 ByteTrue 产物，并在外部副作用前询问用户。
 
 ```yaml
 sync_policy: ask
