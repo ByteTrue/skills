@@ -1,0 +1,22 @@
+{
+  "name": "@bytetrue/skills",
+  "version": "0.1.0",
+  "description": "ByteTrue workflow skills for AI coding agents and pi.",
+  "license": "MIT",
+  "keywords": [
+    "pi-package",
+    "pi-skills",
+    "agent-skills",
+    "bytetrue"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ByteTrue/skills.git"
+  },
+  "pi": {
+    "skills": [
+      "./skills/*/SKILL.md"
+    ],
+    "image": "https://raw.githubusercontent.com/ByteTrue/skills/main/asset/PromotionalImage.png"
+  }
+}

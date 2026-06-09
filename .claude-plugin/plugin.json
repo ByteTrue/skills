@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "bytetrue",
+  "displayName": "ByteTrue",
+  "description": "ByteTrue workflow skills for serious software engineering in Claude Code.",
+  "version": "0.1.0",
+  "author": {
+    "name": "ByteTrue"
+  },
+  "homepage": "https://github.com/ByteTrue/skills",
+  "repository": "https://github.com/ByteTrue/skills",
+  "license": "MIT",
+  "keywords": [
+    "bytetrue",
+    "workflow",
+    "agent-skills",
+    "software-engineering"
+  ]
+}

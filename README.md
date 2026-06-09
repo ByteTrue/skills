@@ -22,11 +22,39 @@
 
 ## 安装
 
+### Claude Code plugin
+
+```bash
+claude plugin marketplace add ByteTrue/skills
+claude plugin install bytetrue@bytetrue-skills
+```
+
+安装后根入口：
+
+```bash
+/bytetrue:bt-onboard
+/bytetrue:bt
+```
+
+### Pi package
+
+```bash
+pi install git:github.com/ByteTrue/skills
+```
+
+临时试用 package（`-e` / `--extension` 会把 git package 加载到临时目录，仅当前这次 pi 进程生效，不写入 settings）：
+
+```bash
+pi -e git:github.com/ByteTrue/skills
+```
+
+### Agentskills / 多 Agent
+
 ```bash
 npx skills add https://github.com/ByteTrue/skills
 ```
 
-只需要一键，开始工作：
+安装后开始工作：
 
 ```bash
 /bt-onboard

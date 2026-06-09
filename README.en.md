@@ -22,11 +22,39 @@ Tired of OpenSpec's flimsiness, Oh-My-OpenAgent's over-engineering, and Superpow
 
 ## Install
 
+### Claude Code plugin
+
+```bash
+claude plugin marketplace add ByteTrue/skills
+claude plugin install bytetrue@bytetrue-skills
+```
+
+After installation, use the namespaced entry points:
+
+```bash
+/bytetrue:bt-onboard
+/bytetrue:bt
+```
+
+### Pi package
+
+```bash
+pi install git:github.com/ByteTrue/skills
+```
+
+Try the package for one run (`-e` / `--extension` loads the git package into a temporary directory for this pi process only, without writing settings):
+
+```bash
+pi -e git:github.com/ByteTrue/skills
+```
+
+### Agentskills / multi-agent
+
 ```bash
 npx skills add https://github.com/ByteTrue/skills
 ```
 
-One command to start working:
+After installation, start working:
 
 ```bash
 /bt-onboard

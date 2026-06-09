@@ -14,8 +14,8 @@
 
 ### 命令与脚本陷阱
 
-- 本仓库是一个多 skill bundle：根目录下每个包含 `SKILL.md` 的一级目录都是一个独立 skill。
-- 本地自举开发时推荐 symlink 安装到 `~/.agents/skills` / `~/.claude/skills`，这样改仓库内 `SKILL.md` 可立即反映到已安装 skill。
+- 本仓库是一个多 skill bundle：`skills/` 下每个包含 `SKILL.md` 的一级目录都是一个独立 skill。
+- 本地自举开发时推荐把 `/Users/byte/workspace/projects/skills/skills` symlink 安装到 `~/.agents/skills` / `~/.claude/skills`，这样改仓库内 `SKILL.md` 可立即反映到已安装 skill。
 - `npx skills add /Users/byte/workspace/projects/skills --list` 可以识别本地路径并列出全部 skills；`npx skills add <local-path> -g --all` 更适合复制式正式安装，不适合边改边用。
 
 ### 路径与目录约定
