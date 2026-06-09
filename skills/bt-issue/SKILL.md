@@ -39,7 +39,7 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 
 `{slug}-fix-note.md` 是阶段 3 **必出产物**——无论修复简单还是复杂都要写。它不是仪式，是回溯凭证：没有它下次类似问题来你只能从 git log 反推。
 
-所有 issue 文档带 YAML frontmatter（`doc_type` 分别为 `issue-report` / `issue-analysis` / `issue-fix`）便于 `search-yaml.py` 按 severity / tags / status 检索。
+所有 issue 文档带 YAML frontmatter（`doc_type` 分别为 `issue-report` / `issue-analysis` / `issue-fix`）便于 `search-yaml.py` 按 severity / tags / status 检索。issue 三阶段完成态统一用 `status: confirmed`；`draft` 只表示该阶段还没完成 review / 验证。
 
 ---
 
@@ -81,6 +81,8 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 | `report.md` 已存在，没 `analysis.md` | `bt-issue-analyze` |
 | `analysis.md` 已存在，代码还没改 | `bt-issue-fix` |
 | 代码已改，还没修复验证记录 | `bt-issue-fix`（走验证） |
+| `fix-note.md` 已存在且 `status: confirmed` | issue 已闭环，不重新进入修复；如需协作投影再提示 `bt-tracker` |
+| `fix-note.md` 已存在但 `status: draft` | 先核正文验证记录、相关提交和 worktree；证据齐全时提示只需把 fix-note 改为 `status: confirmed`，不要直接判修复未完成 |
 | 不确定 | 自己读已有文件按上表对号 |
 
 用户描述的是**新功能需求而不是 bug** → 告诉用户走 `bt-feat`。

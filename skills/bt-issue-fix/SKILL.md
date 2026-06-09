@@ -116,6 +116,8 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 验证通过后在 issue 目录建 `{slug}-fix-note.md`（位置见 `bt-issue` 的"文件放哪儿"），记录完整闭环。标准路径模板和快速通道模板都在同目录 `reference.md`。
 
+fix-note 完成态统一写 `status: confirmed`。不要保留 `draft`：`draft` 表示修复记录未完成 review / 验证，会让后续 `bt-issue` 认为工作流还没闭环。
+
 fix-note 必须额外记录：
 
 - regression coverage：新增了哪个测试 / 用哪个现有测试覆盖 / 为什么没有合适 seam。
@@ -129,6 +131,7 @@ fix-note 必须额外记录：
 - [ ] 所有改动文件已提交或列清单
 - [ ] 验证清单全部勾选
 - [ ] `{slug}-fix-note.md` 已建并填写完整
+- [ ] fix-note frontmatter `status: confirmed`
 - [ ] regression coverage / 无 seam 原因已写入 fix-note
 - [ ] 临时 instrumentation 已清理或明确说明保留理由
 - [ ] mini post-mortem 已写入 fix-note

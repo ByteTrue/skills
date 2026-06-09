@@ -88,7 +88,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 
 **feature spec**：brainstorm / design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。`status`：brainstorm = `confirmed`（落盘即确认无 draft）；design = `draft` / `approved`；acceptance 见对应技能。
 
-**issue spec**：report / analysis / fix-note 共用 `doc_type` / `issue` / `status` / `tags`。`severity` / `root_cause_type` / `path` 由对应阶段按需补。
+**issue spec**：report / analysis / fix-note 共用 `doc_type` / `issue` / `status` / `tags`。三阶段完成态统一用 `status: confirmed`；`draft` 表示该阶段仍未完成 review / 验证。`severity` / `root_cause_type` / `path` 由对应阶段按需补。
 
 **归档类（compound）**：
 
