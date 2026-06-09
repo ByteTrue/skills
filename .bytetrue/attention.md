@@ -21,11 +21,11 @@
 ### 路径与目录约定
 
 - ByteTrue 自身工作流源码在 `/Users/byte/workspace/projects/skills`。
-- 当前自举分支是 `feature/bt-grill`；`main` 保留 ByteTrue baseline，`bt-grill` 已在独立分支提交。
-- 第一阶段只做 additive 增强，不重写已有 `bt` 核心流程。
+- Matt skills absorption 自举工作已合入 `main`；`.bytetrue/roadmap/matt-skills-absorption/` 已完成并归档。
+- Matt skills absorption 阶段保持 additive 增强，不重写已有 `bt` 核心流程；后续改动仍优先保持 additive。
 
 ### 环境变量与凭证
 
 ### 其他
 
-- 后续明确要吸收 Matt Pocock skills 的项目管理能力：triage、to-prd、to-issues、review、PR finishing 等，做成 ByteTrue 的 additive `bt-*` 能力。
+- Matt Pocock skills 的项目管理能力已吸收为 additive `bt-tracker` 能力；规则见 `.bytetrue/reference/project-management.md`。
