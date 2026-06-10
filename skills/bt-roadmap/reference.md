@@ -1,10 +1,10 @@
-# bt-roadmap 参考模板
+# bt-roadmap reference templates
 
-SKILL.md 只保留流程骨架，具体格式在这里。
+`SKILL.md` keeps only the workflow skeleton. The concrete format lives here.
 
 ---
 
-## 1. 主文档 `{slug}-roadmap.md`
+## 1. Main Document `{slug}-roadmap.md`
 
 ### 1.1 frontmatter
 
@@ -16,130 +16,130 @@ status: active          # active | paused | completed
 created: YYYY-MM-DD
 last_reviewed: YYYY-MM-DD
 tags: [permission, auth]
-related_requirements: []    # 相关 req slug 列表，可空
-related_architecture: []    # 相关 architecture doc slug，可空
+related_requirements: []    # list of related req slugs, may be empty
+related_architecture: []    # list of related architecture doc slugs, may be empty
 ---
 ```
 
-- `status`：`active` 进行中 / `paused` 暂停 / `completed` 所有条目 done 或 dropped
-- `related_requirements`：本大需求涉及的 req slug，帮助跳转到"为什么要有这个能力"
-- `related_architecture`：会被改到的 architecture doc slug，帮助理解"改了会触碰哪些现状"
+- `status`: `active` means in progress, `paused` means paused, `completed` means all items are `done` or `dropped`
+- `related_requirements`: the req slugs involved in this larger demand, helping readers jump to "why this capability should exist"
+- `related_architecture`: the architecture doc slugs that will be touched, helping readers understand "which parts of current state this will hit"
 
-### 1.2 正文节
+### 1.2 Body Sections
 
-```markdown
-# {大需求标题——直接说是什么不玩比喻}
+````markdown
+# {Title of the larger demand — say directly what it is, no metaphor}
 
-## 1. 背景
+## 1. Background
 
-一两段讲是什么、为什么要做。对象是"新加入想知道接下来几个月在忙什么"的人。
+One or two paragraphs explaining what it is and why it should be done. The target reader is someone new who wants to know what the team will be busy with in the next few months.
 
-## 2. 范围与明确不做
+## 2. Scope and Explicit Non-goals
 
-### 本 roadmap 覆盖
-- 能力 A
-- 能力 B
+### Covered by this roadmap
+- Capability A
+- Capability B
 
-### 明确不做
-- 能力 X（理由）
-- 能力 Y（指向另一份 roadmap / req）
+### Explicitly not covered
+- Capability X, with reason
+- Capability Y, pointing to another roadmap or req
 
-## 3. 模块拆分（概设）
+## 3. Module Split, conceptual design
 
-拆成哪几个模块 / 组件、各自做什么。文字版结构树或 ASCII 框图都行 + 每个模块一段说明：
+Describe which modules or components it is split into and what each one does. A text tree or an ASCII box diagram is fine, plus one paragraph per module:
 
+```text
+{Large Demand Name}
+├── Module A: {one-line responsibility}
+├── Module B: {one-line responsibility}
+└── Module C: {one-line responsibility}
 ```
-{大需求名}
-├── 模块 A：{一句话职责}
-├── 模块 B：{一句话职责}
-└── 模块 C：{一句话职责}
-```
 
-### 模块 A · {名称}
-- **职责**：{一两句讲清做什么、不做什么}
-- **承载的子 feature**：{slug-1, slug-2}
-- **触碰的现有代码 / 模块**：{已有的 X 模块 / 全新 / 重写某模块}
+### Module A · {name}
+- **Responsibility**: {one or two sentences describing what it does and does not do}
+- **Sub-features carried**: {slug-1, slug-2}
+- **Existing code or modules touched**: {existing module X / brand new / rewrite of a certain module}
 
-### 模块 B / C · ...
+### Module B / C · ...
 
-> 不需要模块拆分（纯改一个已有模块的内部行为）→ 明确写"本大需求在已有模块 {X} 内完成，不引入新模块也不调整模块边界"，跳过第 4 节直接到第 5 节。
+> If module splitting is unnecessary, for example a pure internal behavior change inside one existing module, explicitly write "This larger demand is completed inside the existing module {X}, without adding new modules or changing module boundaries", skip section 4, and go directly to section 5.
 
-## 4. 模块间接口契约 / 共享协议（架构层详设）
+## 4. Inter-module Interface Contracts / Shared Protocols, detailed architecture layer
 
-定义模块之间怎么交互——这一节是 feature-design 的硬约束输入。**写到函数签名 / 数据结构 / 协议字段 / 错误码这一级**，不允许"两边商量" / "待定"。
+Define how the modules interact. This section becomes hard-constraint input for feature-design. **Write all the way down to function signatures, data structures, protocol fields, and error codes**. "The two sides will discuss it" or "TBD" is not allowed.
 
-### 4.1 {接口 / 协议名 1}
+### 4.1 {interface / protocol name 1}
 
-**方向**：模块 A → 模块 B
-**形式**：HTTP API / 函数调用 / 消息事件 / 共享数据库表 / 文件协议 / ...
+**Direction**: Module A → Module B  
+**Form**: HTTP API / function call / message event / shared database table / file protocol / ...
 
-**契约**：
+**Contract**:
 
-```
-# HTTP API 例：
+```text
+# HTTP API example:
 POST /api/v1/permission/check
 Request:  { user_id: str, resource: str, action: str }
 Response: { allowed: bool, reason: str | null }
-错误：    400 invalid_input, 404 user_not_found, 500 internal
+Errors:   400 invalid_input, 404 user_not_found, 500 internal
 
-# 函数签名例：
+# Function signature example:
 def check_permission(user_id: str, resource: str, action: str) -> PermissionResult
 class PermissionResult: allowed: bool; reason: Optional[str]
 
-# 事件例：
+# Event example:
 event_type: permission.changed
 payload: { user_id: str, role: str, changed_at: ISO8601 }
 ```
 
-**约束**：
-- 调用方必须先确保 user_id 已认证
-- response 的 reason 在 allowed=true 时必须为 null
-- 事件必须幂等消费
+**Constraints**:
+- the caller must ensure `user_id` is authenticated first
+- in the response, `reason` must be `null` when `allowed=true`
+- the event must be consumed idempotently
 
 ### 4.2 ...
 
-### 4.x 共享数据结构 / 状态
+### 4.x Shared Data Structures / State
 
-几个模块共享同一份数据结构 / 持久化 / 全局状态时在这里定义一次：
+When several modules share the same data structure, persistence, or global state, define it here once:
 
+```text
+{table schema / type definition / config schema}
 ```
-{表结构 / 类型定义 / 配置 schema}
-```
 
-> 没有跨模块接口（纯前端样式调整）→ 明确写"本 roadmap 无跨模块接口"。不允许空着或"暂无"。
+> If there is no cross-module interface, such as a pure frontend style adjustment, explicitly write "This roadmap has no cross-module interfaces". It must not be left blank or written as "none yet".
 
-## 5. 子 feature 清单
+## 5. Sub-feature List
 
-按依赖和推进顺序排列。每条对应 items.yaml 一个条目，两份保持同步。
+Order by dependency and rollout sequence. Each item corresponds to one entry in `items.yaml`, and the two must stay synchronized.
 
-1. **{slug}** — {一句话描述}
-   - 所属模块：{模块 A / B / 跨模块——指明涉及哪些}
-   - 依赖：{前置 slug 列表 / 无}
-   - 状态：{planned | in-progress | done | dropped}
-   - 对应 feature：{YYYY-MM-DD-{slug} / 未启动}
-   - 备注：{可选}
+1. **{slug}** — {one-line description}
+   - module: {Module A / B / cross-module, explicitly naming which modules are involved}
+   - dependencies: {list of prerequisite slugs / none}
+   - status: {planned | in-progress | done | dropped}
+   - corresponding feature: {YYYY-MM-DD-{slug} / not started}
+   - notes: {optional}
 
-**最小闭环**：第 {N} 条 `{slug}` 做完后 {描述能端到端跑通的最窄路径}。
+**Minimal loop**: after item {N} `{slug}` is done, {describe the narrowest end-to-end path that can run through}.
 
-## 6. 排期思路
+## 6. Scheduling Rationale
 
-一段短的：为什么这样拆（按模块 / 用户价值 / 风险 / 依赖）；第一条为什么选它作最小闭环；中间有没有卡点（前置架构改动 / 外部依赖 / 设计决策）。
+One short paragraph explaining why the split is done this way, by module, user value, risk, or dependency, why the first item was chosen as the minimal loop, and whether there are any sticking points in the middle, such as prerequisite architecture changes, external dependencies, or unresolved design decisions.
 
-## 7. 观察项
+## 7. Observations
 
-起草 / 刷新过程中发现、本 roadmap 不处理的事情交给用户决定：
+Things noticed during drafting or refreshing that this roadmap itself will not handle and should be decided by the user:
 
-- `architecture/X.md` 对 Y 的描述已过时，建议另起 architecture update
-- requirement-Z 的边界和本 roadmap 第 5 条冲突，建议先对齐 req
+- `architecture/X.md` has an outdated description of Y; recommend a separate architecture update
+- the boundary of `requirement-Z` conflicts with item 5 in this roadmap; recommend aligning the req first
 
-## 8. 变更日志（update 模式）
+## 8. Change Log, update mode only
 
-- YYYY-MM-DD：{描述本次改动；改了第 4 节接口契约要单列"接口契约变化"和"受影响的已启动 feature 列表"}
-```
+- YYYY-MM-DD: {description of this change; if section 4 interface contracts changed, list "interface contract changes" and "affected already-started features" separately}
+````
 
 ---
 
-## 2. items.yaml 格式
+## 2. `items.yaml` Format
 
 ```yaml
 roadmap: permission-system
@@ -147,15 +147,15 @@ created: YYYY-MM-DD
 
 items:
   - slug: permission-rbac-core
-    description: 基础 RBAC 模型和数据表，提供角色/权限两张表和最小查询 API
+    description: Base RBAC model and tables, providing role and permission tables plus the minimal query API
     depends_on: []
     status: planned             # planned | in-progress | done | dropped
-    feature: null               # 启动 feature 后填 YYYY-MM-DD-{slug}，未启动写 null
-    minimal_loop: true          # 只有一条标 true
-    notes: null                 # 可选：备注 / 特殊约束 / drop 理由
+    feature: null               # fill YYYY-MM-DD-{slug} after the feature starts; null before that
+    minimal_loop: true          # exactly one entry should be true
+    notes: null                 # optional, remarks / special constraints / reason for drop
 
   - slug: permission-admin-ui
-    description: 管理员配置角色和权限的页面
+    description: The page where admins configure roles and permissions
     depends_on: [permission-rbac-core]
     status: planned
     feature: null
@@ -163,28 +163,28 @@ items:
     notes: null
 ```
 
-### 字段规则
+### Field Rules
 
-- `slug`：子 feature 的 slug，小写字母 / 数字 / 连字符；将来 feature 目录 `YYYY-MM-DD-{slug}`
-- `description`：一句话能独立讲清楚做什么
-- `depends_on`：前置 slug 列表，空数组表示无依赖；必须指向同 roadmap 里的其他条目
-- `status`：四态机
-- `feature`：启动后填目录名，用于 acceptance 反查
-- `minimal_loop`：全表只有一条为 `true`
-- `notes`：drop 的条目必须写理由
+- `slug`: the slug of the sub-feature, lowercase letters, digits, and hyphens; the future feature directory will be `YYYY-MM-DD-{slug}`
+- `description`: one sentence that can stand alone and clearly say what it does
+- `depends_on`: the list of prerequisite slugs; empty array means no dependency; every dependency must point to another item in the same roadmap
+- `status`: a four-state machine
+- `feature`: after the feature starts, fill the directory name, so acceptance can trace back to it
+- `minimal_loop`: exactly one entry in the whole file should be `true`
+- `notes`: dropped items must state a reason
 
-### 状态机
+### State Machine
 
+```text
+planned      → in-progress   (changed by feature-design when the feature starts)
+in-progress  → done          (changed by feature-acceptance when it completes)
+planned      → dropped       (changed by roadmap update when the user decides not to do it)
+done / dropped are terminal states
 ```
-planned  → in-progress  （feature-design 启动时由 design 改）
-in-progress → done      （feature-acceptance 完成时由 acceptance 改）
-planned  → dropped      （用户决定不做，roadmap update 改）
-done / dropped 终态
-```
 
-**不合法跃迁**：`done` 回 `in-progress`（要改需求回退走新 feature）；`dropped` 回 `planned`（恢复要新加一条 slug 略改）。
+**Illegal transitions**: `done` back to `in-progress`, because if the demand changes it should go through a new feature instead; `dropped` back to `planned`, because restoring it should add a new slightly modified slug instead.
 
-### 校验
+### Validation
 
 ```bash
 python .bytetrue/tools/validate-yaml.py --file .bytetrue/roadmap/{slug}/{slug}-items.yaml --yaml-only
@@ -192,42 +192,42 @@ python .bytetrue/tools/validate-yaml.py --file .bytetrue/roadmap/{slug}/{slug}-i
 
 ---
 
-## 3. 拆解 checklist（起草时自问）
+## 3. Decomposition Checklist, questions to ask yourself while drafting
 
-### 架构方案层（先问这几条）
+### Architecture-plan layer, ask these first
 
-- [ ] 模块拆分讲清了？每个模块职责一句话？边界讲得清（哪些事这模块做、哪些不做）？
-- [ ] 接口契约写到函数签名 / 数据结构 / 协议字段 / 错误码这一级了？feature-design 看完不需要回来问就能直接照着实现？
-- [ ] 共享数据结构 / 持久化 / 全局状态列齐了？
-- [ ] 没有跨模块接口的话第 4 节明确写"无跨模块接口"了？而不是空着 / "待定"？
+- [ ] Is the module split clear? Can each module's responsibility be stated in one sentence? Are the boundaries clear, what this module does and what it does not do?
+- [ ] Are the interface contracts written all the way down to function signatures, data structures, protocol fields, and error codes? After reading them, can feature-design implement directly without coming back to ask again?
+- [ ] Are shared data structures, persistence, and global state fully listed?
+- [ ] If there is no cross-module interface, does section 4 explicitly say "no cross-module interface" rather than staying blank or saying "TBD"?
 
-### 子 feature 拆解层
+### Sub-feature decomposition layer
 
-- [ ] 能独立走完一次 feature 流程？走不通就继续拆或合并
-- [ ] 做完后能单独验证？能写出"完成后 {具体可观测现象}"
-- [ ] slug 和 `features/` 下已有目录冲突？grep 过了？
-- [ ] 标了"所属模块"？该模块在第 3 节存在？
-- [ ] 依赖关系讲得清具体理由？"B 需要 A 提供的 {具体产物}"
-- [ ] 最小闭环真是"最窄的端到端路径"？还是只是"最容易的一条"？
-- [ ] 有条目其实应该是 requirement 变化而不是 feature？（"把 XX 能力的边界改一下"）那种转 `bt-req`
+- [ ] Can each item independently complete one full feature workflow? If not, keep splitting or merge differently
+- [ ] Can each item be verified independently after completion? Can you write "after it is done, {specific observable result}"?
+- [ ] Does the slug conflict with an existing directory under `features/`? Have you grep-checked it?
+- [ ] Is the "module" field filled? Does that module actually exist in section 3?
+- [ ] Is each dependency backed by a concrete reason, for example "B depends on the specific artifact provided by A"?
+- [ ] Is the minimal loop truly the narrowest end-to-end path, not just the easiest path?
+- [ ] Is any item really a requirement change rather than a feature, for example "change the boundary of XX capability"? Those should go to `bt-req`
 
 ---
 
-## 4. review 提示
+## 4. Review Prompt
 
-> roadmap 已起草完成请整体 review。**先看架构方案再看 feature 拆解**——架构方案改了下游全要重排：
+> The roadmap draft is complete. Please review it as a whole. **Look at the architecture plan first, then the feature decomposition** — if the architecture plan changes, everything downstream must be reordered:
 >
-> **架构方案层**
-> 1. 模块拆分对吗？边界划得合理？有该合并 / 该拆开的？
-> 2. 接口契约定得够具体吗？feature-design 拿着能直接照做？还是有"两边商量"的含糊地带？
-> 3. 共享数据结构 / 协议字段 / 错误码有遗漏？
+> **Architecture-plan layer**
+> 1. Is the module split correct? Are the boundaries reasonable? Is anything over-split or under-split?
+> 2. Are the interface contracts specific enough? Can feature-design implement directly from them, or are there still vague "the two sides will discuss it" gaps?
+> 3. Are any shared data structures, protocol fields, or error codes missing?
 >
-> **feature 拆解层**
-> 4. 拆解粒度合适？每条都能独立做成 feature？
-> 5. 每条落在哪个模块标对了？
-> 6. 依赖关系对吗？有漏的前置或多余依赖？
-> 7. 最小闭环选得对？第一条做完真能端到端演示点什么？
-> 8. "明确不做"有遗漏？
-> 9. 排期顺序符合你的产品优先级？
+> **Feature-decomposition layer**
+> 4. Is the decomposition grain appropriate? Can each item really become an independent feature?
+> 5. Is each item assigned to the correct module?
+> 6. Are the dependency relationships correct? Are there missing prerequisites or unnecessary dependencies?
+> 7. Is the minimal loop chosen correctly? After the first item is done, can it really demonstrate something end to end?
+> 8. Are any explicit non-goals missing?
+> 9. Does the scheduling order match your product priority?
 >
-> 有修改意见直接说，确认后落盘 roadmap 目录和 items.yaml。
+> If you have changes, say them directly. After confirmation, the roadmap directory and `items.yaml` will be written to disk.

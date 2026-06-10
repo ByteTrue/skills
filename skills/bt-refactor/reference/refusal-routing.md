@@ -1,143 +1,147 @@
-# scan 前置检查与拒绝路由
+# Scan Pre-checks and Refusal Routing
 
-scan 开始前跑一遍 7 条前置检查。任一命中**中止 scan 给路由建议不硬凑清单**。AI 默认倾向是"用户让我扫就得交点什么"——这是低质量重构清单的源头。**拒绝输出是合法路径**。
-
----
-
-## 7 条前置检查（按顺序跑）
-
-### 1. 用户描述里夹带行为改动吗？
-
-**触发**：用户说"顺便加 X / 还要支持 Y / 改成返回 A 而不是 B / 顺手修下 Z"。
-
-**为什么停**：refactor 底线是行为等价。混着做就没法验证"只动结构"——改完出问题分不清是重构引入的还是新能力引入的。
-
-**路由**：
-> 这次描述里有"{触发词}"属于行为改动不在 refactor 范围。建议拆两件事：行为改动走 `bt-feat`（新能力）或 `bt-issue`（bug 修），结构改动走 refactor。拆完再回来。
+Before scan starts, run the 7 pre-checks once. If any one of them hits, **stop scan and give a routing recommendation instead of forcing a checklist**. The AI's default tendency is "the user asked for a scan, so I must produce something", and that is exactly where low-quality refactor checklists come from. **Refusal is a legitimate output path.**
 
 ---
 
-### 2. 目标模块有测试覆盖吗？
+## The 7 pre-checks, run them in order
 
-**怎么查**：扫一下是否有对应 `.test.*` / `.spec.*`，或跑覆盖率工具看关键路径。
+### 1. Does the user's description smuggle in behavior changes?
 
-**触发**：关键路径无测试覆盖 / 行覆盖率明显偏低（< 60%，项目有要求按项目要求）/ 有测试但测的是无关紧要的边角，核心业务路径不在测试里。
+**Trigger**: the user says "also add X", "also support Y", "change it to return A instead of B", or "while here fix Z too".
 
-**例外豁免**：纯声明式内容（样式 / 静态配置 / 类型别名）/ 一目了然的短函数（< 10 行无分支）/ 纯展示组件（只有 Props → 渲染无内部逻辑）。
+**Why stop**: the bottom line of refactor is behavior equivalence. Once behavior change is mixed in, there is no clean way to verify "only the structure changed". If something breaks later, nobody can tell whether refactor caused it or the new capability caused it.
 
-**为什么停**：没测试"行为等价"就只是口头承诺。
-
-**路由**：
-> 目标模块 {文件} 核心路径没测试覆盖。refactor 不能基于"口头承诺"的行为等价。先做前置：用 characterization test 固化当前行为——对目标函数喂一批真实输入记录当前输出作为测试断言。补完测试再回来。
+**Route**:
+> The description contains "{trigger phrase}", which is a behavior change and therefore outside refactor scope. Recommend splitting it into two tasks: behavior change goes to `bt-feat`, new capability, or `bt-issue`, bug fix, and the structural change comes back through refactor.
 
 ---
 
-### 3. 问题是跨模块的吗？
+### 2. Does the target module have test coverage?
 
-**触发**：扫描时多数候选优化点涉及——A 依赖 B 内部实现（不是公开接口）/ 同一职责分散在 3+ 个模块各写一份 / 模块边界本身混乱。量化阈值：> 50% 候选点落在跨模块关系上。
+**How to check**: scan whether corresponding `.test.*` or `.spec.*` files exist, or run the coverage tool and inspect whether the key path is covered.
 
-**为什么停**：单模块 refactor 不能解决跨模块问题。强行在单模块内部改要么改不动（依赖卡着）要么改完其他模块跟着出问题。
+**Trigger**: the key path has no test coverage, or line coverage is clearly too low, below 60%, or below the project's own threshold, or tests exist but only cover irrelevant edge noise while the core business path is uncovered.
 
-**路由**：
-> 主要问题是跨模块的：{具体描述}。这不是单模块 refactor 能解决的，需要先走：
-> 1. `bt-arch` 更新模块边界图
-> 2. `bt-decide` 记新依赖原则
-> 3. 回来拆成若干单模块 refactor 任务
+**Exception exemptions**: purely declarative content such as style, static config, or type aliases; obviously trivial short functions, less than 10 lines and branch-free; or pure presentation components, props → render with no internal logic.
 
----
+**Why stop**: without tests, "behavior equivalence" is only a verbal promise.
 
-### 4. 候选优化点全是风格口味吗？
-
-**触发**：扫出来 > 50% 落在——命名风格 / 引号 / 分号 / 箭头函数 vs function / import 顺序 / 方法声明顺序 / 空行 / 缩进。
-
-**为什么停**：风格口味不该靠人工 refactor 解决。一劳永逸是 lint 规则 + 自动修。
-
-**路由**：
-> 主要是风格口味（命名 / 引号 / 格式）。正确处理方式不是 refactor：
-> 1. `bt-decide` 拍板风格规约
-> 2. ESLint / Prettier 加规则
-> 3. 跑一次 `--fix` 自动修全项目
+**Route**:
+> The core path of target module {file} has no test coverage. Refactor cannot be based on verbal promises of behavior equivalence. First do the prerequisite: use a characterization test to freeze the current behavior. Feed real inputs into the target function and record the current output as the assertion. Come back after that coverage exists.
 
 ---
 
-### 5. 目标文件是生成产物或第三方代码吗？
+### 3. Is the problem cross-module?
 
-**怎么查**：文件头有 `// GENERATED` / `@generated` / `// DO NOT EDIT` 标记 / 路径在 `node_modules/` `vendor/` `dist/` `build/` / 路径匹配 `*.d.ts` 但不是手写 / 有开源 license header。
+**Trigger**: most of the candidate optimization points involve cross-module relationships — A depends on B's internal implementation instead of a public interface, the same responsibility is scattered across 3 or more modules, or module boundaries themselves are confused. Quantitative threshold: more than 50% of the candidate points fall on cross-module relationships.
 
-**为什么停**：生成产物改了会被下次生成覆盖；第三方代码改了违反 license 也无法随上游更新。
+**Why stop**: a single-module refactor cannot solve a cross-module problem. Forcing it locally either changes nothing meaningful, because the dependency is still blocking, or creates breakage in neighboring modules.
 
-**路由**：
-> {文件} 是 {生成产物 / 第三方代码}。改这里要么会被覆盖要么违反上游许可。正确做法：
-> - 生成产物 → 改生成源（{具体脚本 / 模板}）
-> - 第三方代码 → fork 或提 PR；或加一层 wrapper 改 wrapper
-
----
-
-### 6. scan 范围太大吗？
-
-**触发**（任一）：涉及文件 > 15 个 / 涉及代码行数 > 3000 / 扫完预计 > 20 条候选。
-
-**为什么停**：范围太大 AI 上下文承载不住会丢细节、自相矛盾；用户也没法一次性 review 这么多。
-
-**路由**：
-> 范围涉及 {N 个文件 / M 行} 超过单次 scan 上限。先做一件事再回来：
-> - 模块内部本来就该拆分 → 先走 `bt-arch`
-> - 范围可缩 → 和用户挑一个子集（"就看 {具体组件}"）
+**Route**:
+> The main problem is cross-module: {concrete description}. This is not something a single-module refactor can solve. The recommended order is:
+> 1. `bt-arch` to refresh the module-boundary map
+> 2. `bt-decide` to record the new dependency principle
+> 3. then come back and split it into several single-module refactor tasks
 
 ---
 
-### 7. 扫完真的有东西可改吗？
+### 4. Are all the candidates just style preferences?
 
-**触发**：前 6 条都过了，扫完扣掉口味项和重复项之后候选 < 3 条。
+**Trigger**: more than 50% of the scan results land on naming style, quote style, semicolons, arrow function vs function, import order, declaration order, blank lines, or indentation.
 
-**为什么停**：零条是合法输出。AI 默认会为交差凑几条勉强算得上的，用户信了就改最后发现改了个寂寞甚至引入新问题。
+**Why stop**: style preference should not be handled through manual refactor. The permanent fix is lint rules plus automatic formatting.
 
-**路由**：
-> 扫完 {范围} 按硬约束过滤后值得做的 {0 / 1 / 2} 条不够开 design。两个选项：
-> - 现在不做：模块当前状态健康，等有具体触发点（性能 / 新增功能遇阻）再回来
-> - 降级处理：直接把这 {1-2} 条作为小修小补做掉不走完整 refactor
+**Route**:
+> The main issues here are style preferences, naming, quotes, formatting. Refactor is not the right tool:
+> 1. `bt-decide` to settle the style convention
+> 2. add the corresponding ESLint / Prettier rules
+> 3. run one full-project `--fix`
 
 ---
 
-## 拒绝输出的固定格式
+### 5. Is the target file generated output or third-party code?
 
-任一命中按这个格式输出——让用户一眼看到**发生了什么 / 为什么 / 下一步去哪**：
+**How to check**: the file header contains `// GENERATED`, `@generated`, or `// DO NOT EDIT`; the path is under `node_modules/`, `vendor/`, `dist/`, or `build/`; the path matches `*.d.ts` but is not handwritten; or there is an open-source license header.
 
+**Why stop**: generated output will be overwritten the next time it is regenerated; third-party code breaks upgrade flow and may have licensing implications.
+
+**Route**:
+> {file} is {generated output / third-party code}. Changing it here would either be overwritten later or create an upstream-maintenance and licensing problem. The correct move is:
+> - generated output → change the generation source, {concrete script or template}
+> - third-party code → fork or upstream PR, or add a wrapper and change the wrapper instead
+
+---
+
+### 6. Is the scan scope too large?
+
+**Trigger**, any one:
+
+- more than 15 files
+- more than 3000 lines of code
+- likely to produce more than 20 candidates after scanning
+
+**Why stop**: when the scope is too large, the AI cannot hold the detail consistently in context and starts contradicting itself; the user also cannot review such a large checklist in one pass.
+
+**Route**:
+> The scope covers {N files / M lines}, which exceeds the single-scan limit. Do one of these first, then come back:
+> - if the module internally needs splitting, start with `bt-arch`
+> - if the scope can be narrowed, pick a smaller subset with the user, for example just `{specific component}`
+
+---
+
+### 7. After scanning, is there actually enough worth changing?
+
+**Trigger**: the first 6 checks all pass, but after filtering out preference-only items and duplicates, fewer than 3 worthwhile candidates remain.
+
+**Why stop**: zero or one or two items is a valid result. The AI's default tendency is to pad them just to deliver something, and that leads the user into changing things that do not matter or even introducing new problems.
+
+**Route**:
+> After scanning {scope}, and filtering by the hard constraints, only {0 / 1 / 2} worthwhile items remain, which is not enough to open a full design phase. Two options:
+> - do nothing now: the module is currently healthy enough, and come back only when there is a concrete trigger, such as performance pain or a blocked feature
+> - downgrade it: if there are 1-2 items, do them as small maintenance directly rather than through the full refactor flow
+
+---
+
+## Fixed output format for refusal
+
+Whenever any one check hits, use this format so the user can understand **what happened / why / what next** at a glance:
+
+```text
+⛔ refactor workflow stopped
+
+Hit pre-check: #{N} — {check name}
+Evidence:
+- {concrete file / line 1}: {why it triggered}
+- {concrete file / line 2}: {why it triggered}
+
+Suggested route:
+{routing text}
+
+Condition to come back into refactor:
+{what must become true before this refactor can be restarted}
 ```
-⛔ refactor 流程中止
-
-命中前置检查：第 {N} 条 —— {检查名}
-证据：
-- {具体文件 / 行号 1}：{为什么触发}
-- {具体文件 / 行号 2}：{为什么触发}
-
-建议路由：
-{引导文案}
-
-回到 refactor 的条件：
-{满足什么情况下可以重启本次 refactor}
-```
 
 ---
 
-## 多条同时命中怎么办
+## What if multiple checks hit?
 
-按编号最小那条给路由——7 条按"越前面越该先处理"排：
+Route based on the smallest-numbered one. The 7 checks are already ordered by "the earlier it appears, the more it should be handled first":
 
-1. 行为改动混进来，拆了再说
-2. 没测试，补测试先
-3. 跨模块，走架构层
-4. 全是口味，走 decisions
-5. 文件是生成的，换目标
-6. 范围太大，缩范围
-7. 扫完没啥可改，老实说
+1. behavior change mixed in — split first
+2. no tests — add tests first
+3. cross-module problem — go to architecture first
+4. style-only — go to decisions and tooling
+5. file is generated — change the real source instead
+6. scope too large — narrow it first
+7. not enough real findings — say so honestly
 
-处理完第一条**重新跑前置检查**——修掉第一个问题后其他条件可能也变了。
+After fixing the first issue, **rerun the pre-checks**. Once the first blocker is removed, later conditions may also change.
 
 ---
 
-## 为什么"拒绝"要做成显式路径
+## Why refusal must be an explicit path
 
-只让 AI"尽量产出"，它会把模糊信号当有效信号、把口味项包装成"可读性优化"、把测试覆盖不足的模块照样改。
+If the AI is told only "try your best to produce something", it will treat weak signals as valid signals, package preference-only issues as "readability improvements", and happily refactor modules without coverage.
 
-把"拒绝"定义清楚（什么情况下拒绝 / 怎么输出 / 之后去哪），AI 才会老实说"这事我不该接"。这和 feature-design 里"需求不清就退回 brainstorm"是同一种思路——**用流程结构对抗 AI 的"交差倾向"**。
+Only when refusal is explicitly defined, when to refuse, how to output it, and where to send the user next, will the AI honestly say "this is not work I should take right now". This is the same principle as feature-design saying "if the requirement is unclear, send it back to brainstorm" — **use workflow structure to counteract the AI's tendency to merely deliver something**.

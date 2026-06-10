@@ -1,130 +1,130 @@
-# issue-fix 参考模板
+# issue-fix reference templates
 
-本文件提供 `bt-issue-fix` 使用的修复汇报模板、日志调试脚手架和 `{slug}-fix-note.md` 模板。
+This file provides the fix report template, log-debugging scaffolding, and `{slug}-fix-note.md` templates used by `bt-issue-fix`.
 
-## 1. 修复汇报模板
+## 1. Fix Report Template
 
 ```markdown
-## 修复汇报
+## Fix Report
 
-### 动了哪些文件
-{git status 输出或文件列表}
+### Which Files Were Changed
+{git status output or file list}
 
-### 具体改了什么
-- `{文件}:{行号}` — {改动描述，原来是 X，现在是 Y}
+### What Exactly Changed
+- `{file}:{line}` — {change description; it used to be X, now it is Y}
 
-### 是否触碰到分析范围外的文件?
-{是 / 否}
+### Did this touch files outside the analysis scope?
+{yes / no}
 
-### 是否引入了分析中没有提到的新概念/新结构?
-{是 / 否}
+### Did this introduce any new concept or structure not mentioned in the analysis?
+{yes / no}
 
-### 复现步骤走一遍
-{按 {slug}-report.md 第 2 节复现步骤走一遍，结果是否符合期望行为?}
+### Re-run the Reproduction Steps Once
+{walk through the reproduction steps from section 2 of {slug}-report.md; does the result now match the expected behavior?}
 ```
 
-## 2. 日志调试升级
+## 2. Log-Debugging Escalation
 
-当修复未生效时：
+When the fix does not take effect:
 
-1. 宣告当前方案未解决问题
-2. 确定打点位置
-3. 获取日志
-4. 分析日志并修订根因假设
-5. 清理日志打点
+1. Declare that the current approach did not solve the problem
+2. Determine where to add instrumentation
+3. Obtain the logs
+4. Analyze the logs and revise the root-cause hypothesis
+5. Clean up the logging instrumentation
 
-临时日志 / instrumentation 必须带唯一前缀（如 `[DEBUG-{slug}]`）。提交前用 grep 确认清理；若保留正式日志，必须在 fix-note 说明理由。
-6. 以修订后的根因重新进入修复流程
+Temporary logs or instrumentation must carry a unique prefix, such as `[DEBUG-{slug}]`. Before committing, confirm cleanup with `grep`. If a formal log line is intentionally kept, the reason must be explained in the fix note.
+6. Re-enter the fix flow with the revised root cause
 
-如果经过 2 轮日志调试仍未定位到根因，建议回到 `bt-issue-analyze`。
+If the root cause is still not located after two rounds of log debugging, recommend returning to `bt-issue-analyze`.
 
-### 用户取日志提示词
+### User Prompt for Collecting Logs
 
 ```text
-请按以下步骤复现问题并粘贴日志:
-1. {具体复现操作}
-2. 复制控制台/日志文件里从 [打点标记 A] 到 [打点标记 B] 的输出
+Please reproduce the issue using these steps and paste the logs:
+1. {specific reproduction action}
+2. Copy the output in the console or log file from [instrumentation marker A] to [instrumentation marker B]
 ```
 
-## 3. `{slug}-fix-note.md` 标准路径模板
+## 3. `{slug}-fix-note.md` Standard Path Template
 
 ```markdown
 ---
 doc_type: issue-fix
-issue: {issue 目录名}
+issue: {issue directory name}
 status: confirmed
 path: standard
 fix_date: YYYY-MM-DD
-related: [{slug-analysis.md 相对路径}]
+related: [{relative path to slug-analysis.md}]
 tags: []
 ---
 
-# {问题简述} 修复记录
+# {Short Problem Description} Fix Record
 
-## 1. 实际采用方案
+## 1. Actual Solution Used
 
-## 2. 改动文件清单
+## 2. Changed Files List
 
-## 3. Regression 覆盖
+## 3. Regression Coverage
 
-- **新增 regression test**：{测试文件 / 测试名 / red→green 证据}
-- **复用现有测试**：{测试命令 / 覆盖到的行为}
-- **无合适 seam**：{原因；是否建议后续 bt-refactor / bt-arch}
+- **New regression test**: {test file / test name / red→green evidence}
+- **Reused existing test**: {test command / behavior covered}
+- **No suitable seam**: {reason; whether follow-up `bt-refactor` or `bt-arch` is recommended}
 
-## 4. 验证结果
+## 4. Verification Result
 
-## 5. Instrumentation 清理
+## 5. Instrumentation Cleanup
 
-- **临时打点**：{无 / 有，前缀是什么}
-- **清理证据**：{grep 命令或说明}
-- **保留日志**：{无 / 有，保留理由}
+- **Temporary instrumentation**: {none / yes, and what prefix it used}
+- **Cleanup evidence**: {grep command or explanation}
+- **Retained logs**: {none / yes, and the reason for keeping them}
 
-## 6. Mini post-mortem
+## 6. Mini Post-mortem
 
-这类 bug 未来靠什么避免：{测试 / 类型 / 约束 / 架构 seam / review checklist / 其他}
+What would prevent this kind of bug in the future: {tests / types / constraints / architecture seam / review checklist / other}
 
-## 7. 遗留事项
+## 7. Follow-up Items
 ```
 
-## 4. `{slug}-fix-note.md` 快速通道模板
+## 4. `{slug}-fix-note.md` Fast-Track Template
 
 ```markdown
 ---
 doc_type: issue-fix
-issue: {issue 目录名}
+issue: {issue directory name}
 status: confirmed
 path: fast-track
 fix_date: YYYY-MM-DD
 tags: []
 ---
 
-# {问题简述} 修复记录
+# {Short Problem Description} Fix Record
 
-## 1. 问题描述
+## 1. Problem Description
 
-## 2. 根因
+## 2. Root Cause
 
-## 3. 修复方案
+## 3. Fix Plan
 
-## 4. 改动文件清单
+## 4. Changed Files List
 
-## 5. Regression 覆盖
+## 5. Regression Coverage
 
-- **新增 regression test**：{测试文件 / 测试名 / red→green 证据}
-- **复用现有测试**：{测试命令 / 覆盖到的行为}
-- **无合适 seam**：{原因；是否建议后续 bt-refactor / bt-arch}
+- **New regression test**: {test file / test name / red→green evidence}
+- **Reused existing test**: {test command / behavior covered}
+- **No suitable seam**: {reason; whether follow-up `bt-refactor` or `bt-arch` is recommended}
 
-## 6. 验证结果
+## 6. Verification Result
 
-## 7. Instrumentation 清理
+## 7. Instrumentation Cleanup
 
-- **临时打点**：{无 / 有，前缀是什么}
-- **清理证据**：{grep 命令或说明}
-- **保留日志**：{无 / 有，保留理由}
+- **Temporary instrumentation**: {none / yes, and what prefix it used}
+- **Cleanup evidence**: {grep command or explanation}
+- **Retained logs**: {none / yes, and the reason for keeping them}
 
-## 8. Mini post-mortem
+## 8. Mini Post-mortem
 
-这类 bug 未来靠什么避免：{测试 / 类型 / 约束 / 架构 seam / review checklist / 其他}
+What would prevent this kind of bug in the future: {tests / types / constraints / architecture seam / review checklist / other}
 
-## 9. 遗留事项
+## 9. Follow-up Items
 ```

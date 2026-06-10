@@ -1,103 +1,103 @@
-# 重构方法库（2）：L3 结构拆分
+# Refactor Method Library (2): L3 Structural Splitting
 
-## L3 结构拆分
+## L3 Structural Splitting
 
-### M-L3-01 Component Split 组件拆分（容器 / 展示）
+### M-L3-01 Component Split, container / presentation
 
-- **适用**：单组件 > 300 行；同时处理数据获取、状态管理、渲染；props 爆炸
-- **不适用**：小组件 / 拆分后子组件无独立意义
-- **步骤**：
-  1. 识别组件里哪部分是"数据编排"（容器），哪部分是"纯渲染"（展示）
-  2. 把展示部分抽到独立子组件，通过 props 接收数据和事件回调
-  3. 容器组件只负责数据获取 / 状态 / 传递
-  4. 逐个验证子组件可独立渲染
-- **风险点**：props 传递过深（props drilling）；子组件和容器边界不清导致 props 仍然爆炸
-- **验证**：子组件可在 storybook / 测试环境独立渲染；整体交互行为不变
-- **前后端**：前端特化
-- **配哪种 scan 项**：超大组件 / 职责混杂的组件
+- **Use when**: one component exceeds 300 lines, handles data fetching, state management, and rendering at the same time, or props are exploding
+- **Do not use when**: the component is already small, or the child components would have no independent meaning after splitting
+- **Steps**:
+  1. identify which part of the component is "data orchestration", the container, and which part is "pure rendering", the presentation part
+  2. extract the presentation part into an independent child component that receives data and event callbacks through props
+  3. let the container component keep only data fetching, state, and prop wiring
+  4. verify one by one that the child components can render independently
+- **Risk points**: props are still passed too deeply, props drilling; or the boundary between child and container remains unclear, causing props to keep exploding
+- **Validation**: the child component can render independently in Storybook or in a test environment, and the overall interaction behavior stays unchanged
+- **Frontend / backend**: frontend-specific
+- **Matches which scan item**: oversized component or a component with mixed responsibilities
 
-### M-L3-02 Extract Composable / Custom Hook 抽取组合式函数
+### M-L3-02 Extract Composable / Custom Hook
 
-- **适用**：组件里有一段状态 + 副作用的逻辑（表单校验、数据获取、本地缓存、快捷键绑定等），可在多个组件间复用或单独测
-- **不适用**：逻辑和组件强耦合 / 只在一个组件里用且没增长
-- **步骤**：
-  1. 识别一段内聚的 reactive 状态 + 副作用
-  2. 抽到独立文件，Vue 为 `use{Name}.ts`，React 为 `use{Name}.ts`
-  3. 入参是配置项，返回是状态 + 操作方法
-  4. 组件改为调用该 composable/hook
-  5. 为 composable/hook 写单元测试（纯 JS 侧，不挂载组件）
-- **风险点**：抽取的边界不干净，组件和 composable 之间还在共享状态；生命周期钩子（onMounted / useEffect）里的清理没迁移
-- **验证**：组件行为不变；composable 单测通过
-- **前后端**：前端特化（Vue composable / React hook）
-- **配哪种 scan 项**：组件里封闭的逻辑块 / 多个组件有相似逻辑
+- **Use when**: a component contains a block of state plus side-effect logic, such as form validation, data fetching, local caching, or keyboard binding, that can be reused across multiple components or tested independently
+- **Do not use when**: the logic is strongly coupled to one component, or it is used in only one place and is not growing
+- **Steps**:
+  1. identify one cohesive block of reactive state plus side effects
+  2. extract it into an independent file, `use{Name}.ts` for both Vue and React
+  3. make configuration the input, and state plus operation methods the return value
+  4. change the component to call the composable or hook
+  5. write unit tests for the composable or hook, pure JS side, without mounting the component
+- **Risk points**: the boundary is not clean, so the component and the composable still share state implicitly; lifecycle cleanup inside `onMounted` or `useEffect` does not move correctly
+- **Validation**: component behavior stays unchanged and the composable unit tests pass
+- **Frontend / backend**: frontend-specific, Vue composable or React hook
+- **Matches which scan item**: a self-contained logic block inside a component, or similar logic appearing in multiple components
 
-### M-L3-03 State Lifting / Lowering 状态提升 / 下沉
+### M-L3-03 State Lifting / Lowering
 
-- **适用**：状态放在错的层级——提升：多个兄弟组件需要共享的状态放在各自本地；下沉：只有一个子组件用的状态放在了父或全局
-- **不适用**：当前状态位置已是最低公共祖先
-- **步骤**：
-  1. 画出状态的读写点分布
-  2. 找到所有读写点的最低公共祖先（LCA）
-  3. 状态挪到 LCA，通过 props / context / 事件向下传、向上提
-  4. 跑交互验证
-- **风险点**：挪错层导致渲染范围扩大；context 滥用让性能变差
-- **验证**：交互行为不变；React DevTools / Vue DevTools 看渲染范围符合预期
-- **前后端**：前端特化
-- **配哪种 scan 项**：同一状态在多个组件重复 / 全局 store 里装了只有一处用的字段
+- **Use when**: state lives at the wrong level — lifting means state shared by multiple sibling components currently lives in each child's local state; lowering means state used by only one child currently lives in the parent or in global state
+- **Do not use when**: the current state location is already the lowest common ancestor
+- **Steps**:
+  1. map the read and write points of the state
+  2. find the lowest common ancestor of all the read and write points
+  3. move the state to that LCA, then pass it down and events back up through props, context, or events
+  4. rerun interaction verification
+- **Risk points**: moving it to the wrong level widens the render scope; abusing context hurts performance
+- **Validation**: interaction behavior stays unchanged, and React DevTools or Vue DevTools show the expected render scope
+- **Frontend / backend**: frontend-specific
+- **Matches which scan item**: the same state duplicated across multiple components, or global store holding fields used in only one place
 
-### M-L3-04 Service Layer Extraction 服务层抽取
+### M-L3-04 Service Layer Extraction
 
-- **适用**：Controller / 路由处理函数里直接做业务逻辑（校验、多表查询、外部调用），代码越长越难测
-- **不适用**：非常简单的 CRUD 透传
-- **步骤**：
-  1. 建立 `services/` 目录，为该业务域建一个 service 类/模块
-  2. 把业务逻辑从 controller 挪到 service 方法
-  3. Controller 只剩：解析请求 → 调 service → 组装响应
-  4. 为 service 方法写单元测试（不需要启 HTTP）
-- **风险点**：service 变成又一个"什么都装"的大类；事务边界处理不清
-- **验证**：集成测试（HTTP 层）不变；service 单元测试独立通过
-- **前后端**：后端特化
-- **配哪种 scan 项**：胖 controller / 业务逻辑贴在路由
+- **Use when**: controller or route handlers directly contain business logic, validation, multi-table queries, or external calls, making the code longer and harder to test
+- **Do not use when**: it is an extremely simple CRUD pass-through
+- **Steps**:
+  1. create a `services/` directory and a service class or module for the business domain
+  2. move the business logic from the controller into service methods
+  3. leave the controller with only request parsing → service call → response assembly
+  4. write unit tests for the service methods without spinning up HTTP
+- **Risk points**: the service becomes yet another "does everything" class; transaction boundaries remain unclear
+- **Validation**: HTTP-layer integration tests stay unchanged and the service unit tests pass independently
+- **Frontend / backend**: backend-specific
+- **Matches which scan item**: fat controllers or business logic stuck in routes
 
-### M-L3-05 Repository Extraction 仓储层抽取
+### M-L3-05 Repository Extraction
 
-- **适用**：Service 里直接写 SQL / 直接调 ORM；同一查询在多处重复
-- **不适用**：纯脚本 / 原型
-- **步骤**：
-  1. 为该实体建 Repository，封装所有 DB 访问（CRUD + 常用查询）
-  2. Service 改为依赖 Repository
-  3. 测试时可替换为内存实现或 mock Repository
-- **风险点**：Repository 成为泛型 DAO 集合，失去业务语义；事务跨 Repository 边界处理复杂
-- **验证**：集成测试通过；Service 层测试可用 mock Repository
-- **前后端**：后端特化
-- **配哪种 scan 项**：Service 里散落的 DB 访问
+- **Use when**: service code writes SQL directly or calls ORM directly, and the same queries are repeated in multiple places
+- **Do not use when**: this is only a script or a prototype
+- **Steps**:
+  1. create a Repository for the entity and encapsulate all DB access, CRUD plus common queries
+  2. change the service layer to depend on the Repository
+  3. make testing able to swap in an in-memory implementation or a mocked Repository
+- **Risk points**: the Repository turns into a generic DAO bag and loses business meaning; transactions become complicated across Repository boundaries
+- **Validation**: integration tests pass, and service-layer tests can use a mocked Repository
+- **Frontend / backend**: backend-specific
+- **Matches which scan item**: scattered DB access inside services
 
-### M-L3-06 Layer Rectification 分层纠偏
+### M-L3-06 Layer Rectification
 
-- **适用**：违反既定分层（Controller 调了 DB、View 调了 Service、Model 调了 View）
-- **不适用**：项目没有明确分层约定 → 先走 decisions 定分层
-- **步骤**：
-  1. 确认项目分层约定（依赖 decisions 里的记录）
-  2. 找出所有违反点
-  3. 每个违反点走 Parallel Change（M-L1-01）迁到正确层
-  4. 加 lint 规则 / 代码审查检查点防回流
-- **风险点**：改动面大，建议拆多次 refactor；新旧共存期容易写出两套路径
-- **验证**：静态分析 / 依赖关系图无违反
-- **前后端**：后端常见，前端也适用
-- **配哪种 scan 项**：跨层依赖（命中前置检查第 3 条时优先走 architecture）
+- **Use when**: established layering is violated, controller calling DB directly, view calling service, model calling view
+- **Do not use when**: the project has no explicit layering convention yet; define the layering first through decisions
+- **Steps**:
+  1. confirm the project's layering convention, relying on records in decisions
+  2. find every violation point
+  3. migrate each violation point into the correct layer using Parallel Change, M-L1-01
+  4. add lint rules or code-review checks to prevent drift back
+- **Risk points**: the blast radius is large, so it is usually better split across multiple refactors; during coexistence it is easy to end up with two paths
+- **Validation**: static analysis or dependency graphs show no violations
+- **Frontend / backend**: common in backend, but also applies to frontend
+- **Matches which scan item**: cross-layer dependencies, and when pre-check #3 hits, prefer routing to architecture first
 
-### M-L3-07 Single Responsibility Split 职责分离
+### M-L3-07 Single Responsibility Split
 
-- **适用**：一个类 / 模块承担了 > 2 个不相关的职责
-- **不适用**：职责虽多但紧密相关
-- **步骤**：
-  1. 列出当前类的所有方法，按"改动它们的理由"分组
-  2. 按分组拆分为多个类，每个类一个职责
-  3. 原类如果还需存在，改为协调者（组合各新类）
-  4. 迁移调用点
-- **风险点**：过度拆分 → 对象爆炸；分组判断主观，拆法因人而异
-- **验证**：每个新类单测独立通过；原外部行为不变
-- **前后端**：通用
-- **配哪种 scan 项**：什么都装的 Manager / Helper / Utils
+- **Use when**: one class or module carries more than 2 unrelated responsibilities
+- **Do not use when**: the responsibilities are still tightly related
+- **Steps**:
+  1. list every method in the current class and group them by "what kind of reason would cause this method to change"
+  2. split the groups into multiple classes, one responsibility per class
+  3. if the original class still needs to exist, convert it into a coordinator that composes the new classes
+  4. migrate call sites
+- **Risk points**: oversplitting causes object explosion; deciding the groups is subjective, so two people may split it differently
+- **Validation**: each new class passes its unit tests independently, and the original external behavior stays unchanged
+- **Frontend / backend**: generic
+- **Matches which scan item**: Managers, Helpers, or Utils that try to do everything
 
 ---

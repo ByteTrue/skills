@@ -1,160 +1,160 @@
 ---
 name: bt-note
-description: 把"短到不值得起一份文件、但 AI 每次启动 ByteTrue 技能都必须知道"的项目碎片知识追加到 `.bytetrue/attention.md` 的固定分节里——比如编译特殊 flag、运行前要先起的服务、路径陷阱、命令别名、环境变量约定。触发：用户说"记一笔"、"加到 attention.md"、"项目要 X 才能编译"、"以后每次都得 Y"，或刚踩到一个一句话能讲清的项目特殊设置。
+description: Append project fragment knowledge that is "too short to deserve its own file, but every ByteTrue skill startup must know it" into the fixed sections of `.bytetrue/attention.md`, such as special compile flags, services that must be started first, path traps, command aliases, or environment-variable conventions. Trigger when the user says "make a note", "add it to attention.md", "the project needs X to compile", "every future session must know Y", or when a project-specific setup is discovered that can be explained in one sentence.
 ---
 
 # bt-note
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先检查 `.bytetrue/attention.md`：存在就读取；缺 `.bytetrue/` 就提示先运行 `bt-onboard`；只有 attention.md 缺失时，本技能可以先创建固定分节骨架再写入。不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, first check `.bytetrue/attention.md`: if it exists, read it; if `.bytetrue/` itself is missing, tell the user to run `bt-onboard` first; only when `attention.md` is missing may this skill create the fixed-section skeleton first and then write to it. Do not fall back to an external AI entry file.
 
-bt-learn / bt-trick / bt-decide 产出独立 markdown 文件，**通过检索**被读到；`.bytetrue/attention.md` 是 ByteTrue 技能启动时的**强制必读**上下文。这两类信息归宿不同——本技能专管后者：把"短、稳、每次都要知道"的碎片追加到 attention 文件里。
+`bt-learn`, `bt-trick`, and `bt-decide` produce standalone markdown files that are found **through search**. `.bytetrue/attention.md` is the **mandatory read** context for ByteTrue skill startup. These two kinds of information have different destinations. This skill is dedicated to the latter: append fragment knowledge that is short, stable, and needed every time into the attention file.
 
-不替代沉淀类技能，是补一个之前缺的入口。
+It does not replace the archival skills. It fills a missing entry point.
 
 ---
 
-## 什么进 bt-note，什么不进
+## What Goes into bt-note, and What Does Not
 
-**判据：长度 + 频次 + 稳定度**——三条都过才走 bt-note。
+**Decision rule: length + frequency + stability**. Only if all three pass does it belong in `bt-note`.
 
-| 项 | 进 bt-note | 走别处 |
+| Item | Goes into bt-note | Goes elsewhere |
 |---|---|---|
-| 长度 | 一两行能讲清 | 超过半屏 / 需要展开背景 → bt-learn |
-| 频次 | 几乎每次会话都用得上 | 只在某类具体任务相关 → bt-trick |
-| 稳定度 | 项目长期生效的硬约束 | 临时绕过 / 短期 workaround → 写到 issue spec 或 feature spec |
-| 拍板状态 | 已既成事实（不需要决策记录） | 需要记选型理由 / 拒方案 → bt-decide |
+| Length | can be explained in one or two lines | longer than half a screen or needing background → `bt-learn` |
+| Frequency | useful in almost every session | only relevant to a certain class of task → `bt-trick` |
+| Stability | long-lived hard project constraint | temporary workaround or short-term hack → write into issue spec or feature spec |
+| Decision status | already a fact on the ground, not requiring a decision record | if the reason behind the choice or rejection must be recorded → `bt-decide` |
 
-✅ **典型该进**：
+✅ **Typical things that should go in**:
 
-- "编译要先 `pnpm run gen` 生成 schema"
-- "本地起服务前必须 `docker compose up redis`"
-- "项目用 yarn berry，**别**用 `npm install`"
-- "测试命令是 `bun test`，不是 `npm test`"
-- "src/legacy/ 是历史代码，改之前先问"
-- "`OPENAI_KEY` 走 1Password，别从 .env.example 复制"
+- "Before compiling, run `pnpm run gen` to generate schema"
+- "Before starting local services, you must `docker compose up redis`"
+- "This project uses Yarn Berry, **do not** use `npm install`"
+- "The test command is `bun test`, not `npm test`"
+- "`src/legacy/` is historical code; ask before changing it"
+- "`OPENAI_KEY` comes from 1Password; do not copy it from `.env.example`"
 
-❌ **典型不该进**（会让 attention.md 膨胀）：
+❌ **Typical things that should not go in**, because they would bloat `attention.md`:
 
-- 某个 bug 的修法（→ bt-learn pitfall）
-- 某个库怎么用（→ bt-trick library）
-- 一段架构说明（→ .bytetrue/architecture/）
-- "本周在做 X"这种短期状态（→ 别记，会过期）
-- 需要 3 行以上才讲清的（→ bt-learn knowledge）
+- how to fix a certain bug → `bt-learn pitfall`
+- how to use a certain library → `bt-trick library`
+- an architecture explanation → `.bytetrue/architecture/`
+- short-term state like "this week we are working on X" → do not record it; it will expire
+- anything requiring more than 3 lines to explain clearly → `bt-learn knowledge`
 
-**判不准就反问用户一句**："这条以后是不是每次会话都要让 AI 知道？"答"不一定" → 不是 bt-note。
-
----
-
-## 目标文件
-
-目标文件固定为 `.bytetrue/attention.md`。不再兼容 `AGENTS.md` / `CLAUDE.md` / `.cursorrules` 等外部 AI 工具入口。
-
-- `.bytetrue/` 不存在 → 本仓库还没接入 ByteTrue，先提示用户运行 `bt-onboard`
-- `.bytetrue/attention.md` 不存在 → 视为骨架缺失，先创建最小骨架再写入
-- `AGENTS.md` / `CLAUDE.md` 即使存在也不读取、不写入、不询问用户偏好
-
-attention.md 是 ByteTrue 自己的启动注意事项入口，价值来自所有 ByteTrue 技能都明确要求读取它，而不是依赖外部工具的自动注入。
+If unsure, ask the user: "Will the AI need to know this in almost every future session?" If the answer is "not necessarily", then it is not for `bt-note`.
 
 ---
 
-## 固定分节结构
+## Target File
 
-为了防止文件膨胀成另一个胖文件，分节**写死**一组（不在列表里的不开新节）：
+The target file is always `.bytetrue/attention.md`. There is no longer any compatibility for external AI tool entry files such as `AGENTS.md`, `CLAUDE.md`, or `.cursorrules`.
+
+- if `.bytetrue/` does not exist → this repository has not been onboarded to ByteTrue yet, so first ask the user to run `bt-onboard`
+- if `.bytetrue/attention.md` does not exist → treat it as a missing skeleton, create the minimal skeleton first, then write into it
+- even if `AGENTS.md` or `CLAUDE.md` exists, do not read it, do not write to it, and do not ask the user which one they prefer
+
+`attention.md` is ByteTrue's own startup-notes entry point. Its value comes from every ByteTrue skill explicitly requiring it, not from automatic injection by external tools.
+
+---
+
+## Fixed Section Structure
+
+To keep the file from growing into another bloated document, the set of sections is **fixed**. Do not create a new section just because it is not in the list:
 
 ```markdown
-## 项目碎片知识
+## Project Fragment Knowledge
 
-<!-- bt-note managed: 用 bt-note 维护，新条目按下面分节追加 -->
+<!-- bt-note managed: maintain with bt-note; append new entries under the sections below -->
 
-### 编译与构建
+### Compile and Build
 
-### 运行与本地起服务
+### Running and Starting Local Services
 
-### 测试
+### Testing
 
-### 命令与脚本陷阱
+### Command and Script Pitfalls
 
-### 路径与目录约定
+### Path and Directory Conventions
 
-### 环境变量与凭证
+### Environment Variables and Credentials
 
-### 其他
+### Other
 ```
 
-**规则**：
+**Rules**:
 
-- 新条目去对应分节末尾追加，每条一行（最多两行）
-- 没有合适的分节 → 进"其他"。"其他"超过 5 条就停下来和用户讨论是否新增固定分节（不要默默加节）
-- 分节为空时整段保留，不删（让 AI 看到这一节是有意义的）
-- 注释行 `<!-- bt-note managed -->` 是本技能的识别锚——找不到就在文件末尾插入整块结构
-- **整段长度软上限 ~150 行**——超过提示用户："碎片知识太多了，挑几条沉到 bt-learn / bt-decide 里？"
+- append each new entry at the end of the matching section, one line per entry, at most two lines
+- if no suitable section exists, put it under `Other`. If `Other` exceeds 5 items, stop and discuss with the user whether a new fixed section should be added; do not silently add one
+- keep the section blocks even when empty; do not delete them, because their presence is meaningful for the AI
+- the comment line `<!-- bt-note managed -->` is the anchor this skill uses to recognize the block. If it is missing, insert the whole structure at the end of the file
+- **soft limit of about 150 lines for the whole block**. When it goes over, tell the user: "There is too much fragment knowledge here. Which items should be moved into `bt-learn` or `bt-decide`?"
 
 ---
 
-## 流程
+## Flow
 
-### 1. 判定该不该进
+### 1. Decide whether it belongs here
 
-按上面"判据"表对一遍。任一项不过 → 引导到对应别的技能，本轮结束。
+Check it against the rule table above. If any criterion fails, route the user to the corresponding skill and end this run.
 
-### 2. 确认 attention 文件
+### 2. Confirm the attention file
 
-检查 `.bytetrue/attention.md`。缺 `.bytetrue/` 就停止并提示先 `bt-onboard`；只缺 `attention.md` 就创建本技能的固定分节骨架。
+Check `.bytetrue/attention.md`. If `.bytetrue/` is missing, stop and tell the user to run `bt-onboard` first. If only `attention.md` is missing, create the fixed-section skeleton for this skill.
 
-### 3. 找位置：分节归类 + 查重
+### 3. Find the location: section classification + dedup
 
-- 读 `.bytetrue/attention.md`，找 `<!-- bt-note managed -->` 锚定位
-- 找不到锚 → 在文件末尾追加整块"项目碎片知识"骨架
-- 在"项目碎片知识"段内 grep 关键词查重——已有相似条目时**不另起一条**，问用户"是更新已有那条还是确实是另一条"
-- 选好分节，没有合适分节进"其他"
+- read `.bytetrue/attention.md` and locate the `<!-- bt-note managed -->` anchor
+- if the anchor is missing, append the entire "Project Fragment Knowledge" skeleton at the end of the file
+- inside the "Project Fragment Knowledge" block, `grep` by keywords for duplicates. If a similar entry already exists, **do not create a second line**. Ask the user: "Should we update the existing one, or is this truly a different note?"
+- choose the section; if none fits, use `Other`
 
-### 4. 写一条进去
+### 4. Write one line
 
-每条格式：
-
-```
-- {一句话事实 + 必要时一句话原因}
-```
-
-例：
+Each entry uses this format:
 
 ```
-- 编译前要先 `pnpm run gen`，否则 schema 类型对不上
-- 别用 `npm install`，项目锁文件是 yarn berry 的
-- src/legacy/ 是 2023 前的老代码，改之前先和 @ldz 确认
+- {one-sentence fact + one-sentence reason only if needed}
 ```
 
-写完用户 review 一句确认就退出。**不主动连写多条**——一次一条，避免顺手把没拍板的也塞进去。
+Examples:
 
-### 5. 触发软上限检查
+```
+- Before compiling, run `pnpm run gen`, otherwise the schema types will not line up
+- Do not use `npm install`; the project lockfile is for Yarn Berry
+- `src/legacy/` is pre-2023 legacy code; confirm with @ldz before changing it
+```
 
-写完看一眼"项目碎片知识"段总行数：
+After writing, do one sentence of user review confirmation and exit. **Do not proactively write multiple lines at once**. One item per run prevents stuffing in unconfirmed material.
 
-- ≥150 行 → 提示用户挑几条沉到 bt-learn / bt-decide
-- "其他"分节 ≥5 条 → 提示用户讨论是否新增固定分节
+### 5. Trigger the soft-limit check
 
-只是**提示**，不替用户决定。
+After writing, glance at the total line count of the "Project Fragment Knowledge" block:
+
+- if it is 150 lines or more, tell the user to move some items into `bt-learn` or `bt-decide`
+- if `Other` has 5 items or more, tell the user to discuss whether a new fixed section should be added
+
+These are only **prompts**. Do not decide for the user.
 
 ---
 
-## 主动推荐时机
+## When to Proactively Suggest It
 
-不要每次都问。只在两个明确信号触发时推一句：
+Do not ask every time. Suggest it in one sentence only when one of these two explicit signals appears:
 
-1. **用户在对话中说出明显属于碎片知识的事实**——"哦对这个项目要先 X 才能 Y"、"我们这个用 Z 不用 W"——推："这条要不要 `bt-note` 一下？以后 AI 每次都能看到。"
-2. **AI 自己刚踩了一个一句话能讲清的项目特殊设置**（编译失败 / 命令不对 / 路径找错）——修复后推："这个坑是项目通用的吗？是的话 `bt-note` 记一笔，下次会话直接知道。"
+1. **The user says something in the conversation that clearly qualifies as fragment knowledge**, such as "oh right, this project needs X before Y" or "we use Z here, not W". Suggest: "Should we `bt-note` that? Then the AI will see it every session."
+2. **The AI itself just stepped on a project-specific setup that can be explained in one sentence**, such as a build failure, wrong command, or wrong path. After resolving it, suggest: "Is this a general project rule? If yes, we can `bt-note` it so future sessions know immediately."
 
-用户说"不用了"立刻跳过，不重复推。
+If the user says "no need", skip immediately and do not repeat the suggestion.
 
 ---
 
-## 容易踩的坑
+## Easy Pitfalls
 
-- 把详细背景 / 多步骤指南塞进 attention.md——超过两行就该走 bt-learn
-- 写到 `AGENTS.md` / `CLAUDE.md`——ByteTrue 不再兼容这些外部入口
-- 默默新增分节——分节是写死的，新增要先和用户讨论
-- 看到一条就连带把其他几条也写进去——一次一条
-- 写"短期状态"（本周在做 X / 这个 sprint 的目标）——会过期但没人删，慢慢变误导
-- 不查重就追加——同一条事实被记 3 次后 AI 反而搞不清哪条是准的
+- stuffing detailed background or multi-step instructions into `attention.md` — if it exceeds two lines, it should go to `bt-learn`
+- writing into `AGENTS.md` or `CLAUDE.md` — ByteTrue no longer supports these external entry files
+- silently adding new sections — the section list is fixed, and adding one must be discussed with the user first
+- seeing one note and writing several related ones at the same time — one item per run
+- recording short-term state such as "this week we are doing X" or "the current sprint goal is Y" — it will expire, nobody will delete it, and it will gradually become misleading
+- appending without deduplication — once the same fact is recorded three times, the AI becomes less certain which one is correct

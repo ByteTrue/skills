@@ -1,158 +1,159 @@
 ---
 name: bt-issue-report
-description: issue 流程阶段 1——通过对话把问题落成可复现、可追溯的 {slug}-report.md，并判定走标准路径还是快速通道。只问现象不猜根因。触发：用户说"提个 issue"、"记录这个 bug"、"我发现一个问题"。issue 工作流的起点。
+description: Stage 1 of the issue workflow. Turn a problem into a reproducible and traceable `{slug}-report.md` through conversation, and decide whether it should take the standard path or the fast path. Ask only about symptoms; do not guess the root cause. Trigger when the user says "file an issue", "record this bug", or "I found a problem". This is the entry point of the issue workflow.
 ---
 
 # bt-issue-report
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-这一阶段做两件事：把用户脑子里的问题落成结构化记录 + 判断走标准路径还是快速通道。
+This stage does two things: turn the problem in the user's head into a structured record, and decide between the standard path and the fast path.
 
-**核心原则：只记现象不记根因**。用户说"我觉得是 XX 组件的问题"——记下"用户怀疑 XX 组件"作为线索，但不顺着聊根因。根因要在阶段 2 通过实际读代码确认，不靠脑子里猜。混进根因猜测的报告会带偏阶段 2，让分析人围着错误线索绕。
+**Core principle: record symptoms, not root causes**. If the user says "I think it is a problem in component XX", record "the user suspects component XX" as a clue, but do not follow them into root-cause discussion. Root cause belongs to stage 2 and must be confirmed by actually reading code rather than guessing. A report mixed with root-cause guesses will bias stage 2 and send the analyst in circles around a false lead.
 
-> 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md` 第 0 节和 `bt-issue` 的"文件放哪儿"。
-
----
-
-## 启动检查
-
-1. **确认是 bug 不是新功能需求**——描述"想加 X 功能"的告诉他走 `bt-feat`
-2. **看有没有相关 issue 目录**——Glob `.bytetrue/issues/`，有同类问题先和用户确认是新建还是更新
-3. **快速通道判断（唯一正式判定点）**——按用户线索**读一下相关代码**（Grep / Read 定位）：
-   - **能一眼确定根因**（能给出 `{文件}:{行号}`、修复改动小 1-2 处、无跨模块影响风险）→ 告诉用户"我已看到问题所在，可以走快速通道：直接告知根因和修复方案，你确认后我立刻修，修完你验证，只写一份 `{slug}-fix-note.md`"。同意后触发 `bt-issue-fix`（快速通道模式）
-   - **不能**（根因有多个候选 / 不确定 / 需要更多复现信息）→ 走标准路径做完整问题报告。进入标准路径后默认不再二次改判
-4. **确定 issue 目录名**——跟用户商定 slug，日期前缀用今天（环境信息 `currentDate`）。目录不存在就创建。快速通道也要建 issue 目录，`{slug}-fix-note.md` 放那
+> For shared paths and naming conventions, see section 0 of `.bytetrue/reference/shared-conventions.md` and the "where the files go" section in `bt-issue`.
 
 ---
 
-## 必答 5 问
+## Startup Checks
 
-按顺序逐个问，**不一次抛 5 个**——一次抛多个用户只回最容易的，深的就漏了。每问做一次模糊度检查，不通过继续追问。
-
-### 1. 问题是什么？看到的现象？
-
-期待具体的异常表现："点击提交按钮后弹出了空白弹窗" 比 "提交功能有问题" 有用一百倍。
-
-模糊信号："有时候会出错"、"感觉不对" → 追问"具体什么时候"、"具体什么不对"。
-
-红线：**不要让用户描述根因**。出现"应该是因为 XXX"——记现象，根因留给阶段 2。
-
-### 2. 怎么复现？
-
-期待最小复现步骤：进入 XX 页面 → 输入 YY → 点击 ZZ → 看到问题现象。
-
-模糊信号："不稳定复现"、"有时候能有时候不能" → 追问复现频率和条件差异。确实不稳定就写明已知触发条件和复现率。
-
-"无法复现"也是有效回答——写"目前无法稳定复现，只在 X 情况下观察到一次"，别勉强凑步骤。
-
-### 3. 期望行为 vs 实际行为
-
-期待两句话：
-- **期望**：我以为做了 A 之后应该发生 B
-- **实际**：但实际发生了 C
-
-**不要合并成一句**。合在一句"按钮没正常工作"里分析的人不知道"正常"长什么样。
-
-### 4. 环境信息
-
-最低采集：**在哪个模块 / 功能区域发现的**、**相关文件或函数（用户知道的话）**。
-
-可选：操作系统、浏览器版本、运行环境（dev / prod）、最近有没有改过相关代码。
-
-用户说"不知道在哪个文件"——写"待定"，阶段 2 分析时查。
-
-### 5. 严重程度与优先级
-
-- **P0 阻塞**：核心功能完全失效，影响所有用户，必须立刻修
-- **P1 严重**：核心功能受损有绕过方法，尽快修
-- **P2 中等**：非核心功能或影响少数用户，计划内修
-- **P3 轻微**：UI 瑕疵 / 边界情况 / 有更好实现，按空闲修
-
-用户不确定就帮他推荐一个但让用户拍板。
+1. **Confirm this is a bug, not a new feature request** — if the description is really "I want to add capability X", tell the user to use `bt-feat`
+2. **Check for related issue directories** — `Glob .bytetrue/issues/`; if a similar problem already exists, confirm with the user whether this is a new issue or an update
+3. **Fast-path decision, the only formal decision point** — based on the user's clues, **read the related code briefly** with Grep and Read:
+   - **If the root cause is obvious at a glance**, meaning you can point to `{file}:{line}`, the fix is only 1-2 small changes, and there is no cross-module impact risk → tell the user: "I can already see where the problem is. We can use the fast path: I will tell you the root cause and fix plan directly, you confirm, I fix it immediately, you verify it afterward, and we write only one `{slug}-fix-note.md`." If they agree, trigger `bt-issue-fix` in fast-track mode
+   - **If not**, because there are multiple root-cause candidates, uncertainty remains, or more reproduction information is needed → use the standard path and write the full issue report. Once the standard path has started, do not re-decide the route later
+4. **Determine the issue directory name** — agree on the slug with the user. Use today's date from `currentDate` as the date prefix. Create the directory if it does not exist. Even the fast path must have an issue directory, because `{slug}-fix-note.md` still lives there
 
 ---
 
-## 问题报告模板
+## The Five Mandatory Questions
+
+Ask them one by one in order. **Do not throw all 5 at once.** When users get a list all at once, they answer only the easiest items and skip the deeper ones. After each question, do one ambiguity check. If it fails, keep probing.
+
+### 1. What is the problem? What symptom did you observe?
+
+The expectation is a concrete failure symptom, such as "after clicking the submit button, a blank modal appears". That is a hundred times more useful than "the submit function has a problem".
+
+Ambiguity signals include "it sometimes errors" or "it feels wrong" → ask "exactly when?" and "what exactly is wrong?"
+
+Red line: **do not let the user describe the root cause**. If they say "it is probably because XXX", record the symptom only and leave root cause to stage 2.
+
+### 2. How do you reproduce it?
+
+The expectation is the minimum reproduction path: enter page XX → input YY → click ZZ → observe the problem.
+
+Ambiguity signals include "reproduces inconsistently" or "sometimes yes, sometimes no" → ask for reproduction frequency and the difference in conditions. If it is truly unstable, record the known trigger conditions and reproduction rate.
+
+"Cannot reproduce" is still a valid answer. Write "currently cannot reproduce stably; only observed once under condition X". Do not force fake steps.
+
+### 3. Expected behavior vs actual behavior
+
+The expectation is two separate statements:
+
+- **Expected**: I thought that after doing A, B should happen
+- **Actual**: but what actually happened was C
+
+**Do not merge them into one sentence**. A sentence like "the button did not work normally" does not tell the analyst what "normal" was supposed to mean.
+
+### 4. Environment information
+
+Minimum collection: **which module or functional area it was found in**, and **related files or functions if the user knows them**.
+
+Optional: operating system, browser version, runtime environment such as dev or prod, and whether related code changed recently.
+
+If the user says "I do not know which file", write "TBD". Stage 2 will investigate it.
+
+### 5. Severity and priority
+
+- **P0 blocker**: core functionality is completely broken, affecting all users, must be fixed immediately
+- **P1 serious**: core functionality is damaged but there is a workaround, should be fixed soon
+- **P2 medium**: non-core functionality or impact on a small subset of users, fix within planned work
+- **P3 minor**: UI flaws, edge cases, or places where there is simply a better implementation, fix when there is time
+
+If the user is unsure, recommend one but let the user make the final call.
+
+---
+
+## Issue Report Template
 
 ```markdown
 ---
 doc_type: issue-report
-issue: {issue 目录名}
+issue: {issue directory name}
 status: draft
 severity: P0 | P1 | P2 | P3
-summary: {问题现象一句话}
+summary: {one-line summary of the symptom}
 tags: []
 ---
 
-# {问题简述} Issue Report
+# {Short Problem Description} Issue Report
 
-## 1. 问题现象
+## 1. Problem Symptom
 
-{用户描述的具体异常表现，纯现象描述，不含根因推测}
+{specific abnormal behavior described by the user, symptom-only description, without root-cause speculation}
 
-## 2. 复现步骤
+## 2. Reproduction Steps
 
-1. {步骤 1}
-2. {步骤 2}
-3. 观察到：{问题现象}
+1. {step 1}
+2. {step 2}
+3. observed: {problem symptom}
 
-复现频率：{稳定 / 概率（约 X%） / 暂无法稳定}
+Reproduction frequency: {stable / probabilistic, about X% / currently cannot be reproduced stably}
 
-## 3. 期望 vs 实际
+## 3. Expected vs Actual
 
-**期望行为**：{做了 A 应该发生 B}
+**Expected behavior**: {after doing A, B should happen}
 
-**实际行为**：{但实际发生了 C}
+**Actual behavior**: {but what actually happened was C}
 
-## 4. 环境信息
+## 4. Environment Information
 
-- 涉及模块 / 功能：{模块名或功能描述}
-- 相关文件 / 函数：{已知 file:line 或"待定"}
-- 运行环境：{dev / staging / prod / 不确定}
-- 其他上下文：{OS、浏览器、最近改动等，没有写"无"}
+- module / feature involved: {module name or feature description}
+- related files / functions: {known file:line or "TBD"}
+- runtime environment: {dev / staging / prod / unknown}
+- other context: {OS, browser, recent changes, etc.; write "none" if there is nothing}
 
-## 5. 严重程度
+## 5. Severity
 
-**{P0 / P1 / P2 / P3}** — {一句话理由}
+**{P0 / P1 / P2 / P3}** — {one-line reason}
 
-## 备注
+## Notes
 
-{可选：截图描述、日志片段等}
+{optional: screenshot description, log snippets, etc.}
 ```
 
 ---
 
-## 退出条件
+## Exit Conditions
 
-- [ ] frontmatter 完整（`doc_type=issue-report` / `issue` 一致 / `severity` 和 `summary` 非空 / `tags` ≥ 1）
-- [ ] 5 问都有具体答案（环境中相关文件可"待定"）
-- [ ] 问题现象是纯现象描述，没混入根因推测
-- [ ] 期望 vs 实际显式分开写
-- [ ] 复现步骤可执行（"无法稳定复现"也有说明）
-- [ ] 用户明确说"report 可以了，进下一步"
-- [ ] frontmatter `status: confirmed`
-
----
-
-## 退出后
-
-告诉用户："问题报告已就绪。下一步阶段 2 根因分析，触发 `bt-issue-analyze`。"
-
-按 `shared-conventions.md` 第 3 节"issue-report"收尾推荐顺序一句话提示（用户"不用"立即跳过）：
-
-1. confirmed bug issue 需要团队协作投影 → "要同步或绑定外部 tracker 吗？（`bt-tracker`）"；用户确认前不创建 / 更新外部 issue
-
-别自己顺手开始分析根因——阶段间的人工 checkpoint 是工作流硬约束。
+- [ ] frontmatter is complete, including `doc_type=issue-report`, matching `issue`, non-empty `severity` and `summary`, and at least 1 tag
+- [ ] all 5 questions have concrete answers, though related files in the environment section may still be `TBD`
+- [ ] the problem symptom is a pure symptom description, with no mixed-in root-cause speculation
+- [ ] expected and actual behavior are explicitly written separately
+- [ ] reproduction steps are executable, or explicitly explained as "cannot reproduce stably"
+- [ ] the user explicitly says "the report is good; move to the next step"
+- [ ] frontmatter is updated to `status: confirmed`
 
 ---
 
-## 容易踩的坑
+## After Exit
 
-- 用户说"可能是 XX 的问题"你顺着聊根因——错，那是阶段 2
-- 复现步骤太模糊（"在用户界面操作一下"）就放行——逼出可执行步骤
-- 期望和实际混在一段话里——必须显式分开
-- 严重程度留空——给默认值或写"无"
-- 一口气把 5 问列成清单丢给用户填——逐题对话否则深的全漏
+Tell the user: "The issue report is ready. Stage 2 is root-cause analysis. Trigger `bt-issue-analyze` next."
+
+Following section 3 `issue-report` in `shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+
+1. a confirmed bug issue may need collaboration projection → "Do you want to sync or bind it to an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit user confirmation
+
+Do not start root-cause analysis on your own. The human checkpoint between stages is a hard workflow constraint.
+
+---
+
+## Easy Pitfalls
+
+- the user says "it might be a problem in XX" and you start discussing root cause with them — wrong, that is stage 2
+- the reproduction steps are too vague, such as "do something in the UI", and you still let it pass — force executable steps out of it
+- expected and actual are mixed into one paragraph — they must be written separately
+- severity is left empty — give a default or write "none"
+- all 5 questions are dumped at the user as a checklist at once — ask them one by one or the deeper details will be lost

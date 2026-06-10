@@ -1,106 +1,106 @@
-# 重构方法库（3）：L4 性能与异步 + 用法速查
+# Refactor Method Library (3): L4 Performance and Async + Usage Cheat Sheet
 
-## L4 性能与异步
+## L4 Performance and Async
 
-### M-L4-01 Memoization 记忆化
+### M-L4-01 Memoization
 
-- **适用**：纯计算在同一输入下重复执行；渲染时依赖的 derived 值每次都重算
-- **不适用**：计算本身非常便宜 / 输入空间巨大（缓存不命中 + 内存占用）
-- **步骤**：
-  1. 识别纯计算点（无副作用、输出只依赖输入）
-  2. Vue 用 `computed`，React 用 `useMemo` / `React.memo`，纯 JS 用手写 memo
-  3. 跑 benchmark 对比前后
-- **风险点**：把非纯函数错误标为纯；缓存 key 不稳定导致永远不命中；大对象缓存泄漏
-- **验证**：行为不变；性能指标（CPU / 渲染次数）下降
-- **前后端**：通用（性能场景以前端居多）
-- **配哪种 scan 项**：重复计算 / 父组件每次渲染导致子组件重渲
+- **Use when**: a pure computation is repeatedly executed with the same input, or a derived value used during rendering is recomputed every time
+- **Do not use when**: the computation is already very cheap, or the input space is huge so caching misses plus memory cost outweigh the gain
+- **Steps**:
+  1. identify the pure computation point, meaning no side effects and output depends only on input
+  2. use `computed` in Vue, `useMemo` or `React.memo` in React, or hand-written memoization in plain JS
+  3. run a benchmark before and after to compare
+- **Risk points**: misclassifying a non-pure function as pure; unstable cache keys causing permanent misses; large-object cache leaks
+- **Validation**: behavior stays unchanged, and performance indicators, CPU or render count, go down
+- **Frontend / backend**: generic, though performance cases are more common on the frontend
+- **Matches which scan item**: repeated computation, or every parent render causes child rerenders
 
-### M-L4-02 Batching 批处理
+### M-L4-02 Batching
 
-- **适用**：高频小操作导致总开销过大（一次一次 DB 写、一次一次事件触发、一次一次渲染）
-- **不适用**：单次操作本身就够便宜 / 延迟敏感（批处理会引入延迟）
-- **步骤**：
-  1. 在操作和执行之间加一层缓冲
-  2. 按时间窗口 / 容量触发批执行
-  3. 调用点从"一次做一件"改为"扔进队列"
-- **风险点**：延迟增加；失败处理变复杂（批里有几条失败怎么办）；内存压力
-- **验证**：吞吐提升；延迟仍在可接受范围；失败处理覆盖
-- **前后端**：通用
-- **配哪种 scan 项**：循环内 IO / 高频事件触发
+- **Use when**: high-frequency small operations create too much total cost, such as one DB write at a time, one event emission at a time, or one render at a time
+- **Do not use when**: a single operation is already cheap enough, or the scenario is latency-sensitive, because batching introduces delay
+- **Steps**:
+  1. add a buffer layer between producing the operation and executing it
+  2. trigger batch execution by time window or capacity
+  3. change call sites from "do one thing now" to "push into queue"
+- **Risk points**: higher latency; failure handling becomes more complex, such as what happens when only some items in the batch fail; memory pressure
+- **Validation**: throughput improves, latency remains acceptable, and failure handling is covered
+- **Frontend / backend**: generic
+- **Matches which scan item**: IO inside loops or very high-frequency event emission
 
-### M-L4-03 Lazy Loading / Code Splitting 懒加载 / 代码分割
+### M-L4-03 Lazy Loading / Code Splitting
 
-- **适用**：首屏包过大；某些页面 / 组件只在特定路径才用到
-- **不适用**：对所有用户都立即需要的核心内容
-- **步骤**：
-  1. 识别可延后加载的模块（按路由、按组件、按功能）
-  2. 改为动态 import（`() => import(...)`）或路由级分包
-  3. 添加 loading / fallback UI
-  4. 构建产物看包分析器确认效果
-- **风险点**：切换时闪烁；网络差时加载卡顿；分包过细反而增加请求数
-- **验证**：首屏包大小下降；功能可正常延迟加载
-- **前后端**：前端特化
-- **配哪种 scan 项**：大 bundle / 不常用模块被强加载
+- **Use when**: the initial bundle is too large, or certain pages or components are used only on specific paths
+- **Do not use when**: the content is core and needed immediately by all users
+- **Steps**:
+  1. identify modules that can load later, by route, by component, or by feature
+  2. switch them to dynamic import, `() => import(...)`, or route-level bundle splitting
+  3. add loading or fallback UI
+  4. use the build analyzer to confirm the effect
+- **Risk points**: flicker during switching; slow loading on poor networks; over-splitting increases request count
+- **Validation**: the initial bundle size goes down, and the delayed-loaded feature still works normally
+- **Frontend / backend**: frontend-specific
+- **Matches which scan item**: large bundle, or infrequently used modules being eagerly loaded
 
-### M-L4-04 N+1 Query Elimination N+1 查询消除
+### M-L4-04 N+1 Query Elimination
 
-- **适用**：循环里对每条记录发起单独查询（N+1 问题）
-- **不适用**：记录数极少且查询便宜
-- **步骤**：
-  1. 定位循环中的查询
-  2. 改为一次批量查询（`IN` 查询、`JOIN`、或 ORM 的 eager load / dataloader）
-  3. 在代码里构建 `id → 结果` 的 map 替代循环查询
-  4. 跑性能测试确认查询次数下降
-- **风险点**：`IN` 列表过长；JOIN 笛卡尔积；eager load 过度导致内存飙升
-- **验证**：查询日志显示查询次数从 N+1 降到 1-2；结果正确
-- **前后端**：后端特化
-- **配哪种 scan 项**：循环里的 DB / 外部 API 调用
+- **Use when**: the code performs one query per record inside a loop, an N+1 problem
+- **Do not use when**: the record count is tiny and each query is cheap
+- **Steps**:
+  1. locate the query inside the loop
+  2. replace it with a batch query, `IN`, `JOIN`, eager load, or dataloader
+  3. build an `id → result` map in code instead of querying inside the loop
+  4. run performance tests and confirm query count goes down
+- **Risk points**: very long `IN` lists; JOIN Cartesian explosion; overly eager loading causing memory spikes
+- **Validation**: query logs show the count drops from N+1 to 1-2, while results remain correct
+- **Frontend / backend**: backend-specific
+- **Matches which scan item**: DB or external API calls inside loops
 
-### M-L4-05 Index & Cache 索引与缓存
+### M-L4-05 Index & Cache
 
-- **适用**：慢查询有明确的过滤字段但无索引；读多写少的数据可缓存
-- **不适用**：写密集场景加索引反降性能；一致性要求高的数据不该粗暴缓存
-- **步骤**：
-  1. 用慢查询日志 / EXPLAIN 定位瓶颈
-  2. 加索引：覆盖过滤和排序字段，注意复合索引顺序
-  3. 加缓存：选层次（应用内 / Redis / CDN），定义 TTL 和失效策略
-  4. 上线后观察命中率和延迟
-- **风险点**：索引过多影响写性能；缓存一致性（读到旧数据）；缓存雪崩 / 穿透
-- **验证**：查询延迟下降；缓存命中率符合预期；数据一致性测试通过
-- **前后端**：后端特化
-- **配哪种 scan 项**：慢查询 / 重复读取的热数据
+- **Use when**: a slow query has obvious filter fields but no index, or read-heavy data can be cached
+- **Do not use when**: the workload is write-heavy and additional indexes would hurt performance, or the data requires such high consistency that naive caching is unsafe
+- **Steps**:
+  1. use slow-query logs or EXPLAIN to locate the bottleneck
+  2. add indexes covering the filter and sort fields, paying attention to composite-index order
+  3. add caching, choose the layer, in-process, Redis, CDN, and define TTL plus invalidation strategy
+  4. after rollout, observe hit rate and latency
+- **Risk points**: too many indexes hurt write performance; cache consistency, stale reads; cache avalanche or penetration
+- **Validation**: query latency goes down, cache hit rate matches expectation, and data-consistency tests pass
+- **Frontend / backend**: backend-specific
+- **Matches which scan item**: slow queries or hot data read repeatedly
 
-### M-L4-06 Async & Cancellation 异步与取消
+### M-L4-06 Async & Cancellation
 
-- **适用**：长任务阻塞；组件卸载后仍在跑的副作用 / 网络请求；回调地狱
-- **不适用**：任务极短且不可取消
-- **步骤**：
-  1. 把同步长任务改成 async（Promise / async-await）
-  2. 加取消机制：AbortController（fetch）、Vue `onUnmounted` / React cleanup 里取消
-  3. 清理资源：定时器、事件监听、订阅
-  4. 测试组件快速切换 / 请求快速重发是否有残留
-- **风险点**：忘加 cleanup 导致内存泄漏 / 状态更新到已卸载组件（React 警告）；取消后的中间态处理
-- **验证**：卸载 / 切换后无泄漏警告；测试快速切换场景
-- **前后端**：通用（前端场景居多）
-- **配哪种 scan 项**：回调地狱 / 未清理的副作用 / useEffect 无返回清理
+- **Use when**: long tasks block execution, side effects or network requests continue after component unmount, or callback hell appears
+- **Do not use when**: tasks are extremely short and effectively non-cancellable
+- **Steps**:
+  1. convert long synchronous tasks into async, Promise or async-await
+  2. add cancellation, `AbortController` for fetch, Vue `onUnmounted` or React cleanup return for teardown
+  3. clean up resources, timers, event listeners, subscriptions
+  4. test fast component switching or rapid request retry to ensure nothing is left behind
+- **Risk points**: forgetting cleanup, causing memory leaks or state updates into unmounted components, React warnings; handling intermediate state after cancellation
+- **Validation**: no leak warnings after unmount or switch, and fast-switch scenarios are covered by tests
+- **Frontend / backend**: generic, but especially common on the frontend
+- **Matches which scan item**: callback hell, uncleared side effects, or `useEffect` without cleanup
 
-### M-L4-07 List Virtualization 列表虚拟化
+### M-L4-07 List Virtualization
 
-- **适用**：长列表（> 数百条）渲染卡顿；表格大数据量
-- **不适用**：列表短 / 行高不稳定（实现复杂度高）
-- **步骤**：
-  1. 选库（`vue-virtual-scroller` / `react-window` / `tanstack-virtual` 等）
-  2. 替换列表渲染为虚拟化组件
-  3. 处理行高（固定 / 可变）和滚动恢复
-- **风险点**：搜索 / Ctrl+F 只能找到已渲染行；可访问性（屏幕阅读器）；打印
-- **验证**：滚动流畅；渲染 DOM 数限制在视口左右；交互行为不变
-- **前后端**：前端特化
-- **配哪种 scan 项**：超长列表无分页 / 无虚拟化
+- **Use when**: long lists, hundreds of rows or more, render sluggishly, or large data tables are involved
+- **Do not use when**: the list is short, or row height is unstable and would make the implementation much more complex
+- **Steps**:
+  1. choose a library, such as `vue-virtual-scroller`, `react-window`, or `tanstack-virtual`
+  2. replace the list rendering with a virtualized component
+  3. handle fixed or variable row heights and scroll restoration
+- **Risk points**: browser search, Ctrl+F, only sees rendered rows; accessibility, screen readers; printing
+- **Validation**: scrolling becomes smooth, DOM node count stays bounded around the viewport, and interactive behavior stays unchanged
+- **Frontend / backend**: frontend-specific
+- **Matches which scan item**: very long lists without pagination or virtualization
 
 ---
 
-## 用法速查
+## Usage Cheat Sheet
 
-- **scan 阶段**：扫到候选优化点匹配最合适的方法号填入"建议映射的方法"。匹配不上说明候选写太模糊，重写
-- **design 阶段**：执行步骤引用方法号后，把"步骤"字段落到本项目的具体文件 / 函数。方法库的步骤是骨架不是直接复制的答案
-- **扩展方法库**：新方法号接着层内编号递增。新增完整填齐所有字段——缺字段不准入库
+- **In the scan stage**: when a candidate optimization point is found, match it to the most suitable method ID and fill that into "suggested mapped method". If nothing fits, the candidate is still too vague and should be rewritten
+- **In the design stage**: once the execution step cites a method ID, project the "steps" field down into the concrete files and functions of this repo. The steps in the method library are the skeleton, not a copy-paste answer
+- **When extending the method library**: continue numbering inside the same level. Every new method must fill all fields completely. Missing fields mean the method is not allowed into the library

@@ -1,125 +1,125 @@
 ---
 name: bt-learn
-description: 把踩过的坑或好做法沉淀成可检索的 learning 文档，两条轨道 pitfall（坑）/ knowledge（默认做法）。触发：用户说"沉淀知识"、"learning"、"把这次经验记下来"，或 acceptance / fix 收尾时推送。
+description: Turn encountered pitfalls or good practices into searchable learning documents, with two tracks: `pitfall` and `knowledge`. Trigger when the user says "capture this knowledge", "learning", "record what we learned this time", or when this is suggested at the end of an acceptance or fix flow.
 ---
 
 # bt-learn
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-每次做 feature 或修 issue 都会留下 spec 文件。但 spec 记录的是"做了什么"和"怎么做的"，**不会记录"踩了什么坑"和"发现了什么更好的做法"**。没有沉淀的团队总在重复解决同一个问题。
+Every feature or issue fix leaves behind spec files. But specs record "what was done" and "how it was done"; they **do not record "what pitfall we hit" or "what better practice we discovered"**. Teams that do not capture these lessons keep solving the same problem again and again.
 
-两条轨道：
+Two tracks:
 
-- **坑点轨道**（pitfall）：记录问题 / 根因 / 解法，防止下次再掉进同一个坑
-- **知识轨道**（knowledge）：记录最佳实践 / 工作流改进 / 可复用模式
+- **Pitfall track** (`pitfall`): record the problem, root cause, and solution so the same pitfall is not repeated next time
+- **Knowledge track** (`knowledge`): record best practices, workflow improvements, and reusable patterns
 
-两者都写入 `.bytetrue/compound/`（共享目录见 `shared-conventions.md` 第 1 节"归档类文档"）。本技能产出 frontmatter 带 `doc_type: learning`，命名 `YYYY-MM-DD-learning-{slug}.md`。
+Both are written into `.bytetrue/compound/` (for the shared directory, see section 1 "archival documents" in `shared-conventions.md`). This skill outputs frontmatter with `doc_type: learning` and uses the name `YYYY-MM-DD-learning-{slug}.md`.
 
 ---
 
-## 什么时候触发
+## When to Trigger
 
-| 情境 | 说明 |
+| Situation | Description |
 |---|---|
-| 完成 feature 工作流 | `bt-feat-accept` 主动问"要记录这次的学习点吗？" |
-| 完成 issue 工作流 | `bt-issue-fix` 主动问"要把这个坑记录下来吗？" |
-| 用户主动 | "记录一下"、"沉淀知识"、"learning"等 |
-| 解决了一次性难题 | 不在 feature / issue 内但花了大量时间才解决的工程问题 |
+| Feature workflow completed | `bt-feat-accept` proactively asks "Do you want to record the lessons from this run?" |
+| Issue workflow completed | `bt-issue-fix` proactively asks "Do you want to write this pitfall down?" |
+| User initiates it | "record this", "capture knowledge", "learning", and similar |
+| A one-off hard problem was solved | An engineering problem outside a feature or issue flow that still took substantial time to solve |
 
-主动推荐一句话即可，用户说"不用了"立刻跳过——重复推可能让用户觉得 AI 在加戏。
-
----
-
-## 两条轨道各写什么
-
-**坑点**：调试过的 bug / 绕过的配置陷阱 / 环境问题 / 集成失败……一切"本来应该好但没好"的经历。
-
-**知识**：发现的最佳实践 / 工作流改进 / 架构洞见 / 可复用设计模式……一切"以后应该默认这样做"的学习。
-
-frontmatter / 正文模板 / 完整示例见同目录 `reference.md`。
+One proactive sentence is enough. If the user says "no need", skip immediately. Repeating the suggestion can make the AI feel performative.
 
 ---
 
-## 工作流阶段
+## What Each Track Should Contain
 
-### Phase 1：识别来源（自动）
+**Pitfalls**: debugged bugs, configuration traps that had to be worked around, environment issues, failed integrations... anything that should have worked but did not.
 
-从对话上下文提取：
+**Knowledge**: discovered best practices, workflow improvements, architecture insights, reusable design patterns... anything that should become the default way to do it in the future.
 
-- **来源类型**：feature 工作流 / issue 工作流 / 独立问题
-- **关联产物**：feature 目录 / issue 目录路径（如有）
-- **粗分轨道**：坑点 or 知识。"修了什么坏了的东西" = 坑点；"发现了什么更好做法" = 知识。两者都有就分两条
-
-来源不明确问用户**一个问题**澄清不要猜。
-
-### Phase 1.5：查重叠与意图分流（必做）
-
-按 `shared-conventions.md` §6 第 5/6 条：
-
-- 含"改 / 更新 / 补充 / 某条 learning"或指向某份旧文档 → 直接走**更新已有**
-- 否则用搜索工具按 `--filter tags~=` 或 `--query` 查一遍，命中相近旧文档时把候选列给用户
-
-**更新路径**：读旧文档 → 和用户对齐要改哪几节（常见是补新踩的坑、补当时"没找到原因"的根因）→ 起草 diff → 写回原文件 + `updated: YYYY-MM-DD`，不新建。
-
-### Phase 2：提炼要点（一次一个问题）
-
-**坑点轨道**问：
-
-1. "你最开始观察到的现象是什么？"
-2. "哪些解法试过但没用？"（鼓励写，失败的尝试是后人最宝贵的信息——知道哪条路不通能省下大量时间）
-3. "最终怎么发现真正原因的？"
-4. "下次可以更早发现吗？怎么发现？"
-
-**知识轨道**问：
-
-1. "你发现的这个模式，在什么情境下最有价值？"
-2. "不这样做会出什么问题？"
-3. "有没有不适用的反例？"
-
-用户对某问题说"没什么"或"跳过"就跳过——宁可少一节也不用空话填充。
-
-### Phase 3：起草 + 用户 review
-
-AI 一次性起草完整文档（YAML frontmatter + 所有正文节）。一次性展示给用户。
-
-### Phase 4：归档
-
-- 新建：写入 `compound/YYYY-MM-DD-learning-{slug}.md`（日期取**归档当天**），frontmatter 带 `doc_type: learning`
-- 更新：写回 Phase 1.5 定位的原文件 + `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条处理
-
-### Phase 5：可发现性检查
-
-写完若发现一两行"每次 ByteTrue 技能启动都该知道"的项目硬约束，提示用户用 `bt-note` 追加到 `.bytetrue/attention.md`。不要自作主张改 attention，也不要写外部 AI 入口。
+For frontmatter, body templates, and full examples, see `reference.md` in the same directory.
 
 ---
 
-## 搜索工具
+## Workflow Phases
 
-> 完整语法见 `.bytetrue/reference/tools.md`。
+### Phase 1: Identify the Source (automatic)
+
+Extract from the conversation context:
+
+- **Source type**: feature workflow / issue workflow / standalone problem
+- **Related artifacts**: feature directory or issue directory path, if any
+- **Rough track split**: pitfall or knowledge. "Fixed something broken" = pitfall; "found a better way to do something" = knowledge. If both exist, split them into two entries
+
+If the source is unclear, ask the user **one question** to clarify. Do not guess.
+
+### Phase 1.5: Check for Overlap and Route Intent (required)
+
+Follow items 5 and 6 in `shared-conventions.md` §6:
+
+- If the request includes "change / update / supplement / a certain learning" or points to an old document, go directly to **update existing**
+- Otherwise, use the search tool once with `--filter tags~=` or `--query`, and if you hit similar old documents, list the candidates for the user
+
+**Update path**: read the old document → align with the user on which sections to change, commonly adding a newly discovered pitfall or a root cause that was unknown at the time → draft the diff → write back to the original file and add `updated: YYYY-MM-DD`; do not create a new file.
+
+### Phase 2: Distill the Key Points (one question at a time)
+
+For the **pitfall track**, ask:
+
+1. "What was the first symptom you observed?"
+2. "Which attempted fixes did you try that did not work?" Encourage this. Failed attempts are some of the most valuable information for future readers. Knowing which path does not work can save a large amount of time.
+3. "How did you finally discover the real cause?"
+4. "Could this be detected earlier next time? If so, how?"
+
+For the **knowledge track**, ask:
+
+1. "In what situation is this pattern most valuable?"
+2. "What goes wrong if we do not do it this way?"
+3. "Are there counterexamples where it does not apply?"
+
+If the user says "nothing" or "skip it" for a question, skip it. A shorter document is better than filling sections with empty prose.
+
+### Phase 3: Draft + User Review
+
+The AI drafts the full document in one pass, including YAML frontmatter and all body sections. Show it to the user in one pass.
+
+### Phase 4: Archive
+
+- New document: write to `compound/YYYY-MM-DD-learning-{slug}.md` using the **archive date of the current day**, with frontmatter `doc_type: learning`
+- Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
+- Supersede: handle it according to item 5 of `shared-conventions.md` §6
+
+### Phase 5: Discoverability Check
+
+After writing, if you notice one or two lines of hard project constraints that "every ByteTrue skill startup should know", suggest that the user add them to `.bytetrue/attention.md` via `bt-note`. Do not change `attention.md` on your own, and do not write to an external AI entry file.
+
+---
+
+## Search Tools
+
+> For the full syntax, see `.bytetrue/reference/tools.md`.
 
 ```bash
-# 按轨道筛选坑点
+# Filter pitfall learnings by track
 
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=learning --filter track=pitfall --filter severity=high
 
-# 按组件查相关学习点
+# Find related learnings by component
 
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=learning --filter component~={组件名}
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=learning --filter component~={component-name}
 
-# 归档后查重叠
+# Check for overlap after archiving
 
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=learning --filter tags~={主要 tag} --json
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=learning --filter tags~={primary-tag} --json
 ```
 
 ---
 
-## 守护规则
+## Guard Rules
 
-> 归档类共享规则见 `shared-conventions.md` 第 6 节。本技能特有：
+> For shared rules on archival documents, see section 6 of `shared-conventions.md`. Rules specific to this skill:
 
-1. **不混入 spec**——learning 不放进 `features/` 或 `issues/`；spec 也不放进 `compound/`
-2. **只认自己的 doc_type**——只读写 `doc_type: learning`
+1. **Do not mix them into specs** — learning docs do not go into `features/` or `issues/`; specs do not go into `compound/`
+2. **Only recognize your own `doc_type`** — only read and write `doc_type: learning`

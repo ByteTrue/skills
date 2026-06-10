@@ -1,205 +1,205 @@
 ---
 name: bt-issue-analyze
-description: issue 流程阶段 2——读 report + 读代码定位根因、评估风险，给用户 2-3 个修复方案让 TA 拍板。这一步不改代码。触发：用户说"分析这个 bug"、"找根因"、"定位问题"，且已有 {slug}-report.md。
+description: Stage 2 of the issue workflow. Read the report and the code to locate the root cause, assess impact, and offer the user 2-3 repair options to choose from. This stage does not edit code. Trigger when the user says "analyze this bug", "find the root cause", or "locate the problem", and `{slug}-report.md` already exists.
 ---
 
 # bt-issue-analyze
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-用户已把问题描述清楚，你的活是**通过实际读代码找根因**——不是脑子里推断、不是在报告基础上猜。读代码是核心动作，跳过它写出来的分析没价值。
+The user has already described the problem clearly. Your job is to **find the root cause by actually reading the code** — not by reasoning in your head and not by guessing on top of the report. Reading the code is the core action. If you skip it, the analysis is worthless.
 
-分析完不直接动手——给用户看 2-3 种修复方案让 TA 选。原因：根因往往有多种修法，影响面 / 副作用 / 改动范围各不相同，这是用户该拍板的事。
+After analyzing, do not go straight into the fix. Show the user 2-3 repair options and let them choose. Reason: there are often multiple possible ways to fix a root cause, each with different blast radius, side effects, and scope. That is the user's call.
 
-> 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md` 第 0 节和 `bt-issue` 的"文件放哪儿"。
-
----
-
-## 启动检查
-
-1. **问题报告存在且已确认**——读 `{slug}-report.md`，确认 `doc_type=issue-report` 且 `status=confirmed`，5 节都有内容。不完整 / 状态不对 → 回 `bt-issue-report`。`bt-issue-report` 已判走标准路径就按标准路径走，不二次改判
-2. **断点恢复**——`{slug}-analysis.md` 已存在则检查 5 节哪些已填：
-   - 全部填满但 `status=draft` → 跳到 checkpoint
-   - 部分填写 → 汇报"上次做到第 X 步，从第 Y 步继续"
-3. **把上下文读全**：
-   - 问题报告全文 + `.bytetrue/attention.md`
-   - 报告里提到的相关文件（用 Glob / Grep 找别只凭描述）
-   - **扫 .bytetrue/ 全局**——Glob `.bytetrue/` 发现可用输入，按需取用：`architecture/`（涉及跨模块时读 ARCHITECTURE.md）、`compound/`（用 search-yaml.py 搜相关 trick / explore / learning，命中在分析开头标注引用）、`requirements/`（涉及能力边界时读）
+> For shared paths and naming conventions, see section 0 of `.bytetrue/reference/shared-conventions.md` and the "where the files go" section in `bt-issue`.
 
 ---
 
-## 分析的五步
+## Startup Checks
 
-每步都要**真正读代码**不要靠推测。
-
-### 复杂 bug 诊断增强（按需触发）
-
-以下情况触发 Matt `diagnose` 的增强纪律；简单 bug / 快速通道不强制套用：
-
-- 根因不明或有多个候选根因。
-- 复现不稳定、并发 / timing / flaky 相关。
-- 性能回退或资源泄漏。
-- 修复一次后验证未生效。
-- 需要日志、debugger、profiler、query plan 才能判断。
-
-触发后在分析里额外记录：
-
-1. **feedback loop**：有没有一个可重复运行的失败信号？命令、复现步骤、测试、日志断言都可以。没有稳定复现时，目标是提高复现率，而不是假装已经稳定。
-2. **ranked hypotheses**：列 2-5 个根因假设，按可能性排序；每个假设必须写“如何证伪 / 需要什么证据”。
-3. **instrumentation plan**：需要打点时写打点位置、唯一前缀（如 `[DEBUG-{slug}]`）、清理方式；性能问题优先 baseline / profiler / query plan，不靠日志猜。
-4. **regression seam**：如果修复后能写 regression test，先指出最高层行为 seam；没有合适 seam 时记录原因，并可建议后续 `bt-refactor` / `bt-arch`。
-
-### 步骤 1：定位问题代码
-
-按报告"涉及模块 / 复现步骤"用 Grep / Glob 找：搜函数名 / 类名 / 文件名；沿调用链追溯（用户入口往下找）；重点看条件分支 / 边界值 / 状态更新 / 异步 / 数据流转。
-
-记关键位置：`{文件}:{行号} — {这里干什么}`。
-
-### 步骤 2：还原失败路径
-
-对照复现步骤把代码执行路径走一遍：用户触发什么 → 调哪个函数 → 数据怎么流 → 哪里分叉走错。描述"正常路径"和"失败路径"的分叉点。**分叉点 = 根因候选**。
-
-### 步骤 3：确认根因
-
-单一 vs 多个根因；多个根因列出主次。复杂 bug 要先列 ranked hypotheses，并用证据逐个证伪 / 支持，不能从第一个猜测直接跳到修复方案。
-
-**根因分类**：
-- 逻辑错误（条件判断 / 边界值缺失）
-- 状态污染（副作用影响后续流程）
-- 数据格式（输入 / 输出格式假设不符实际）
-- 并发 / 竞态（异步顺序 / 共享状态）
-- 配置 / 环境（依赖未稳定的配置）
-- 缺少防御（没处理 null / undefined / 空列表等边界）
-
-### 步骤 4：影响面评估
-
-- **影响范围**：只影响报告场景，还是更多场景？
-- **潜在受害者**：哪些其他功能 / 模块可能被同一根因波及？
-- **数据完整性**：会不会导致数据损坏或状态不一致？
-- **严重程度复核**：和报告 P0/P1/P2/P3 对比是否需要调整？
-
-为什么复核：report 阶段给的是基于现象的判断，分析后看到了影响面——往往发现问题比看上去严重或没那么严重。
-
-### 步骤 5：修复方案选项
-
-列 2-3 种方向，每种说明：做什么（改哪里、怎么改）/ 优点 / 缺点和风险 / 影响面（会动哪些文件、影响其他功能吗）。
-
-**推荐方案**：在 2-3 种里挑一种说明理由（通常：改动范围最小 + 根因最直接 + 副作用最少）。
+1. **The issue report exists and has been confirmed** — read `{slug}-report.md`, confirm `doc_type=issue-report` and `status=confirmed`, and confirm all five sections are filled. If incomplete or the status is wrong, return to `bt-issue-report`. If `bt-issue-report` has already classified this as the standard path, stay on the standard path and do not reclassify
+2. **Resume support** — if `{slug}-analysis.md` already exists, inspect which of the 5 sections are already filled:
+   - if all are filled but `status=draft`, jump to checkpoint
+   - if only some are filled, report "last time we got to step X, resuming from step Y"
+3. **Read the full context**:
+   - the full issue report and `.bytetrue/attention.md`
+   - the related files mentioned in the report, using Glob and Grep, not just the verbal description
+   - **scan `.bytetrue/` globally** — Glob `.bytetrue/`, discover available inputs, and read as needed: `architecture/`, read `ARCHITECTURE.md` when cross-module behavior is involved; `compound/`, search relevant trick, explore, and learning using `search-yaml.py`, and cite the hit at the beginning of the analysis; `requirements/`, read it when capability boundaries are involved
 
 ---
 
-## 根因分析模板
+## The Five Analysis Steps
+
+Every step must involve **actually reading code** rather than relying on speculation.
+
+### Enhanced discipline for complex bug diagnosis, trigger as needed
+
+Trigger the enhanced `diagnose` discipline from Matt in any of the following cases. Do not force it for simple bugs or fast-path issues:
+
+- the root cause is unclear or there are multiple candidate root causes
+- reproduction is unstable, concurrent, timing-related, or flaky
+- the issue is a performance regression or a resource leak
+- a first fix attempt has already failed to solve it
+- logs, debugger, profiler, or query plan are needed to decide
+
+When triggered, additionally record the following in the analysis:
+
+1. **feedback loop** — is there a repeatable failure signal? A command, reproduction step, test, or log assertion all count. If reproduction is not stable, the goal is to increase the reproduction rate, not to pretend it is already stable
+2. **ranked hypotheses** — list 2-5 root-cause hypotheses ranked by likelihood; for each one, write how it would be falsified and what evidence is needed
+3. **instrumentation plan** — if instrumentation is needed, write the instrumentation points, the unique prefix, such as `[DEBUG-{slug}]`, and the cleanup method; for performance issues, baseline, profiler, or query plan come first, not logging-based guessing
+4. **regression seam** — if a regression test can be written after the fix, identify the highest behavior seam first; if no suitable seam exists, record why, and optionally recommend later `bt-refactor` or `bt-arch`
+
+### Step 1: Locate the problem code
+
+Following the report's involved modules and reproduction steps, use Grep and Glob to search: function names, class names, file names; then trace along the call chain, from user entry downward; focus on condition branches, boundary values, state updates, async behavior, and data flow.
+
+Record key positions in the form: `{file}:{line} — what this location does`.
+
+### Step 2: Reconstruct the failure path
+
+Follow the code execution path against the reproduction steps: what the user triggers → which function gets called → how data flows → where the branch goes wrong. Describe the split between the normal path and the failure path. **That split point is the root-cause candidate.**
+
+### Step 3: Confirm the root cause
+
+Single root cause versus multiple root causes. If there are multiple, list the primary and secondary causes. For complex bugs, first list ranked hypotheses and then falsify or support them one by one with evidence. Do not jump from the first guess directly to a repair plan.
+
+**Root-cause categories**:
+- logic error, such as wrong condition or missing boundary case
+- state pollution, side effects affecting later flow
+- data format mismatch, assumptions about input or output not matching reality
+- concurrency or race condition, async order or shared state
+- config or environment issue, unstable or wrong dependency configuration
+- missing guard, such as not handling null, undefined, or empty lists
+
+### Step 4: Assess the impact surface
+
+- **impact scope**: does it affect only the reported scenario, or more scenarios?
+- **potential victims**: which other functions or modules may be affected by the same root cause?
+- **data integrity**: can it cause data corruption or state inconsistency?
+- **severity re-evaluation**: compared with the P0/P1/P2/P3 in the report, should it change?
+
+Why re-evaluate: the report's severity is based on symptoms. After analysis you can see the actual impact surface, and often discover that the problem is either more serious or less serious than it first appeared.
+
+### Step 5: Repair options
+
+List 2-3 directions. For each one, explain: what it does, where it changes, and how; the advantages; the disadvantages and risks; and the impact surface, meaning which files would move and whether it affects other behavior.
+
+**Recommended option**: pick one out of the 2-3 and explain why. Usually the reason is the smallest scope, the most direct hit on the root cause, and the fewest side effects.
+
+---
+
+## Root-Cause Analysis Template
 
 ```markdown
 ---
 doc_type: issue-analysis
-issue: {issue 目录名}
+issue: {issue directory name}
 status: draft
 root_cause_type: logic | state-pollution | data-format | concurrency | config | missing-guard
-related: [{slug-report.md 相对路径}]
+related: [{relative path to slug-report.md}]
 tags: []
 ---
 
-# {问题简述} 根因分析
+# {Short Problem Description} Root-Cause Analysis
 
-## 1. 问题定位
+## 1. Problem Location
 
-| 关键位置 | 说明 |
+| Key Location | Description |
 |---|---|
-| `{文件}:{行号}` | {干什么，为什么有问题} |
+| `{file}:{line}` | {what it does, and why it is problematic} |
 
-## 2. 失败路径还原
+## 2. Failure-Path Reconstruction
 
-**正常路径**：{用户做 A → 调用 B → 数据经过 C → 结果 D（符合期望）}
+**Normal path**: {user does A → calls B → data flows through C → result D, matching expectation}
 
-**失败路径**：{用户做 A → 调用 B → 在 C 处因为 E 走了错误分支 → 结果 F（不符合期望）}
+**Failure path**: {user does A → calls B → at C, because of E, enters the wrong branch → result F, not matching expectation}
 
-**分叉点**：`{文件}:{行号}` — {为什么这里走错}
+**Split point**: `{file}:{line}` — why this is the wrong turn
 
-## 3. 根因
+## 3. Root Cause
 
-**根因类型**：{...}
+**Root-cause type**: {...}
 
-**根因描述**：{一段话说清为什么会发生，要能让没看过代码的人理解}
+**Root-cause description**: {one paragraph explaining clearly why it happens, so that even someone who has not read the code can understand it}
 
-**是否有多个根因**：{是 / 否。是的话列出主次}
+**Are there multiple root causes?**: {yes / no. If yes, list the primary and secondary ones}
 
-**复杂 bug 诊断记录**（未触发则写“未触发：根因明确 / 快速通道不适用”）：
+**Complex bug diagnosis record**, write "not triggered: root cause is already clear / fast path does not apply" when not triggered:
 
-- **feedback loop**：{可重复失败信号 / 提高复现率的方法 / 暂无稳定 loop 的原因}
-- **ranked hypotheses**：
-  1. {假设 A} — 证据：{...}；证伪方式：{...}
-  2. {假设 B} — 证据：{...}；证伪方式：{...}
-- **instrumentation / measurement**：{日志前缀 / debugger / profiler / query plan / 清理计划}
-- **regression seam**：{最高层行为 seam / 无 seam 原因}
+- **feedback loop**: {repeatable failure signal / how reproduction rate was improved / why there is not yet a stable loop}
+- **ranked hypotheses**:
+  1. {hypothesis A} — evidence: {...}; falsification method: {...}
+  2. {hypothesis B} — evidence: {...}; falsification method: {...}
+- **instrumentation / measurement**: {log prefix / debugger / profiler / query plan / cleanup plan}
+- **regression seam**: {highest behavior seam / reason no seam exists}
 
-## 4. 影响面
+## 4. Impact Surface
 
-- **影响范围**：{只影响报告场景 / 还会影响 X、Y、Z}
-- **潜在受害模块**：{列出可能被波及的}
-- **数据完整性风险**：{有 / 无。有的话说明}
-- **严重程度复核**：{维持 P? / 调整为 P?，理由}
+- **impact scope**: {affects only the reported scenario / also affects X, Y, Z}
+- **potential victim modules**: {list the ones that may be affected}
+- **data-integrity risk**: {yes / no. Explain if yes}
+- **severity re-evaluation**: {keep at P? / change to P?, with reason}
 
-## 5. 修复方案
+## 5. Repair Options
 
-### 方案 A：{方案名}
-- **做什么**：{改哪里、怎么改}
-- **优点**：{...}
-- **缺点 / 风险**：{...}
-- **影响面**：{会动哪些文件，会影响其他功能吗}
+### Option A: {option name}
+- **what it does**: {where to change, and how}
+- **advantages**: {...}
+- **disadvantages / risks**: {...}
+- **impact surface**: {which files move, and whether other functions are affected}
 
-### 方案 B：{方案名}
+### Option B: {option name}
 - ...
 
-### 推荐方案
+### Recommended Option
 
-**推荐方案 {A / B}**，理由：{改动范围最小 / 根因最直接 / 副作用最少 + 具体说明}
+**Recommend option {A / B}**, because {smallest change scope / most direct hit on the root cause / fewest side effects + concrete explanation}
 ```
 
 ---
 
-## checkpoint：和用户对齐
+## Checkpoint, Align with the User
 
-写完后**别直接开始修**：
+After writing, **do not start fixing immediately**:
 
-1. 把"根因"和"推荐方案"口头总结给用户（不让用户读整份文件——TA 在等结论）
-2. 问"根因判断是否准确？推荐方案你认可，还是想选别的？"
-3. 用户明确确认方案后才触发阶段 3
-
----
-
-## 退出条件
-
-- [ ] frontmatter 存在（`doc_type=issue-analysis` / `issue` 一致）
-- [ ] 5 节都填完
-- [ ] 定位到具体代码位置（`{文件}:{行号}`）
-- [ ] 失败路径还原清晰
-- [ ] 影响面评估完成
-- [ ] 至少 2 种修复方案 + 推荐
-- [ ] 复杂 bug 已记录 feedback loop / hypotheses / instrumentation / regression seam，或明确说明未触发
-- [ ] 用户明确确认"分析准确，用方案 X 修"
-- [ ] frontmatter `status: confirmed`
+1. summarize the "root cause" and the "recommended option" orally to the user, without making them read the whole file, because what they are waiting for is the conclusion
+2. ask: "Is the root-cause judgment accurate? Do you agree with the recommended option, or do you want a different one?"
+3. only after the user explicitly confirms the option may stage 3 be triggered
 
 ---
 
-## 退出后
+## Exit Conditions
 
-告诉用户："根因分析已就绪，方案已确认。下一步阶段 3 修复验证，触发 `bt-issue-fix`。"
-
-别自己顺手改代码——跨阶段无停顿往下跑会让用户来不及把关。
+- [ ] frontmatter exists, including matching `doc_type=issue-analysis` and `issue`
+- [ ] all 5 sections are filled
+- [ ] a concrete code location was identified, `file:line`
+- [ ] the failure path is reconstructed clearly
+- [ ] the impact-surface assessment is complete
+- [ ] at least 2 repair options plus a recommendation are present
+- [ ] for complex bugs, feedback loop, hypotheses, instrumentation, and regression seam were recorded, or the reason it was not triggered is explicit
+- [ ] the user explicitly confirmed "the analysis is accurate; fix it using option X"
+- [ ] frontmatter is `status: confirmed`
 
 ---
 
-## 容易踩的坑
+## After Exit
 
-- 根因写"可能是某处的问题"——必须定位到 file:line
-- 没读代码就靠问题描述推断——一定要实际 Grep / Read
-- 只列一种修复方案——至少两种
-- 分析完直接开始改代码——必须等用户确认
-- 影响面写"可能影响其他功能"——要具体说哪些
-- 严重程度复核总是"维持"——认真看影响面，升级的要改
-- 复杂 bug 没有 feedback loop 就开始猜修——先构造失败信号，非确定性 bug 至少要提高复现率
-- 列了多个假设但没有证伪方式——这还是猜测，不是诊断
-- 打临时日志没有唯一前缀和清理计划——后续很容易把 debug 垃圾提交进去
+Tell the user: "The root-cause analysis is ready, and the option is confirmed. Stage 3 is fix verification. Trigger `bt-issue-fix` next."
+
+Do not casually start changing code yourself. If there is no pause between stages, the user loses the chance to review.
+
+---
+
+## Easy Pitfalls
+
+- writing "it may be some issue around here" as the root cause — it must locate to `file:line`
+- inferring only from the problem statement without reading code — you must actually Grep and Read
+- listing only one repair option — there must be at least two
+- starting to change code immediately after analysis — user confirmation is required first
+- saying only "it may affect other functions" for impact surface — specify which ones
+- always re-evaluating severity to "unchanged" — actually inspect the impact surface; upgrade it when appropriate
+- for complex bugs, guessing a fix without any feedback loop — first build a failure signal; for nondeterministic bugs, at least improve the reproduction rate
+- listing multiple hypotheses without any falsification method — that is still guessing, not diagnosis
+- adding temporary logs without a unique prefix or cleanup plan — debug garbage gets committed easily later

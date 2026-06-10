@@ -1,164 +1,164 @@
-# scan 清单条目格式
+# Scan Checklist Item Format
 
-scan 产出要被用户 30 秒扫一条决定 yes/no——字段固定、顺序固定、可写什么不可写什么有硬约束。
+The user should be able to scan each item in 30 seconds and decide yes or no. That requires fixed fields, fixed order, and hard constraints on what may and may not be written.
 
 ---
 
-## `{slug}-scan.md` 文件骨架
+## `{slug}-scan.md` file skeleton
 
 ```markdown
 ---
 doc_type: refactor-scan
 refactor: {YYYY-MM-DD}-{slug}
 status: pending-user-selection | user-reviewed
-scope: {扫描范围一句话，含文件/目录列表}
-summary: {发现多少条，按分类分布}
+scope: {one-line scan scope, including files or directories}
+summary: {how many findings were found, and how they distribute by category}
 ---
 
 # {slug} scan
 
-## 总览
+## Overview
 
-- 扫描范围：{文件/目录}
-- 发现 N 条优化点：结构 a / 性能 b / 可读性 c
-- 按风险：低 x / 中 y / 高 z
-- 建议先做：#A #B #C（低风险、独立、AI 可自证）
-- 建议慎做 / 后做：#D（高风险、触发渲染路径变化、需人工目视）
-- 前置检查 7 条全过：✓
+- Scope scanned: {files / directories}
+- Found N optimization points: structure a / performance b / readability c
+- By risk: low x / medium y / high z
+- Recommended to do first: #A #B #C, low risk, independent, and AI can self-prove
+- Recommended to do carefully or later: #D, high risk, changes render path, or needs human eyes
+- All 7 pre-checks passed: ✓
 
-## 条目
+## Items
 
-[一条一块，格式见下节]
+[one block per item, following the format below]
 ```
 
-用户勾选方式：在每条标题行末尾加 `✓` 或 `✗`（✗ 后面跟一行理由）。AI 不替用户勾选。
+The user marks each item by adding `✓` or `✗` at the end of the item title line, with a reason line after `✗`. The AI never checks items off on the user's behalf.
 
 ---
 
-## 单条字段顺序和格式
+## Field order and format for a single item
 
 ```markdown
-### [编号] {一句话标题}   ← 用户在这行末尾标 ✓ 或 ✗
+### [number] {one-line title}   ← the user adds ✓ or ✗ at the end of this line
 
-- **位置**：`src/xxx.vue:120-180`（可点开）
-- **分类**：结构 / 性能 / 可读性（三选一，不叠加）
-- **现状**：一句话白描现在怎么写的，必要时贴 ≤5 行原代码
-- **问题**：为什么值得改——可度量的东西（圈复杂度、重复次数、渲染次数、行数、依赖方向）
-- **建议**：动词开头，说清改成什么样
-- **建议映射的方法**：M-Ln-NN（引用 methods.md 里的方法号）
-- **风险**：低 / 中 / 高 + 一句话为什么
-- **验证**：AI 自证（跑哪个测试/类型检查）｜ HUMAN（人要看什么页面/操作什么）
-- **范围**：约 N 行 / M 文件
+- **Location**: `src/xxx.vue:120-180`, clickable
+- **Category**: structure / performance / readability, exactly one, not multiple
+- **Current state**: one-sentence plain description of how it is written now; if needed, include at most 5 lines of original code
+- **Problem**: why it is worth changing — this must be measurable, cyclomatic complexity, repetition count, render count, line count, dependency direction
+- **Suggestion**: starts with a verb, and says clearly what shape it should be changed into
+- **Suggested mapped method**: M-Ln-NN, citing the method ID from methods.md
+- **Risk**: low / medium / high, plus one sentence of why
+- **Verification**: AI self-proof, which tests or typecheck to run, | HUMAN, which page to inspect or what operation to perform
+- **Scope**: about N lines / M files
 ```
 
-### 字段顺序的理由
+### Why the field order is this way
 
-位置 → 分类 → 现状 → 问题 → 建议 → 方法 → 风险 → 验证 → 范围。对应人类决策流：**在哪 → 是啥类型 → 现在怎样 → 为什么要动 → 怎么动 → 套哪个方法 → 多大代价 → 怎么验 → 工作量**。换顺序会让读者多次折返。
+Location → category → current state → problem → suggestion → method → risk → verification → scope. This matches human decision flow: **where is it → what kind of thing is it → what does it look like now → why touch it → how to change it → which method applies → what does it cost → how is it verified → how much work is it**. Changing the order forces the reader to bounce back and forth.
 
-### 标题写作约束
+### Title writing constraints
 
-- ≤ 25 字，名词短语或动词短语，说**动什么**不说**好在哪**
-- ✓ "把 handleData 的 3 层嵌套 filter 换成单次 reduce"
-- ✗ "优化数据处理逻辑"（没说动什么）/ "提升 handleData 的可读性和性能"（说的是好处不是动作）
+- 25 characters or fewer, as a noun phrase or verb phrase, saying **what gets changed**, not **why it is good**
+- ✓ "Replace the 3-layer nested filter inside handleData with one reduce"
+- ✗ "Optimize data-processing logic", it never says what gets touched; or "Improve readability and performance of handleData", which states benefits instead of action
 
 ---
 
-## 硬约束
+## Hard constraints
 
-AI 生成条目必须守，违反要自我纠正重写。
+The AI must obey these when generating items. If any one is violated, the item must be rewritten.
 
-### 约束 1：问题字段不允许纯形容词
+### Constraint 1: the problem field may not be pure adjectives
 
-"太长 / 太乱 / 不优雅 / 耦合严重 / 难以维护"都要被拒绝。必须落到可度量的东西：行数 / 圈复杂度（> 10）/ 嵌套深度（> 3）/ 重复次数（同一数组遍历 N 次）/ 依赖方向（A 依赖 B 内部实现）/ 具体性能指标（N+1 查询 / 每次渲染重建 / 没有清理）。
+"too long", "too messy", "not elegant", "highly coupled", and "hard to maintain" are all rejected. The problem must be expressed through measurable signals: line count, cyclomatic complexity above 10, nesting depth above 3, repetition count, the same array traversed N times, dependency direction, or concrete performance indicators such as N+1 queries, rebuild on every render, or missing cleanup.
 
-### 约束 2：建议字段不允许开放式
+### Constraint 2: the suggestion field may not be open-ended
 
-不能写"考虑重构这块 / 建议整理一下 / 优化一下结构"。要写出具体动作：
+Do not write "consider refactoring this", "suggest tidying this up", or "optimize the structure a bit". It must state a concrete action:
 
-- ✓ "抽成 useFormValidation composable，参数是 schema + initialValues，返回 errors + validate"
-- ✗ "提取公共逻辑"（提到哪？什么公共？）/ "使用更好的模式"（哪个？）
+- ✓ "Extract this into a `useFormValidation` composable, parameterized by schema + initialValues, returning errors + validate"
+- ✗ "Extract common logic", common in what sense and to where; or "use a better pattern", which pattern?
 
-### 约束 3：一条只做一件事
+### Constraint 3: one item does exactly one thing
 
-不能"拆成 composable 顺便把命名改一下"——命名是另一条。一个条目对应一个原子动作。
+Do not write "split into a composable and also improve naming". Naming is another item, and is usually just a preference issue and should be removed entirely.
 
-### 约束 4：同一位置最多出现在 3 条里
+### Constraint 4: the same location may appear in at most 3 items
 
-同一文件 / 函数出现在 4 条以上 → 这块应该整体设计而不是列清单改。退回前置检查触发"范围太大"或"架构问题"路由。
+If the same file or function appears in 4 or more items, that area needs an overall redesign rather than a checklist of small fixes. Route back into the pre-checks and trigger either "scope too large" or "architecture problem".
 
-### 约束 5：不列口味项
+### Constraint 5: do not include preference-only items
 
-箭头函数 vs function / 单引号 vs 双引号 / 命名风格 / 代码顺序 / import 顺序——一律不进清单。
+Arrow function vs function, single quotes vs double quotes, naming taste, code order, import order — none of these belong in the checklist.
 
-例外：项目已有 decision 明确要求且代码违反——这种"问题"字段要引用 decision 编号。
+The only exception is when the project already has an explicit decision that forbids or requires a style and the code violates it. In that case, the problem field must cite the decision ID.
 
-### 约束 6：每条必须映射到方法库
+### Constraint 6: every item must map to the method library
 
-"建议映射的方法"写不出 M-Ln-NN → 建议过于模糊重写到能对应某个方法。映射不上的不准进清单。
-
----
-
-## 总览段的硬约束
-
-顶部总览必须包含：扫描范围（具体文件 / 目录）+ 总条数和分类分布 + 风险分布 + 建议先做 3-5 条 + 建议慎做 / 后做 + 前置检查 7 条是否全过。
-
-让用户**不读全清单也能判断方向**。写不出"建议先做哪几条"说明风险排序没想清楚，回炉。
+If you cannot write a valid M-Ln-NN under "suggested mapped method", then the suggestion is still too vague and must be rewritten until it matches a concrete method. Anything that cannot be mapped is not allowed into the checklist.
 
 ---
 
-## 反模式样本
+## Hard constraints for the overview section
 
-写进 SKILL.md 的 AI 一眼就能对照检查。
+The top overview must include: the scan scope, concrete files or directories, the total count plus category distribution, the risk distribution, the 3-5 items recommended first, the ones that should be done carefully or later, and whether all 7 pre-checks passed.
 
-### ❌ 反模式 1：形容词堆砌
-
-```
-### #3 优化数据处理逻辑
-- 位置：src/utils/data.ts
-- 分类：可读性
-- 现状：handleData 函数处理用户数据
-- 问题：代码可以更清晰
-- 建议：重构 handleData 函数
-- 建议映射的方法：（无）
-- 风险：低
-- 验证：AI 自证
-- 范围：约 50 行
-```
-
-问题：标题没说动什么；问题字段纯形容词；建议字段开放式；没方法号。
-
-### ✅ 重写后
-
-```
-### #3 把 handleData 里的 3 层嵌套 filter 换成单次 reduce
-- 位置：src/utils/data.ts:45-80
-- 分类：性能
-- 现状：handleData 对同一数组依次调用 filter → map → filter，长度 5000 的输入要遍历 3 次
-- 问题：同数组被遍历 3 次（O(3n) 可降到 O(n)）；嵌套深度 3，圈复杂度 8
-- 建议：合并为一次 reduce，累加器里同时做筛选和转换，保持现有输出结构
-- 建议映射的方法：M-L2-03（提取/合并遍历）
-- 风险：低（纯局部改动，有 5 个单元测试覆盖输入输出）
-- 验证：AI 自证（跑 data.test.ts；benchmark 对比前后耗时）
-- 范围：约 35 行 / 1 文件
-```
-
-### ❌ 反模式 2：多件事塞一条
-
-```
-### #7 拆分 UserForm 组件并改进命名
-```
-
-应拆成至少两条：一条"拆分 UserForm 组件"，一条"重命名 XXX"（而命名改动大概率是口味项，应整个去掉）。
-
-### ❌ 反模式 3：同一位置反复出现
-
-如果 #3 #5 #8 #11 都指向 `src/UserForm.vue`，说明这块应该整体重设计，而不是散成 4 条小改动。应退回前置检查的第 3 条（跨模块 / 整体架构问题）或第 6 条（范围过大）。
+The user should be able to **judge the direction even without reading the full checklist**. If the AI cannot say "which items should go first", that means the risk ranking was never actually thought through, and the scan should be revised.
 
 ---
 
-## 用户勾选后的状态迁移
+## Anti-pattern examples
 
-- 用户勾选完 → status 改为 `user-reviewed`
-- 被 ✗ 的条目**保留在文件里**（不要删），留痕"当时考虑过但不做"
-- 被 ✓ 的条目就是阶段 2 design 的输入
-- 全被 ✗ → 本次 refactor 终止，不进 design
+This section exists so the AI can compare itself against obvious failures.
+
+### ❌ Anti-pattern 1: adjective pile
+
+```text
+### #3 Optimize data-processing logic
+- Location: src/utils/data.ts
+- Category: readability
+- Current state: handleData processes user data
+- Problem: the code could be clearer
+- Suggestion: refactor the handleData function
+- Suggested mapped method: none
+- Risk: low
+- Verification: AI self-proof
+- Scope: about 50 lines
+```
+
+What is wrong: the title never says what changes; the problem field is only adjectives; the suggestion field is open-ended; and there is no method ID.
+
+### ✅ Rewritten version
+
+```text
+### #3 Replace the 3-layer nested filter inside handleData with a single reduce
+- Location: src/utils/data.ts:45-80
+- Category: performance
+- Current state: handleData calls filter → map → filter over the same array, causing 3 passes for a 5000-item input
+- Problem: the same array is traversed 3 times, O(3n) that can be reduced to O(n); nesting depth 3, cyclomatic complexity 8
+- Suggestion: merge the work into one reduce, performing both filtering and transformation inside the accumulator while keeping the current output structure
+- Suggested mapped method: M-L2-03, extract / merge traversal
+- Risk: low, pure local change, covered by 5 unit tests for input and output
+- Verification: AI self-proof, run data.test.ts and benchmark before and after
+- Scope: about 35 lines / 1 file
+```
+
+### ❌ Anti-pattern 2: stuffing multiple actions into one item
+
+```text
+### #7 Split UserForm and improve naming
+```
+
+This should become at least two separate items: one for splitting `UserForm`, and one for renaming. The naming item is usually pure preference and should probably be removed.
+
+### ❌ Anti-pattern 3: the same location appears over and over
+
+If #3, #5, #8, and #11 all point to `src/UserForm.vue`, then this area needs an overall design, not four independent checklist items. It should route back into pre-check #3, cross-module or architecture issue, or pre-check #6, scope too large.
+
+---
+
+## State transition after user selection
+
+- once the user finishes marking items, the file status changes to `user-reviewed`
+- items marked ✗ **remain in the file**, they are not deleted, so the record shows that they were considered and intentionally rejected
+- items marked ✓ become the input to stage 2 design
+- if every item is ✗, the refactor ends here and does not proceed into design

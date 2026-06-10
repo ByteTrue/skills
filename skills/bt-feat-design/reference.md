@@ -1,256 +1,256 @@
-# feature-design 参考模板
+# feature-design reference templates
 
-本文件提供 `bt-feat-design` 使用的 `{slug}-design.md` / `{slug}-checklist.yaml` 参考格式。
+This file provides the reference formats for `{slug}-design.md` and `{slug}-checklist.yaml` used by `bt-feat-design`.
 
-## 1. {slug}-design.md frontmatter
+## 1. `{slug}-design.md` frontmatter
 
 ```markdown
 ---
 doc_type: feature-design
 feature: 2026-04-12-user-auth
 requirement: user-auth-email
-roadmap: permission-system           # 可选：本 feature 从某 roadmap 条目起头时填
-roadmap_item: permission-rbac-core   # 可选：对应 roadmap items.yaml 里的 slug
+roadmap: permission-system           # optional, fill only when this feature starts from a roadmap item
+roadmap_item: permission-rbac-core   # optional, the slug in the corresponding roadmap items.yaml
 status: draft
-summary: 支持用户通过邮箱验证码登录后台
+summary: Support users logging into the admin console via email verification code
 tags: [auth, email, login]
 ---
 ```
 
-必填：`doc_type` / `feature` / `status` / `summary` / `tags`。
+Required fields: `doc_type`, `feature`, `status`, `summary`, and `tags`.
 
-- `requirement`：填对应 req 的 slug；纯重构 / 技术债允许留空
-- `roadmap` / `roadmap_item`：从 roadmap 条目起头时才填，两个一起填或一起空
+- `requirement`: fill in the corresponding req slug; pure refactor or technical debt may leave it empty
+- `roadmap` and `roadmap_item`: fill them only when starting from a roadmap item; either both filled or both empty
 
-## 2. 顶层节锚点
+## 2. Top-level section anchors
 
-- `## 0. 术语约定`
-- `## 1. 决策与约束`
-- `## 2. 名词与编排` ← design 的灵魂，是 implement 的主输入
-  - `### 2.1 名词层`
-  - `### 2.2 编排层`
-  - `### 2.3 挂载点清单`
-  - `### 2.4 推进策略`
-  - `### 2.5 结构健康度与微重构` ← 固定节，结论二选一 + 可选"超出范围的观察"
-- `## 3. 验收契约`
-- `### 3.1 测试 seam / TDD 规划`（可选但要显式判断）
-- `## 4. 与项目级架构文档的关系`
+- `## 0. Terminology`
+- `## 1. Decisions and Constraints`
+- `## 2. Terms and Orchestration` ← the soul of the design, and the main input for implement
+  - `### 2.1 Term Layer`
+  - `### 2.2 Orchestration Layer`
+  - `### 2.3 Mount-Point Inventory`
+  - `### 2.4 Rollout Strategy`
+  - `### 2.5 Structural Health and Micro-refactor` ← fixed section, explicit conclusion plus optional "observations beyond scope"
+- `## 3. Acceptance Contract`
+- `### 3.1 Test Seam / TDD Plan` optional, but the judgment must be explicit
+- `## 4. Relationship with Project-Level Architecture Docs`
 
-## 3. {slug}-checklist.yaml 格式
+## 3. `{slug}-checklist.yaml` format
 
 ```yaml
-feature: {feature 目录名}
+feature: {feature directory name}
 created: YYYY-MM-DD
 
 steps:
-  - action: "{paradigm 维度的切片}：{动作描述}"
-    exit_signal: "{退出信号，可独立验证}"
+  - action: "{paradigm-dimension slice}: {action description}"
+    exit_signal: "{exit signal, independently verifiable}"
     status: pending
 
 checks:
-  - item: "{检查项描述}"
-    source: 名词契约 | 编排骨架 | 流程级约束 | 挂载点 | 范围守护 | 验收场景
+  - item: "{check item description}"
+    source: term-contract | orchestration-skeleton | flow-level-constraint | mount-point | scope-guard | acceptance-scenario
     status: pending
 ```
 
-`steps`（design 阶段产出）：
+`steps`, produced during design:
 
-- 粒度是 paradigm 维度，**不写 file:line / 函数级**——具体落点是 implement 的事
-- 切片顺序"最简 Workflow 先行 → 逐个节点填充"：
-  - 后端：编排骨架（空实现跑通）→ 计算节点逐个填 → 接通加载/持久化 → 测试覆盖
-  - 前端：静态结构 → 交互逻辑 → 状态接入 → 联调 / 样式收尾
-- 4-8 步；每步必须有可独立验证的退出信号
-- 第 2.5 节结论是"微重构"时，**第 1 步固定是"按第 2.5 节方案做微重构（只搬不改行为）"**，独立退出信号（如"全部测试通过 + 编译绿灯 + 行为相关 diff 为零"），跑通后再进 feature 主体步骤
+- grain is at the paradigm dimension, **not file:line or function level**; concrete file touchpoints are implement's job
+- slice order follows "minimal workflow first, then fill nodes one by one":
+  - backend: orchestration skeleton, empty implementation runs through → fill computation nodes one by one → connect loading and persistence → add test coverage
+  - frontend: static structure → interaction logic → state integration → integration and style finish
+- 4-8 steps, each with an independently verifiable exit signal
+- when section 2.5 concludes "micro-refactor", **step 1 is fixed as "perform the micro-refactor according to section 2.5, move only, no behavior change"**, with an independent exit signal such as "all tests pass, build is green, and there is zero behavior-related diff", then only after it passes do you proceed to the feature body
 
-`checks`（design 阶段产出，提取来源）：
+`checks`, produced during design, extracted from the design itself:
 
-- 名词契约 ← 第 2.1 节关键接口签名
-- 编排骨架 / 流程级约束 ← 第 2.2 节主流程关键步骤、流程级约束
-- 挂载点 ← 第 2.3 节每个挂入点（acceptance 反向核对可卸载性）
-- 范围守护 ← 第 1 节"明确不做"每条
-- 验收场景 ← 第 3 节"关键场景清单"每条
-- 测试 seam / TDD 规划 ← 第 3.1 节最高层行为 seam、优先 red/green 行为、手工验证项
+- term contracts ← key interface signatures in section 2.1
+- orchestration skeleton and flow-level constraints ← the key flow steps and flow-level constraints in section 2.2
+- mount points ← each mount point in section 2.3, acceptance will reverse-check removability
+- scope guard ← each non-goal in section 1
+- acceptance scenarios ← each key scenario in section 3
+- test seam / TDD plan ← highest behavior seam, priority red/green behaviors, and manual verification items in section 3.1
 
-不允许编造 design 里不存在的条目。
+It is not allowed to invent entries that do not exist in the design.
 
-## 4. 各节写作要求
+## 4. Writing requirements for each section
 
-### `## 0. 术语约定`
+### `## 0. Terminology`
 
-每个关键术语写"术语 / 定义 / 防冲突结论"。必须做 grep 防冲突。
+Each key term should include "term / definition / anti-conflict conclusion". Grep-based conflict prevention is mandatory.
 
-### `## 1. 决策与约束`
+### `## 1. Decisions and Constraints`
 
-design 的"是什么 / 为什么"——不写实现细节，不写挂载点（挂载点归第 2 节）。
+This is the design's "what it is / why" section. Do not write implementation details here, and do not write mount points here; mount points belong to section 2.
 
-- **需求摘要**：做什么、为谁、成功标准、明确不做什么
-- **复杂度档位**：只记偏离默认组合的维度（默认组合在 `.bytetrue/reference/code-dimensions.md` 末尾"常用默认组合"表）。格式：`{维度名} = {档位}（偏离默认 {默认档位} 的原因：……）`。全部走默认写一句"走 {场景} 默认档位，无偏离"
-- **关键决策**：选型 / 取舍 / 硬约束 / 被拒方案。每条决策必须能回答"换另一种做法名词层或编排层会怎么不同"——否则不是设计决策，是实现细节
-- **前置依赖**：仅在 implement 阶段评估出"目标文件结构性问题需要先解决"、回头改 design 时填
+- **Requirement summary**: what is being built, for whom, what success looks like, and what is explicitly not being done
+- **Complexity dimension**: record only the dimensions that deviate from the default bundle, with the default bundle defined in the "common default combinations" table at the end of `.bytetrue/reference/code-dimensions.md`. Format: `{dimension name} = {level}, reason for deviating from default {default level}: ...`. If everything stays on default, write one sentence saying it follows the default bundle for that scenario with no deviations
+- **Key decisions**: choices, tradeoffs, hard constraints, or rejected alternatives. Every decision must answer "if we chose a different approach, how would the term layer or orchestration layer differ?" If it cannot answer that, then it is not a design decision, only an implementation detail
+- **Prerequisite dependencies**: fill this only when implementation later finds that the target file has structural problems that need to be resolved first and then comes back to revise the design
 
-### `## 2. 名词与编排`
+### `## 2. Terms and Orchestration`
 
-design 的灵魂。**所有子节用"现状 → 变化"两段式**——不写"现状"读者无法判断变化是否合理；只写"变化"则下游每个阶段都要重新理解一遍当前代码。design 把这层信息检索代价付掉一次，所有阶段受益。
+The soul of the design. **Every subsection uses a two-part "current state → change" structure**. Without the current state, the reader cannot tell whether the change is reasonable. With only the change, every downstream stage has to rediscover the current code again. Design pays that lookup cost once so all later stages benefit.
 
-#### 2.1 名词层：值对象 / 实体 / 接口契约
+#### 2.1 Term layer: value objects, entities, and interface contracts
 
-- **现状**：当前的关键值对象 / 实体 / 接口承担什么职责（指向代码位置：文件 + 类型/函数名）。全新模块写"无现状，全新"
-- **变化**：新增 / 改名 / 拆分 / 合并 / 删除，每条标动作 + 动机
-- **接口示例**（每个新增/变更接口至少一个）：
-  - 后端 API：输入 → 输出，含正常 + 主要错误路径
-  - 前端组件：组件拆分（父子关系 + 拆分理由）、Props / Events / Slots 用示例说明、状态归属（组件内部 / props / store）
-  - 示例下注释标来源：`// 来源：{文件路径} {函数名 / 组件名}`
+- **Current state**: what responsibilities the current key value objects, entities, or interfaces carry, pointing to code locations, file plus type or function name; for a brand-new module, write "no current state, fully new"
+- **Change**: additions, renames, splits, merges, or removals, each marked with the action plus motivation
+- **Interface example**, at least one for each added or changed interface:
+  - backend API: input → output, including normal path and major error path
+  - frontend component: component split, parent-child relationship plus reason for splitting, props, events, and slots illustrated by example, state ownership, local component, props, or store
+  - under each example, annotate the source as `// source: {file path} {function name / component name}`
 
-#### 2.2 编排层：主流程与控制流
+#### 2.2 Orchestration layer: main flow and control flow
 
-- **主流程图**（开头一张）：mermaid sequence 或 flowchart。正常路径 + 关键异常 / 边界。这是读者建 mental model 的入口
-- **现状**：当前主流程 / workflow / 关键编排函数承担什么；拓扑（线性 pipeline / 分支 router / 并行 DAG / 状态机）
-- **变化**：在哪一步插入、哪条分支变更、新增哪个支线、是否升级拓扑
-- **流程级约束**：错误语义（失败回滚还是重试，对外返回什么）、幂等性、并发 / 顺序约束、扩展点位置、可观测点
+- **Main flow diagram**, one Mermaid sequence or flowchart at the top, with normal path plus key exception or edge path. This is the entry point for the reader's mental model
+- **Current state**: what the current main flow, workflow, or key orchestration function is responsible for, and its topology, such as linear pipeline, branching router, parallel DAG, or state machine
+- **Change**: where a new step is inserted, which branch changes, which new side path is added, and whether the topology is upgraded
+- **Flow-level constraints**: error semantics, rollback or retry, what is returned externally, idempotency, concurrency or order constraints, extension points, and observability points
 
-#### 2.3 挂载点清单
+#### 2.3 Mount-point inventory
 
-判据：**"删掉这一项，feature 在用户/系统视角是不是就消失了？"** 是→列；否→不列。
+Decision rule: **if this item were removed, would the feature disappear from the user's or system's point of view?** If yes, list it. If no, do not list it.
 
-- ✅ 列：路由 / endpoint 注册、配置项 key / 默认值、数据库 schema、定时任务、事件订阅 / hook 注册、公共 UI 注入点（菜单 / 按钮 / 路由表）、特性开关、第三方系统注册条目（vendor preset、plugin entry）
-- ❌ 不列：被修改的内部代码文件、新增的 helper / 计算函数、模块内部 import 调整、为支持新能力而修改的 wire / parser / runner 等内部代码——这些是 implement 的改动计划
-- 格式：`{挂载位置}：{具体文件或配置 key} — {动作：新增 / 修改}`
-- 一般 3-5 条；超过 8 条要复查；纯内部能力增强写"本 feature 不引入新挂入点"
+- ✅ include: routes or endpoint registration, config keys and defaults, database schema, scheduled tasks, event subscriptions or hook registration, shared UI injection points such as menu, button, or route table, feature flags, and third-party registration entries such as vendor preset or plugin entry
+- ❌ do not include: internal code files that were modified, new helpers or computation functions, internal import adjustments, and internal wire, parser, or runner code modified to support the new capability, because those are implement's change plan
+- format: `{mount location}: {specific file or config key} — {action: add / modify}`
+- 3-5 items is the normal range. If it exceeds 8, re-check it. For pure internal capability enhancement, write "this feature introduces no new mount points"
 
-架构文档更新不属于挂载点——归第 4 节管。
+Architecture doc updates are not mount points. Those belong to section 4.
 
-#### 2.4 推进策略
+#### 2.4 Rollout strategy
 
-按 paradigm 维度切片，4-8 行讲清切片顺序 + 每步退出信号。详细清单落 `{slug}-checklist.yaml` 的 `steps`。**只写 paradigm 维度，不下沉到 file:line**。
+Slice by paradigm dimension, 4-8 lines explaining the order and the exit signal of each slice. The detailed list lands in `steps` inside `{slug}-checklist.yaml`. **Write only at the paradigm dimension, not file:line.**
 
-后端示例：
+Backend example:
 
-```
-1. 编排骨架：在 {workflow} 里把新流程跑通（节点用空实现）
-   退出信号：流程从入口走到出口，节点返回 stub 值
-2. 计算节点 A：实现 {名词 X} 核心逻辑
-   退出信号：单测覆盖正常路径
-3. 计算节点 B：实现 {名词 Y}
-   退出信号：单测覆盖正常 + 关键边界
-4. 接通加载 / 持久化
-   退出信号：端到端跑通一条真实数据
-5. 测试覆盖：补齐关键场景清单剩余条目
-   退出信号：所有验收场景都有可观察证据
-```
-
-前端示例：
-
-```
-1. 静态结构：组件骨架 + 占位数据 → 浏览器看到完整布局
-2. 交互逻辑：按钮 / 表单事件 + 局部 state → 点击 / 输入有正确响应
-3. 状态接入：与全局 store / API 联通 → 真实数据能渲染
-4. 联调 / 样式收尾 → 所有验收场景肉眼通过
+```text
+1. orchestration skeleton: wire the new flow through {workflow}, with stubbed nodes
+   exit signal: the flow runs from entry to exit and the nodes return stub values
+2. computation node A: implement the core logic of {term X}
+   exit signal: unit test covers the normal path
+3. computation node B: implement {term Y}
+   exit signal: unit test covers normal path plus key edge
+4. connect loading and persistence
+   exit signal: one real-data path runs end to end
+5. test coverage: fill the remaining items in the key scenario list
+   exit signal: every acceptance scenario has observable evidence
 ```
 
-#### 2.5 结构健康度与微重构
+Frontend example:
 
-固定节，每个 design 都要写。**评估对象**：
+```text
+1. static structure: component skeleton plus placeholder data → full layout visible in browser
+2. interaction logic: button and form events plus local state → clicking and input respond correctly
+3. state integration: connect with store or API → real data renders
+4. integration and style finish → every acceptance scenario passes by direct observation
+```
 
-- **文件级**：第 2.1 / 2.2 节"变化"涉及的源码文件（新增不算，只看要改的）
-- **目录级**：本次要落新文件的目标目录（新增文件不评估文件本身，但要评估它们要落进的目录是否摊平）
+#### 2.5 Structural health and micro-refactor
 
-**评估前先查 compound**——围绕"目录组织 / 文件归属 / 命名约定"关键词查一次：
+This is a fixed section and every design must write it. **The evaluation targets are**:
+
+- **file level**: the source files affected by the "change" in sections 2.1 and 2.2, excluding newly created files, only files that will actually be modified
+- **directory level**: the target directories where new files will land in this feature, because the new file itself is not evaluated, but the directory it will be placed into must be checked for flattening
+
+**Search compound first** — search once around "directory organization / file ownership / naming convention":
 
 ```bash
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound \
   --filter doc_type=decision --filter category=convention \
-  --query "目录组织 OR 命名 OR 归属"
+  --query "directory organization OR naming OR ownership"
 ```
 
-命中已有 convention（如"composable 统一放 `src/composables/`"）：本节相关维度结论直接写"按 compound `{slug}` 执行"，不再讨论。
+If an existing convention is hit, for example "composables always go under `src/composables/`", then the conclusion for the relevant dimension here should simply say "follow compound `{slug}`", and the topic no longer needs to be debated.
 
-**评估维度**（任一显著就算需要处理）：
+**Evaluation dimensions**, if any one is significant, it counts as something that needs handling:
 
-- 文件行数：单文件 > 500 行（TS/JS/Vue 偏严，Python 略松）
-- 文件职责：一个文件混了 2 个以上不相关概念（编排 + 计算混写、UI + 数据请求 + 业务逻辑混写）
-- 文件改动密度：本次要在同一文件改 / 加 3 处以上，且每处之间逻辑独立
-- **目录摊平**：目标目录已有 ≥ 8 个同层文件且本次还要再加 ≥ 2 个；或目录内文件命名出现明显可分组前缀 / 后缀（如 `XxxModal.vue` / `XxxForm.vue` 一堆混在通用目录），本次新增会延续这种摊平
+- file length: over 500 lines in one file, stricter for TS/JS/Vue, slightly looser for Python
+- file responsibility: one file mixes 2 or more unrelated concepts, such as orchestration plus computation, or UI plus data fetching plus business logic
+- file change density: this feature will touch or add 3 or more separate places inside the same file, and those places are logically independent
+- **directory flattening**: the target directory already has 8 or more files at the same level and this feature will add 2 or more more; or the directory already shows obvious filename grouping patterns, such as many `XxxModal.vue` and `XxxForm.vue` files all mixed into one generic folder, and this feature would continue that flattening
 
-**结论必须显式写出来**：
+**The conclusion must be written explicitly**:
 
 ```markdown
-##### 评估
-- 文件级 — {文件路径}：{行数 / 职责 / 改动密度三个观察点}
-- 目录级 — {目录路径}：{现有文件数 / 命名模式 / 本次新增情况}
+##### Evaluation
+- file level — {file path}: {the three observations, length / responsibility / change density}
+- directory level — {directory path}: {existing file count / naming pattern / this feature's added files}
 - ...
 
-##### 结论：{不做 | 微重构（拆文件） | 微重构（重组目录）}
+##### Conclusion: {do not refactor | micro-refactor, split files | micro-refactor, restructure directory}
 
-##### 方案（仅"微重构"时填）
-- 搬什么：{从 file A 把 X / Y / Z 这几块搬走 / 把目录 D 下匹配 {模式} 的文件搬走}
-- 搬到哪：{新文件 / 新子目录路径，命名 / 归属说明}
-- 行为不变怎么验证：{编译绿灯 + 现有测试通过 + 对外接口签名零 diff + 仅 import 路径有 diff}
-- 步骤序列（provable refactor）：
+##### Plan, fill only when conclusion is micro-refactor
+- what to move: {which chunks move out of file A, or which files matching a pattern move out of directory D}
+- where to move it: {new file or new subdirectory path, plus naming and ownership explanation}
+- how unchanged behavior will be verified: {build green + existing tests pass + zero diff in external signatures + only import-path diff}
+- step sequence, provable refactor:
   1. ...
   2. ...
 
-##### 建议沉淀的 convention（可选，仅"重组目录"且属稳定模式时填）
-- 是否稳定模式：{一次性整理 → 省略整段；稳定模式 → 继续填以下}
-- 规则一句话：{如"自定义业务组件统一放 src/components/custom/，通用组件放 src/components/common/"}
-- 适用范围：{本仓库全部 / 仅 frontend / 仅某模块}
-  → 建议 implement 跑通后走 `bt-decide` 归档为 `category: convention`，未来 design 在开篇 compound 检索就能命中
+##### Suggested convention to capture, optional, only when the conclusion is directory restructuring and it represents a stable pattern
+- is it a stable pattern: {if it is one-off cleanup, omit the whole block; if stable pattern, continue below}
+- one-line rule: {for example "custom business components live under src/components/custom/, generic components under src/components/common/"}
+- scope of applicability: {whole repo / frontend only / one module only}
+  → recommend archiving it through `bt-decide` as `category: convention` after implement proves it works, so future designs can hit it from compound search
 
-##### 超出范围的观察（可选，仅提示不阻塞）
-- {文件路径 / 目录路径}：{发现的结构性问题——职责重划 / 模块拆合 / 接口语义需要变 / 跨文件依赖混乱}
-  → 建议后续走 `bt-refactor` 处理，本 feature 不动
+##### Observations beyond scope, optional, only advisory, not blocking
+- {file path / directory path}: {structural problem discovered — repartition of responsibilities / module split or merge / interface semantics need to change / cross-file dependency tangle}
+  → recommend handling later through `bt-refactor`; do not touch it in this feature
 ```
 
-**判据**：
+**Decision rules**:
 
-- 选"微重构"必须满足"只搬不改行为"——文件级靠 IDE rename / move + 编译器校验，目录级靠纯文件移动 + import 路径更新 + 编译器校验。一旦涉及改函数签名 / 改返回值结构 / 改调用关系语义 / 模块拆合，**不要在 design 里做也不要作为前置依赖**——写进"超出范围的观察"提示用户走 `bt-refactor`，本 feature 照常推进
-- 选"不做"也要列评估观察点（文件级 + 目录级），不能只写一句"健康"——避免后续 acceptance 时无法回看判断依据
-- "建议沉淀的 convention"判定**稳定模式 vs 一次性整理**：稳定模式 = 这条规则**未来其他 feature 也应该遵守**（如归属规则、命名规则）；一次性整理 = 只是这个目录恰好挤了，没有普适规则。拿不准时倾向"一次性整理"——design 阶段方案还没真跑过，不在这里直接归档，只留钩子让 implement 跑通后由用户决定是否走 `bt-decide`
-- "超出范围的观察"和"建议沉淀的 convention"都是发现到就提，不是必填——发现不到就省略整段
+- selecting micro-refactor requires satisfying "move only, no behavior change" — at file level, this means IDE rename or move plus compiler validation; at directory level, pure file moves plus import path updates plus compiler validation. If it requires changing function signatures, return shapes, call-graph semantics, or module split and merge, **do not do it in design and do not make it a prerequisite**. Write it into "observations beyond scope" and recommend `bt-refactor`, while this feature proceeds normally
+- selecting "do not refactor" must still list the evaluation observations at both file level and directory level. Do not write only "healthy", because later acceptance will have no basis to understand how the judgment was made
+- deciding whether "suggested convention to capture" is a stable pattern or one-off cleanup: stable pattern means **future features should also follow this rule**, such as ownership or naming rules. One-off cleanup means the directory is crowded only in this case and there is no broadly reusable rule. When unsure, lean toward one-off cleanup. In design, the plan has not yet been proven in real implementation, so this section only leaves the hook; whether to formalize it should be decided after implement succeeds
+- both "observations beyond scope" and "suggested convention to capture" are optional. If there is nothing to record, omit the whole block
 
-写完此节不单独走确认，随整稿一起进整体 review（看下文第 5 节）。
+The section is not reviewed separately. It goes through overall review together with the whole design document, see section 5 below.
 
-### `## 3. 验收契约`
+### `## 3. Acceptance Contract`
 
-implement 完成的判据，acceptance 核对的依据。**不写测试代码 / framework / mock 怎么搭**——归 implement 自决。
+This defines what it means for implement to be complete, and what acceptance will verify. **Do not write test code, framework choice, or mock setup** here — that is implement's decision.
 
-- **关键场景清单**：每条"输入 / 触发 → 期望可观察结果"——能被一个测试或一次手工操作验证。覆盖正常路径（对应成功标准）+ 关键边界（边界值、空输入、上下限）+ 关键错误路径（流程级约束的可观察行为）
-- **明确不做的反向核对项**：第 1 节"明确不做"每条 → 写成可被 grep 或测试反向核对的形式（"代码中不应出现对 X API 的调用"、"输出 JSON 不应包含字段 Y"）
+- **key scenario list**: write each item as "input or trigger → expected observable result", so it can be verified by one test or one manual operation. Cover normal paths, corresponding to the success criteria, plus key edges, such as boundary values, empty input, upper and lower limits, and key error paths, meaning the observable consequences of the flow-level constraints
+- **reverse-check items for explicit non-goals**: every explicit non-goal from section 1 must be rewritten into something grep-able or testable in reverse, such as "the code must not call X API" or "the output JSON must not contain field Y"
 
+#### 3.1 Test seam / TDD plan
 
-#### 3.1 测试 seam / TDD 规划
+This section does not write test code, framework, or mock. It answers only "from where should the behavior be validated during implementation".
 
-本节不写测试代码 / framework / mock，只回答“实现时应该从哪里验证行为”。
+- **TDD applicability**: `{applicable / not applicable / user did not require it but it is recommended}`, with reason, such as complex business logic, regression sensitivity, pure UI display, or configuration-only change
+- **highest behavior seam**: `{public interface / API / CLI / component interaction / workflow entry}`
+- **priority red/green behaviors**:
+  1. `{the smallest behavior to validate with a failing test first}`
+  2. `{second behavior, optional}`
+  3. `{third behavior, optional}`
+- **manual verification items**: `{acceptance scenarios that cannot be automated or are not worth automating}`
 
-- **TDD 适用性**：{适合 / 不适合 / 用户未要求但建议}，理由：{复杂业务逻辑 / regression-sensitive / UI 纯展示 / 配置变更等}
-- **最高层行为 seam**：{public interface / API / CLI / component interaction / workflow entry}
-- **优先 red/green 行为**：
-  1. {先写一个失败测试验证的最小行为}
-  2. {第二个行为，可选}
-  3. {第三个行为，可选}
-- **手工验证项**：{无法自动化或不值得自动化的验收场景}
+For simple UI, copy, or config changes, it is acceptable to write "this feature does not require TDD; cover it with {manual verification / typecheck / smoke test}".
 
-简单 UI / 文案 / 配置改动可以写“本 feature 不强制 TDD；用 {手工验证 / 类型检查 / smoke test} 覆盖”。
-### `## 4. 与项目级架构文档的关系`
+### `## 4. Relationship with project-level architecture docs`
 
-预判 acceptance 阶段要把哪些东西**提炼**回 architecture（不是加个 design 链接就算数）：
+Predict what the acceptance stage will actually **extract** back into architecture, rather than merely adding a design link:
 
-- **名词** ← 系统级可见的实体 / 类型 / 对外契约 → architecture 的"结构与交互 / 数据与状态"节
-- **动词骨架** ← 跨模块可见的主流程 / 关键编排 → architecture 的结构图 / 模块交互
-- **流程级约束** ← 跨 feature 稳定的约束（错误语义、幂等、扩展点、挂载点规约）→ architecture 的"已知约束"
+- **terms** ← entities, types, or outward contracts that are system-visible → go into the "structure and interaction / data and state" sections of architecture
+- **verb skeleton** ← main flows or key orchestration visible across modules → go into architecture diagrams and module-interaction sections
+- **flow-level constraints** ← stable constraints that span multiple features, such as error semantics, idempotency, extension points, or mount-point rules → go into the "known constraints" section of architecture
 
-外加：关联哪些已有架构 doc；架构总入口要不要新增描述（描述不是贴链接）。
+Additionally: which existing architecture docs are related, and whether the top-level architecture entry should gain new description, not just a link.
 
-纯模块内部不可见的改动，写"本 feature 改动局限在 {模块} 内部，无系统级可见变化"，acceptance 核实后跳过归并。
+For changes that are visible only inside one module, write "this feature's changes are confined inside {module}, with no system-visible impact", and let acceptance skip architecture merge after confirming that is true.
 
-## 5. review 提示
+## 5. Review prompt
 
-> 方案 doc 已起草完成，请整体 review：
-> 1. 术语有没有和已有概念冲突？
-> 2. 第 1 节决策与约束准不准，"不做什么"有没有遗漏？
-> 3. 第 2.1 名词层：现状描述对不对？变化是否覆盖所有数据/接口改动？
-> 4. 第 2.2 编排层：主流程图和现状→变化能不能跑通你脑子里的场景？流程级约束有没有漏？
-> 5. 第 2.3 挂载点：照这份清单能不能完整卸载？有没有项是内部改动被误列进来？
-> 6. 第 2.5 结构健康度：评估的文件 + 目录是否准确？结论（不做 / 拆文件 / 重组目录）和方案是否同意？若有"建议沉淀的 convention"是否真属稳定模式？"超出范围的观察"有没有遗漏或写错？
-> 7. 第 3 节验收场景：覆盖正常 + 边界 + 错误路径了吗？第 3.1 节测试 seam / TDD 规划是否合理？
+> The design doc draft is complete. Please review it as a whole:
+> 1. Do any terms conflict with existing concepts?
+> 2. Is section 1, decisions and constraints, accurate, and is anything missing from the explicit non-goals?
+> 3. In section 2.1 term layer, is the current-state description correct, and do the changes cover all data and interface changes?
+> 4. In section 2.2 orchestration layer, can the main flow diagram and current-state → change narrative run through the scenarios in your head, and are any flow-level constraints missing?
+> 5. In section 2.3 mount points, could the feature be completely removed by following this list, and has any internal implementation change been incorrectly listed as a mount point?
+> 6. In section 2.5 structural health, are the evaluated files and directories correct, and do you agree with the conclusion, do not refactor / split files / restructure directory? If there is a "suggested convention to capture", is it truly a stable pattern? Are any "observations beyond scope" missing or wrong?
+> 7. In section 3 acceptance scenarios, do they cover normal, edge, and error paths, and is the section 3.1 test seam / TDD plan reasonable?
 >
-> 有修改意见直接说，确认后进入实现阶段。
+> If you have changes, say them directly. After confirmation, we move into implementation.

@@ -1,48 +1,48 @@
-# bt-brainstorm 模板
+# bt-brainstorm templates
 
-本文件只放落盘模板。`bt-brainstorm/SKILL.md` 负责分诊和对话流程；真正要写文件时再读取这里。
+This file contains only write-to-disk templates. `bt-brainstorm/SKILL.md` owns triage and conversation flow; read this file only when it is time to actually write a document.
 
-## feature brainstorm 模板
+## feature brainstorm template
 
-用于 case 2，路径为 `.bytetrue/features/{feature}/{slug}-brainstorm.md`。
+Used for case 2. The path is `.bytetrue/features/{feature}/{slug}-brainstorm.md`.
 
 ```markdown
 ---
 doc_type: feature-brainstorm
 feature: YYYY-MM-DD-{slug}
 status: confirmed
-summary: 一句话讲选定方向
+summary: One sentence describing the chosen direction
 tags: [...]
 ---
 
-# {功能名称} Brainstorm
+# {Feature Name} Brainstorm
 
-> Stage 0 | {YYYY-MM-DD} | 下一步：design
+> Stage 0 | {YYYY-MM-DD} | Next: design
 
-## 想做什么、为什么
-{出发点 + 关键发现和转折}
+## What We Want to Do and Why
+{starting point + key discoveries and turning points}
 
-## 考虑过的方向
+## Directions Considered
 
-### 方向 A：{名}
+### Direction A: {name}
 
-- 描述 / 价值 / 代价
-- 结论：选定 / 否决（原因）
+- description / value / cost
+- conclusion: selected / rejected (reason)
 
-### 方向 B / C ...
+### Direction B / C ...
 
-## 已敲定的设计点
-{聊过程已达成共识的具体设计：库选型 / Schema / 接口形态 / 技术约束}
-{每条标：已确认 / 倾向 / 待验证。design 直接落，不重复讨论}
-{没聊到这一层整节删掉，别留空}
+## Design Points Already Settled
+{specific design points already agreed during the discussion: library choice / schema / interface shape / technical constraints}
+{mark each one as: confirmed / leaning / to be verified. Design can carry these forward directly without reopening the discussion}
+{if the discussion never reached this level, delete the whole section instead of leaving it empty}
 
-## 选定方向与遗留问题
-{选定方向 2-3 句重述 + 粗粒度轮廓（核心行为 / 明显不做 / 最大未知）+ 遗留给 design 的问题}
+## Chosen Direction and Remaining Questions
+{restate the chosen direction in 2-3 sentences + coarse-grained outline of the core behavior / what is clearly out of scope / biggest unknowns + questions left for design}
 ```
 
-## open brainstorm 模板
+## open brainstorm template
 
-用于 case 4，路径为 `.bytetrue/brainstorms/{slug}/brainstorm.md`。
+Used for case 4. The path is `.bytetrue/brainstorms/{slug}/brainstorm.md`.
 
 ```markdown
 ---
@@ -50,28 +50,28 @@ doc_type: brainstorm
 slug: {slug}
 created: YYYY-MM-DD
 status: active
-summary: 一句话讲这块要探索什么
+summary: One sentence describing what this area needs to explore
 tags: [...]
 ---
 
-# {主题名}
+# {Topic Name}
 
-> 创意空间 | {YYYY-MM-DD} | 下一步：bt-roadmap
+> Idea space | {YYYY-MM-DD} | Next: bt-roadmap
 
-## 出发点
-{什么触发了这个想法 / 想解决什么问题 / 为什么觉得值得做}
+## Starting Point
+{what triggered this idea / what problem it is trying to solve / why it seems worth doing}
 
-## 聊过的方向
-{发散过程的关键转折、候选方向、讨论过的可能性；不要求收敛，保留探索痕迹}
+## Directions Discussed
+{key turning points in the divergent discussion, candidate directions, and possibilities that were discussed; convergence is not required, keep the exploration trail}
 
-## 当前倾向
-{聊到目前的模糊方向，可以是 2-3 个还在摇摆的方向，各自一两句}
-{如果已经比较清楚，写"倾向于 X 方向，核心是 Y"}
+## Current Leaning
+{the current fuzzy direction after the discussion so far; this can be 2-3 directions still in play, each with one or two sentences}
+{if things are already fairly clear, write "leaning toward direction X, with Y as the core"}
 
-## 已敲定的点
-{聊过程中已经达成共识的：约束、不做、类比、技术判断}
-{什么都没有就删掉这节}
+## Points Already Settled
+{constraints, non-goals, analogies, or technical judgments that reached consensus during the discussion}
+{delete this section if there is nothing yet}
 
-## 遗留问题 & 下一步
-{最大的未知 / 需要验证的假设 / 建议 roadmap 注意的点}
+## Remaining Questions & Next Step
+{the biggest unknowns / assumptions that still need verification / points that roadmap should pay attention to}
 ```

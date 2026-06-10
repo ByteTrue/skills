@@ -1,115 +1,115 @@
 ---
 name: bt-feat
-description: 新功能开发的子流程入口，把"加个 X 能力"从想法走到验收闭环。触发：用户说"做新功能"、"加个 X"、"实现 XX"。只做路由，根据已有产物决定走 brainstorm / design / fastforward / implement / acceptance。不处理 bug。
+description: Sub-workflow entry for new feature development. Move "add capability X" from idea to acceptance closure. Trigger when the user says "build a new feature", "add X", or "implement XX". This skill only routes. It decides between `brainstorm` / `design` / `fastforward` / `implement` / `acceptance` based on existing artifacts. It does not handle bugs.
 ---
 
 # bt-feat
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-新功能流程在"需求"和"代码"之间塞了一份方案文件，让两边有交接点——AI 直接拿到需求就写代码会出三个老问题：名字跟原代码对不上、改着改着改出范围、改完不留存档。
+The new-feature flow inserts a design document between "requirement" and "code" so that both sides have a handoff point. If the AI writes code directly from the requirement, three familiar problems appear: names do not line up with the existing code, scope keeps drifting during implementation, and no archive remains after the work is done.
 
 ```
-(想法模糊先去 bt-brainstorm 分诊) → 方案设计（名词层 + 编排层 + 验收契约 + 推进策略切片）→ 分步实现 → 验收闭环
+(if the idea is still fuzzy, first go to bt-brainstorm for triage) → design plan (term layer + orchestration layer + acceptance contract + sliced rollout strategy) → stepwise implementation → acceptance closure
 ```
 
-brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 design）/ case 2（小需求继续讨论 → 落 brainstorm note）/ case 3（大需求 → 移交 `bt-roadmap`）。只有 case 2 在 feature 目录产出 brainstorm note。
+`brainstorm` is an independent entry for the discussion layer. It triages into case 1 (clear → go straight to design), case 2 (small need that still needs discussion → write a brainstorm note), or case 3 (large need → hand off to `bt-roadmap`). Only case 2 writes a brainstorm note under the feature directory.
 
-本技能不写代码不写文档，只做一件事：看当前 feature 走到哪步，告诉用户该触发哪个子技能。
+This skill writes neither code nor documents. It does only one thing: look at which step the current feature has reached and tell the user which sub-skill should be triggered next.
 
 ---
 
-## 文件放哪儿
+## Where the Files Go
 
 ```
 .bytetrue/features/{feature}/
-├── {slug}-brainstorm.md       ← 阶段 0 产物（仅 case 2 落盘）
-├── {slug}-intent.md           ← 阶段 1 可选前置草稿（用户自己写半成品）
-├── {slug}-design.md           ← 阶段 1 方案文件
-├── {slug}-checklist.yaml      ← 阶段 1 生成 steps + checks，2/3 阶段更新 status
-└── {slug}-acceptance.md       ← 阶段 3 验收报告
+├── {slug}-brainstorm.md       ← stage 0 artifact (written only for case 2)
+├── {slug}-intent.md           ← optional stage 1 draft pre-input (a partial draft written by the user)
+├── {slug}-design.md           ← stage 1 design document
+├── {slug}-checklist.yaml      ← stage 1 generated steps + checks; statuses updated during stages 2 and 3
+└── {slug}-acceptance.md       ← stage 3 acceptance report
 ```
 
-目录命名 `YYYY-MM-DD-{英文 slug}`，日期取首次创建当天定了不动；slug 小写字母 / 数字 / 连字符。
+The directory name is `YYYY-MM-DD-{english-slug}`. The date is fixed to the day of first creation and never changes. The slug uses lowercase letters, digits, and hyphens.
 
-为什么聚一起：以后查"那个导出 CSV 功能当时怎么决定的"，brainstorm / design / acceptance 都在一处。feature 和 issue 分别放在 `.bytetrue/features/` 和 `.bytetrue/issues/` 因为归档逻辑不一样。
+Why keep them together: later, when someone asks "how did we decide that CSV export feature back then?", the brainstorm, design, and acceptance are all in one place. Features and issues live separately under `.bytetrue/features/` and `.bytetrue/issues/` because their archival logic is different.
 
-实现 feature 时顺手发现的 bug → 记成新 issue，**不在 feature PR 里偷偷修**——验收时分不清范围，git blame 找不到为什么改。
+If you discover a bug while implementing a feature, record it as a new issue. **Do not quietly fix it inside the feature PR**. Otherwise acceptance cannot tell what scope was intended, and `git blame` cannot explain why the change happened.
 
 ---
 
-## 四个阶段
+## Four Stages
 
-| 阶段 | 子技能 | 产出 | 谁主导 |
+| Stage | Sub-skill | Output | Who Leads |
 |---|---|---|---|
-| 0 brainstorm（可选，独立入口） | `bt-brainstorm` | case 2 时产出 brainstorm note | AI 思考伙伴，用户拍板 |
-| 1 方案设计 | `bt-feat-design` | design.md + checklist.yaml | AI 起草，用户整体 review |
-| 2 分步实现 | `bt-feat-impl` | 代码 + 阶段汇报 | AI 按方案执行 |
-| 3 验收闭环 | `bt-feat-accept` | acceptance.md | AI 逐层核对，用户终审 |
+| 0 brainstorm (optional, independent entry) | `bt-brainstorm` | brainstorm note only for case 2 | AI as thinking partner, user decides |
+| 1 design plan | `bt-feat-design` | `design.md` + `checklist.yaml` | AI drafts, user reviews as a whole |
+| 2 stepwise implementation | `bt-feat-impl` | code + stage report | AI executes against the plan |
+| 3 acceptance closure | `bt-feat-accept` | `acceptance.md` | AI checks layer by layer, user does final review |
 
-阶段间有人工 checkpoint。上一阶段没拿到用户明确放行，下一阶段别开始——防止 AI 一口气从需求跑到代码、跑出来才发现走偏。
+There is a human checkpoint between stages. If the previous stage has not received explicit user approval, do not start the next stage. This prevents the AI from running straight from requirement to code and only discovering the drift after the fact.
 
-阶段 0 可选且是 feature 流程的**外部入口**——`bt-brainstorm` 同时服务 feature 和 roadmap。case 3（大需求）讨论被移交给 `bt-roadmap` 不再回 feature 流程；roadmap 拆出子 feature 后从 `bt-feat-design` 的"从 roadmap 条目起头"入口进来。
+Stage 0 is optional and is an **external entry** to the feature flow. `bt-brainstorm` serves both feature and roadmap. Case 3, the large-demand discussion path, is handed off to `bt-roadmap` and does not return to the feature flow. After roadmap later splits out sub-features, they re-enter through the `bt-feat-design` entry "starting from a roadmap item".
 
-### Fastforward 模式
+### Fastforward Mode
 
-需求清楚 + 范围小时走完整四阶段太啰嗦。fastforward 把 design 压成 4 节（需求摘要 / 设计方案 / 验收标准 / 推进步骤），用户一次确认后直接实现。触发："快速模式"、"fastforward"、"直接开干"、"别那么多步骤"，去 `bt-feat-ff`。
+When the requirement is clear and the scope is small, the full four-stage flow is too heavy. Fastforward compresses design into 4 sections: requirement summary, design plan, acceptance criteria, and rollout steps. After one user confirmation, implementation starts directly. Triggers include "fast mode", "fastforward", "just start coding", and "too many steps"; route those to `bt-feat-ff`.
 
-**别走** fastforward：跨多个子系统、有术语冲突风险、推进步骤超过 4 步——这些情况跳过 design 意味着 AI 和用户没共同确认过同一份方案，实现完容易发现彼此理解不一样。
+**Do not use** fastforward when the work spans multiple subsystems, has terminology collision risk, or needs more than 4 rollout steps. In those cases, skipping design means the AI and user never confirmed the same plan, and only after implementation finishes do they discover that they meant different things.
 
 ---
 
-## 路由：用户现在该走哪个子技能
+## Routing: Which Sub-skill the User Should Use Now
 
-进入本技能先 Glob 一下 `.bytetrue/features/` 看已有产物。**不要只听用户口头描述**——用户说"设计写完了"不一定真完整，自己读一遍。
+When entering this skill, `Glob .bytetrue/features/` first and inspect the existing artifacts. **Do not rely only on the user's verbal claim**. When the user says "the design is done", that does not mean it is actually complete. Read it yourself.
 
-| 当前状态 | 触发哪个子技能 |
+| Current State | Trigger Which Sub-skill |
 |---|---|
-| 想法模糊，说不清真问题 / 边界 / 不做什么 | `bt-brainstorm` |
-| 想法清晰（知道做什么 / 为谁 / 怎么算成功） | `bt-feat-design` |
-| 用户说"开一个新需求 / 起草稿 / 新建 feature"想自己写半成品 | `bt-feat-design` 的"初始化模式"（建目录 + 空 intent，让用户填完再回） |
-| 用户主动说"先 brainstorm 一下"、"有个想法没想清楚" | `bt-brainstorm` |
-| `{slug}-intent.md` 已填好 | `bt-feat-design`（读 intent 作输入） |
-| 用户说"快速模式 / fastforward" | `bt-feat-ff` |
-| `{slug}-brainstorm.md` 已存在，要进设计 | `bt-feat-design` |
-| `{slug}-design.md` 已 approved、代码没动 | `bt-feat-impl` |
-| fastforward design 已确认 | `bt-feat-impl` |
-| 代码已写完要验收 | `bt-feat-accept` |
-| 用户说"我想要一个 X 系统"大需求 | 转 `bt-brainstorm` 分诊（大概率 case 3 → `bt-roadmap`） |
-| roadmap 里某条子 feature 该启动 | `bt-feat-design` 的"从 roadmap 条目起头"入口 |
-| 不确定 design 是否完整 | 自己读一遍，按上面对号 |
+| The idea is fuzzy, and the user cannot clearly state the real problem, boundary, or non-goals | `bt-brainstorm` |
+| The idea is clear, meaning they know what to build, for whom, and what counts as success | `bt-feat-design` |
+| The user says "open a new request / start a draft / create a new feature" and wants to write a partial draft themselves | `bt-feat-design` in "initialization mode" (create directory + empty intent, then return after the user fills it) |
+| The user explicitly says "let's brainstorm first" or "I have an idea but haven't thought it through" | `bt-brainstorm` |
+| `{slug}-intent.md` is already filled | `bt-feat-design` (read the intent as input) |
+| The user says "fast mode / fastforward" | `bt-feat-ff` |
+| `{slug}-brainstorm.md` exists and it is time to move into design | `bt-feat-design` |
+| `{slug}-design.md` is approved and code has not started yet | `bt-feat-impl` |
+| Fastforward design is already confirmed | `bt-feat-impl` |
+| Code is done and needs acceptance | `bt-feat-accept` |
+| The user says "I want an X system" and it is a large demand | route to `bt-brainstorm` for triage, most likely case 3 → `bt-roadmap` |
+| A sub-feature in roadmap is ready to start | `bt-feat-design` via the "starting from a roadmap item" entry |
+| Not sure whether the design is complete | read it yourself and match it against the table above |
 
-### 怎么判断该不该走阶段 0
+### How to Decide Whether Stage 0 Is Needed
 
-判断信号不是"用户描述字数少"，是用户能不能清楚说出三件事：要解决的真问题 / 核心行为 / 一条明确的"不做什么"。三项有一项模糊就值得 brainstorm。
+The signal is not "the user's description is short". The signal is whether the user can clearly state three things: the real problem to solve, the core behavior, and one explicit non-goal. If any one of the three is fuzzy, brainstorm is worth doing.
 
-但别强推——用户明确说"想清楚了直接做设计"就尊重。不确定时问一句让用户选。**宁可漏判，别误判**——逼一个想清楚的用户做发散是浪费。
+But do not force it. If the user clearly says "I have thought it through; go straight to design", respect that. If unsure, ask one question and let the user choose. **Better to under-classify than over-classify**. Forcing divergent discussion onto a user who already knows what they want is a waste.
 
 ### brainstorm vs intent
 
-两者都是 design 前置，区别在**谁在主导收敛**：
+Both are pre-design inputs, but the difference is **who leads the convergence**:
 
-- brainstorm：用户脑子里模糊，AI 问用户答。判 case 3 时移交 `bt-roadmap` 不回 feature；只有 case 2 产出 brainstorm note
-- intent：用户自己想好大致做法（100 字描述 + 相关数据结构），懒得口述就写成 `{slug}-intent.md` 给 AI 读
+- brainstorm: the user is fuzzy, the AI asks and the user answers. If triage lands on case 3, it is handed to `bt-roadmap` and does not return to feature. Only case 2 writes a brainstorm note.
+- intent: the user already has a rough solution in mind, such as a 100-word description plus related data structures, and prefers writing `{slug}-intent.md` for the AI to read instead of explaining it verbally
 
-用户模糊触发"开一个新需求"时默认问"你想先聊清楚（brainstorm）还是自己写草稿（intent）？"，别自己挑。
-
----
-
-## 与 issue 工作流的边界
-
-- feature：从来没有的东西要加进来（新功能 / 新能力）
-- issue：本来应该好的东西坏了（bug / 异常 / 文档错误）
-
-灰色地带：feature 实现时发现的 bug 记成新 issue，不在 feature PR 顺手修。
+When a fuzzy user asks to "open a new request", ask by default: "Do you want to talk it through first (`brainstorm`) or write a draft yourself (`intent`)?". Do not choose for them.
 
 ---
 
-## 相关文档
+## Boundary with the Issue Workflow
 
-- `.bytetrue/reference/system-overview.md` — ByteTrue 体系总览
-- `.bytetrue/reference/shared-conventions.md` — 跨阶段共享口径、目录结构、checklist 生命周期
-- `.bytetrue/attention.md` — ByteTrue 启动注意事项和项目硬约束
-- 项目架构总入口 — 方案设计阶段需要查
+- feature: something that never existed needs to be added, meaning a new feature or new capability
+- issue: something that should already be working is broken, meaning a bug, abnormal behavior, or documentation error
+
+Gray area: a bug discovered during feature implementation should be recorded as a new issue rather than fixed casually inside the feature PR.
+
+---
+
+## Related Documents
+
+- `.bytetrue/reference/system-overview.md` — overview of the ByteTrue system
+- `.bytetrue/reference/shared-conventions.md` — shared conventions across stages, directory structure, and checklist lifecycle
+- `.bytetrue/attention.md` — startup notes and hard project constraints for ByteTrue
+- the project architecture entry — needed during the design stage

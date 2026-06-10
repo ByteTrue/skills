@@ -1,30 +1,30 @@
-# Browser Bridge 参考
+# Browser Bridge Reference
 
-## 使用模式
+## Usage Modes
 
-### 模式 A：先执行
+### Mode A: Execute First
 
-已经知道页面结构时，直接使用 `exec`：
+When the page structure is already known, use `exec` directly:
 
-1. `exec "document.querySelector('.add-to-cart').click()"` 会返回一小段结构化 diff。
-2. 调用方可以根据 diff 推断页面变化，不需要重新读取整页。
+1. `exec "document.querySelector('.add-to-cart').click()"` returns a small structured diff.
+2. The caller can infer page changes from the diff without rereading the whole page.
 
-页面结构已知时，不要走 `scan` -> 检查 HTML -> `exec` -> `scan` 的高 token 循环。只有页面未知时才先 `scan`。
+When the page structure is known, do not use the high-token loop of `scan` -> inspect HTML -> `exec` -> `scan`. Only `scan` first when the page is unknown.
 
-### 模式 B：先观察再执行
+### Mode B: Observe First, Then Execute
 
-用于调研、竞品分析、市场研究或未知页面：
+Use this for research, competitor analysis, market research, or unknown pages:
 
-1. `scan --text-only` 获取低 token 的页面概览。
-2. 用 `exec` 和定向 selector 抽取结构化数据。
-3. 用 `navigate` + `scan --text-only` 逐页深入。
-4. 深入后用 `back` 返回。
+1. `scan --text-only` to get a low-token page overview.
+2. Use `exec` plus targeted selectors to extract structured data.
+3. Use `navigate` + `scan --text-only` to go page by page.
+4. Use `back` after going deeper.
 
-用 `--size-only` 可以确认 SPA 是否已经渲染内容，同时不返回正文内容。
+Use `--size-only` to confirm whether an SPA has rendered content without returning body text.
 
-## SPA 内容抽取
+## SPA Content Extraction
 
-React / Vue 页面通常会动态加载内容。抽取前用 `--wait` 等待元素出现：
+React and Vue pages often load content dynamically. Before extracting, use `--wait` to wait for elements to appear:
 
 ```bash
 python <skill-dir>/scripts/browser.py exec --wait ".note-item" "
@@ -41,40 +41,40 @@ python <skill-dir>/scripts/browser.py exec --wait ".result-card" --wait-ms 8000 
 python <skill-dir>/scripts/browser.py scan --text-only --wait ".product-list" --wait-ms 5000
 ```
 
-如果你确定页面有内容，但 `exec` 返回空数组 `[]`，先退回 `scan --text-only`。常见原因是页面还没渲染完，或 selector 没匹配上。
+If you are sure the page has content but `exec` returns an empty array `[]`, fall back to `scan --text-only` first. Common reasons are that the page has not finished rendering or the selector did not match.
 
-## 调研速查表
+## Research Cheat Sheet
 
-| 场景 | 命令 | 原因 |
+| Scenario | Command | Why |
 |---|---|---|
-| 未知页面初看 | `scan --text-only` | 低 token 页面概览 |
-| 快速确认是否渲染 | `scan --size-only` | 不消耗正文 token |
-| SPA 动态内容 | `exec --wait ".selector" "..."` | 等待渲染完成 |
-| SPA 页面概览 | `scan --text-only --wait ".selector"` | 等待后再扫描 |
-| 抽取结构化数据 | `exec "Array.from(...)"` | 精准且低 token |
-| 组件证据 | `evidence '[data-slot="switch"]' --name Switch` | 捕获渲染后的组件结构 |
-| 信息密集的价格页 / 商店页 | `scan --text-only` | selector 不容易猜 |
-| 多平台调研 | `newtab` + `navigate` | 每个来源放在独立 tab |
-| 跟随链接再返回 | `navigate <url>` 后 `back` | 深入查看后回到原页 |
-| 慢异步操作 | `exec --timeout 30 "..."` | 延长超时时间 |
+| First look at an unknown page | `scan --text-only` | Low-token page overview |
+| Quickly confirm whether content rendered | `scan --size-only` | No body-text token cost |
+| SPA dynamic content | `exec --wait ".selector" "..."` | Wait for rendering to finish |
+| SPA page overview | `scan --text-only --wait ".selector"` | Wait, then scan |
+| Extract structured data | `exec "Array.from(...)"` | Precise and low-token |
+| Component evidence | `evidence '[data-slot="switch"]' --name Switch` | Capture rendered component structure |
+| Dense pricing or store pages | `scan --text-only` | Selectors are hard to guess |
+| Multi-source research | `newtab` + `navigate` | Put each source in a separate tab |
+| Follow a link, then return | `navigate <url>` then `back` | Dive in, then return to the original page |
+| Slow async operation | `exec --timeout 30 "..."` | Extend timeout |
 
-## 站点专用参考
+## Site-Specific Reference
 
-- `grok.md`：通过 Browser Bridge 操作 `https://grok.com` 的页面结构、输入提交、响应抽取和超时建议。
+- `grok.md`: page structure, input submission, response extraction, and timeout recommendations for operating `https://grok.com` through Browser Bridge.
 
-## 排障
+## Troubleshooting
 
-**"No browser tabs available"**：扩展没有连接。检查 Chrome 扩展页，必要时重启 Chrome。
+**"No browser tabs available"**: the extension is not connected. Check the Chrome extensions page, and restart Chrome if needed.
 
-**tab 上没有绿色标记**：扩展不能注入 `chrome://` 页面或 Chrome Web Store 页面，这是正常现象。
+**No green indicator on the tab**: the extension cannot inject into `chrome://` pages or Chrome Web Store pages. This is expected.
 
-**Port 18765 already in use**：另一个 Browser Bridge 实例正在运行。先停止旧实例。
+**Port 18765 already in use**: another Browser Bridge instance is already running. Stop the old instance first.
 
-**CSP errors**：扩展会自动回退到 CDP，也就是 `chrome.debugger`。
+**CSP errors**: the extension automatically falls back to CDP, that is, `chrome.debugger`.
 
-**navigate 后页面没有加载**：先加 `--no-wait`，之后用 `exec --wait` 或 `scan --wait` 等待目标元素。
+**Page does not load after `navigate`**: add `--no-wait` first, then use `exec --wait` or `scan --wait` to wait for the target element.
 
-**多行 JS**：外层字符串用单引号：
+**Multi-line JS**: use single quotes for the outer string:
 
 ```bash
 python <skill-dir>/scripts/browser.py exec '

@@ -98,7 +98,7 @@ def web_execute_js(script, switch_tab_id=None, no_monitor=False, wait_selector=N
             tab_id: The tab where the script executed
             error: Error message if status is "failed"
             reloaded: True if the page reloaded during execution
-            suggestion: Hint about what happened (e.g. "页面无明显变化")
+            suggestion: Hint about what happened (e.g. "No obvious page change")
     """
     driver = get_driver()
     if len(driver.get_all_sessions()) == 0:

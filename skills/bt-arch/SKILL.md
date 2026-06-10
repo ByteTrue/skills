@@ -1,202 +1,201 @@
 ---
 name: bt-arch
-description: 维护 `.bytetrue/architecture/` 这份只记现状的系统地图，三种模式 update / check / backfill。触发：用户说"刷新 architecture"、"做架构检查"、"补这个模块的架构文档"、"方案和代码对得上吗"，或 feature 阶段需要先做架构动作。不写未来规划（走 bt-roadmap）。
+description: Maintain `.bytetrue/architecture/`, the system map that records only the current state, in three modes: `update`, `check`, and `backfill`. Trigger when the user says "refresh architecture", "do an architecture check", "backfill the architecture doc for this module", "does the plan match the code", or when a feature stage needs an architecture action first. This skill does not write future plans; future planning belongs to `bt-roadmap`.
 ---
 
 # bt-arch
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-`.bytetrue/architecture/` 是项目"地图"——design 写方案前读它定位、issue-analyze 做根因时读它理解模块边界、新人读它知道系统大致长什么样。本技能是"起草 / 刷新 / 体检"三件事的统一入口。
+`.bytetrue/architecture/` is the project's "map". Design reads it before writing a plan so it can locate itself. `issue-analyze` reads it to understand module boundaries during root-cause analysis. Newcomers read it to understand roughly what the system looks like. This skill is the unified entry for three jobs: drafting, refreshing, and health-checking.
 
-**architecture 是累积的、自给自足的系统地图**，不是某次 feature 的详细方案，而是所有已落地 feature 沉淀下来的"系统现在长什么样"总图。读者打开应能看懂整体结构而不需要跳回历史 design。design 是临时增量稿，acceptance 把稳定下来的名词 / 编排 / 约束提炼回这里；design 文件归档，只在追究具体决策细节时翻。
+**Architecture is the accumulated, self-sufficient system map**, not the detailed plan of a single feature. It is the "what the system looks like now" picture formed by every landed feature. A reader should be able to understand the overall structure without jumping back into historical design docs. Design is a temporary incremental draft. Acceptance extracts the stabilized terms, orchestration, and constraints back into architecture. Design files are archived and should be revisited only when someone needs to inspect concrete decision details.
 
-**只记现状不记计划**——默认在 acceptance 跟着代码同步，必要时本技能主动 backfill / update。**不写"未来会加什么层"、"下一步打算拆出 X 模块"**——那些归 `bt-roadmap`。用户说"我想重构成 X 架构"先走 roadmap 拆 feature，每次 acceptance 把实际达到的结构提炼回 architecture。
+**Record only the current state, never the plan**. By default, architecture is synchronized with code during acceptance, and when necessary this skill performs backfill or update proactively. **Do not write "we will add a new layer later" or "next we plan to split out module X"**. Those belong to `bt-roadmap`. If the user says "I want to refactor this into architecture X", send that first to roadmap and split it into features. Each acceptance then extracts the structure that actually landed back into architecture.
 
-详略判据：**够不够让读者不跳转就读懂系统**——稳定、跨 feature 可见的那一层写全；模块内部循环、辅助函数、一次性实现决定不进来。
+The level-of-detail rule is: **is this enough for the reader to understand the system without jumping away?** Write the stable, cross-feature-visible layer in full. Internal loops, helper functions, and one-off implementation decisions do not belong here.
 
-架构文档价值在**准、稳、可查**。AI 容易破坏这三点的几种问题：
+The value of architecture docs is that they are **accurate, stable, and searchable**. The AI commonly damages those properties in a few ways:
 
-- **凭空造系统**——文档说 `AuthManager 协调 TokenService`，代码里根本没 `AuthManager`
-- **替用户拍板**——悄悄选某种分层方式，读者以为是既定事实
-- **代码复述**——每节都说"这里有什么"，不说"为什么这么分"，信息量等于 `ls -R`
-- **检查时看一眼感觉没问题**——没给具体位置证据
+- **inventing a system out of thin air** — the doc says `AuthManager` coordinates `TokenService`, but the code contains no `AuthManager`
+- **deciding on the user's behalf** — quietly choosing a layering approach so readers mistake it for settled fact
+- **paraphrasing code** — every section says only "what is here" but never "why it is split this way", so the informational value is no better than `ls -R`
+- **glancing once during check mode and saying it looks fine** — without any positional evidence
 
-> 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md`。文档结构模板、check 覆盖项、报告格式看同目录 `reference.md`。
+> For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`. For the doc structure templates, check coverage items, and report formats, see `reference.md` in the same directory.
 
 ---
 
-## 模式分流
+## Mode Routing
 
-启动先判断模式三选一（不让用户选菜单）：
+At startup, classify into one of three modes. Do not show the user a menu:
 
-| 用户说什么 | 模式 |
+| What the user says | Mode |
 |---|---|
-| "刷新 {某文档}"、"代码变了把架构 doc 同步"、"更新到最新" | `update` |
-| "检查 design 自洽"、"方案和代码对得上吗"、"几份文档有没有打架"、"做架构体检" | `check` |
-| "补一份架构 doc"、"这块模块一直没写档"、"把已经在跑的子系统结构写下来" | `backfill` |
+| "refresh {a doc}", "the code changed, sync the architecture doc", "update it to the latest" | `update` |
+| "check design consistency", "does the plan match the code", "are these docs fighting each other", "do an architecture health check" | `check` |
+| "backfill an architecture doc", "this module never had architecture docs", "write down the structure of this subsystem that is already running" | `backfill` |
 
-判断不出问用户。用户说"我想重构成 X / 打算新做 Y 模块"——不是本技能的事，转 `bt-roadmap`。
-
----
-
-## 单目标规则
-
-每次只跑一个模式，且只锁定一个目标：
-
-- `backfill`：给已存在但从没写过档的模块补一份（`architecture/{type}-{slug}.md` 或更新 `ARCHITECTURE.md`）
-- `update`：按代码最新状态 + 用户素材刷新一份已有 doc
-- `check`：三个子目标之一
-  - `design-internal` — 一份 design 内部一致性
-  - `design-vs-code` — design 与代码一致性
-  - `architecture-folder-internal` — `architecture/` 多份文档间一致性
-
-为什么不一次做多件？起草时一次吐多份用户 review 不过来；检查时三个子目标视角和材料完全不同，同时做每边都不深。用户提多个目标让 TA 选一个。
+If you cannot tell, ask the user. If the user says "I want to refactor this into X" or "I plan to build module Y", that is not this skill. Route to `bt-roadmap`.
 
 ---
 
-## 工作流骨架（三模式共用 6 阶段）
+## Single-Target Rule
+
+Each run uses only one mode and locks onto only one target:
+
+- `backfill`: create one doc for a module that already exists but has never been documented, either `architecture/{type}-{slug}.md` or an update to `ARCHITECTURE.md`
+- `update`: refresh one existing doc based on the latest code state plus user-provided material
+- `check`: one of three sub-targets
+  - `design-internal` — consistency within one design
+  - `design-vs-code` — consistency between design and code
+  - `architecture-folder-internal` — consistency across multiple docs inside `architecture/`
+
+Why not do multiple things at once? During drafting, if multiple docs are produced at once the user cannot review them properly. During checking, the three sub-targets use completely different views and materials, so doing them together makes each one shallow. If the user asks for multiple targets, ask them to pick one.
+
+---
+
+## Shared Workflow Skeleton, Six Phases Across All Modes
 
 ```
-Phase 1：锁定目标
-Phase 2：读取材料
-Phase 3：执行（backfill/update = 起草；check = 检查）
-Phase 4：自查（backfill/update）或 输出报告（check）
-Phase 5：用户 review
-Phase 6：落盘（backfill/update）或 等用户拍板（check）
+Phase 1: lock the target
+Phase 2: read the materials
+Phase 3: execute, backfill and update mean drafting, check means checking
+Phase 4: self-check, for backfill and update, or output report, for check
+Phase 5: user review
+Phase 6: write to disk, for backfill and update, or wait for the user's decision, for check
 ```
 
-### Phase 1：锁定目标
+### Phase 1: Lock the target
 
-确认：模式 + 目标对象 + 范围。
+Confirm mode, target object, and scope.
 
-- backfill：新 slug + 受众 + 范围（+ 确认模块在代码里已存在）
-- update：已有文档路径
-- check：子目标 + 检查对象（feature 名 / architecture 子范围）
+- backfill: new slug, audience, and scope, plus confirm that the module already exists in code
+- update: the path of the existing document
+- check: the sub-target plus the object to inspect, such as the feature name or the architecture sub-scope
 
-范围不收敛就问用户收敛——一份 doc"全模块重写"往往意味着底下其实有多个独立子系统应该拆；一次检查覆盖整个 `architecture/` 报告读起来抓不到重点。
+If the scope is not converged, ask the user to narrow it. A "rewrite the whole module doc" usually means there are actually multiple independent subsystems underneath that should be split. A single check covering the whole `architecture/` folder usually produces a report too broad to be useful.
 
-### Phase 2：读取材料
+### Phase 2: Read the materials
 
-**共同必读**：`shared-conventions.md` + `ARCHITECTURE.md` + `architecture/` 下其他文档。
+**Required for all modes**: `shared-conventions.md`, `ARCHITECTURE.md`, and the other docs under `architecture/`.
 
-**backfill / update 额外**（详见 `reference.md` "读取清单"）：目标模块代码入口和核心文件 + 用户素材 + 相关 compound 沉淀（decision / explore / learning）+ 相关已有 feature 方案。**update 专项**：当前 doc 全文 + `last_reviewed` 之后的代码变更（`git log` 粗扫）。
+**Additional inputs for backfill and update**, see the "reading checklist" in `reference.md`: the code entry points and core files of the target module, user-provided material, related compound artifacts such as decision, explore, and learning, and related existing feature designs. **Update-specific**: read the full current doc plus a rough `git log` scan of code changes since `last_reviewed`.
 
-若输入来自 `bt-explore module-overview` / `zoom-out`，优先复用其中的模块边界、调用方地图和证据；仍需按本技能规则补齐 `file:line` 锚点。
+If the input comes from `bt-explore module-overview` or `zoom-out`, reuse its module boundary map, caller map, and evidence where possible, but still add `file:line` anchors according to this skill's rules.
 
-**check 额外**（按子目标）：
-- `design-internal` / `design-vs-code`：方案 doc 全文 + 架构相关 doc
-- `design-vs-code` 再额外：与 design 第 2/3 节直接对应的代码
-- `architecture-folder-internal`：用户圈定的几份 doc + 索引 + 顺藤摸到的被引用文档（不扩展到代码）
+**Additional inputs for check**, depending on sub-target:
+- `design-internal` and `design-vs-code`: the full design doc plus relevant architecture docs
+- `design-vs-code` additionally: the code directly corresponding to sections 2 and 3 of the design
+- `architecture-folder-internal`: the user-selected docs, the index, and the referenced docs reached by following links, but do not expand into code
 
-### Phase 3：执行
+### Phase 3: Execute
 
-**backfill / update**：按 `reference.md` "文档结构"写**完整初稿**不分批吐半成品——分批 review 用户看不到全局一致性，第 2 节描述的结构和第 4 节决策经常有跨节矛盾。
+**backfill and update**: write a **complete first draft** according to the "document structure" in `reference.md`. Do not emit partial pieces one batch at a time. If review happens in fragments, the user cannot see global consistency, and section 2 structure descriptions often conflict with section 4 decisions across sections.
 
-**check**：按 `reference.md` "检查覆盖项"（三个子目标各 6 类）逐条执行。每条不一致都要记**可定位位置**（`file:line` 或 `design 第X节`）+ 现象 + 影响 + 修复建议。
+**check**: execute each item in the "check coverage items" in `reference.md`, 6 categories for each of the three sub-targets. Every inconsistency must record a **locatable position**, either `file:line` or `design section X`, plus the symptom, impact, and suggested fix.
 
-### Phase 4：自查 / 输出报告
+### Phase 4: Self-check or output report
 
-**backfill / update**：按 `reference.md` "自查清单"（7 条）就地跑一遍，发现问题在 review 前处理掉（删 / 标 TODO / 改写）。自查结果简短汇报——发现了就说，不要走过场。
+**backfill and update**: run the 7-item "self-check list" in `reference.md` in place. Handle problems before review by deleting, marking TODO, or rewriting. Report the self-check result briefly. If you found a problem, say so. Do not perform a ceremonial pass.
 
-**check**：按 `reference.md` "报告模板"输出完整报告（检查摘要 / 不一致清单带严重级别 / 观察项 / 一致性良好项 / 建议下一步）。
+**check**: output the full report according to the "report template" in `reference.md`, including the check summary, inconsistency list with severity, observations, items that are consistent, and suggested next step.
 
-### Phase 5：用户 review
+### Phase 5: User review
 
-**backfill / update**：完整初稿贴给用户 review。
-**check**：报告给用户，等确认结论。本技能不替用户拍板。
+**backfill and update**: show the complete first draft to the user for review.
+**check**: give the report to the user and wait for them to confirm the conclusion. This skill does not make the final call for them.
 
-### Phase 6：落盘 / 结束
+### Phase 6: Write to disk or finish
 
-**backfill**：
+**backfill**:
 
-- 写入 `architecture/{type}-{slug}.md`（命名规则见 `shared-conventions.md` 第 0 节），frontmatter `status: current`、`last_reviewed` 填当天
-- **同类聚合检查**（落盘前必跑）：按"架构 doc 分组规则"判断本次落盘后某 type 在根目录 ≥6 份——命中就把这类全搬进 `architecture/{type}/`、去掉文件名前缀、同步改 `ARCHITECTURE.md` 链接；搬迁清单在 Phase 5 一并 review
-- **索引更新**：`ARCHITECTURE.md` 加新文档引用——backfill **必定**要加，否则写了没人会读；改动同样 review，不偷偷改
+- write to `architecture/{type}-{slug}.md`, following the naming rules in section 0 of `shared-conventions.md`, with frontmatter `status: current` and `last_reviewed` set to today
+- **same-type grouping check**, mandatory before writing: according to the "architecture doc grouping rules", if after writing there would be 6 or more docs of the same type in the root directory, move the entire type into `architecture/{type}/`, remove the type prefix from filenames, and update the links in `ARCHITECTURE.md`; include the migration list in the Phase 5 review
+- **index update**: add the new doc to `ARCHITECTURE.md`. Backfill **must** add this. Otherwise the doc exists but nobody will find it. This change is reviewed together, not changed silently
 
-**update**：覆盖已有文件，`last_reviewed` 更新当天；结构性改动大时文末 `变更日志` 节加一条；`ARCHITECTURE.md` 只在 scope/summary 影响索引描述时更新。
+**update**: overwrite the existing file and update `last_reviewed` to today. If the structural change is large, add one line to the `Change Log` section at the end. Update `ARCHITECTURE.md` only when the scope or summary changes the index description.
 
-**check**：不落盘结束。用户可能基于报告决定触发 backfill/update——那是下一轮的事。
-
----
-
-## 硬性边界
-
-1. **只锚代码不造系统**（backfill/update）——每条结构化断言必须能锚到 `file:line`；锚不到标 `TODO: 待确认`。模块在代码里还没写就不该走 backfill —— 那是规划转 `bt-roadmap`
-2. **不替用户拍板决策**（backfill/update）——关键决策节实质内容必须来自用户或可追溯的 decision，AI 只起草结构和串联语言
-3. **只检查不修复**（check）——禁止改 design / 代码 / 配置。check 和修复分开做，用户才能看到完整不一致清单后整体决定优先级
-4. **证据化**（check）——每条不一致有可定位位置
-5. **可执行建议**（check）——具体到"改哪里、怎么改"，但不落盘
-6. **单目标**（所有模式）
-7. **不改代码、不动 spec**（所有模式）——只写架构 doc 或出报告。发现代码 / 方案 / decision 有问题记成"观察项"
-9. **只记现状不写目标态**——`improve-codebase-architecture` 产生的 deep module / seam / adapter 候选，只有在代码已落地后才进入 architecture；未落地目标态归 `bt-roadmap` / `bt-refactor design` / `bt-grill`。
-8. **不发散**——范围外问题不扩展，记观察项
+**check**: finish without writing to disk. The user may decide to trigger backfill or update based on the report. That would be a separate next run.
 
 ---
 
-## 退出条件
+## Hard Boundaries
 
-**共通**：
-- [ ] 已锁定单一模式和单一目标
-- [ ] 用户明确 review 通过（backfill/update）或确认结论（check）
-- [ ] 没有顺手修改代码 / 方案 doc / decision
-- [ ] 没有范围外文档改动
-
-**backfill / update 额外**：
-- [ ] 自查清单逐条跑过并汇报处理
-- [ ] frontmatter 完整（`doc_type: architecture` / `status` / `last_reviewed`）
-- [ ] 每个结构化断言有 `file:line` 锚点或标 `TODO: 待确认`
-- [ ] 落盘前已按"分组规则"判断同类 ≥6 份，命中则搬迁清单已 review
-- [ ] **backfill**：`ARCHITECTURE.md` 已加链接（或用户明确决定暂不加）
-- [ ] **update**：结构性改动有 `变更日志` 条目
-
-**check 额外**：
-- [ ] 已覆盖对应子目标的检查项
-- [ ] 报告含不一致清单 + 修复建议
-- [ ] 报告不含任何实际修复动作
+1. **Anchor only to code, never invent the system**, backfill and update — every structured assertion must anchor to `file:line`; if it cannot, mark it `TODO: to be confirmed`. If the module does not exist in code yet, backfill should not be used. That is planning and belongs to `bt-roadmap`
+2. **Do not make decisions for the user**, backfill and update — the substantive content of the key-decisions section must come from the user or a traceable decision. The AI only drafts the structure and connective wording
+3. **Check only, do not fix**, check mode — do not edit design, code, or config. Keep checking separate from fixing so the user can see the full inconsistency list and then decide priorities
+4. **Evidence-backed**, check mode — every inconsistency must have a locatable position
+5. **Actionable suggestions**, check mode — be specific enough to say where to change and how to change it, but do not write it into the files
+6. **Single target**, all modes
+7. **Do not edit code or spec**, all modes — only write architecture docs or output a report. If code, design, or decision has a problem, record it as an observation
+8. **Record only the current state, not target state** — candidates from `improve-codebase-architecture`, such as deep module, seam, or adapter, enter architecture only after they are actually landed in code. Unlanded target state belongs to `bt-roadmap`, `bt-refactor design`, or `bt-grill`
+9. **Do not fan out** — do not expand beyond the chosen scope; record out-of-scope issues as observations
 
 ---
 
-## 和其他工作流的关系
+## Exit Conditions
 
-| 方向 | 关系 |
+**Shared**:
+- [ ] one mode and one target have been locked
+- [ ] the user explicitly approved the review in backfill and update, or confirmed the conclusion in check
+- [ ] no code, design doc, or decision was modified on the side
+- [ ] there were no out-of-scope document edits
+
+**Additional for backfill and update**:
+- [ ] the self-check list has been run item by item and the handling was reported
+- [ ] frontmatter is complete, including `doc_type: architecture`, `status`, and `last_reviewed`
+- [ ] every structured assertion has a `file:line` anchor or is marked `TODO: to be confirmed`
+- [ ] before writing to disk, the same-type >= 6 grouping rule has been checked, and if triggered, the migration list has been reviewed
+- [ ] **backfill**: `ARCHITECTURE.md` has a new link added, unless the user explicitly decided to delay that
+- [ ] **update**: structural changes include a `Change Log` entry
+
+**Additional for check**:
+- [ ] the relevant check items for the chosen sub-target were covered
+- [ ] the report contains the inconsistency list plus fix suggestions
+- [ ] the report contains no actual fix actions
+
+---
+
+## Relationship with Other Workflows
+
+| Direction | Relationship |
 |---|---|
-| `bt-req` 配合 | req 写"为什么有这个能力"、本技能写"用什么结构实现"；frontmatter `implements` 反向链到 req slug |
-| `bt-feat-design` 上游 | design 写"本 feature 和哪块架构对接"时读本技能产出的 doc；design 写完可触发 check 体检 |
-| `bt-feat-accept` 下游 | 验收阶段实际去更新本技能产出的 doc（acceptance 自己归并，不回调本技能）；想确认实现 vs design 对得上时触发 check `design-vs-code` |
-| `bt-decide` 配合 | 拍板架构决策后，update 模式把引用补进相关 doc 第 4 节 |
-| `bt-issue-analyze` 读者 | 根因分析读本技能 doc 定位模块边界 |
-| `bt-onboard` 创建者 | onboard 建 `ARCHITECTURE.md` 占位，之后由本技能填实 |
-| `bt-roadmap` 配合 | architecture 记现状、roadmap 记规划。roadmap 起草读本技能 doc 理解现状但不改它；目标态架构归 roadmap |
-| `bt-explore` 配合 | `zoom-out` / module-overview 先给模块和调用方地图；本技能把稳定现状回填成长期 architecture 文档 |
-| `bt-grill` 配合 | 架构候选还没问透时先 grill；拍板并落地后本技能只记录实际现状 |
+| works with `bt-req` | req writes "why this capability exists", while this skill writes "what structure implements it"; architecture frontmatter uses `implements: [req-slug]` to link back |
+| upstream of `bt-feat-design` | design reads this skill's docs when it needs to state "which part of architecture this feature plugs into"; after design is written, `check` may be triggered for a health check |
+| downstream of `bt-feat-accept` | acceptance is where these docs are actually updated, acceptance merges changes itself rather than calling back into this skill; when someone wants to confirm implementation vs design, trigger `check design-vs-code` |
+| works with `bt-decide` | after an architecture decision is finalized, update mode adds the reference into section 4 of the relevant docs |
+| reader of `bt-issue-analyze` | root-cause analysis reads these docs to locate module boundaries |
+| created by `bt-onboard` | onboard creates the `ARCHITECTURE.md` placeholder, and this skill fills it in later |
+| works with `bt-roadmap` | architecture records current state, roadmap records the plan. Roadmap reads these docs to understand current state, but does not modify them. Target-state architecture belongs in roadmap |
+| works with `bt-explore` | `zoom-out` or `module-overview` first gives the module and caller map; this skill turns stable current state into a long-lived architecture doc |
+| works with `bt-grill` | if an architecture candidate has not been challenged deeply enough, grill it first; after it is finalized and landed, this skill records only the actual current state |
 
 ---
 
-## 常见错误
+## Common Mistakes
 
-**backfill / update**：
-- 把"打算重构成什么样"写进来——目标态归 roadmap
-- 凭空造系统——出现代码里不存在的"协调层 / 中枢 / 管理器"
-- 替用户拍板——选型理由是 AI 编的
-- 代码复述——每节只列"这里有什么"，没说"为什么这么分"
-- 分批吐半成品——用户看不出跨节矛盾
-- 术语冲突——新名字和代码 / 其他 architecture doc / compound 已有的冲突
-- 一次写 / 改多份——审不过来全部粗糙合入
-- 和已有 decision 冲突不停下——自己写了一版相悖的说法
-- backfill 落盘后忘加 `ARCHITECTURE.md` 索引——写了没人能发现
-- 把还没在代码里跑起来的模块走 backfill——那是目标态转 roadmap
-- update 加新内容但没代码依据——内容飘离实际的开端
-- 顺手把代码 / 方案 doc 一起改了——越界
-- 同类 ≥6 份还往根目录平铺——触发分组规则没搬迁
-- 文件名没遵循 `{type}-{slug}.md`——分组规则形同虚设
+**backfill and update**:
+- writing "what we plan to refactor it into" here — target state belongs in roadmap
+- inventing a system — writing a coordination layer, central hub, or manager that does not exist in code
+- making decisions on the user's behalf — the rationale is written by the AI rather than coming from traceable decision material
+- paraphrasing code — each section lists only "what is there", never "why it is split this way"
+- emitting partial drafts in batches — the user cannot catch cross-section contradictions
+- terminology conflicts — the new term conflicts with code, other architecture docs, or existing compound artifacts
+- conflicting with an existing decision and not stopping — quietly writing a contradictory version
+- forgetting to add the `ARCHITECTURE.md` index entry after backfill, so the doc exists but is undiscoverable
+- using backfill for a module that is not yet running in code — that is target state and should go to roadmap
+- adding new content in update mode without code evidence — the start of drifting away from reality
+- editing code or design docs on the side — out of bounds
+- still flattening 6 or more docs of the same type at the root level — the grouping rule was triggered but ignored
+- filenames not following `{type}-{slug}.md` — making the grouping rule meaningless
 
-**check**：
-- 一次同时做多个子目标
-- `architecture-folder-internal` 顺手读代码——那是 `design-vs-code`
-- 发现问题就顺手改代码或文档
-- 只说"这里不太对"不给证据位置
-- 建议过于抽象（"优化一下架构"）
-- 从一个目标无限扩展到全仓库审计
+**check**:
+- doing multiple sub-targets at once
+- reading code during `architecture-folder-internal` — that belongs to `design-vs-code`
+- finding a problem and then fixing code or docs on the side
+- saying only "this part is not quite right" without positional evidence
+- suggestions that are too abstract, like "optimize the architecture a bit"
+- expanding from one target into a whole-repository audit

@@ -1,50 +1,50 @@
-# onboard 参考模板
+# onboard reference templates
 
-本文件提供 `bt-onboard` 使用的骨架模板。
+This file provides the skeleton templates used by `bt-onboard`.
 
-## 1. `.bytetrue/architecture/ARCHITECTURE.md` 占位模板
+## 1. Placeholder Template for `.bytetrue/architecture/ARCHITECTURE.md`
 
 ```markdown
-# {项目名} 架构总入口
+# {Project Name} Architecture Entry
 
-> 状态：骨架（待填充）
-> 创建日期：YYYY-MM-DD
+> Status: skeleton (to be filled)
+> Created: YYYY-MM-DD
 
-## 1. 项目简介
+## 1. Project Overview
 
-## 2. 核心概念 / 术语表
+## 2. Core Concepts / Glossary
 
-## 3. 子系统 / 模块索引
+## 3. Subsystem / Module Index
 
-## 4. 关键架构决定
+## 4. Key Architecture Decisions
 
-## 5. 已知约束 / 硬边界
+## 5. Known Constraints / Hard Boundaries
 ```
 
-## 2. `.bytetrue/attention.md` 最小模板
+## 2. Minimal Template for `.bytetrue/attention.md`
 
-attention.md 是 ByteTrue 技能启动必读的项目注意事项入口。onboard 创建最小骨架，不替项目 owner 填实质内容；后续短规则由 `bt-note` 追加。
+`attention.md` is the entry point for project notes that every ByteTrue skill must read at startup. Onboard creates only the minimal skeleton and does not fill in project-specific substantive content for the owner. Later short rules are appended by `bt-note`.
 
 ```markdown
 # Attention
 
-本文件是 ByteTrue 技能启动必读的项目注意事项入口。所有 ByteTrue 子技能开始工作前必须读取它。
+This file is the entry point for project notes that every ByteTrue skill must read at startup. Every ByteTrue sub-skill must read it before starting work.
 
-## 项目碎片知识
+## Project Fragment Knowledge
 
-<!-- bt-note managed: 用 bt-note 维护，新条目按下面分节追加 -->
+<!-- bt-note managed: maintain with bt-note; append new entries under the sections below -->
 
-### 编译与构建
+### Compile and Build
 
-### 运行与本地起服务
+### Running and Starting Local Services
 
-### 测试
+### Testing
 
-### 命令与脚本陷阱
+### Command and Script Pitfalls
 
-### 路径与目录约定
+### Path and Directory Conventions
 
-### 环境变量与凭证
+### Environment Variables and Credentials
 
-### 其他
+### Other
 ```

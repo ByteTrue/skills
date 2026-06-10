@@ -1,54 +1,54 @@
 # Domain Context
 
-本文档是 ByteTrue 版 `grill-with-docs` 的 CONTEXT.md 等价物，记录本项目的 canonical terms、domain glossary 和术语边界。
+This document is the ByteTrue equivalent of `CONTEXT.md` for `grill-with-docs`. It records the project's canonical terms, domain glossary, and terminology boundaries.
 
-`bt-grill` 默认 with-docs 模式中，如果讨论澄清了术语或语言共识，必须更新本文档；`bt-grill --lite` 不读写本文档。
+In the default `with-docs` mode of `bt-grill`, if a discussion clarifies terminology or language consensus, this document must be updated. `bt-grill --lite` does not read or write this document.
 
 ---
 
 ## Canonical Terms
 
 <!--
-记录本项目必须统一使用的术语。
+Record the terms that must be used consistently throughout this project.
 
-示例：
-- **Order**：用户提交并等待履约的一次购买意图。
-- **Invoice**：对已完成 Order 生成的财务凭证，不等同于付款记录。
+Example:
+- **Order**: one purchase intent submitted by a user and awaiting fulfillment.
+- **Invoice**: a financial voucher generated from a completed Order, not the same thing as a payment record.
 -->
 
-- **TODO**：项目 onboard 后按需补充。
+- **TODO**: fill in after the project is onboarded, as needed.
 
 ---
 
 ## Domain Glossary
 
 <!--
-按业务域或模块分组记录领域词汇。
+Record domain vocabulary grouped by business domain or module.
 -->
 
 ### TODO
 
-- 待补充。
+- To be filled.
 
 ---
 
 ## Term Boundaries
 
 <!--
-记录容易混淆的词，以及“不要用 A 指 B”的边界。
+Record terms that are easy to confuse, and boundaries such as "do not use A to mean B".
 
-示例：
-- 不要把 “account” 用来同时表示登录账号和计费账户；登录账号叫 **User Account**，计费账户叫 **Billing Account**。
+Example:
+- Do not use "account" to refer to both the login account and the billing account. The login account is **User Account**, and the billing account is **Billing Account**.
 -->
 
-- 待补充。
+- To be filled.
 
 ---
 
 ## Rejected / Ambiguous Terms
 
 <!--
-记录已经讨论过但决定不用的叫法，避免未来重复争论。
+Record terms that were discussed but intentionally not adopted, so the same naming argument is not repeated in the future.
 -->
 
-- 待补充。
+- To be filled.

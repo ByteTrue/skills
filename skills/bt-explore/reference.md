@@ -1,6 +1,6 @@
-# explore 参考模板
+# explore reference templates
 
-本文件提供 `bt-explore` 使用的 frontmatter、正文结构和写作说明。
+This file provides the frontmatter, body structure, and writing notes used by `bt-explore`.
 
 ## 1. frontmatter
 
@@ -9,36 +9,36 @@
 doc_type: explore
 type: question | module-overview | spike
 date: YYYY-MM-DD
-slug: {英文描述，连字符分隔}
-topic: {一句话描述探索问题}
-scope: {探索范围}
+slug: {English description, hyphen-separated}
+topic: {one-line description of the exploration question}
+scope: {exploration scope}
 keywords: []
 status: active | outdated
 confidence: high | medium | low
 ---
 ```
 
-文件名：`.bytetrue/compound/YYYY-MM-DD-explore-{slug}.md`。
+Filename: `.bytetrue/compound/YYYY-MM-DD-explore-{slug}.md`.
 
-## 2. 正文结构
+## 2. Body Structure
 
 ```markdown
-## 问题与范围
-## 速答
-## 关键证据
-## 细节展开
-## 未决问题
-## 后续建议
-## 相关文档
+## Question and Scope
+## Short Answer
+## Key Evidence
+## Detailed Expansion
+## Open Questions
+## Suggested Next Step
+## Related Documents
 ```
 
-## 3. 写法说明
+## 3. Writing Notes
 
-- `速答` 必须结论前置
-- `关键证据` 目标 3–8 条
-- 涉及多模块协作时，在速答节附 Mermaid 图
-- 结论必须能被证据支撑
+- `Short Answer` must lead with the conclusion
+- Target 3-8 items in `Key Evidence`
+- If the exploration involves collaboration across multiple modules, attach a Mermaid diagram in the `Short Answer` section
+- Every conclusion must be supportable by evidence
 
-## 4. 后续建议
+## 4. Suggested Next Step
 
-`后续建议` 节写一句话提示用户接下来可能的方向（下一步由用户自己决定，本节不枚举候选技能）。用户说"不用"就跳过。
+In the `Suggested Next Step` section, write one sentence hinting at a plausible direction the user may take next. The user decides the next step; this section does not enumerate candidate skills. If the user says "no need", skip it.

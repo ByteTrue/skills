@@ -1,235 +1,235 @@
 ---
 name: bt-feat-impl
-description: feature 流程阶段 2——按 {slug}-checklist.yaml 里 design 切好的 paradigm 维度 steps 推进，每步具体改哪个文件由 implement 自决，写完用统一格式汇报。触发：用户说"方案确认了开始实现"、"按方案写代码"、"开工"。前提是 design 已 approved 且有 checklist。遇到方案外情况要回方案谈不要硬冲。
+description: Stage 2 of the feature workflow. Advance according to the paradigm-dimension steps sliced by design inside `{slug}-checklist.yaml`. Implement decides which concrete files to change inside each step. After finishing, report using a fixed format. Trigger when the user says "the plan is confirmed, start implementing", "write the code according to the design", or "start". The prerequisite is an approved design with a checklist. If something falls outside the design, go back to the design instead of forcing ahead.
 ---
 
 # bt-feat-impl
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-到这一步用户已经在方案上签过字了，你的活是把方案变成代码。容易出问题的不是写代码本身，而是**实现路上发现方案没覆盖到的情况时怎么办**——硬冲下去就把方案当摆设了。下面整套规则就是为了让"停下来"成为默认动作。
+At this point the user has already signed off on the design. Your job is to turn that design into code. The thing most likely to go wrong is not the coding itself, but **what to do when implementation discovers a case the design did not cover**. If you brute-force through it, the design becomes decoration. The rules below exist to make "stop and go back" the default action.
 
-> 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md` 第 0 节。
-
----
-
-## 写代码时的三条姿态
-
-具体规则是这三条姿态的落点，理解姿态比记规则重要。
-
-### 1. 默认写最少的代码
-
-只写当前步骤明确要的东西。不顺手加"以后可能要"的可配置项、抽象层、参数开关、防御性兜底。判据：写完一段觉得"是不是还得加点 X"，先问 X 是不是当前用户能感知到的——不是就别加。整体写完一看 200 行其实 50 行能讲清楚 → 重写。多出来的代码不是中性的，是后人维护的负担。
-
-### 2. 只动该动的，不顺手"改善"邻居
-
-改某个函数时只改那个函数。同文件里别的函数风格丑、命名怪——除非和本次改动直接冲突，否则别碰。新代码风格匹配当前文件已有写法。混进的"顺手改"会把功能 PR 稀释成"一坨综合改动"，review 成本翻几倍。值得改的按下文"顺手发现"格式记成后续 issue。
-
-孤儿处理：你这次改动让某个 import / 函数变成死代码 → 删掉。**不是**你改动造成的死代码 → 留着记成顺手发现。
-
-### 3. design 没说的事别自己拍板
-
-写到一半发现 design 没覆盖的角落（边界条件、错误路径、方案外文件）——默认停下来回 design 谈。下面"补丁分支"和"术语守护"是这条姿态的两个典型落点；**任何"design 没明说我替它选了一个"的瞬间都触发**。
+> For shared paths and naming conventions, see section 0 of `.bytetrue/reference/shared-conventions.md`.
 
 ---
 
-## 启动检查
+## Three implementation stances
 
-### 1. 方案文件够不够撑实现
+The concrete rules are all expressions of these three stances. Understanding the stance is more important than memorizing the rule.
 
-frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` / `summary` 非空 / `tags` ≥ 2。
+### 1. By default, write the least code possible
 
-**标准 design**（节 0/1/2/3/4）：
-- 第 0 节有内容；第 1 节含"明确不做"和复杂度档位
-- 第 2.1 名词层用"现状 → 变化"两段式，每个新增/变更接口至少一个示例 + 来源位置
-- 第 2.2 编排层开头有主流程图，"现状 → 变化"齐全，流程级约束已记
-- 第 2.3 挂载点按"删了它 feature 是否消失"判据，没把内部代码改动误列进来
-- 第 3 节有关键场景清单 + 反向核对项（不含测试代码 / framework 选型）
+Write only what the current step explicitly needs. Do not casually add configuration hooks, abstraction layers, parameter switches, or defensive fallbacks "for what we may need later". Decision rule: if after writing a block you think "should I also add X?", ask whether X is something the current user can perceive. If not, do not add it. If, after the whole change, 200 lines of code could really say the same thing in 50, rewrite it. Extra code is not neutral; it becomes maintenance burden.
 
-**Fastforward design**（节 0/1/2/3）：
-- 第 0 含"明确不做"；第 1 有改动点（文件 + 函数/类型名）
-- 第 2 验收标准每条可验证；第 3 推进步骤有退出信号
+### 2. Touch only what should be touched, and do not improve neighbors casually
 
-任一项不达标 → 退回 `bt-feat-design` 补齐。原因：方案漏的项实现时一定要现场补，等于绕过 checkpoint。
+When changing one function, change that function only. If another function in the same file has ugly style or weird naming, do not touch it unless it directly conflicts with the current change. Match the existing style of the file. "While-here improvements" dilute a feature PR into a pile of mixed changes and multiply review cost. Anything worth improving should be recorded as a follow-up issue using the "while here I noticed" format below.
 
-**注意**：标准 design 第 3 节"验收契约"只说"做完后什么应该成立"，不说"具体怎么做"。改动文件清单 / 函数级落点 / 测试代码归 implement 自决，不要因为 design 里没写就退回去要求补。
+Orphan cleanup: if your change makes an import or function dead code, remove it. If the dead code already existed and was **not** caused by this change, leave it and record it as a while-here observation.
 
-### 2. {slug}-checklist.yaml 在不在
+### 3. Do not decide things that design did not say
 
-- 文件存在，`feature` 字段一致
-- `steps` 非空（design 已产出，paradigm 维度切片，4-8 步）；`checks` 非空
-- 不存在 → 退回 `bt-feat-design` 生成
-
-### 3. 把上下文读全
-
-- 方案 doc 全文（标准 design 重点：第 1 节、2.1/2.2/2.3/2.4、3）
-- `{slug}-checklist.yaml`、需求来源（用户描述 + brainstorm note）、`.bytetrue/attention.md`
-- 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
-
-### 4. 跟用户确认从哪一步开始
-
-通常第 1 步；接续上次中断从已 `done` 的下一步继续。
-
-design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 → 持久化 → 测试），**具体每步改哪个文件由你执行时决定**。如果某一步实际是 3 个独立子动作、或发现微重构是它的前置（参考反射检查），跟用户对齐后追加 / 拆分 steps，**不偷偷做**。
-
-**design 第 2.5 节微重构的衔接**：
-
-- 如果 2.5 结论是"做微重构（拆文件）"或"做微重构（重组目录）"，checklist 第 1 步就是它——**独立跑完**，按 2.5 节"行为不变怎么验证"那条核对：
-  - 拆文件：编译绿灯 + 现有测试通过 + 对外接口签名零 diff
-  - 重组目录：编译绿灯 + 现有测试通过 + diff 仅限文件移动 + import 路径更新（**没有任何函数体改动**）
-
-  **不要合并到下一步**——一旦混在一起，行为变更和结构变更就分不开，出问题回滚不到干净中间态
-- 如果 2.5 结论是"不做"但写到中途反射检查触发了拆分信号 → 走下面"反射检查"那条路径（停下来 → 和用户对齐 → 能 provable 解决就追加独立 step），**不要绕过用户确认偷偷追加**
-- 如果 2.5 末尾有"建议沉淀的 convention"段：implement 阶段**不主动归档**——只在重组目录跑通且行为零改动确认后，在汇报里带一句"design 2.5 建议沉淀的 convention 已就绪，等 acceptance 阶段确认是否走 bt-decide"，把决定权交给 acceptance / 用户
+If halfway through coding you find a corner the design did not cover, edge behavior, error path, or out-of-scope files, stop by default and go back to design. The later rules on "patch branches" and "terminology guard" are two typical manifestations of this stance; **any moment that feels like "design did not say, so I chose for it" should trigger the same behavior**.
 
 ---
 
-## 实现期间的几条核心约束
+## Startup checks
 
-### 严格按 steps 顺序走
+### 1. Is the design document strong enough to support implementation?
 
-按 `steps` 列表顺序执行，不合并、不跳。每完成一步立即把 status `pending` → `done`。
+Frontmatter must have matching `doc_type=feature-design` and `feature`, `status=approved`, non-empty `summary`, and `tags` length at least 2.
 
-最常见违规是"顺手把下一步也做了"——每步都对应独立可验证的退出信号，两步合做意味着出问题时不知道是哪一步引入的、回滚也回不到干净中间态。
+**Standard design**, sections 0, 1, 2, 3, and 4:
+- section 0 has content; section 1 contains explicit non-goals and complexity dimensions
+- section 2.1 term layer uses the two-part "current state → change" structure, and every added or changed interface has at least one example plus source location
+- section 2.2 orchestration layer starts with a main flow diagram, fully describes current state → change, and already records flow-level constraints
+- section 2.3 mount points follow the rule "would the feature disappear if this were removed?", and do not mistakenly include internal code edits
+- section 3 contains the key scenario list plus reverse-check items, and does not contain test code or framework choice
 
+**Fastforward design**, sections 0, 1, 2, and 3:
+- section 0 contains explicit non-goals; section 1 contains change points, files plus function or type names
+- section 2 acceptance criteria are all verifiable; section 3 rollout steps each have exit signals
 
-### TDD / vertical slice 纪律（按需启用）
+If any of the above fails, return to `bt-feat-design` to complete it. Reason: every missing item in the design will end up being patched live during implementation, which bypasses the checkpoint.
 
-以下情况启用 TDD 纪律：用户明确要求 TDD、design 第 3.1 节建议 TDD、实现涉及复杂业务逻辑、或变更 regression-sensitive。简单 UI / 文案 / 配置改动不强制。
+**Important**: in standard design, section 3 acceptance contract says only "what should be true after it is done". It does not say "exactly how to implement it". Change-file inventories, function-level landing points, and test code are implement's own decision. Do not send the design back merely because those details are absent.
 
-启用后按 Matt `tdd` 的节奏执行：
+### 2. Does `{slug}-checklist.yaml` exist?
 
-1. 选一个最小 vertical slice / tracer bullet，不按“先写完全部测试再写全部实现”的 horizontal slicing 推进。
-2. 每轮只写一个行为测试，测试 public interface / 可观察行为，不测 private method / 内部 collaborator。
-3. 先确认测试失败（red），再写最少代码让它通过（green）。
-4. 当前测试变绿前不做 refactor；**never refactor while red**。
-5. 全绿后才允许小步 refactor，每次 refactor 后重跑相关测试。
-6. 继续下一条行为：one test → minimal code → repeat。
+- the file exists and its `feature` field matches
+- `steps` is non-empty, produced by design, sliced at the paradigm dimension, usually 4-8 steps; `checks` is also non-empty
+- if it does not exist, send it back to `bt-feat-design` to generate
 
-如果 design 第 3.1 节缺失但实现时发现非常适合 TDD，不要绕过 design：停下来补第 3.1 节或和用户确认“按 TDD 模式执行”。
-### 不做方案外的改动
+### 3. Read the full context
 
-发现值得重构的点（参考 `.bytetrue/reference/shared-conventions.md` 第 7 节"写代码时的反射检查"），只要**不在本次功能影响面内**就记成后续 issue：
+- the full design doc; in standard design focus especially on section 1, sections 2.1, 2.2, 2.3, 2.4, and section 3
+- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, and `.bytetrue/attention.md`
+- the source locations of interface examples in section 2.1, or the code files named by the change points in section 1 of fastforward design; reading the relevant functions is enough
+
+### 4. Confirm with the user which step to start from
+
+Usually step 1. If resuming from an interrupted run, continue from the next step after the last `done`.
+
+The `steps` provided by design are paradigm-dimension slices, orchestration skeleton → computation nodes → persistence → tests. **Which concrete files to change inside each step is your call during implementation**. If one step turns out to contain three independent sub-actions, or if a micro-refactor is discovered to be a prerequisite by the reflection checks, align with the user and then split or append the steps. **Do not do it silently.**
+
+**The handoff from design section 2.5 micro-refactor**:
+
+- if section 2.5 concludes "do micro-refactor, split files" or "do micro-refactor, restructure directories", then checklist step 1 is exactly that, and it must be run **as an independent step**, verified against the "how unchanged behavior is validated" rule in section 2.5:
+  - split files: build is green, existing tests pass, and external interface signatures have zero diff
+  - restructure directories: build is green, existing tests pass, and the diff is limited to file moves plus import-path updates, with **no function-body changes at all**
+
+  **Do not merge this into the next step**. Once behavior change and structure change are mixed, you can no longer separate them when debugging or rolling back.
+- if section 2.5 concluded "do not refactor", but halfway through implementation the reflection checks still trigger a split signal, follow the reflection-check path below, stop, align with the user, and if it can be solved provably, insert a new independent step. **Do not silently append it without confirmation**
+- if section 2.5 ends with a "suggested convention to capture" block, implement **does not archive it proactively**. Only after the directory reorganization runs cleanly and is confirmed as zero behavior change should your status report include one sentence saying "the convention suggested by design 2.5 is now ready; acceptance can decide whether to archive it through `bt-decide`", leaving the decision to acceptance and the user
+
+---
+
+## Core constraints during implementation
+
+### Follow steps strictly in order
+
+Execute according to the `steps` list in order. Do not merge steps and do not skip steps. Immediately after completing one step, change its status from `pending` to `done`.
+
+The most common violation is "while here I also did the next step". Every step has its own independently verifiable exit signal. If you do two steps together, when something goes wrong you will no longer know which step introduced it, and you also lose the clean rollback point.
+
+### TDD / vertical-slice discipline, enabled when applicable
+
+Enable TDD discipline when the user explicitly asks for TDD, when design section 3.1 recommends TDD, when the work involves complex business logic, or when the change is regression-sensitive. Simple UI, copy, or config changes do not require it.
+
+When enabled, follow Matt `tdd` rhythm:
+
+1. pick one minimal vertical slice or tracer bullet, rather than doing horizontal slicing like "write all tests first, then all implementation"
+2. each round writes only one behavior test, testing the public interface or observable behavior, not a private method or internal collaborator
+3. first confirm the test fails, red, and then write the least code needed to make it pass, green
+4. do not refactor before the current test turns green, **never refactor while red**
+5. after everything is green, small-step refactor is allowed, rerunning relevant tests after each refactor
+6. then move to the next behavior: one test → minimal code → repeat
+
+If section 3.1 is missing from design but implementation clearly turns out to be a very strong TDD candidate, do not bypass design. Stop and either add section 3.1 or align with the user that implementation will proceed in TDD mode.
+
+### Do not make changes outside the plan
+
+If you discover something worth refactoring, see section 7 "reflection checks while writing code" in `.bytetrue/reference/shared-conventions.md`, and it is **outside the current feature's impact surface**, record it as a later issue:
 
 ```markdown
-> 顺手发现：{文件:行号} {问题简述}。不在本次范围，记录待后续 issue。
+> While here I noticed: {file:line} {short problem summary}. It is outside this run's scope and is recorded for a future issue.
 ```
 
-顺手改的代码不在方案里，验收对不上；后人 git blame 也分不清是为本次功能还是顺手。
+Code changed casually "while here" is not part of the plan, so acceptance will not match it, and future `git blame` readers will not know whether it was for the feature or just an incidental cleanup.
 
-### 术语守护
+### Terminology guard
 
-**标准 design**：新写的类型 / 函数 / 变量名都要去方案 doc 第 0 节对照，不允许出现 doc 里没有的新概念。要引入新概念 → 先停下来改第 0 节、grep 防冲突、用户确认。
+**Standard design**: every new type, function, or variable name must be checked against section 0 of the design document. It is not allowed to introduce a new concept that does not exist in the doc. If a new concept is really needed, stop first, update section 0, grep for conflicts, and get user confirmation.
 
-**Fastforward design**：没有正式术语表，但要新起概念名时也要 grep 一下当前代码防冲突。
+**Fastforward design**: there is no formal terminology table, but when inventing a new concept name you still need to grep the codebase once to avoid collisions.
 
-代价：术语冲突意味着同概念两个名字 / 同名字两个概念——后者会让搜索完全失效。
+The cost of terminology collisions is that one concept ends up with two names, or one name ends up representing two concepts. The second case destroys searchability.
 
-### 出现"补丁分支"的冲动时停下来
+### Stop when you feel the urge to add a patch branch
 
-写代码时冒出 `if (特殊情况) { 特殊处理 }` 这种结构，**停**。这种分支基本只有一个原因：方案没覆盖到这种情况。继续写得到的是"为了让代码能跑而加的特殊逻辑"——下次别人改这块时不知道这个分支为什么存在。回方案谈：补进 design / 砍掉 / 明确为遗留问题。
+If coding leads you toward something like `if (special case) { special handling }`, **stop**. A branch like that usually means the design did not cover this situation. If you continue, the result will be "special logic added only to make the code run". Go back to the plan and discuss whether to add it, cut it, or explicitly mark it as leftover work.
 
-### 代码质量反射检查
+### Code-quality reflection checks
 
-除上面流程约束外，还有一组针对代码质量的反射检查——看 `.bytetrue/reference/shared-conventions.md` 第 7 节。
+In addition to the flow constraints above, there is another set of reflection checks aimed at code quality, see section 7 of `.bytetrue/reference/shared-conventions.md`.
 
-核心：**不是"超过 N 行必须拆"，而是"遇到 X 情况就停下来问自己"**。每条对应 AI 默认会走进去的坑（往大文件继续追加、往大类加方法、补丁分支、复制粘贴、第 4+ 个参数、往万能 util 堆东西）。
+The core idea is: **it is not "must split when over N lines", it is "when X happens, stop and ask yourself"**. Each signal corresponds to one of the default AI traps, adding more code to a large file, more methods to a large class, patch branches, copy-paste duplication, a fourth plus parameter, or stuffing more into universal utils.
 
-反射检查结论是"要拆 / 新建文件 / 重命名 / 抽共用层"且超出现有 steps 范围 → 跟用户商量决定，不偷偷拆完继续写。判据按和 design 2.5 一致的边界分两路（避免 impl 自己造一套口径）：
+If the reflection check concludes that the code should be split, moved, renamed, or extracted into a shared layer, and that falls outside the current steps, then discuss it with the user and decide together; do not secretly finish the split and continue coding. The same boundary as design 2.5 is used here to avoid implement inventing a new standard:
 
-- **能用"只搬不改行为"解决**（拆函数 / 拆文件 / 移动定义，编译器全程绿灯，对外签名零 diff）→ 和用户对齐后**追加为独立 step**插在当前 step 之前，跑完独立验证退出再继续
-- **超出"只搬不改行为"边界**（要改函数签名 / 改返回值结构 / 改调用关系语义 / 模块拆合）→ **本 feature 不做**，记成"顺手发现"格式提示用户后续走 `bt-refactor`，当前 step 用最少的改动绕过去；不要因为"反正都看到了"就在 feature 里顺手做掉——这会把功能 PR 稀释成综合改动，也违反 design 2.5 早就划好的边界
+- **If it can be solved by "move only, no behavior change"**, such as splitting functions, splitting files, or moving definitions while the compiler stays green and external signatures have zero diff, then after aligning with the user, **insert it as an independent step** before the current step, run it, verify it independently, and only then continue
+- **If it exceeds the "move only, no behavior change" boundary**, changing function signatures, changing return shapes, changing call-graph semantics, or splitting and merging modules, then **do not do it in this feature**. Record it as a "while here I noticed" item and suggest that the user handle it later through `bt-refactor`. Keep the current step as minimal as possible and work around it. Do not say "since I already saw it, I might as well fix it here", because that dilutes a feature PR into a mixed change and also violates the boundary already drawn by design 2.5
 
 ---
 
-## 写完后输出统一汇报
+## Fixed-format completion report after everything is done
 
-所有步骤完成后用下面模板汇报，**停下来等用户 review**。
+Once all steps are complete, use the template below and **stop to wait for user review**.
 
-固定模板的意义：含糊汇报等于把验证责任推回用户。固定模板逼你把改了哪些文件、是否触碰方案外、是否引入新概念一一说清楚。
+The point of the fixed template is that vague status reporting pushes verification responsibility back onto the user. The template forces you to say exactly which files changed, whether anything outside the plan was touched, and whether any new concept was introduced.
 
 ```markdown
-## 实现完成汇报
+## Implementation Completion Report
 
-### 动了哪些文件
-{git status 真实输出}
+### Which files were changed
+{real git status output}
 
-### 改了哪些函数 / 类型（按步骤分组）
-**步骤 N：{步骤名}**
-- file:line  函数名  改动类型（新增 / 修改 / 删除）
+### Which functions / types changed, grouped by step
+**Step N: {step name}**
+- file:line  function name  change type, add / modify / delete
 
-### 是否触碰到方案外的文件？
-{是 / 否。是的话说明原因 + 是否已同步更新方案 doc}
+### Did this touch files outside the plan?
+{yes / no. If yes, explain why and whether the design doc was updated accordingly}
 
-### 是否引入了方案 doc 里没有的新概念 / 抽象？
-{是 / 否。是的话说明已回填方案 doc（标准 design 补第 0 节 + 第 2.1 节；fastforward 补第 1 节）并做过 grep 防冲突}
+### Did this introduce any new concept or abstraction not present in the design doc?
+{yes / no. If yes, explain whether the design doc was backfilled, standard design updates section 0 and 2.1; fastforward updates section 1, and whether grep conflict-check was done}
 
-### 代码质量反射检查自检
-{对照 shared-conventions 第 7 节，触发哪些信号 + 怎么处理；都没触发写"无触发"}
+### Reflection-check self-audit
+{against section 7 of shared-conventions, which signals fired and how they were handled; if none fired, write "none"}
 
-### 推进顺序退出信号核对
-{对照 steps 逐条列 action + exit_signal + status（应全为 done）}
+### Exit-signal verification for rollout order
+{for each step, list action + exit_signal + status, all should be done}
 
-### 验收场景自检
-**标准 design**：对照第 3 节关键场景清单，每条靠什么证据满足（类型 / 单测 / 集成 / 手工 / assert）+ 反向核对项是否守住
-**Fastforward design**：对照第 2 节验收标准逐条核对
+### Acceptance-scenario self-check
+**Standard design**: for each key scenario in section 3, what evidence satisfies it, type system / unit test / integration / manual / assert, and whether reverse-check items are guarded
+**Fastforward design**: check each item against the acceptance criteria in section 2
 ```
 
-### TDD / red-green 证据
-{未启用：原因 / 已启用：逐条列 red test → minimal code → green evidence；如发生 refactor，列 refactor 后重跑的测试命令}
+### TDD / red-green evidence
+{if not enabled: reason / if enabled: for each item, list red test → minimal code → green evidence; if any refactor happened, list the test command rerun after refactor}
 
-汇报后停等 review。
-
----
-
-## 测试用例怎么落
-
-标准 design 第 3 节"关键场景清单"每条 = 一个可验证行为约束。你的活是把每条变成可观察证据：单测 / 集成 / 手工操作 / 类型编译期保证。
-
-具体怎么测、用什么 framework、mock 怎么搭——design 没规定，自决。但你得在 `steps` 里写清楚"哪一步落哪个测试"，汇报里逐项核对每条场景都有证据。
-
-**测试通过 ≠ 验收场景满足**——前者只说明你写的用例过了，不说明每条场景都有用例覆盖。
-
-启用 TDD 时，测试落地顺序必须跟实现同步：一个行为测试 red → 最小实现 green → 下一条行为。不要先堆一批 pending tests，也不要红灯时顺手重构。
-
-类型系统保证的（如 TypeScript 签名直接排除某种调用），汇报里说"类型签名已落地，编译期保证"。
+After the report, stop and wait for review.
 
 ---
 
-## 退出条件
+## How test cases should land
 
-- [ ] 所有 steps 的 status 都 `done`
-- [ ] 完成汇报已输出，用户 review 通过
-- [ ] 没有未处理的"需要叫停"信号
-- [ ] 第 3 节关键场景每条都有证据 / 测试覆盖（fastforward 对照第 2 节）
-- [ ] 若启用 TDD，red/green/refactor 证据已在完成汇报中列出
-- [ ] 没有"顺手发现"被偷偷修掉（都进 issue 列表）
-- [ ] 没有方案外文件改动（或已同步更新方案 doc）
+Each item in the "key scenario list" of section 3 in standard design equals one verifiable behavior constraint. Your job is to turn each of them into observable evidence: unit test, integration test, manual operation, or compile-time guarantee from the type system.
 
----
+Exactly how to test it, which framework to use, and how to set up mocks is not defined by design. That is your decision. But inside `steps`, you must still state clearly in which step each test is landed, and in the completion report you must check one by one that every scenario has evidence.
 
-## 退出后
+**A passing test is not the same thing as a satisfied acceptance scenario**. The former only says that the tests you wrote passed. It does not prove that every scenario has coverage.
 
-告诉用户："所有步骤完成，方案 doc 已同步。下一步阶段 3 验收闭环，触发 bt-feat-accept。"
+When TDD is enabled, the order of test landing must stay synchronized with implementation: one behavior test red → the minimum implementation to green → next behavior. Do not pile up a batch of pending tests, and do not refactor while the current test is still red.
 
-别自己顺手开始写验收报告——验收需要独立的 checklist 节奏，提前进入会让把关失效。
-
-**实现过程中如果踩到了项目通用的硬约束 / 命令陷阱 / 环境设置**（"啊原来这个项目要先 X 才能 Y"，一两行能讲清、下个 feature 的 AI 还会再撞一次）→ 在告诉用户去 accept 前**顺便提一句**："这次发现 {具体那条}，是不是要 `bt-note` 一下加到 attention.md，免得下次再踩？"——单条即可，不连写多条；用户说"等 accept 一起处理" 就跳过，accept 第 8 节会兜底盘点。
+When the type system itself guarantees something, for example a TypeScript signature ruling out a certain call shape, say so in the report as "the type signature now guarantees this at compile time".
 
 ---
 
-## 容易踩的坑
+## Exit Conditions
 
-- 代码只写了一部分就发完成汇报——汇报只在全部完成后发一次
-- 汇报里写"修改了相关文件"而不列 file:line
-- 看到方案外的代码顺手改了
-- 引入新类型 / 概念但没回去更新方案 doc
-- 加 `if (用户是 X) { 特殊处理 }` 补丁分支而不停下来
-- 用户 review 还没通过就自己进入验收阶段
-- 关键场景清单一条都没落证据
-- 把 paradigm 维度 steps 当 file:line 读——steps 是切片策略不是改动清单；step 内部偷偷拆子步骤而不跟用户对齐 = 绕过 review
-- 启用 TDD 时先写一堆测试再写实现——这会退化成 horizontal slicing，不是 tracer bullet
-- 测 private method / 内部实现细节——测试应该通过 public interface / 可观察行为表达需求
-- red 状态下顺手重构——先让当前测试变绿，全绿后再重构
+- [ ] all steps have status `done`
+- [ ] the completion report has been output, and the user review passed
+- [ ] there are no unhandled "must stop" signals
+- [ ] every key scenario in section 3 has evidence or test coverage, or in fastforward, every section 2 acceptance criterion has evidence
+- [ ] if TDD was enabled, red/green/refactor evidence is listed in the completion report
+- [ ] no "while here I noticed" item was secretly fixed; they are all in the issue list
+- [ ] there are no plan-external file changes, or the design doc was updated in sync
+
+---
+
+## After Exit
+
+Tell the user: "All steps are complete, and the design doc is synchronized. The next stage is acceptance closure. Trigger `bt-feat-accept`."
+
+Do not casually start writing the acceptance report yourself. Acceptance needs its own checklist rhythm, and entering it early weakens the gate.
+
+**If implementation encountered a project-wide hard constraint, command pitfall, or environment setup** — a one- or two-line fact like "ah, this project requires X before Y", something the AI for the next feature would likely hit again — then before telling the user to move to acceptance, **also mention it in one sentence**: "This run revealed {that specific thing}; should we `bt-note` it into attention.md so the next session does not step on it again?" One item only, not several. If the user says "let's handle it during acceptance", skip it; section 8 of acceptance will review candidates again.
+
+---
+
+## Easy Pitfalls
+
+- sending the completion report after only part of the code is written — the report is sent exactly once, after everything is done
+- writing "modified relevant files" in the report without listing `file:line`
+- casually editing code outside the plan
+- introducing a new type or concept without going back to update the design doc
+- adding a patch branch like `if (user is X) { special handling }` without stopping
+- entering acceptance before the user has approved the implementation review
+- leaving the key scenario list without any evidence
+- reading the paradigm-dimension steps as if they were a file:line checklist — steps are slicing strategy, not a diff list; secretly splitting sub-steps inside a step without alignment is bypassing review
+- when TDD is enabled, writing a pile of tests first and then all the implementation — that degrades into horizontal slicing, not tracer bullet
+- testing a private method or internal implementation detail — tests should express the requirement through public interface or observable behavior
+- refactoring while still red — make the current test green first, refactor only after everything is green

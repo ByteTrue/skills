@@ -1,53 +1,53 @@
 ---
 name: bt-guide
-description: 写或更新对外指南文档——开发者指南（dev-guide）和用户指南（user-guide），产物在项目 docs/ 目录。任务导向（怎么用 X 做 Y），与 libdoc 的零件参考不同。触发：用户说"写文档"、"开发者指南"、"用户指南"，或 feature-acceptance 收尾时推送。
+description: Write or update outward-facing guide documents, including `dev-guide` for developers and `user-guide` for end users, with artifacts under the project's `docs/` directory. These are task-oriented, "how to use X to do Y", and are different from libdoc's part-by-part reference style. Trigger when the user says "write docs", "developer guide", or "user guide", or when this is suggested at feature-acceptance closeout.
 ---
 
 # bt-guide
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-代码解决问题，文档让别人能用它解决问题。spec 记录"做了什么、为什么这么做"，但下游开发者和终端用户不需要、也不应该读 spec——他们需要面向自己角色的、可发布的指南。guidedoc 就是从 spec 和代码出发写成读者真正能用的指南。
+Code solves problems. Documentation lets other people use that code to solve problems. Specs record "what was built" and "why it was built that way", but downstream developers and end users neither need nor should read specs. They need publishable guides written for their own role. `guidedoc` turns specs and code into guides that readers can actually use.
 
 ---
 
-## 两条轨道
+## Two Tracks
 
-| 轨道 | 目标读者 | 典型内容 | 输出路径 |
+| Track | Target Reader | Typical Content | Output Path |
 |---|---|---|---|
-| `dev-guide` | 贡献者、集成方、下游开发者 | 本地 setup、架构解说、API 说明、扩展方式 | `docs/dev/{slug}.md` |
-| `user-guide` | 终端用户 | 功能概述、操作步骤、概念解释、常见问题 | `docs/user/{slug}.md` |
+| `dev-guide` | contributors, integrators, downstream developers | local setup, architecture explanation, API usage, extension method | `docs/dev/{slug}.md` |
+| `user-guide` | end users | feature overview, operation steps, concept explanation, FAQ | `docs/user/{slug}.md` |
 
-**轨道选择从"谁读"出发**——同一个 feature 经常需要两份：API 变化进 dev-guide，对应的用户操作进 user-guide。
+**Track selection starts from "who will read it"**. The same feature often needs two documents: API changes go into the dev-guide, while the corresponding user-facing operations go into the user-guide.
 
-> 路径 `docs/dev/` 和 `docs/user/` 是默认约定，项目已有自己的 docs 结构就以项目为准——开始前先确认。
+> `docs/dev/` and `docs/user/` are the default conventions. If the project already has its own docs structure, follow the project and confirm it before starting.
 
 ---
 
-## 触发时机
+## Trigger Timing
 
-| 情境 | 说明 |
+| Situation | Description |
 |---|---|
-| feature-acceptance 结束 | 主动推：方案第 2 节（接口契约）有变更问"需要更新 dev-guide 吗？"；第 1 节（用户可见行为）有变更问"需要更新 user-guide 吗？" |
-| 用户主动触发 | "写文档"、"guidedoc"、"补一份开发者指南" |
-| onboard 完成后 | 新仓库可触发补全基础文档骨架 |
+| feature-acceptance has ended | proactively suggest: if section 2 of the design, interface contract, changed, ask "do we need to update the dev-guide?"; if section 1, user-visible behavior, changed, ask "do we need to update the user-guide?" |
+| user triggers it directly | "write docs", "guidedoc", or "add a developer guide" |
+| after onboard completes | a new repository can use this to fill in the base document skeleton |
 
-主动推送一句话即可，用户说"不用"就别再提——多次推会让用户觉得 AI 在加戏。
+One proactive sentence is enough. If the user says "no need", stop there. Repeating the suggestion makes the AI feel performative.
 
 ---
 
-## 涉及路径
+## Paths Involved
 
-guidedoc 产物**不在 `.bytetrue/` 下**——指南是面向外部读者的可发布产物，和 spec 工件分开。
+guidedoc artifacts **do not live under `.bytetrue/`**. Guides are publishable artifacts for external readers, so they stay separate from spec artifacts.
 
 - dev-guide → `docs/dev/{slug}.md`
 - user-guide → `docs/user/{slug}.md`
 
-文件命名 `{slug}.md`（英文小写连字符，**无日期前缀**）——指南持续更新按主题管理。
+File naming is `{slug}.md`, lowercase English with hyphens and **no date prefix**. Guides are maintained by topic over time.
 
-检索：
+Search:
 
 ```
 python .bytetrue/tools/search-yaml.py --dir docs/dev --filter doc_type=dev-guide --filter status=current
@@ -61,100 +61,100 @@ python .bytetrue/tools/search-yaml.py --dir docs/user --filter doc_type=user-gui
 ```yaml
 ---
 doc_type: dev-guide | user-guide
-slug: {英文连字符}
-component: {关联模块名或 feature slug}
+slug: {english-hyphenated}
+component: {related module name or feature slug}
 status: draft | current | outdated
-summary: {一句话描述涵盖什么}
+summary: {one-line description of what it covers}
 tags: []
 last_reviewed: YYYY-MM-DD
 ---
 ```
 
-`status` 三态：`draft` 待 review；`current` 当前有效；`outdated` 对应代码已变文档没跟上（保留原文，标记后推送更新）。
+`status` is a three-state field: `draft` pending review, `current` currently valid, `outdated` where the code changed but the document did not keep up. Keep the original text, mark it, then push an update.
 
 ---
 
-## 文档格式
+## Document Format
 
-### dev-guide 正文结构
+### dev-guide body structure
 
 ```markdown
-## 概述
-一段话描述功能定位和适用场景。
+## Overview
+One paragraph describing the feature's role and applicable scenarios.
 
-## 前置依赖
-集成此模块所需的环境、依赖或配置（如有）。
+## Prerequisites
+Environment, dependencies, or configuration needed to integrate the module, if any.
 
-## 快速上手
-最小可运行示例。代码优先文字辅助。
+## Quick Start
+Minimum runnable example. Code first, text second.
 
-## 核心概念
-（可选）理解接口 / API / 模块行为所需的关键术语和设计决定。
+## Core Concepts
+Optional. Key terminology and design decisions needed to understand the interface, API, or module behavior.
 
-## 接口参考
-主要 API / 配置选项 / 事件 / 钩子。表格或逐项列举。
+## Interface Reference
+Main APIs, configuration options, events, or hooks. Use a table or per-item list.
 
-## 常见场景
-2-4 个实际使用场景代码示例，覆盖 happy path 和常见边界。
+## Common Scenarios
+2-4 practical code examples covering the happy path and common edges.
 
-## 已知限制与注意事项
-（可选）边界、性能考虑、已知 bug 绕过方式。
+## Known Limits and Notes
+Optional. Boundaries, performance considerations, or workarounds for known bugs.
 
-## 相关文档
-关联的 user-guide、方案 doc、架构 doc 或外部参考。
+## Related Documents
+Related user-guide, design doc, architecture doc, or external references.
 ```
 
-### user-guide 正文结构
+### user-guide body structure
 
 ```markdown
-## 功能简介
-一段话描述功能是什么、解决什么问题。
+## Feature Overview
+One paragraph describing what the feature is and what problem it solves.
 
-## 前置条件
-（可选）使用前的前提（账号权限、需先完成的操作）。
+## Preconditions
+Optional. What must already be true before using it, such as account permissions or prerequisite operations.
 
-## 如何使用
-步骤化操作。每步一行，关键操作配截图占位（`![描述](./assets/xxx.png)` 或注明"此处需截图"）。
+## How to Use
+Step-by-step operations. One line per step. Important actions get screenshot placeholders, using `![description](./assets/xxx.png)` or a note saying "screenshot needed here".
 
-## 常见问题
+## Frequently Asked Questions
 Q: ...
 A: ...
 
-## 相关功能
-（可选）关联功能跳转链接或说明。
+## Related Features
+Optional. Links or explanations for related features.
 ```
 
 ---
 
-## 工作流步骤
+## Workflow Steps
 
-1. **明确任务范围**——轨道（dev / user / 都要）+ 覆盖范围（新写还是更新）+ 信息来源（方案 doc 已有吗？同 component 已有 guide？需要读哪些代码？）
-2. **收集输入**——读方案 doc（重点第 0 节术语、第 2 节接口契约、第 1 节用户可见行为）+ `search-yaml.py` 搜 docs/ 确认有无已有 guide。发现已有 guide 标 `outdated` → 任务定性为**更新**
-3. **起草**——按对应轨道结构起草，frontmatter `status: draft`。约束：只写面向目标读者的内容——**不要把方案 doc 里"实现提示"或内部设计搬过来**；术语与方案 doc 第 0 节一致；代码示例必须来自实际代码不虚构接口
-4. **用户 review**——展示草稿，逐节确认覆盖范围 / 描述准确性 / 是否有读者看不懂的地方
-5. **落盘**——用户放行后：写入路径；`status: current` + `last_reviewed` 当天；更新已有文档时小修直接改，大改（结构重组 / 读者定位调整）先把旧文档 `status: outdated` 留作参考再新写一份
+1. **Clarify scope** — track, dev / user / both, scope, new or update, and information sources. Do design docs already exist? Is there already a guide for the same component? What code needs to be read?
+2. **Collect inputs** — read the design doc, especially section 0 terminology, section 2 interface contract, and section 1 user-visible behavior, then use `search-yaml.py` under `docs/` to confirm whether an existing guide already exists. If an existing guide is found and marked `outdated`, classify the task as an **update**
+3. **Draft** — draft according to the track structure and set frontmatter `status: draft`. Constraint: write only content for the target reader. **Do not move "implementation hints" or internal design straight out of the design doc.** Terminology must match section 0 of the design doc. Code examples must come from real code; do not invent interfaces.
+4. **User review** — show the draft and confirm section by section whether the scope is covered, whether the descriptions are accurate, and whether any part would be hard for the intended reader to understand
+5. **Write to disk** — after user approval, write to the chosen path, set `status: current`, and set `last_reviewed` to today. For updates, do direct edits for small changes. For major changes such as restructuring or a shift in reader positioning, first mark the old document `status: outdated` and keep it as reference, then write a new one
 
 ---
 
-## 与其他工作流的关系
+## Relationship with Other Workflows
 
-| 来源 | 关系 |
+| Source | Relationship |
 |---|---|
-| `bt-feat-accept` | 验收后主动推：接口变更推 dev-guide，用户可见变更推 user-guide |
-| `bt-feat-design` | 方案第 2 节是 dev-guide 主要信息源；第 1 节是 user-guide 主要信息源 |
-| `bt-onboard` | 新仓库接入后可补全基础文档骨架 |
-| `bt-arch` (check) | 检测到 design 与代码不一致时对应 guide 应同步标 `outdated` |
-| `bt-decide` | dev-guide 引用的技术选型应来自 decisions，不独立发明 |
-| `bt-trick` | dev-guide 用法示例若与 tricks 重合，交叉引用而不重复写 |
-| `bt-libdoc` | guide 引用 libdoc 条目做详细参考；libdoc 是零件参考，guidedoc 是任务教程 |
+| `bt-feat-accept` | after acceptance, proactively suggest: interface changes push dev-guide, user-visible changes push user-guide |
+| `bt-feat-design` | section 2 of the design is the primary information source for dev-guide; section 1 is the primary information source for user-guide |
+| `bt-onboard` | after a new repository is onboarded, this can fill in the base documentation skeleton |
+| `bt-arch` in check mode | if design and code diverge, the corresponding guide should also be marked `outdated` |
+| `bt-decide` | technology choices referenced by dev-guide must come from decisions rather than being invented independently |
+| `bt-trick` | if dev-guide usage examples overlap with tricks, cross-reference instead of repeating |
+| `bt-libdoc` | the guide cites libdoc entries for detailed reference; libdoc is part reference, guidedoc is task tutorial |
 
 ---
 
-## 容易踩的坑
+## Easy Pitfalls
 
-- 把方案 doc 里"实现提示"原文搬进 dev-guide——那是内部 spec
-- 没检查已有 guide 就新建——可能两份冲突
-- 写完 `status` 还是 `draft`——落盘必须改 `current`
-- 代码已更新相关 guide 还是 `current`——应标 `outdated` 并推送更新
-- dev-guide 和 user-guide 内容高度重叠——其中一份定位有误
-- 用 guide 存放 spec 信息（不变量 / 测试约束 / 根因分析）——这类内容属于 `.bytetrue/`
+- copying "implementation hints" from the design doc verbatim into the dev-guide — that belongs to the internal spec
+- creating a new guide without checking whether an old one already exists — conflicts may result
+- finishing the document while `status` is still `draft` — it must be changed to `current` when written
+- the code changed but the related guide is still marked `current` — it should be marked `outdated` and an update should be pushed
+- dev-guide and user-guide overlap too heavily — one of them is positioned incorrectly
+- using the guide to store spec information such as invariants, test constraints, or root-cause analysis — that content belongs under `.bytetrue/`

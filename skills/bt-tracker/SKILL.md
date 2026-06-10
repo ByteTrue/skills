@@ -1,54 +1,54 @@
 ---
 name: bt-tracker
-description: ByteTrue 外部 tracker 桥，融合 Matt to-prd / to-issues / triage。用于把符合可同步源和可同步状态映射的 `.bytetrue` 产物发布/绑定/更新到 GitHub/GitLab/local tracker，或 triage 外部 incoming issues 后路由回 bt 生命周期。
+description: ByteTrue's external tracker bridge, combining Matt `to-prd`, `to-issues`, and `triage`. It publishes, binds, and updates `.bytetrue` artifacts that satisfy the syncable-source and syncable-status mapping into GitHub, GitLab, or a local tracker, and it can also triage external incoming issues and route them back into the bt lifecycle.
 ---
 
 # bt-tracker
 
-`bt-tracker` 是 ByteTrue 的 external tracker bridge。
+`bt-tracker` is ByteTrue's external tracker bridge.
 
-它吸收 Matt `to-prd`、`to-issues`、`triage`，但不替代 ByteTrue 主流程：
+It absorbs ideas from Matt `to-prd`, `to-issues`, and `triage`, but it does not replace the main ByteTrue workflows:
 
-- 需求 / 规划 / feature / bug 的 canonical source 仍是 `.bytetrue/`。
-- GitHub / GitLab / local tracker 只是团队可见 projection 和 incoming queue。
-- 外部副作用必须先预览、再让用户确认。
+- the canonical source for requirements, planning, features, and bugs remains `.bytetrue/`
+- GitHub, GitLab, or a local tracker are only team-visible projections and incoming queues
+- every external side effect must be previewed first, then explicitly confirmed by the user
 
-> 项目管理配置看 `.bytetrue/reference/project-management.md`；术语看 `.bytetrue/reference/domain-context.md`。
-
----
-
-## 启动检查
-
-每次先做：
-
-1. 读 `.bytetrue/attention.md`；缺失则提示先 `bt-onboard`。
-2. 读 `.bytetrue/reference/project-management.md`；缺失则提示重跑 `bt-onboard` 补齐。
-3. 读 `.bytetrue/reference/domain-context.md`（如果存在），外部 issue 标题/正文必须使用项目 canonical terms。
-4. 判断 provider：`local | github | gitlab`。
-5. provider 是 `github` 时检查 `gh`、`gh auth status`、`git remote -v`。
-6. provider 是 `gitlab` 时检查 `glab`、`glab auth status`、`git remote -v`。
-
-provider 是 `local` 时，不创建外部 issue；只说明当前未配置外部 tracker，并可帮助用户更新 `project-management.md` 或建议重跑 `bt-onboard`。
+> Project-management configuration lives in `.bytetrue/reference/project-management.md`; terminology comes from `.bytetrue/reference/domain-context.md`.
 
 ---
 
-## 模式
+## Startup checks
 
-| 用户想做什么 | 模式 |
+Do this every time first:
+
+1. read `.bytetrue/attention.md`; if missing, tell the user to run `bt-onboard` first
+2. read `.bytetrue/reference/project-management.md`; if missing, tell the user to rerun `bt-onboard` and fill it
+3. read `.bytetrue/reference/domain-context.md`, if it exists; titles and bodies of external issues must use the project's canonical terms
+4. determine the provider: `local`, `github`, or `gitlab`
+5. if the provider is `github`, check `gh`, `gh auth status`, and `git remote -v`
+6. if the provider is `gitlab`, check `glab`, `glab auth status`, and `git remote -v`
+
+If the provider is `local`, do not create any external issue. Simply explain that no external tracker is configured yet, and offer to help update `project-management.md` or recommend rerunning `bt-onboard`.
+
+---
+
+## Modes
+
+| What the user wants to do | Mode |
 |---|---|
-| 把符合可同步源和状态映射的 roadmap / feature / bug 发布到 GitHub/GitLab | `publish` |
-| 把 ByteTrue 产物绑定到已有外部 issue | `link` |
-| 更新已绑定外部 issue 的 managed block / labels | `update` |
-| 看外部 incoming issues / needs-triage / needs-info 回复 | `triage` |
-| 查看当前 tracker 配置 | `status` |
+| publish roadmap, feature, or bug artifacts that satisfy the syncable-source and status mapping into GitHub or GitLab | `publish` |
+| bind a ByteTrue artifact to an existing external issue | `link` |
+| update the managed block or labels of an already bound external issue | `update` |
+| inspect incoming external issues, needs-triage, or needs-info replies | `triage` |
+| inspect the current tracker configuration | `status` |
 
-如果用户没说模式，先根据话判断；仍不确定就问一个问题。
+If the user did not explicitly name the mode, infer it from the wording; if still uncertain, ask one question.
 
 ---
 
-## 可同步源
+## Syncable sources
 
-只同步符合可同步源和可同步状态映射的 ByteTrue 产物。
+Only sync ByteTrue artifacts that satisfy both the syncable-source rule and the syncable-status mapping.
 
 ```yaml
 syncable_sources:
@@ -69,41 +69,41 @@ syncable_sources:
     external_kind: bug
 ```
 
-可同步状态映射：
+Syncable-status mapping:
 
-- `roadmap_prd`：`status: active | completed | paused` 视为已 review 的规划口径，可 publish / update；`draft` 不同步。
-- `roadmap_item`：`status: planned | in-progress | done` 可 publish / update；`dropped` 只更新已绑定外部 issue 的状态，不默认新建。
-- `feature_design`：`status: approved` 可 publish / update。
-- `bug_issue`：`status: confirmed` 可 publish / update。
+- `roadmap_prd`: `status: active | completed | paused` counts as reviewed planning content and may be published or updated; `draft` does not sync
+- `roadmap_item`: `status: planned | in-progress | done` may be published or updated; `dropped` only updates the state of an already bound external issue and does not create one by default
+- `feature_design`: `status: approved` may be published or updated
+- `bug_issue`: `status: confirmed` may be published or updated
 
-不要默认同步 standalone requirement；requirement 只作为 PRD / feature issue 的愿景输入。
+Do not sync standalone requirements by default. Requirement is only a vision input to PRD or feature issues.
 
 ---
 
-## publish：ByteTrue → external tracker
+## `publish`, ByteTrue → external tracker
 
-### 1. 读取源产物
+### 1. Read the source artifact
 
-根据用户给的路径 / slug / roadmap 名称读取源产物：
+Based on the path, slug, or roadmap name provided by the user, read the source artifact:
 
-- roadmap PRD：读 roadmap.md + items.yaml + 相关 requirement（如果 frontmatter 引用）。
-- roadmap item：读 item + parent roadmap。
-- feature design：读 design + checklist；若 `{slug}-acceptance.md` 已存在，同时读取 acceptance report 作为 task 完成状态 / 验收结果的 update 输入。
-- bug issue：读 report / analysis / fix note（如有）。
+- roadmap PRD: read `roadmap.md`, `items.yaml`, and related requirements if they are referenced in frontmatter
+- roadmap item: read the item plus its parent roadmap
+- feature design: read the design plus checklist; if `{slug}-acceptance.md` already exists, also read the acceptance report as input for task completion status or acceptance-result updates
+- bug issue: read the report, analysis, and fix note, if present
 
-如果源产物不符合"可同步源"和"可同步状态映射"，停止并问用户是否先回对应 bt 流程确认。
+If the source artifact does not satisfy the syncable-source rule and syncable-status mapping, stop and ask the user whether they want to go back through the corresponding bt workflow and confirm it first.
 
-### 2. 生成外部 issue 预览
+### 2. Generate an external-issue preview
 
-发布前先给用户预览：
+Before publishing, show the user a preview containing:
 
-- external kind：`prd | task | bug`
+- external kind: `prd`, `task`, or `bug`
 - title
 - labels
 - body managed block
-- 将回写到哪个 `.bytetrue` 源文件
+- which `.bytetrue` source file it will write metadata back into
 
-PRD body 使用 Matt `to-prd` 的结构，但映射到 ByteTrue：
+PRD body uses Matt `to-prd` structure, but mapped into ByteTrue:
 
 ```md
 ## Problem Statement
@@ -115,7 +115,7 @@ PRD body 使用 Matt `to-prd` 的结构，但映射到 ByteTrue：
 ## Further Notes
 ```
 
-Task issue 使用 vertical slice / tracer bullet：
+Task issue uses the vertical-slice / tracer-bullet structure:
 
 ```md
 ## Parent
@@ -126,7 +126,7 @@ Task issue 使用 vertical slice / tracer bullet：
 ## ByteTrue Source
 ```
 
-Bug issue 至少包含：
+Bug issue contains at least:
 
 ```md
 ## Problem
@@ -137,37 +137,37 @@ Bug issue 至少包含：
 ## ByteTrue Source
 ```
 
-### 3. 用户确认后再执行
+### 3. Execute only after user confirmation
 
-提供三个选择：
+Offer the user three choices:
 
-1. 创建新的外部 issue。
-2. 绑定已有 issue URL / id。
-3. 暂不同步。
+1. create a new external issue
+2. bind an existing issue URL or ID
+3. do not sync for now
 
-用户确认前不要调用 `gh issue create` / `glab issue create` / edit 命令。
+Before the user confirms, do not call `gh issue create`, `glab issue create`, or any edit command.
 
-### 4. 创建或更新
+### 4. Create or update
 
-GitHub：
+GitHub:
 
 ```bash
 gh issue create --title "$TITLE" --body-file "$BODY_FILE" --label "$LABELS"
 gh issue edit "$ID" --body-file "$BODY_FILE" --add-label "$LABELS"
 ```
 
-GitLab：
+GitLab:
 
 ```bash
 glab issue create --title "$TITLE" --description-file "$BODY_FILE" --label "$LABELS"
 glab issue update "$ID" --description-file "$BODY_FILE" --label "$LABELS"
 ```
 
-具体参数以本机 CLI help 为准；不确定时先运行 `gh issue create --help` 或 `glab issue create --help`。
+Use the local CLI help as the source of truth for exact flags. If uncertain, first run `gh issue create --help` or `glab issue create --help`.
 
-### 5. 回写 metadata
+### 5. Write back metadata
 
-成功后把 external metadata 写回源产物，不做中央 sync DB：
+After success, write external metadata back into the source artifact. Do not create a central sync database:
 
 ```yaml
 external:
@@ -179,13 +179,13 @@ external:
   synced_at: 2026-06-07T10:00:00Z
 ```
 
-roadmap item 的 metadata 写在 `items.yaml` 对应 item 上；feature / issue / roadmap PRD 写在 frontmatter。
+For roadmap items, write metadata into the matching item in `items.yaml`. For feature, issue, or roadmap PRD, write it into frontmatter.
 
 ---
 
-## managed block 更新规则
+## Managed block update rules
 
-外部 issue body 中只管理 ByteTrue block：
+Only the ByteTrue block inside the external issue body is managed:
 
 ```md
 <!-- bytetrue:managed:start -->
@@ -193,13 +193,13 @@ Generated from .bytetrue source.
 <!-- bytetrue:managed:end -->
 ```
 
-更新时只替换 block 内内容，保留团队手写内容和评论。找不到 managed block 时，先问用户是插入 block、覆盖 body、还是取消。
+During updates, only replace the content inside that block. Keep all team-written content and comments intact. If the managed block is missing, ask the user whether to insert the block, overwrite the whole body, or cancel.
 
 ---
 
-## 状态和 labels
+## Statuses and labels
 
-ByteTrue 使用 canonical keys，外部 label 名称来自 `project-management.md`：
+ByteTrue uses canonical keys; external label names come from `project-management.md`:
 
 - `prd`
 - `task`
@@ -209,89 +209,89 @@ ByteTrue 使用 canonical keys，外部 label 名称来自 `project-management.m
 - `ready_for_human`
 - `wontfix`
 
-非破坏性状态可以同步成 labels。关闭外部 issue 前必须询问用户；外部状态变化不自动回写 `.bytetrue/`。
+Non-destructive state may be synchronized as labels. Before closing an external issue, ask the user. External state changes never write back into `.bytetrue` automatically.
 
 ---
 
-## triage：external tracker → 人工判断 → ByteTrue
+## `triage`, external tracker → human judgment → ByteTrue
 
-triage 只处理外部 incoming queue，不自动修改 `.bytetrue`。
+Triage handles only external incoming queues and does not automatically modify `.bytetrue`.
 
-### 1. 列出需要关注的 issue
+### 1. List issues that need attention
 
-按 oldest first 展示三桶：
+Show three buckets, oldest first:
 
-1. unlabeled：从未 triage。
-2. `needs-triage`：等待 maintainer 评估。
-3. `needs-info` 且 reporter 有新回复：需要重新评估。
+1. unlabeled, never triaged
+2. `needs-triage`, waiting for maintainer evaluation
+3. `needs-info` with a new reporter reply, meaning it needs re-evaluation
 
-每个 issue 只列：id、title、labels、更新时间、一句话摘要。
+For each issue, show only id, title, labels, updated time, and a one-sentence summary.
 
-### 2. triage 单个 issue
+### 2. Triage one issue
 
-读取完整 body / comments / labels / reporter / dates；如果有历史 triage notes，先解析，避免重复问。
+Read the full body, comments, labels, reporter, and dates. If there are historical triage notes, parse them first to avoid asking the same question twice.
 
-给出推荐：
+Give a recommendation:
 
-- category：`bug | task | prd | question | out_of_scope`
-- state：`needs_info | ready_for_agent | ready_for_human | wontfix | needs_triage`
-- reasoning：为什么
-- ByteTrue route：进入 `bt-issue` / `bt-feat` / `bt-roadmap` / `bt-grill` / 暂不进入
+- category: `bug | task | prd | question | out_of_scope`
+- state: `needs_info | ready_for_agent | ready_for_human | wontfix | needs_triage`
+- reasoning: why
+- ByteTrue route: whether it should enter `bt-issue`, `bt-feat`, `bt-roadmap`, `bt-grill`, or not enter ByteTrue yet
 
-bug 必须先尝试复现或说明为什么无法复现；不要直接 grill reporter。
+For bugs, you must first try to reproduce them, or explain clearly why reproduction is not possible. Do not go straight into grilling the reporter.
 
-### 3. 用户确认后才改外部 tracker
+### 3. Change the external tracker only after user confirmation
 
-任何 triage comment 都必须以这句开头：
+Every triage comment must begin with this line:
 
 > *This was generated by AI during triage.*
 
-- `needs_info`：发 triage notes，问具体缺失信息。
-- `ready_for_agent`：发 agent brief，说明可由 agent 独立处理。
-- `ready_for_human`：说明为什么需要人类判断 / 权限 / 设计 review。
-- `wontfix`：礼貌说明原因；关闭前再次确认。
+- `needs_info`: post triage notes and ask for the specific missing information
+- `ready_for_agent`: post the agent brief and explain that an agent can process it independently
+- `ready_for_human`: explain why it needs human judgment, permissions, or design review
+- `wontfix`: explain the reason politely, and confirm again before closing
 
-### 4. 路由回 ByteTrue
+### 4. Route back into ByteTrue
 
-用户确认某个外部 issue 应进入 ByteTrue 后：
+Once the user confirms that an external issue should enter ByteTrue:
 
 - bug → `bt-issue-report`
-- 小 feature / task → `bt-brainstorm` 或 `bt-feat`
-- 大需求 / PRD → `bt-roadmap`
-- 方案不清 → `bt-grill`
+- small feature or task → `bt-brainstorm` or `bt-feat`
+- large demand or PRD → `bt-roadmap`
+- unclear proposal → `bt-grill`
 
-进入 ByteTrue 后，external issue 仍只是输入来源；`.bytetrue` 产物才是后续 canonical source。
+After it enters ByteTrue, the external issue is still only an input source. `.bytetrue` artifacts remain the later canonical source.
 
 ---
 
-## 上游触发点
+## Upstream trigger points
 
-以下阶段产物符合可同步源和可同步状态映射后，上游技能应一句话提示是否进入 `bt-tracker`；本技能仍必须按 publish/link/update 的预览和确认规则执行：
+Once the following stage outputs satisfy the syncable-source and syncable-status mapping, upstream skills should suggest in one sentence whether to enter `bt-tracker`; this skill still must follow the preview-and-confirmation rules of publish, link, or update:
 
-| 上游阶段 | 触发内容 |
+| Upstream stage | Trigger content |
 |---|---|
-| `bt-roadmap` 退出后 | roadmap PRD + 本次变更涉及的 syncable roadmap items（planned / in-progress / done；dropped 仅更新已绑定外部 issue） |
-| `bt-feat-design` 退出后 | approved feature design；roadmap 起头时含对应 roadmap item |
-| `bt-feat-accept` 退出后 | feature design + acceptance report/checklist 的 task 完成状态更新；roadmap 起头时含 done roadmap item |
-| `bt-issue-report` 退出后 | confirmed bug issue |
-| `bt-issue-fix` 退出后 | 已绑定 bug issue 的 managed block / labels / close-on-done 更新；未绑定时可补 publish/link |
+| after `bt-roadmap` | roadmap PRD plus any syncable roadmap items touched in this change, planned / in-progress / done, with dropped items only updating already bound external issues |
+| after `bt-feat-design` | approved feature design; if started from roadmap, also the corresponding roadmap item |
+| after `bt-feat-accept` | task completion-state updates for the feature design plus acceptance report or checklist; if started from roadmap, also the done roadmap item |
+| after `bt-issue-report` | confirmed bug issue |
+| after `bt-issue-fix` | updates to managed block, labels, or close-on-done for an already bound bug issue; if it was never bound before, publish or link may still be added |
 
 ---
 
-## 退出条件
+## Exit Conditions
 
-- [ ] 已读取 `project-management.md` 并确认 provider。
-- [ ] 外部副作用前已展示预览并获得用户确认。
-- [ ] publish/link/update 成功后已回写 external metadata。
-- [ ] triage 模式没有自动修改 `.bytetrue`。
-- [ ] 所有外部 comment 都带 AI triage disclaimer。
+- [ ] `project-management.md` has been read and the provider has been confirmed
+- [ ] before any external side effect, a preview was shown and user confirmation was obtained
+- [ ] after publish, link, or update succeeded, external metadata was written back
+- [ ] triage mode did not automatically modify `.bytetrue`
+- [ ] every external comment contains the AI triage disclaimer
 
 ---
 
-## 不做的事
+## Things this skill does not do
 
-- 不替代 `bt-roadmap` / `bt-feat` / `bt-issue` 的主流程。
-- 不把外部 tracker 当 canonical source。
-- 不从外部 issue 自动回写 `.bytetrue`。
-- 不自动关闭外部 issue。
-- 不设计 API / token / SDK adapter；只使用 `gh` / `glab` CLI。
+- It does not replace the main workflows of `bt-roadmap`, `bt-feat`, or `bt-issue`
+- It does not treat the external tracker as the canonical source
+- It does not write back into `.bytetrue` automatically from external issues
+- It does not automatically close external issues
+- It does not design APIs, tokens, or SDK adapters; it only uses `gh` and `glab` CLI

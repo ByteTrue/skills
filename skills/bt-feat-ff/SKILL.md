@@ -1,199 +1,199 @@
 ---
 name: bt-feat-ff
-description: feature 流程的超轻量通道——不写 design / checklist 直接动手，但先指引 AI 查 ByteTrue 知识库再开工。触发：用户说"快速模式"、"fastforward"、"别那么多步骤"、"直接开干"，且需求小到不值得走 design 流程。
+description: Ultra-light path for the feature workflow. Skip design and checklist and go directly to implementation, but first point the AI at the existing ByteTrue knowledge base before starting. Trigger when the user says "fast mode", "fastforward", "too many steps", or "just start coding", and the request is small enough that a full design flow would not be worth it.
 ---
 
 # bt-feat-ff
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-用户让你做小功能时本来 AI 就会直接动手——这个技能**不改变这件事**。它只做一件事：动手前把项目里已沉淀的 ByteTrue 知识指给你，按需搜一下，写出来的代码就比裸写多一层保护；动手后回写一份**最简的 `{slug}-ff-note.md`** 让这次工作可追溯、可被 bt-arch / bt-req backfill 看到、能纳入 scoped-commit 提交。
+When the user asks for a small feature, the AI would normally start coding directly anyway. This skill **does not change that**. It does only one thing: before coding, point the AI at the ByteTrue knowledge already captured inside the project, search it as needed, and give the resulting code one extra layer of protection beyond bare coding; after implementation, write back the **minimal `{slug}-ff-note.md`** so this work remains traceable, visible to `bt-arch` and `bt-req` backfill, and eligible for a scoped commit.
 
-很轻：没有 design doc / checklist / 验收清单 / 动手前的用户确认。看完指引，该读代码读、该写代码写、写完回写一段话。
+Very light: no design doc, no checklist, no acceptance checklist, and no user confirmation before implementation. After reading the guidance, read code when needed, write code when needed, and write back a short note after the work is done.
 
 ---
 
-## 动手前先扫一眼 .bytetrue/
+## Before Coding, Scan `.bytetrue/` Once
 
-Glob `.bytetrue/` 发现可用目录和文档，按需取用：
+Glob `.bytetrue/`, discover the available directories and documents, and use them as needed:
 
-- **`architecture/`** — ARCHITECTURE.md 总入口 + 子系统 doc。改跨模块的东西前看一眼避免违反边界
-- **`compound/`** — learning / trick / decision / explore 四类沉淀：
+- **`architecture/`** — the `ARCHITECTURE.md` entry plus subsystem docs. Before changing cross-module behavior, glance here to avoid violating boundaries
+- **`compound/`** — the four captured types, learning, trick, decision, and explore:
   ```bash
-  python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=learning --query "关键词"
-  python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=decision --query "关键词"
-  python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --query "关键词"
+  python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=learning --query "keyword"
+  python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=decision --query "keyword"
+  python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --query "keyword"
   ```
-- **`requirements/`** — 有相关 req 时读边界
-- **`features/`** — 有同类 feature 时参考其 design
-- **`reference/`** — shared-conventions.md / tools.md
+- **`requirements/`** — read boundaries if there is a relevant requirement
+- **`features/`** — if there is a similar feature, refer to its design
+- **`reference/`** — `shared-conventions.md` and `tools.md`
 
 ---
 
-## 怎么用
+## How to Use It
 
-动手前问 2 个问题：
+Before coding, ask two questions:
 
-1. **这块代码以前有人栽过跟头吗？** → 搜 `compound/` 的 learning
-2. **这块代码有没有已经拍板的写法约束？** → 搜 `compound/` 的 decision + 看 `architecture/` 相关子系统
+1. **Has anyone stumbled on this part of the code before?** → search learning in `compound/`
+2. **Are there already finalized constraints for how this part should be written?** → search decisions in `compound/` and check the relevant subsystem under `architecture/`
 
-命中就把结论融进实现（**按约束来写**，不是抄）。没命中按自己判断写很正常。搜不到换几个关键词再试。
-
----
-
-## 写代码时守住这几条
-
-design / implement 的硬约束在 fastforward 的精简版。没 design doc 不代表可以不讲——这些是让你"直接动手"时不偏向 AI 默认会踩的坑。
-
-### 先想"放在哪儿"再写
-
-30 秒回答：**这次要加的东西在项目结构里属于哪儿？**
-
-- 现有模块本该承担？→ 在那扩展，别另起
-- 横跨多个模块？→ 抽公共层 / 让某一方主导
-- 已有模块叫法不同？→ grep 同义词
-- 跟现有都不像？→ 多半该切回完整 design 流程
-
-默认坑：**不思考就往眼前最顺手的文件里加**——加完就成"什么都装的筐"。
-
-### 扫一眼要改的文件现在什么状况
-
-开写前看一眼：文件多长？承担几件事？类有多少方法？新加的是自然扩展还是把它推向"什么都能干"？
-
-健康就直接加；要先收拾（拆长文件 / 抽重函数）就**先收拾再加**，范围锁死为"只搬不改行为"；结构性问题（职责重划 / 模块拆合）→ 停下来回 design 流程。
-
-### 默认写最少的代码
-
-只写用户明确要的。不顺手加：
-
-- "以后可能要"的配置项 / 参数开关 / 抽象层 / 接口 / 工厂
-- 没人要的防御性兜底 / try-catch
-- 用户没提的边界处理
-
-判据：写完觉得"是不是还得加点 X"——X 是不是用户能感知到的？不是就别加。多出来的代码不是中性的，是后人维护的负担。
-
-### 只动该动的
-
-只改要改的函数。同文件里别的函数丑 / 命名怪——**除非和这次冲突，否则别碰**。新代码风格匹配当前文件已有写法。看到值得改的别处 → "顺手发现：{文件:行号} {问题}，不在本次范围"让用户决定。
-
-### 新逻辑默认放新文件
-
-会被其他地方引用 → 新文件；只一处用的小工具函数 → 就近放。
-
-### 不打补丁分支
-
-冒出 `if (特殊情况) { 特殊处理 }` → **停**。这种分支基本只因为思路没覆盖到这种情况，硬写下去得到的是"为让代码能跑而加的特殊逻辑"。要么改数据结构让它不需要特殊处理，要么明确承认是边界情况并注释说明为什么特殊。
-
-### 反射信号触发就停
-
-- 往 > 300 行文件追加 / 往 > 10 个方法的类加方法
-- 函数做的事越来越多超过一屏
-- 写第二段"跟上面那段基本一样改了两个变量"的代码
-- 函数参数加到第 4 个
-- 往 `utils.ts` / `helpers.ts` 万能 util 堆东西
-- 新起概念名时先 grep 同名 / 近义命名
-
-完整清单看 `.bytetrue/reference/shared-conventions.md` 第 7 节。
+If there is a hit, fold the conclusion into the implementation, **write according to the constraint**, not by copying. If there is no hit, writing by your own judgment is normal. If search comes up empty, try a few different keywords and search again.
 
 ---
 
-## 写完回写 `{slug}-ff-note.md`
+## Guard These Rules While Coding
 
-代码写完、验证完、用户确认效果 OK **之后**才动这一步——动手前先建空壳会破坏 ff 的轻体感。
+These are the compressed versions of the hard constraints from design and implement. No design doc does not mean no discipline. These rules exist to stop the default AI failure modes while "just start coding" is in effect.
 
-### 自动生成 slug
+### Think "where should this live?" before you write
 
-不问用户。规则：
+Spend 30 seconds answering: **where in the project structure does this new thing belong?**
 
-- 从用户最初的请求里抽 2-4 个英文 kebab-case 词概括动作 / 对象（如 "rename-cwd-helper"、"add-export-button"、"fix-toolbar-layout"）
-- 不抽业务名词缩写、不音译中文、保持小写连字符
-- 拿不准就保守一点："tweak-{对象}" / "small-{动作}" 也比强求精准好
+- if an existing module should naturally carry it → extend there; do not invent a new home
+- if it spans multiple modules → extract a shared layer or make one side the clear owner
+- if existing modules use a different name for the same idea → grep synonyms
+- if it does not look like any existing place → it probably should fall back to the full design flow
 
-最终路径：`.bytetrue/features/YYYY-MM-DD-{slug}/{slug}-ff-note.md`，日期用今天。
+Default pitfall: **adding it to the most convenient file in front of you without thinking**. That is how files become catch-all buckets.
 
-### 模板
+### Take one look at the file you plan to change
+
+Before writing, look once: how long is the file? How many responsibilities does it already carry? How many methods does the class have? Is your new change a natural extension, or does it push the file or class further toward "does everything"?
+
+If it looks healthy, add the code directly. If it needs cleanup first, such as splitting a long file or extracting repeated logic, **clean first, then add**, while locking the cleanup scope to "move only, no behavior change". If the issue is structural, such as responsibility repartition or module split and merge, stop and return to the full design flow.
+
+### By default, write the least code possible
+
+Write only what the user explicitly asked for. Do not add extras "while here":
+
+- configuration items, parameter switches, abstraction layers, interfaces, or factories for some hypothetical future
+- defensive fallbacks or `try-catch` blocks that nobody asked for
+- edge handling the user never mentioned
+
+Decision rule: after writing, if you think "should I also add X?" ask whether X is something the user can actually perceive. If not, do not add it. Extra code is not neutral; it becomes maintenance burden for the next person.
+
+### Touch only what should be touched
+
+Only change the functions that need changing. If other functions in the same file are ugly or badly named, **do not touch them unless they directly conflict with this work**. Match the existing style of the file. If you see another place worth improving, record it as "While here I noticed: {file:line} {problem}", and let the user decide.
+
+### New logic goes to a new file by default
+
+If it will be used elsewhere, create a new file. If it is only a small helper used in one place, keep it nearby.
+
+### Do not patch with special-case branches
+
+If you are about to write `if (special case) { special handling }`, **stop**. A branch like this usually means the current thinking did not cover that scenario, and forcing it in produces "special logic added just to make the code run". Either change the data structure so no special handling is needed, or explicitly admit it is a real edge case and comment why it is special.
+
+### Stop when reflection signals fire
+
+- appending to a file over 300 lines, or adding another method to a class with more than 10 methods
+- a function growing until it no longer fits on one screen
+- writing a second block that is "basically the same as the one above except for two variables"
+- adding a fourth function parameter
+- dumping more things into a universal `utils.ts` or `helpers.ts`
+- before inventing a new concept name, grep the same name and near-synonyms first
+
+See section 7 of `.bytetrue/reference/shared-conventions.md` for the full list.
+
+---
+
+## After Coding, Write Back `{slug}-ff-note.md`
+
+Do this **only after** the code is written, verified, and the user confirms the effect is OK. Creating the shell in advance breaks the light feel of ff.
+
+### Generate the slug automatically
+
+Do not ask the user. Rules:
+
+- extract 2-4 English kebab-case words from the user's original request to summarize the action or target, such as `rename-cwd-helper`, `add-export-button`, or `fix-toolbar-layout`
+- do not use business abbreviations, do not transliterate Chinese, and keep lowercase with hyphens
+- if unsure, be conservative. `tweak-{object}` or `small-{action}` is better than forcing false precision
+
+Final path: `.bytetrue/features/YYYY-MM-DD-{slug}/{slug}-ff-note.md`, with today's date.
+
+### Template
 
 ```markdown
 ---
 doc_type: feature-ff-note
 feature: {slug}
 date: YYYY-MM-DD
-requirement: {req-slug 或留空}
+requirement: {req-slug or empty}
 tags: [...]
 ---
 
-## 做了什么
-{1-3 句：解决什么需求 / 加了什么能力，业务视角}
+## What Was Done
+{1-3 sentences: what need was solved and what capability was added, from the business perspective}
 
-## 改了哪些
-- {file:行号区间或函数名} — {一句话说改了什么}
+## What Changed
+- {file:line range or function name} — {one sentence saying what changed}
 - ...
 
-## 怎么验证的
-{1-2 句：跑了哪些验证 / 浏览器走通了哪条路径 / 跑了什么测试}
+## How It Was Verified
+{1-2 sentences: what checks were run, which browser path was walked through, or what tests were run}
 
-## 顺手发现（可选，不阻塞）
-- {文件:行号} {问题简述} — 不在本次范围
+## While Here I Noticed, optional, non-blocking
+- {file:line} {short problem summary} — outside the scope of this run
 ```
 
-**写得真的轻**：每节就那么几行，不要把它写成迷你 design / 迷你 acceptance。这份文档的目标是"半年后有人看 git log 能跳进来 30 秒搞清楚做了啥"，不是替代标准流程。
+**Keep it truly light**: each section is only a few lines. Do not turn it into a mini design or mini acceptance report. The goal of this document is "six months later, someone can jump in from git log and understand in 30 seconds what this change did", not to replace the standard flow.
 
-落盘后告诉用户："已写 `{slug}-ff-note.md`，本次 fastforward 闭环。"
-
----
-
-## 不做什么
-
-- **不写 design doc / checklist / acceptance**——这就是 fastforward 的意义。要写就去 `bt-feat-design`
-- **不跟用户确认方案**——用户让你做小功能就是不想等你开会
-- **不在 `.bytetrue/` 里留 `{slug}-ff-note.md` 之外的新文件**——除非发现值得沉淀的坑 / 技巧，另起对话用 `bt-learn` / `bt-trick` 写
+After writing it, tell the user: "`{slug}-ff-note.md` has been written, and this fastforward run is closed."
 
 ---
 
-## 什么时候跳出 fastforward
+## What Not to Do
 
-干到一半发现下面任一情况，**停下来告诉用户"这比想象的复杂，建议切回完整流程"**：
-
-- 改动涉及 3 个以上子系统
-- 需要引入新术语或和现有术语冲突
-- 要动 `.bytetrue/architecture/` 既定的模块边界
-- 用户追加的要求让范围翻倍
-
-切回方式：触发 `bt-feat-design`。已写的代码在 design 里标"已部分实现"即可。
+- **Do not write a design doc, checklist, or acceptance report** — that is exactly why fastforward exists. If those are needed, go to `bt-feat-design`
+- **Do not ask the user to confirm the plan up front** — the whole point of a user asking for a small feature is that they do not want a meeting first
+- **Do not leave new files in `.bytetrue/` other than `{slug}-ff-note.md`** — unless you discover a pitfall or technique worth preserving, in which case start a separate conversation and use `bt-learn` or `bt-trick`
 
 ---
 
-## 退出条件
+## When to Exit Fastforward
 
-- [ ] 代码写完且用户确认效果 OK
-- [ ] `{slug}-ff-note.md` 已落盘且四节填齐（顺手发现可省）
-- [ ] 没有未对齐的"顺手发现"（都进 ff-note 末节，留给后续）
+If any of the following appears halfway through, **stop and tell the user "this is more complex than expected; recommend switching back to the full flow"**:
 
----
+- the change touches more than 3 subsystems
+- a new term must be introduced, or it conflicts with existing terminology
+- an established module boundary in `.bytetrue/architecture/` must be changed
+- the user's added requirements double the scope
 
-## 收尾提交
-
-按 `.bytetrue/reference/shared-conventions.md` 第 4 节"scoped-commit"规则执行。本通道：
-
-- **提交范围**：本次代码改动 + `{slug}-ff-note.md`
-- ff-note 落盘后告诉用户"已就绪，是否代为 commit？"，用户明确同意才执行
-
-按 `shared-conventions.md` 第 3 节"feature-ff"收尾推荐顺序逐项一句话提示（用户"不用"立即跳过）：
-
-1. 暴露的坑 → "沉淀 learning？（`bt-learn`）"
-2. 拍板的长期约束 → "归档决定？（`bt-decide`）"
-3. 最后问是否代为 scoped-commit
+To switch back, trigger `bt-feat-design`. Code already written can simply be marked in design as "partially implemented".
 
 ---
 
-## 容易踩的坑
+## Exit Conditions
 
-- 完全跳过知识检索就写——这个技能的唯一理由就是让你搜一下再写
-- 把搜到的 learning / decision 当"参考"而不是"约束"——decision 拍过板，违反要么重新 decision 要么别做
-- 开始写 design doc——fastforward 就是不写 design
-- 发现任务变复杂还硬在 fastforward 推——切回成本远低于带着错误方案改到底
-- **动手前就建 ff-note 空壳**——破坏 fastforward 的轻体感，必须代码 + 验证完才回写
-- **把 ff-note 写成迷你 design / 迷你 acceptance**——四节加一起十几行就够，多了说明这事不该走 fastforward
-- **跳过 ff-note 直接 commit**——和 issue-ff 强制 fix-note 同样的理由：没记录后人追溯不了
+- [ ] the code is written and the user confirms the effect is OK
+- [ ] `{slug}-ff-note.md` has been written and all four sections are filled, with "while here I noticed" optional
+- [ ] there are no unresolved "while here I noticed" items, meaning they are all recorded in the last section of the ff note for later follow-up
+
+---
+
+## Close-Out Commit
+
+Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-conventions.md`. For this path:
+
+- **commit scope**: this code change plus `{slug}-ff-note.md`
+- after the ff note is written, tell the user "it is ready; do you want me to commit it?" and only execute after explicit approval
+
+Following section 3 `feature-ff` of `shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+
+1. if it exposed a pitfall → "Capture it as learning? (`bt-learn`)"
+2. if it finalized a long-term constraint → "Archive the decision? (`bt-decide`)"
+3. finally ask whether they want a scoped commit
+
+---
+
+## Easy Pitfalls
+
+- skipping knowledge lookup entirely and just writing code — the only reason this skill exists is to make you search once before coding
+- treating the learning or decision you found as "reference" rather than a constraint — once a decision is finalized, either follow it or reopen the decision; do not quietly violate it
+- starting to write a design doc — fastforward exists precisely to avoid that
+- discovering the task is becoming complex and still forcing it through fastforward — the cost of switching back is far lower than carrying a wrong plan all the way through
+- **creating an empty ff-note shell before coding** — this breaks the light feel of fastforward; code and verification must come first, and only then write back
+- **turning the ff-note into a mini design or mini acceptance** — the four sections together should only be around a dozen lines; if it needs more, it probably should not have used fastforward
+- **committing without the ff-note** — for the same reason issue fast path requires a fix note, future readers need a trace

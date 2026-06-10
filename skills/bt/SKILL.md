@@ -1,167 +1,171 @@
 ---
 name: bt
-description: ByteTrue 工作流根入口，介绍体系全貌并把诉求路由到对应 bt-* 子技能。触发：用户只输入 `bt`、说"介绍一下 bytetrue"、"该用哪个技能"、"不知道用哪个"，或诉求还很开放未收敛。本技能只做路由不做事。
+description: Root entry for the ByteTrue workflow. Introduce the overall system and route the user's request to the appropriate `bt-*` sub-skill. Trigger when the user only types `bt`, says "introduce bytetrue", "which skill should I use", "I don't know which skill to use", or the request is still broad and unconverged. This skill only routes; it does not do the work itself.
 ---
 
 # bt
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-`bt` 是 ByteTrue 工作流家族的统一入口。用户开口大概率不会指名某个 `bt-xxx`——可能只说"我想加个权限校验"、"这个地方有 bug"、"介绍下 bytetrue"，甚至只发一个 `bt`。本技能负责接住开放式输入，弄清意图，路由到对的子技能。
+`bt` is the unified entry point for the ByteTrue workflow family. In most cases, the user will not name a specific `bt-xxx` skill up front. They may only say "I want to add a permission check", "there is a bug here", "introduce bytetrue", or even just send `bt`. This skill is responsible for catching that open-ended input, understanding the intent, and routing to the correct sub-skill.
 
-**两件事，仅此两件**：
+**Two things, and only these two things**:
 
-1. 用户带具体诉求 → 匹配场景路由表，告诉用户该触发哪个 `bt-*`，并简单说明为什么
-2. 用户想了解体系 / 说不清想做什么 → 给精简体系速读 + 让用户挑或描述更具体的诉求
+1. The user has a concrete request → match it against the scenario routing table, tell the user which `bt-*` to trigger, and briefly explain why
+2. The user wants to understand the system or cannot clearly say what they want to do → give a concise system quick-read and let the user choose or describe a more specific request
 
-**本技能不做事**：不写 spec / 不读写 `.bytetrue/` 下内容产物 / 不替子技能跑流程。产出只有"建议触发哪个子技能"。
-
----
-
-## 收到调用先做的扫描
-
-回应前每次都做（几个 tool 调用就够）：
-
-1. **看仓库有没有接入 ByteTrue**——`Glob .bytetrue/` 看顶层目录
-2. **存在**——必须先 `Read .bytetrue/attention.md`（如果缺失提示骨架不完整，先补齐或重跑 `bt-onboard`）；再 `Read .bytetrue/reference/system-overview.md`（如果有）；`Glob` 一下 `features/` `issues/` `roadmap/` 看进行中的工作（拿目录名就够，不逐份读）
-3. **不存在**——后面提示用户先走 `bt-onboard`
-4. **看用户原话**——开放式还是带具体诉求？带诉求匹配路由表，没诉求给体系介绍
-
-扫完才回应。让用户感觉你心里有数。
+**This skill does not do the work**: it does not write specs, does not read or write content artifacts under `.bytetrue/`, and does not run a sub-skill's workflow for it. The only output is "which sub-skill should be triggered".
 
 ---
 
-## 体系一图速读（用户没具体诉求 / 让你介绍时讲这个）
+## Scan Before Responding
 
-ByteTrue 把开发活动建模成 **8 个实体 + 3 个流程**，所有产物聚在 `.bytetrue/`：
+Do this every time before replying; a few tool calls are enough:
+
+1. **Check whether the repo has been onboarded to ByteTrue** — `Glob .bytetrue/` and look at the top-level directories
+2. **If it exists** — you must `Read .bytetrue/attention.md` first (if it is missing, say the skeleton is incomplete and ask the user to fill it in or rerun `bt-onboard`); then `Read .bytetrue/reference/system-overview.md` if present; `Glob` `features/`, `issues/`, and `roadmap/` once to see ongoing work (directory names are enough; do not read every file)
+3. **If it does not exist** — later tell the user to go through `bt-onboard` first
+4. **Look at the user's exact wording** — is it open-ended or already a concrete request? If concrete, match the routing table; if not, give the system introduction
+
+Reply only after the scan. The user should feel that you know the terrain.
+
+---
+
+## One-Page System Quick Read
+
+Use this when the user does not have a concrete request yet or asks you to introduce the system.
+
+ByteTrue models development activities as **8 entities + 3 workflows**, with all artifacts gathered under `.bytetrue/`:
 
 ```
 .bytetrue/
-├── requirements/    需求实体（"为什么要有这个能力"，只记现状）
-├── architecture/    架构实体（"系统现在长什么样"，只记现状）
-├── roadmap/         规划层（"接下来怎么做这块大需求 + 模块切 + 接口定"）
-├── features/        新增能力 spec 聚合根（design / impl / accept）
-├── issues/          修 bug spec 聚合根（report / analyze / fix）
-├── refactors/       重构 spec 聚合根（beta）
-├── audits/          审计实体（主动扫描发现清单，不定修）
-└── compound/        知识沉淀（learning / trick / decision / explore）
+├── requirements/    Requirement entities ("why this capability should exist", current state only)
+├── architecture/    Architecture entities ("what the system looks like now", current state only)
+├── roadmap/         Planning layer ("how to execute this larger need next: module split + interface contracts")
+├── features/        Aggregate root for new-capability specs (design / impl / accept)
+├── issues/          Aggregate root for bug-fix specs (report / analyze / fix)
+├── refactors/       Aggregate root for refactor specs (beta)
+├── audits/          Audit entities (proactively discovered finding lists, not committed fixes)
+└── compound/        Knowledge accumulation (learning / trick / decision / explore)
 ```
 
-**三条流程**：
+**Three workflows**:
 
-- **新增能力**：`bt-feat-design` → `bt-feat-impl` → `bt-feat-accept`（想法模糊先 `bt-brainstorm` 分诊）
-- **修 bug**：`bt-issue-report` → `bt-issue-analyze` → `bt-issue-fix`
-- **重构**（beta）：`bt-refactor` / `bt-refactor-ff`
+- **New capability**: `bt-feat-design` → `bt-feat-impl` → `bt-feat-accept` (if the idea is still fuzzy, route through `bt-brainstorm` first)
+- **Bug fix**: `bt-issue-report` → `bt-issue-analyze` → `bt-issue-fix`
+- **Refactor** (beta): `bt-refactor` / `bt-refactor-ff`
 
-**横切**：方案还没问透先 `bt-grill`；需要把符合可同步源和可同步状态映射的 ByteTrue 产物同步到 GitHub/GitLab/local tracker，或 triage 外部 incoming issues 时走 `bt-tracker`；流程跑完发现"值得记下来" → `bt-learn` / `bt-trick` / `bt-decide` / `bt-explore` 沉淀到 `compound/`。
+**Cross-cutting**: if the proposal has not been questioned hard enough yet, use `bt-grill` first; if you need to sync ByteTrue artifacts that match a syncable source and syncable status mapping into a GitHub/GitLab/local tracker, or triage external incoming issues, use `bt-tracker`; after a workflow finishes, if something is "worth writing down", record it into `compound/` through `bt-learn`, `bt-trick`, `bt-decide`, or `bt-explore`.
 
-**核心理念**：编排的是软件本身的生命周期（需求、架构、特性、bug、决策），不是 Agent。人在环——程序员对整体把控负责，AI 是高效执行体。
+**Core idea**: what gets orchestrated is the lifecycle of the software itself (requirements, architecture, features, bugs, decisions), not the Agent. Human in the loop: the programmer remains responsible for overall control, and AI is the efficient executor.
 
-> 项目已 onboard 的话更详细总览看 `.bytetrue/reference/system-overview.md`。
+> If the project has already been onboarded, see `.bytetrue/reference/system-overview.md` for the more detailed overview.
 
 ---
 
-## 场景路由表
+## Scenario Routing Table
 
-匹配用户的话到表里某行，告诉用户："你这个诉求建议走 `bt-xxx`，因为 {一句话理由}"。
+Match the user's words to one row in the table, then tell them: "Your request should go through `bt-xxx`, because {one-line reason}."
 
-| 用户说什么 / 想做什么 | 路由到 |
+| What the user says / wants to do | Route to |
 |---|---|
-| 仓库还没有 `.bytetrue/` | **先 `bt-onboard`**——所有其他 bt-* 都依赖这个目录 |
-| 想拷问方案 / "grill me" / "stress-test" / "设计靠谱吗" / "把计划问透" | `bt-grill`（默认读 `.bytetrue/` 和代码上下文；显式 `--lite` / `--no-docs` 才纯对话） |
-| 想法还模糊 / "有想法没想清楚" / "先聊聊" / "不知道是不是新功能" | `bt-brainstorm`（分诊后路由到 design / feature-brainstorm 落盘 / roadmap；显式想被拷问时转 `bt-grill`） |
-| 新功能 / "加个 X" / "实现 XX" | `bt-feat`（路由 design / ff / impl / accept） |
-| BUG / 异常 / 报错 / "这里不对" / "文档错了" | `bt-issue`（路由 report / analyze / fix） |
-| 代码优化 / 重构 / 重写（行为不变） | `bt-refactor` / `bt-refactor-ff` |
-| 摸代码 / "X 是怎么实现的" / 提问调研 / zoom out / 上升一层看整体 / 模块和调用方地图 | `bt-explore`（`module-overview` 承接 zoom-out；需要长期架构地图再接 `bt-arch`） |
-| 审查系统 / 扫描 bug / 审计代码 / "有哪些问题" / "哪里可以优化" | `bt-audit`（主动扫描发现，只列清单不定修） |
-| 补 / 更新需求文档 | `bt-req` |
-| 补 / 更新 / 检查架构文档 / "刷新架构 doc" / "做架构体检" | `bt-arch` |
-| 大需求拆解 / "我想要一个 X 系统" / 排期规划 / 模块拆分 + 接口契约 | `bt-roadmap` |
-| 技术选型 / 长期约束 / 编码规约 | `bt-decide` |
-| 踩坑回顾 / 经验总结 / "值得记下来" | `bt-learn` |
-| 可复用编程模式 / 库用法 / "以后做 X 就该这样" | `bt-trick` |
-| 一两行的项目注意事项 / 编译特殊设置 / 命令陷阱 / "记到 attention.md" | `bt-note` |
-| 开发者指南 / 用户指南 | `bt-guide` |
-| 库 API 参考 | `bt-libdoc` |
-| 外部 tracker / GitHub Issues / GitLab Issues / PRD 同步 / issue 同步 / triage incoming issues | `bt-tracker`（external tracker bridge；publish/link/update/triage，不替代 bt-roadmap / bt-feat / bt-issue） |
-| 用户在 feature / issue 流程中间问"下一步" | 路由到对应入口（`bt-feat` / `bt-issue`），让该入口判断当前阶段 |
+| The repo does not have `.bytetrue/` yet | **`bt-onboard` first** — every other `bt-*` depends on that directory |
+| Wants to interrogate a proposal / "grill me" / "stress-test" / "is this design solid" / "push this plan hard" | `bt-grill` (by default it reads `.bytetrue/` and code context; only explicit `--lite` / `--no-docs` makes it pure conversation) |
+| The idea is still fuzzy / "I have an idea but haven't thought it through" / "let's talk first" / "I don't know if this is a feature" | `bt-brainstorm` (it triages and routes to design / feature-brainstorm write-up / roadmap; if the user explicitly wants to be challenged, switch to `bt-grill`) |
+| New feature / "add X" / "implement XX" | `bt-feat` (routes to design / ff / impl / accept) |
+| BUG / exception / error / "something is wrong here" / "the docs are wrong" | `bt-issue` (routes to report / analyze / fix) |
+| Code optimization / refactor / rewrite with unchanged behavior | `bt-refactor` / `bt-refactor-ff` |
+| Read the code / "how is X implemented" / exploratory question / zoom out / step up one level / map the module and its callers | `bt-explore` (`module-overview` handles zoom-out; if a long-lived architecture map is needed, continue with `bt-arch`) |
+| Review the system / scan for bugs / audit the code / "what problems are there" / "what can be optimized" | `bt-audit` (proactive discovery only; list findings without committing to fixes) |
+| Add or update requirement docs | `bt-req` |
+| Add / update / check architecture docs / "refresh the architecture doc" / "do an architecture health check" | `bt-arch` |
+| Break down a larger need / "I want an X system" / scheduling plan / module split + interface contracts | `bt-roadmap` |
+| Technical choices / long-term constraints / coding conventions | `bt-decide` |
+| Pitfall review / experience summary / "this is worth writing down" | `bt-learn` |
+| Reusable programming patterns / library usage / "this is how X should be done in the future" | `bt-trick` |
+| One or two lines of project-specific notes / special build setup / command pitfalls / "put this into attention.md" | `bt-note` |
+| Developer guide / user guide | `bt-guide` |
+| Library API reference | `bt-libdoc` |
+| External tracker / GitHub Issues / GitLab Issues / PRD sync / issue sync / triage incoming issues | `bt-tracker` (external tracker bridge; publish/link/update/triage, not a replacement for `bt-roadmap`, `bt-feat`, or `bt-issue`) |
+| The user asks "what's next" in the middle of a feature / issue workflow | Route to the corresponding entry (`bt-feat` / `bt-issue`) and let that entry decide the current phase |
 
-**判不出来 / 太抽象**："听起来像 {猜测}，但你描述里 {缺什么}。是 {选项 A} 还是 {选项 B}？" 让用户选不要硬猜。
+**Cannot tell / too abstract**: "It sounds like {guess}, but your description is missing {what is missing}. Is it {option A} or {option B}?" Make the user choose; do not guess hard.
 
 ---
 
-## 几种需要特别留心的情况
+## Cases That Need Extra Attention
 
-### 仓库还没接入
+### The Repo Is Not Onboarded Yet
 
-任何 bt-* 流程但 `.bytetrue/` 不存在 → 说明这一点建议**先 `bt-onboard`**。不要直接路由到 bt-feat / bt-issue——它们的 SKILL.md 都假设 `.bytetrue/` 已存在。
+Any `bt-*` workflow when `.bytetrue/` does not exist → point this out and recommend **`bt-onboard` first**. Do not route directly to `bt-feat` or `bt-issue`; their `SKILL.md` files all assume `.bytetrue/` already exists.
 
-### 大需求被误当成 feature
+### A Large Need Mistaken for a Feature
 
-"我想要一个权限系统 / 通知中心 / SSO 接入"这类**一眼看出做不完一个 feature** 的诉求 → 不路由到 `bt-feat`，路由到 `bt-brainstorm`（大概率判 case 3 → `bt-roadmap`）或直接 `bt-roadmap`。理由：直接起 feature 会变成巨型 design 塞不下。
+Requests like "I want a permission system / notification center / SSO integration" are the kind you can tell **at a glance will not fit into one feature** → do not route to `bt-feat`; route to `bt-brainstorm` instead (most likely it will classify as case 3 → `bt-roadmap`) or directly to `bt-roadmap`. Reason: starting a feature directly will turn into an oversized design that no longer fits.
 
-### "改一下 X" 但 X 是已有功能
+### "Change X" but X Is an Existing Capability
 
-先问这是 **bug 修复**（X 现在表现错了）还是 **需求变更**（X 现在表现没错，但策略变了）：
+Ask first whether this is a **bug fix** (X behaves incorrectly now) or a **requirement change** (X behaves correctly now, but the policy has changed):
 
 - bug → `bt-issue`
-- 需求变更 → `bt-req` 改需求 doc + 之后 `bt-feat` 跑实现
+- requirement change → update the requirement doc through `bt-req`, then run implementation through `bt-feat`
 
-### 进行中的工作
+### Work Already In Progress
 
-扫描看到 `features/` 或 `issues/` 下已有相关目录 → 提一句"看到 `features/2026-04-22-xxx/` 已经存在，是接着做这个吗？" 让用户确认续作还是开新的。
+If the scan sees related directories under `features/` or `issues/`, say something like "I can see `features/2026-04-22-xxx/` already exists. Are we continuing that one?" Let the user confirm whether this is continuation work or a new one.
 
-### 沉淀类技能的细分
+### How to Distinguish Accumulation Skills
 
-判别口诀：
+Rule of thumb:
 
-- 回顾"做 X 时踩了 Y" → `bt-learn`
-- 处方"以后做 X 就这样做" → `bt-trick`
-- 规定"全项目今后都按 X 来" → `bt-decide`
-- 调查"X 现在是什么样" → `bt-explore`
-- 一两行常驻提示"ByteTrue 技能每次启动都得知道 X" → `bt-note`（写到 `.bytetrue/attention.md`）
+- Review of "we hit Y while doing X" → `bt-learn`
+- Prescription of "this is how X should be done from now on" → `bt-trick`
+- Rule of "the whole project will follow X from now on" → `bt-decide`
+- Investigation of "what X looks like right now" → `bt-explore`
+- One or two lines of standing reminder: "every ByteTrue skill startup must know X" → `bt-note` (written into `.bytetrue/attention.md`)
 
-判不出问用户："这个你想记成 {踩坑回顾 / 复用处方 / 长期规约 / 调研存档 / 常驻提示} 哪一种？"
-
----
-
-## 介绍模式（用户只说想了解 / 不知道做什么）
-
-按这个顺序讲，**不一次倒出全部**：
-
-1. 一句话：ByteTrue 是面向严肃工程的 AI 编码工作流，编排软件生命周期而不是 Agent
-2. 7 实体 + 3 流程的速读图
-3. 问用户"你现在最想从哪儿开始？"，给四个引子：
-   - "我有个新功能想做" → bt-feat
-   - "我想把一个方案问透" → bt-grill
-   - "代码里有个 bug" → bt-issue
-   - "项目还没接入 ByteTrue" → bt-onboard
-
-收住，别把所有子技能细节讲一遍。用户问到具体的再展开。
+If you still cannot tell, ask the user: "Which type do you want this recorded as: {pitfall review / reusable prescription / long-term convention / investigation archive / standing reminder}?"
 
 ---
 
-## 退出
+## Introduction Mode
 
-本技能没有"落盘"。退出条件一条：
+Use this when the user only wants to understand the system or does not know what to do.
 
-- [ ] 已告诉用户下一步触发哪个具体的 `bt-*` 子技能（或确认用户只是来了解，没要做事）
+Explain it in this order, **without dumping everything at once**:
 
-输出形如：
+1. One sentence: ByteTrue is an AI coding workflow for serious engineering. It orchestrates the software lifecycle, not the Agent.
+2. The quick-read map of 7 entities + 3 workflows
+3. Ask the user "Where do you want to start right now?", and offer four prompts:
+   - "I have a new feature I want to build" → `bt-feat`
+   - "I want to pressure-test a proposal" → `bt-grill`
+   - "There is a bug in the code" → `bt-issue`
+   - "This project has not been onboarded to ByteTrue yet" → `bt-onboard`
 
-> 你这个诉求建议走 **`bt-xxx`**——{一句话理由}。
-> 触发后它会 {简述会发生什么：会先扫已有 spec / 会让你先描述 / 会进入分诊 / ...}。
-> 现在切到 `bt-xxx` 吗？
+Stop there. Do not explain every sub-skill in detail at once. Expand only when the user asks about something specific.
 
 ---
 
-## 不做的事
+## Exit
 
-- **不读写 `.bytetrue/` 下的内容产物**——这些是子技能的事
-- **不替子技能做决策**——不在本技能做 brainstorm 分诊，不判 bt-arch 走哪个模式
-- **不一次推荐多个技能**——每次只指一条路；两个独立诉求分两轮
-- **不重复体系总览细节**——`.bytetrue/reference/system-overview.md` 才是权威完整版
-- **不绕过 `bt-onboard`**——仓库没接入就先 onboard
+This skill does not "write anything down". There is only one exit condition:
+
+- [ ] You have told the user which specific `bt-*` sub-skill to trigger next, or confirmed that the user only came to understand the system and is not asking to do work yet
+
+Output should look like this:
+
+> Your request should go through **`bt-xxx`** — {one-line reason}.
+> After you trigger it, it will {briefly describe what happens next: scan existing specs first / ask you to describe the issue first / enter triage / ...}.
+> Switch to `bt-xxx` now?
+
+---
+
+## Things This Skill Must Not Do
+
+- **Do not read or write content artifacts under `.bytetrue/`** — that is the job of the sub-skills
+- **Do not make sub-skill decisions on their behalf** — do not perform brainstorm triage here, and do not decide which mode `bt-arch` should use
+- **Do not recommend multiple skills at once** — point to exactly one path each time; split two independent requests across two rounds
+- **Do not repeat the detailed system overview** — `.bytetrue/reference/system-overview.md` is the authoritative full version
+- **Do not bypass `bt-onboard`** — if the repo is not onboarded, onboard first

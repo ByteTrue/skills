@@ -1,231 +1,231 @@
 ---
 name: bt-brainstorm
-description: 想法还模糊时的讨论入口，做分诊后路由到 feature-design / feature-brainstorm / roadmap / bt-grill。AI 是思考伙伴不是记录员。触发：用户说"有个想法还没想清楚"、"先 brainstorm 一下"、"聊一聊这块"、"方向还在摇摆"。显式要 grill / stress-test / 把方案问透时转 `bt-grill`。不处理 bug 和重构。
+description: Discussion entry point for when the idea is still fuzzy. It triages and routes to feature-design, feature-brainstorm, roadmap, or bt-grill. The AI is a thinking partner, not a recorder. Trigger when the user says "I have an idea but haven't thought it through", "let's brainstorm first", "let's talk about this area", or "the direction is still shaky". If the user explicitly wants grill, stress-test, or to push the proposal until it is clear, route to `bt-grill`. This skill does not handle bugs or refactors.
 ---
 
 # bt-brainstorm
 
-brainstorm 是"讨论层"统一入口。
+Brainstorm is the unified entry for the discussion layer.
 
-三件最重要的事：
+Three things matter most:
 
-- **brainstorm 是创意空间不是审计关卡**——探索 / 质疑 / 改主意 / 聊着聊着发现真正想做的是另一件事都正常
-- **任何话题都可以聊**——用户想聊库 / Schema / 接口就聊；TA 提出来说明心里有谱，趁早讨论清楚 design 阶段更省力，不设话题黑名单。
-- **AI 是思考伙伴不是记录员**——用户来这步是想被挑战、被启发，不是被一条条问题填表。如果只是把用户的话整理一遍写下来这步就白做了
+- **Brainstorm is an idea space, not an audit gate** — exploring, questioning, changing your mind, or even discovering halfway through that the real thing you want is something else is all normal
+- **Any topic is fair game** — if the user wants to talk about a library, schema, or interface, talk about it. The fact that they brought it up means they already have something in mind. Clarifying it early saves effort in design. There is no blacklist of allowed topics
+- **The AI is a thinking partner, not a recorder** — the user came to this step to be challenged and inspired, not to fill out a form. If all you do is reorganize the user's own words and write them down, the step was wasted
 
-> 共享路径和命名约定看 `.bytetrue/reference/shared-conventions.md`。
+> For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`.
 
 ---
 
-## 分诊
+## Triage
 
-### 四种 case 速览
+### Four-case overview
 
-| case | 规模 | 用户状态 | 产物 |
+| Case | Scale | User State | Output |
 |---|---|---|---|
-| **case 1：已经够清楚** | 不限 | 一句话能说清做什么 / 为谁 / 怎么算成功 / 不做什么 | 不落盘，直接 `bt-feat-design` |
-| **case 2：小需求** | 单 feature | 知道要解决什么问题，对解法 / 边界还摇摆 | `.bytetrue/features/{feature}/{slug}-brainstorm.md` → `bt-feat-design` |
-| **case 3：大需求，拆解 ready** | 多 feature | 心里已有大致模块划分，想直接做拆解和接口契约 | 不落盘，移交 `bt-roadmap` |
-| **case 4：大需求，想被拷问** | 多 feature | 还不想拆——想先 grill / stress-test / 把计划问透 | 移交 `bt-grill`（默认 with-docs）；收束后再决定是否落 `.bytetrue/brainstorms/{slug}/brainstorm.md` 或进 `bt-roadmap` |
+| **case 1: already clear enough** | any size | one sentence can already say what to build, for whom, what success looks like, and what is out of scope | no file written, go directly to `bt-feat-design` |
+| **case 2: small demand** | single feature | the user knows what problem they want to solve, but the solution and boundary still wobble | `.bytetrue/features/{feature}/{slug}-brainstorm.md` → `bt-feat-design` |
+| **case 3: large demand, decomposition-ready** | multiple features | the user already has a rough module split in mind and wants to move directly into breakdown and interface contracts | no file written, hand off to `bt-roadmap` |
+| **case 4: large demand, wants to be grilled first** | multiple features | the user does not want decomposition yet, they want grill, stress-test, and to push the plan until it is clear | hand off to `bt-grill`, default `with-docs`; after convergence, decide whether to write `.bytetrue/brainstorms/{slug}/brainstorm.md` or move into `bt-roadmap` |
 
-判错 case 不是灾难——**允许升降级**。case 2 聊着发现范围越聊越大切 case 3/4，case 3 聊着发现需要先拷问切 case 4，case 4 经 `bt-grill` 问透后可以直接拆切 case 3，当场切换出口。
+Misclassifying the case is not a disaster. **Upgrading and downgrading are allowed.** A case 2 discussion can grow into case 3 or 4 as the scope expands. Case 3 can switch to case 4 if it becomes clear that the proposal needs interrogation first. Case 4 can, after `bt-grill`, switch directly into case 3 and decompose immediately.
 
-### 开聊前检查
+### Checks before starting the discussion
 
-每次都做：
+Do this every time:
 
-1. **扫一眼仓库**——先读 `.bytetrue/attention.md`；Glob `.bytetrue/` 发现 architecture / features / roadmap / brainstorms / compound / requirements，读架构总入口、看已有 feature 和 roadmap 和 brainstorm、搜 compound 看有没有相关坑（`--filter doc_type=learning`）；Grep 用户描述里的关键词防术语冲突。缺 attention.md 视为骨架不完整，不回退读外部 AI 入口
-2. **是不是接续之前的工作**：
-   - `features/` 下有名字相近的 brainstorm？`roadmap/` 下有相近子目录？`brainstorms/` 下有相关创意记录？
-   - 没有 → 当新讨论
-   - 有 brainstorm 内容是中断留下的 → 读完汇报"上次聊到 {…}，接着聊还是推翻？"
-   - 有同名 design.md → 告诉用户 design 已开，是不是走错入口
-   - 有同名 roadmap → 这块已在 roadmap 跟进，是不是要推进具体子 feature
-   - `brainstorms/` 下有相关创意记录 → 读完汇报"之前 {日期} 存过一份脑暴记录，方向是 {…}，接着聊还是直接拆 roadmap？"
-3. **确认这是新功能 brainstorm**——bug 走 `bt-issue`，重构走 `bt-refactor`
-4. **如果你已经能替用户写出 design 需求摘要的初稿**——当场判 case 1。揽下不属于自己的活是本阶段最大反模式
+1. **Scan the repo once** — read `.bytetrue/attention.md` first; Glob `.bytetrue/` to discover architecture, features, roadmap, brainstorms, compound, and requirements; read the architecture entry, inspect existing features, roadmaps, and brainstorms, and search compound for related pitfalls with `--filter doc_type=learning`; Grep the user's keywords to prevent terminology collisions. If `attention.md` is missing, treat the skeleton as incomplete and do not fall back to external AI entry files
+2. **Check whether this continues existing work**:
+   - are there similarly named brainstorms under `features/`? Similar subdirectories under `roadmap/`? Related idea records under `brainstorms/`?
+   - if none, treat it as a new discussion
+   - if there is an unfinished brainstorm, read it and report "last time the discussion reached {...}; do we continue that or overturn it?"
+   - if there is a design.md with the same name, tell the user design already exists and ask whether this is the wrong entry point
+   - if there is a roadmap with the same topic, tell the user that this area is already being tracked by roadmap and ask whether the real goal is to advance a concrete sub-feature
+   - if there is a related idea record under `brainstorms/`, read it and report "there was already a brainstorm record from {date}, with direction {...}; do we continue that or go straight into roadmap decomposition?"
+3. **Confirm this is new-feature brainstorming** — bugs go to `bt-issue`, refactors go to `bt-refactor`
+4. **If you can already write the first draft of the design requirement summary on the user's behalf**, classify it as case 1 immediately. Taking work that does not belong here is the biggest anti-pattern of this phase
 
-### 开场分诊：一两轮对话判 case
+### Opening triage, decide the case in one or two rounds
 
-不是填表——分类题问太多用户觉得在走流程。
+This is not a form. If you ask too many classification questions, the user feels trapped in process.
 
-**用户只说一个模糊词 / 短句**（"我想要一个权限系统"、"想聊聊通知"）：
+**When the user gives only one fuzzy word or short phrase**, such as "I want a permission system" or "let's talk about notifications":
 
-> 一句话先对齐：你想解决的是 {AI 复述的问题} 对吧？这块你脑子里多大范围——是"加一个小能力"那种一个 feature 能装下的，还是"一整块新子系统得分几轮做"的规模？
+> Let me align in one sentence first: the problem you want to solve is {AI's restatement}, right? In your mind, how large is this, something small enough to fit in one feature, or a whole new subsystem that has to be done over several rounds?
 
-**用户带着方案来**（"我想做 X，里面有 a/b/c"）：
+**When the user comes in with a plan**, such as "I want to do X, including a/b/c":
 
-> 复述一下看对不对——你想解决的问题是 {P}，打算做 X 包含 a/b/c。这里 a/b/c 合起来更像一个 feature 能搞定，还是三件互相有依赖的事要分几轮？
+> Let me restate it to check: the problem you want to solve is {P}, and your plan is X with a/b/c inside it. Taken together, do a/b/c feel like something one feature can finish, or like three dependent things that need to be done over several rounds?
 
-用户自己拆成多件 → 多 feature 规模，追问"想直接拆 roadmap，还是先走 `bt-grill` 把方案问透？"→ case 3 或 case 4；a/b/c 是同一件事的不同面 → case 2；用户听完复述说"对就是这个想清楚了"→ case 1。
+If the user themselves splits it into multiple separate things, that is multi-feature scale. Then ask whether they want to decompose straight into roadmap, or first use `bt-grill` to pressure-test the plan until it is clear, leading to case 3 or case 4. If a/b/c are just different faces of the same thing, that is case 2. If the user says after your restatement "yes, exactly, that is already clear", that is case 1.
 
-**判 case 信号**（用户说不清就 AI 自判）：
+**Signals for deciding the case**, if the user cannot say it cleanly and the AI must judge:
 
-- 每一条目标是**同一件事的不同角度**→ case 2
-- 几条目标有**先后依赖**或**互相独立的子模块**，用户能说出大致拆法 → case 3
-- 几条目标有**先后依赖**或**互相独立的子模块**，但用户说不清模块边界、想先发散探索 → case 4
-- 聊两句"不做什么 / 核心行为 / 成功标准"都对上 → case 1
-
----
-
-## 怎么聊（case 2 的轻量讨论工具箱）
-
-以下对话方法主要用于 case 2：目标大致明确但解法 / 边界还摇摆。若讨论中出现显式 grill、范围跨多个 feature、或连续复述仍对不上，立刻移交 `bt-grill`。
-
-### 两条核心姿态
-
-**1. 区分"用户说的"和"用户要的"**——开口第一句往往是 TA 想到的方案不是真要解决的问题。听到"我想做 X"先别顺着聊方案，先问"X 是为了解决什么场景下的什么问题"。常见发现：真问题不是 X 能解决的，或有更小、更轻、完全不同方向的解法。一旦进 design 方向就焊死——在用户自己还没意识到之前完成这件事是 brainstorm 阶段最大价值。
-
-**2. 用户带着方案来时先评估再接受**——不要直接进入"那我们聊聊 a 怎么做"。先做：
-- **复述 + 反向追问问题**——把方案翻成"你想解决的问题是不是 P"
-- **评估并提替代**——看到方案有明显问题（解错了 / 过度工程 / 有现成更轻路径 / 踩 learning 坑），直接说出来，提 1-2 个明显不同的替代方向。**不要为了显得配合就闭嘴**
-
-评估完发现方案确实合理 → "我觉得这个方向 OK 建议直接进 design"，别为凑流程硬发散——当场升级 case 1。
-
-### 对话节奏
-
-没有固定步骤。三个动作随时可回到上一步：
-
-1. **挖问题**——按姿态 1 把"真正要解决的问题"问清楚，能用一句话复述、用户说"对就是这个"为止。**这一步价值最高不要急着跳过**
-
-   **显式 grill 信号**
-
-   下面任一信号出现时，不在 `bt-brainstorm` 内部继续追问，而是移交 `bt-grill`：
-
-   - **显式请求**：用户说"多问几轮 / 帮我问清楚再开始 / grill 我 / stress-test / 拷问方案"。
-   - **隐式信号**：连续两次复述被"差不多但不太对"驳回；同一概念用不同词反复互指（"权限 / 角色 / 租户"换着说指同一件事）；用户自己也说不清楚。
-   - **范围信号**：问题明显跨多个 feature，但用户还没有模块边界或依赖顺序。
-
-   移交时带上已聊到的：真问题、用户方案、冲突术语、已知约束、你看到的最大风险。`bt-grill` 默认会读 `.bytetrue/` 文档和代码上下文；用户显式 `--lite` / `--no-docs` 才走纯对话。
-
-2. **发散**——确认问题后再谈方案。提 2-3 个具体候选方向（用户带的方案算其中一个），每个 1-2 句描述 / 价值 / 代价。**至少有一个反直觉候选**（反转 / 去掉常见约束 / 跨领域类比）。所有候选呈现完再给推荐——先锚定再补别的会污染用户判断
-3. **收敛**——选定方向后轻轻勾勒：核心行为？明显不做？最大未知？给 design 热身不是替 design 决定
-
-### 最小 demo / spike
-
-讨论中冒出"这个方向能不能走得通要看 X 实际是不是 Y"——不要靠脑补辩论，**停下来花 5-30 分钟搭个最小 demo 验一下**比再聊三轮更省时。
-
-**默认不做**——大多数 brainstorm 是在比较权衡，demo 帮不上忙。同时满足下面三条才主动提议：
-
-1. **是事实问题不是偏好问题**——某 API 实际行为 / 库是否真支持 / 性能特征是否成立，不是"哪种风格更好"
-2. **结果会改变方向**——验出来不管成败，讨论都能收敛
-3. **成本可控**——你判断 5-30 分钟内能搭出能跑的东西。超过这个量该走 `bt-feat-ff` 直接做或拆成正式 feature
-
-提议格式：**"这块靠想不准，我做个最小 demo 验一下 {要验的事}，5-10 分钟，OK 吗？"** 用户秒过 / 拒绝即可。
-
-**spike 落地约定**：
-- case 2：实验代码扔 `.bytetrue/features/{feature}/` 下（和 brainstorm note 同目录），文件随便起名（`spike.py` / `try-{topic}.ts`）
-- case 4：spike 放 `.bytetrue/brainstorms/{slug}/`，跟 brainstorm.md 挨着
-- 验完不强制清理——留着以后看也行；用户嫌乱说一声再删
-- **结果必须回写 brainstorm note**——成败都要在"已敲定"那节记一条："{结论} —— 已用 spike 验证（代码见 `{路径}`）"，避免 design / roadmap 阶段再起疑重做
-
-case 1 / case 3 也能借这个动作（不强求落 brainstorm note），逻辑一样：事实存疑 + 改变方向 + 成本可控。
-
-### 对话中的坑
-
-- **一次只问一个问题**——抛三五个用户只回最容易答的
-- **先给选项再提问**——能用 2-4 个具体有区别度的选项让用户挑就别让 TA 自由作文
-- **不要主动把话题拉回"用户感知层面"**——用户想聊库 / Schema / 接口 / 选型就跟着聊；AI 自己别主动开技术细节话题填时间，但用户开了的话题就认真陪聊。某问题的答案得看代码 → 按需读代码再带回对话
+- each goal is **a different angle of the same thing** → case 2
+- the goals have **dependency order** or **independent submodules**, and the user can already describe the rough split → case 3
+- the goals have **dependency order** or **independent submodules**, but the user cannot describe the module boundaries clearly and wants to explore first → case 4
+- after two quick exchanges, the explicit non-goals, core behavior, and success standard all line up → case 1
 
 ---
 
-## 四种 case
+## How to Talk, the lightweight toolbox for case 2
 
-### case 1：已经够清楚
+The following dialogue methods are mainly for case 2: the target problem is roughly clear, but the solution or boundary is still unstable. If the discussion turns into explicit grill, crosses into multiple-feature scale, or the restatement still fails after repeated attempts, hand it to `bt-grill` immediately.
 
-**信号**：一句话能说出做什么 / 为谁 / 怎么算成功 / 不做什么；聊两句核心行为 / 成功标准都对上。
+### Two core stances
 
-**处理**：
-1. 告诉用户"这块你已经想清楚了：{AI 一句话复述}。建议直接 `bt-feat-design`——brainstorm 对你没增量"
-2. **看聊过程有没有非琐碎技术决策**——讨论了具体库选型 / Schema / 接口形态 / 跨模块约定，落一份精简 brainstorm（只填"已敲定的设计点"那节）让 design 直接读到不必重讨；纯方向确认没聊技术细节就裸退不落盘
-3. 停下来等用户触发 design
+**1. Distinguish between what the user says and what the user actually wants** — the first sentence the user gives is often the solution they happened to think of, not the real problem they want to solve. When you hear "I want to do X", do not follow them straight into the solution. First ask what scenario and what problem X is meant to solve. A common outcome is that the real problem is not solved by X, or that there is a much smaller, lighter, or completely different solution. Once something enters design, the direction becomes welded. The biggest value of brainstorm is catching that before the user notices it themselves.
 
-**退出**："直接触发 `bt-feat-design` 从零写 design"（不落盘）；轻量落盘则"下一步 `bt-feat-design` 会读到 `{路径}` 不必重述"
+**2. When the user arrives with a plan, assess it before accepting it** — do not immediately go into "then let's discuss how to do a". First:
+- **restate and reverse-ask the problem** — translate the proposed plan back into "the problem you want to solve is P, right?"
+- **evaluate and propose alternatives** — if the plan has an obvious issue, wrong problem, over-engineering, an existing lighter path, or it would step on a known learning pitfall, say so directly and offer 1-2 genuinely different alternatives. **Do not stay silent just to look cooperative**
 
----
+If, after evaluating, the plan actually looks solid, say "I think this direction is fine; recommend going straight into design", and do not force extra divergence just to satisfy the workflow. That is a case 1 promotion on the spot.
 
-### case 2：小需求 → feature brainstorm
+### Conversation rhythm
 
-**信号**：知道要解决什么问题、大致做哪块，一个 feature 能装下，但对解法 / 边界还摇摆。
+There is no rigid sequence. You may move back to the previous step at any time:
 
-**怎么聊**：按上节"怎么聊"工具箱推进——挖问题 → 发散 → 收敛。收敛到选定方向后落盘。
+1. **dig for the real problem** — use stance 1 until the "real problem to solve" can be restated in one sentence and the user says "yes, that is exactly it". **This is the highest-value step; do not rush past it**
 
-**升降级**：
-- 聊着发现规模超出单 feature → "这规模超出单 feature，你想直接拆 roadmap，还是先走 `bt-grill` 问透后再拆？"→ case 3 或 case 4
-- 聊着发现已经全清楚 → case 1
+   **Explicit grill signals**
 
-**落盘**：收敛完成后写 `.bytetrue/features/{feature}/{slug}-brainstorm.md`。
+   If any of the following appears, do not keep questioning inside `bt-brainstorm`; hand it to `bt-grill`:
 
-目录约定：
-- 日期前缀：从环境信息取今天日期
-- slug：根据方向自拟英文小写连字符，写进 note 时告诉用户。design 阶段改名只 rename slug 部分日期别动
-- 目录不存在就创建；已存在回到开聊前检查的接续逻辑
+   - **explicit request**: the user says "ask me a few more rounds", "help me question this until it is clear", "grill me", "stress-test", or "interrogate the plan"
+   - **implicit signal**: two consecutive restatements are rejected with "close, but not quite"; the same concept is repeatedly referred to using different words, for example permission, role, and tenant all pointing at the same thing; or the user explicitly says they cannot explain it clearly either
+   - **scope signal**: the issue clearly spans multiple features, but the user still has no module boundaries or dependency order
 
-只在用户确认进 design 那一刻落盘——对话期间不写文件。`status` 固定 `confirmed`，没有 draft。
+   When handing off, bring along what has already been discussed: the real problem, the user's current plan, conflicting terms, known constraints, and what you think is the single most important next question. `bt-grill` will, by default, read `.bytetrue/` docs and code context. Only when the user explicitly says `--lite` or `--no-docs` does it switch to pure conversation.
 
-文档模板见同目录 `reference.md` 的"feature brainstorm 模板"。frontmatter 字段口径跟 design / acceptance 共用一组，看 `shared-conventions.md` 第 1 节。
+2. **diverge** — only after the problem is clear, discuss solutions. Offer 2-3 concrete candidate directions, counting the user's plan as one of them. Give each 1-2 sentences of description, value, and cost. **At least one candidate should be counterintuitive**, by reversing assumptions, removing a common constraint, or borrowing an analogy from another domain. Present all candidates before giving your recommendation. If you anchor early and then add others, you bias the user's judgment
+3. **converge** — after selecting a direction, sketch it lightly: what is the core behavior, what is obviously out of scope, and what is the biggest unknown. This is warming up design, not making design decisions for it
 
-**退出**：主动问"这块够清楚了可以进 design 吗？"，确认后落盘。如果愿景（用户故事 / 痛点 / 边界）已经聊透了，提示用户可以先 `bt-req draft` 把愿景落成 requirement，design 会读到这份 req 做对齐。告诉用户"下一步 `bt-feat-design` 会读到 `{路径}`"
+### Minimal demo or spike
 
----
+If the discussion reaches "whether this direction is viable depends on whether X is actually Y", do not keep debating it in the abstract. **Stop and spend 5-30 minutes building the smallest possible demo** to verify the fact. That usually saves more time than three additional rounds of discussion.
 
-### case 3：大需求 → roadmap 直接拆
+**Do not do this by default**. Most brainstorms are comparing tradeoffs, and a demo would not help. Only proactively suggest it when all three of the following are true:
 
-**信号**：多 feature 规模，用户心里已有大致模块划分，能说出拆法，想直接做拆解和接口契约。
+1. **this is a factual question, not a preference question** — for example how an API behaves, whether a library really supports something, or whether a performance characteristic holds, not "which style is nicer"
+2. **the result would change the direction** — whether it succeeds or fails, the discussion will converge afterward
+3. **the cost is controlled** — you judge that a runnable thing can be built in 5-30 minutes. Beyond that, it should either go straight through `bt-feat-ff` or be split into a formal feature
 
-**处理**：
-1. 告诉用户"听起来是多个 feature 的集合，单 feature 装不下。`bt-roadmap` 会做拆解和依赖梳理，我把讨论交给它"
-2. 把已聊的信息汇总让 roadmap 接手不用重来：真问题 / 大致范围 / 已提到的可能子模块（一句话各一）；**聊到的跨模块接口形态、共享协议、技术选型一并列出**——这些是 roadmap "架构层详设"节的种子
-3. **不落盘**——`roadmap new` 自己建目录和主文档
+Suggested phrasing: **"This one is hard to settle by thinking. I can build a minimal demo to verify {the thing to verify} in 5-10 minutes. OK?"** The user can then instantly approve or reject.
 
-**退出**："移交给 `bt-roadmap`"（附聊到的要点汇总），不落盘
+**Spike landing convention**:
+- case 2: put the experiment code under `.bytetrue/features/{feature}/`, in the same directory as the brainstorm note, with any simple name such as `spike.py` or `try-{topic}.ts`
+- case 4: put the spike under `.bytetrue/brainstorms/{slug}/` next to `brainstorm.md`
+- after verification, cleanup is not mandatory; leaving it there for later is fine. Delete it only if the user thinks it is clutter
+- **the result must be written back into the brainstorm note** — regardless of success or failure, add one line in the "design points already settled" section: "{conclusion} — verified by spike, see `{path}`", so that design or roadmap does not re-open the same doubt later
 
----
+Case 1 and case 3 can also borrow this action, though it is not mandatory to land a brainstorm note there. The same logic applies: the fact is uncertain, the answer changes direction, and the cost is controlled.
 
-### case 4：大需求 → bt-grill 拷问后再决定
+### Pitfalls in the conversation itself
 
-**信号**：多 feature 规模，但用户说不清模块边界、想先发散探索——"帮我问问清楚"、"先把想法理一理"、"方向还乱，聊开了再说"，或显式说 "grill / stress-test / 拷问方案"。
-
-**处理**：移交 `bt-grill`，不要在 `bt-brainstorm` 内维护第二套 grill 流程。
-
-移交摘要包含：
-
-1. 用户想解决的真实问题（如果已问出来）。
-2. 用户当前方案或直觉。
-3. 已暴露的术语冲突 / 范围不清 / 依赖不清。
-4. 已知 ByteTrue 上下文线索（相关 requirement / architecture / roadmap / compound，如已读到）。
-5. 你认为最该先问的一个问题。
-
-`bt-grill` 收束后再决定出口：
-
-- 够清楚且是单 feature → 回 `bt-feat-design`；必要时由用户要求落 feature brainstorm。
-- 够清楚但跨多个 feature → 回 `bt-roadmap`。
-- 产生了可留存创意但还不 ready → 可按原 open brainstorm 模板落 `.bytetrue/brainstorms/{slug}/brainstorm.md`。
-- 愿景、架构、长期约束已拍板 → 提示 `bt-req` / `bt-arch` / `bt-decide`。
-
-**退出**：告诉用户"这块需要先问透，我建议切到 `bt-grill`。它会默认读取 `.bytetrue/` 文档和代码上下文；如果你只想纯对话，用 `bt-grill --lite`。"
+- **Ask only one question at a time** — if you dump three or five, the user will answer only the easiest one
+- **Offer options before asking** — if 2-4 concrete choices with real distinctions can be offered, let the user choose instead of writing a free-form answer
+- **Do not proactively drag the topic back to the "user-visible layer"** — if the user wants to talk about a library, schema, interface, or technical choice, go with them. The AI should not open technical detail just to fill airtime, but if the user opens it, discuss it seriously. If the answer depends on code, read the code as needed and bring the fact back into the dialogue
 
 ---
 
-## 硬性边界
+## The four cases
 
-1. **不跳过分诊**——任何长度的讨论开始前都要先判 case
-2. **不替用户决定规模**——case 2 / 3 / 4 边界模糊就问用户"你脑子里这块是一个 feature 能装下的规模吗，还是需要先 grill 存着"
-3. **不落盘非 case 2 / case 4 产物**——case 1 / 3 不写文件
-4. **不处理 bug / 重构**
-5. **不在本技能内部维护 grill 流程**——显式 grill / stress-test / 拷问方案统一转 `bt-grill`
-6. **别自己顺手开始写 design 或 roadmap**——阶段间的人工 checkpoint 是 ByteTrue 整套流程的硬约束
+### case 1: already clear enough
+
+**Signal**: one sentence can already say what is being built, for whom, what success looks like, and what is out of scope. After two exchanges, core behavior and success criteria both line up.
+
+**Handling**:
+1. tell the user: "This is already clear enough: {AI one-sentence restatement}. Recommend going directly to `bt-feat-design`; brainstorm adds no value here"
+2. **check whether the discussion produced non-trivial technical decisions** — if the user discussed a concrete library choice, schema, interface shape, or cross-module convention, write a minimal brainstorm note, filling only "design points already settled", so design can read it without reopening the same discussion. If it was only direction confirmation with no technical detail, exit with no file
+3. stop and wait for the user to trigger design
+
+**Exit**: "trigger `bt-feat-design` directly to write the design from scratch", with no file written; or, if a lightweight note was written, "the next `bt-feat-design` will read `{path}` so you do not have to repeat it"
 
 ---
 
-## 常见错误
+### case 2: small demand → feature brainstorm
 
-- 跳过分诊默认所有讨论按 case 2 推进——大需求被硬塞进一个 feature
-- 分诊问得像问卷——一两轮该有方向；问到第三轮还在对齐规模说明方法错了
-- case 1 硬凑 brainstorm note——用户已清楚还写一份模板，后人误以为这里发生过有价值讨论
-- case 3 自己做拆解——越俎代庖，那是 roadmap 的产物
-- 升降级信号不理——范围扩大还继续 case 2，最后落一份塞不下所有子模块的 note
-- 把 case 4 当 case 3 处理——用户想被问透，却直接移交 roadmap 把未成形的想法硬拆成 feature
-- 把 case 3 当 case 4 处理——用户已经 ready 拆解，却强行 grill 拖延节奏
-- 一次只给一个方案让用户评价——用户被锚定提不出别的方向
-- 复述用户方案就落盘——记录员心态，AI 没提供思考伙伴的价值
+**Signal**: the user knows what problem they want to solve and roughly what part of the system it affects; one feature can hold it; but the solution or boundary still wobbles.
+
+**How to talk**: use the toolbox from the previous section, dig the real problem → diverge → converge. Once the direction converges, write it down.
+
+**Upgrading or downgrading**:
+- if the discussion reveals that the scale exceeds a single feature → "this is larger than one feature. Do you want to decompose it straight into roadmap, or first use `bt-grill` to question it through?" → case 3 or case 4
+- if the discussion reveals that everything is already clear → case 1
+
+**Write to disk**: after convergence, write `.bytetrue/features/{feature}/{slug}-brainstorm.md`.
+
+Directory conventions:
+- date prefix: use today's date from environment info
+- slug: invent an English lowercase hyphenated slug based on the direction, and tell the user what it is. If design later renames it, only rename the slug part, not the date
+- if the directory does not exist, create it; if it already exists, follow the continuation logic from the pre-discussion check
+
+Write to disk only when the user confirms it is ready to move into design. Do not write files during the discussion itself. `status` is always `confirmed`, never `draft`.
+
+See the "feature brainstorm template" in `reference.md` in the same directory for the template. The frontmatter conventions are shared with design and acceptance; see section 1 of `shared-conventions.md`.
+
+**Exit**: proactively ask "is this clear enough to move into design now?" and after confirmation, write it to disk. If the vision, user stories, pain point, and boundaries, is already well discussed, tell the user they may optionally run `bt-req draft` first so the requirement vision is captured before design. Then say "the next `bt-feat-design` will read `{path}`"
+
+---
+
+### case 3: large demand → direct roadmap decomposition
+
+**Signal**: multi-feature scale, and the user already has a rough module split in mind, enough to go directly into decomposition and interface contracts.
+
+**Handling**:
+1. tell the user: "This sounds like a set of multiple features, too large for a single feature. `bt-roadmap` will handle the decomposition and dependency sorting, so I will hand the discussion there"
+2. summarize the discussion so roadmap does not start from zero: the real problem, rough scope, and any possible sub-modules already mentioned, one sentence each; **also list any cross-module interface shape, shared protocol, or technology choice already discussed**, because these are the seeds for the "detailed architecture layer" section of roadmap
+3. **do not write a file** — `roadmap new` will create the directory and main document itself
+
+**Exit**: "handing off to `bt-roadmap`", with the summary of what has been discussed, and no file written
+
+---
+
+### case 4: large demand → `bt-grill` first, then decide
+
+**Signal**: multi-feature scale, but the user cannot yet explain the module boundaries and wants to explore first, by saying things like "help me question it through", "let's sort the idea first", "the direction is still messy", or explicitly "grill / stress-test / interrogate the plan".
+
+**Handling**: hand it to `bt-grill`. Do not maintain a second grill flow inside `bt-brainstorm`.
+
+The handoff summary should include:
+
+1. the real problem the user wants to solve, if that has already been reached
+2. the user's current plan or intuition
+3. the terminology conflicts, scope confusion, or dependency confusion already exposed
+4. any known ByteTrue context clues already read, such as related requirement, architecture, roadmap, or compound artifacts
+5. the single question you think should be asked first
+
+After `bt-grill` converges, then decide the exit:
+
+- if it is clear enough and only one feature, go to `bt-feat-design`; if needed, the user may ask to write a feature brainstorm note first
+- if it is clear enough but spans multiple features, go to `bt-roadmap`
+- if it produced an idea worth retaining but is still not ready, it may write `.bytetrue/brainstorms/{slug}/brainstorm.md` using the open brainstorm template
+- if it finalized vision, architecture, or long-term constraints, suggest `bt-req`, `bt-arch`, or `bt-decide`
+
+**Exit**: tell the user "this needs to be pushed further first; I recommend switching to `bt-grill`. By default it will read `.bytetrue/` docs and code context; if you want pure conversation only, use `bt-grill --lite`."
+
+---
+
+## Hard Boundaries
+
+1. **Never skip triage** — every discussion must be classified into a case before it really starts
+2. **Do not decide the scale on the user's behalf** — when the boundary between case 2, 3, and 4 is fuzzy, ask the user whether in their head this fits one feature or should first be grilled and stored
+3. **Do not write files for non-case-2 or non-case-4 outputs** — case 1 and case 3 do not write a file
+4. **Do not handle bugs or refactors**
+5. **Do not maintain a grill flow inside this skill** — explicit grill, stress-test, or plan interrogation always routes to `bt-grill`
+6. **Do not casually start writing design or roadmap yourself** — the human checkpoint between stages is a hard constraint in the whole ByteTrue workflow
+
+---
+
+## Common Mistakes
+
+- skipping triage and forcing every discussion into case 2, which means a large demand gets stuffed into one feature
+- making triage feel like a questionnaire — one or two rounds should be enough to see the direction; if by the third round you are still only aligning the scale, the method is wrong
+- forcing a brainstorm note in case 1 — the user is already clear, and the template only creates the illusion that something valuable happened
+- decomposing case 3 yourself — that oversteps the roadmap workflow
+- ignoring upgrade and downgrade signals — the scope grows but the AI continues as case 2, ending with a note that cannot hold all the submodules
+- treating case 4 like case 3 — the user wants to be questioned through, but the AI pushes them straight into roadmap and forces an immature idea into feature decomposition
+- treating case 3 like case 4 — the user is already ready to decompose, but the AI forces grill and delays the rhythm
+- giving only one candidate direction and asking the user to evaluate it — users get anchored and do not propose alternatives
+- simply restating the user's plan and writing it down — recorder mentality, with no added value as a thinking partner

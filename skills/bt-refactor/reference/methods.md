@@ -1,23 +1,23 @@
-# 重构方法库
+# Refactor Method Library
 
-scan 阶段匹配候选优化点的方法表，design 阶段每个执行步骤要引用一个方法号。
+This is the method table used in the scan stage to match candidate optimization items. In the design stage, every execution step must cite one method ID.
 
-## 拆分说明
+## Split Notes
 
-完整方法库已拆成 3 份；保留本页作为入口，便于其他 skill 继续稳定引用 `bt-refactor/reference/methods.md`。
+The full method library has been split into 3 files. This page remains as the entry point so that other skills can continue to stably reference `bt-refactor/reference/methods.md`.
 
-## 阅读顺序
+## Reading Order
 
-1. [L1 行为等价迁移与 L2 代码级重构](./methods-l1-l2.md)
-2. [L3 结构拆分](./methods-l3.md)
-3. [L4 性能与异步 + 用法速查](./methods-l4-and-usage.md)
+1. [L1 Behavior-Equivalent Migration and L2 Code-Level Refactor](./methods-l1-l2.md)
+2. [L3 Structural Splitting](./methods-l3.md)
+3. [L4 Performance and Async + Usage Cheat Sheet](./methods-l4-and-usage.md)
 
-## 方法层级映射
+## Method-Layer Mapping
 
-| 层级 | 位置 |
+| Layer | Location |
 |---|---|
-| L1 行为等价迁移 | [methods-l1-l2.md](./methods-l1-l2.md) |
-| L2 代码级重构（Fowler 经典） | [methods-l1-l2.md](./methods-l1-l2.md) |
-| L3 结构拆分 | [methods-l3.md](./methods-l3.md) |
-| L4 性能与异步 | [methods-l4-and-usage.md](./methods-l4-and-usage.md) |
-| 用法速查 | [methods-l4-and-usage.md](./methods-l4-and-usage.md) |
+| L1 Behavior-Equivalent Migration | [methods-l1-l2.md](./methods-l1-l2.md) |
+| L2 Code-Level Refactor, Fowler classics | [methods-l1-l2.md](./methods-l1-l2.md) |
+| L3 Structural Splitting | [methods-l3.md](./methods-l3.md) |
+| L4 Performance and Async | [methods-l4-and-usage.md](./methods-l4-and-usage.md) |
+| Usage Cheat Sheet | [methods-l4-and-usage.md](./methods-l4-and-usage.md) |

@@ -1,8 +1,8 @@
-# learning 参考模板
+# learning reference templates
 
-本文件提供 `bt-learn` 的两条轨道模板和示例。产出文档写入 `.bytetrue/compound/`，文件名 `YYYY-MM-DD-learning-{slug}.md`。
+This file provides the templates and examples for the two `bt-learn` tracks. Output documents are written to `.bytetrue/compound/` with the filename `YYYY-MM-DD-learning-{slug}.md`.
 
-## 1. 坑点轨道（pitfall）
+## 1. Pitfall Track (`pitfall`)
 
 ### frontmatter
 
@@ -11,23 +11,23 @@
 doc_type: learning
 track: pitfall
 date: YYYY-MM-DD
-slug: {英文描述，连字符分隔}
-component: {受影响模块/层}
+slug: {English description, hyphen-separated}
+component: {affected module/layer}
 severity: low | medium | high
 tags: []
 ---
 ```
 
-### 正文结构
+### Body Structure
 
-1. 问题
-2. 症状
-3. 没用的做法
-4. 解法
-5. 为什么有效
-6. 预防
+1. Problem
+2. Symptoms
+3. Approaches That Did Not Work
+4. Solution
+5. Why It Works
+6. Prevention
 
-## 2. 知识轨道（knowledge）
+## 2. Knowledge Track (`knowledge`)
 
 ### frontmatter
 
@@ -36,20 +36,20 @@ tags: []
 doc_type: learning
 track: knowledge
 date: YYYY-MM-DD
-slug: {英文描述，连字符分隔}
-component: {适用模块/领域}
+slug: {English description, hyphen-separated}
+component: {applicable module/domain}
 tags: []
 ---
 ```
 
-### 正文结构
+### Body Structure
 
-1. 背景
-2. 指导原则
-3. 为什么重要
-4. 何时适用
-5. 示例
+1. Background
+2. Guiding Principles
+3. Why It Matters
+4. When It Applies
+5. Example
 
-## 3. 示例
+## 3. Examples
 
-完整示例可按仓库需要逐步补充；当前技能正文只保留流程，不再内嵌长示例。
+Full examples can be added gradually as the repository needs them; the current skill body keeps only the workflow and no longer embeds long examples.

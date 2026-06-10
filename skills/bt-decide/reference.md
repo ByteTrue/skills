@@ -1,6 +1,6 @@
-# decisions 参考模板
+# decisions reference templates
 
-本文件提供 `bt-decide` 使用的 frontmatter、正文模板和示例。
+This file provides the frontmatter, body templates, and examples used by `bt-decide`.
 
 ## 1. frontmatter
 
@@ -9,35 +9,35 @@
 doc_type: decision
 category: tech-stack | architecture | constraint | convention
 date: YYYY-MM-DD
-slug: {英文描述，连字符分隔}
+slug: {English description, hyphen-separated}
 status: active | superseded | deprecated
-superseded-by: {可选}
-area: {受影响领域}
+superseded-by: {optional}
+area: {affected area}
 tags: []
 ---
 ```
 
-文件名：`.bytetrue/compound/YYYY-MM-DD-decision-{slug}.md`。
+Filename: `.bytetrue/compound/YYYY-MM-DD-decision-{slug}.md`.
 
-## 2. 正文模板
+## 2. Body Template
 
 ```markdown
-## 背景
+## Background
 
-## 决定
+## Decision
 
-## 理由
+## Rationale
 
-## 考虑过的替代方案
+## Alternatives Considered
 
-## 后果
+## Consequences
 
-## 相关文档
+## Related Documents
 ```
 
-`考虑过的替代方案` 和 `相关文档` 都是可选节。
+`Alternatives Considered` and `Related Documents` are both optional sections.
 
-## 3. 技术选型示例
+## 3. Technology Choice Example
 
 ```markdown
 ---
@@ -50,11 +50,11 @@ area: frontend
 tags: [vite, bundler, build-tool]
 ---
 
-## 背景
+## Background
 
-项目启动时需要选择前端构建工具。
+The project needed to choose a frontend build tool at startup.
 
-## 决定
+## Decision
 
-使用 Vite 作为开发和生产构建工具。
+Use Vite as the development and production build tool.
 ```

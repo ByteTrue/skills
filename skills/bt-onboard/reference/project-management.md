@@ -1,37 +1,37 @@
 # ByteTrue Project Management Bridge
 
-本文档记录 ByteTrue 与外部 tracker（GitHub / GitLab / local）的项目管理集成规则。
+This document records the project-management integration rules between ByteTrue and external trackers, GitHub, GitLab, or local.
 
-核心原则：`.bytetrue/` 是 canonical source of truth；external tracker 是团队协作 projection，不反向主导 ByteTrue 主流程。
+Core principle: `.bytetrue/` is the canonical source of truth; the external tracker is a team-collaboration projection and must not drive the main ByteTrue workflow in reverse.
 
 ---
 
 ## Provider
 
-项目 onboard 时由用户选择：
+Chosen by the user during onboarding:
 
 ```yaml
 provider: local | github | gitlab
 sync_policy: ask
 ```
 
-- `local`：只使用 `.bytetrue/`，不创建外部 issue。
-- `github`：通过本地 `gh` CLI 操作 GitHub Issues。
-- `gitlab`：通过本地 `glab` CLI 操作 GitLab Issues。
+- `local`: use only `.bytetrue/`, create no external issues
+- `github`: operate GitHub Issues through the local `gh` CLI
+- `gitlab`: operate GitLab Issues through the local `glab` CLI
 
-`bt-onboard` 需要检测：
+`bt-onboard` needs to detect:
 
-- CLI 是否安装。
-- CLI auth 状态。
-- 当前 repo remote 是否匹配 provider。
+- whether the CLI is installed
+- the CLI auth status
+- whether the current repo remote matches the provider
 
-本次不设计 API / token / SDK adapter。
+This layer does not design any API, token, or SDK adapter.
 
 ---
 
 ## Current Project Configuration
 
-`bt-onboard` 维护本节。规则章节里的 YAML 是默认语义；本节才表示当前项目实际选择。
+`bt-onboard` maintains this section. The YAML in the rule sections expresses default semantics; this section is the current project's actual choice.
 
 ```yaml
 provider: local # local | github | gitlab
@@ -51,20 +51,20 @@ cli:
     auth: unknown # ok | failed | unknown
 ```
 
-如果用户选择 `github` / `gitlab` 但 CLI 未安装或未登录，保留 provider 选择，同时把 `provider_status` 标为 `not_configured`；不要中止 onboard。
+If the user chooses `github` or `gitlab` but the CLI is not installed or not logged in, keep the provider selection, but mark `provider_status` as `not_configured`; do not stop onboarding.
 
 ---
 
 ## External Tracker Role
 
-external tracker 只承载团队可见的协作对象：
+The external tracker carries only team-visible collaboration objects:
 
-- PRD parent issue。
-- roadmap item / feature design 对应的 task issue。
-- ByteTrue bug issue 对应的 bug issue。
-- incoming issue queue 的 triage 状态。
+- PRD parent issues
+- task issues corresponding to roadmap items or feature designs
+- bug issues corresponding to ByteTrue bug issues
+- triage state of the incoming issue queue
 
-external tracker 不直接成为 requirement、roadmap、feature、issue 的主状态源。
+The external tracker never becomes the primary state source for requirement, roadmap, feature, or issue.
 
 ---
 
@@ -90,23 +90,23 @@ syncable_sources:
 
 not_syncable_by_default:
   standalone_requirement:
-    reason: requirement 是愿景输入材料，默认不单独发布外部 tracker
+    reason: requirement is vision input material and is not published to external tracker by default
 ```
 
-可同步状态映射：
+Syncable-status mapping:
 
-- `roadmap_prd`：`status: active | completed | paused` 视为已 review 的规划口径，可 publish / update；`draft` 不同步。
-- `roadmap_item`：`status: planned | in-progress | done` 可 publish / update；`dropped` 只更新已绑定外部 issue 的状态，不默认新建。
-- `feature_design`：`status: approved` 可 publish / update。
-- `bug_issue`：`status: confirmed` 可 publish / update。
+- `roadmap_prd`: `status: active | completed | paused` counts as reviewed planning content and may be published or updated; `draft` does not sync
+- `roadmap_item`: `status: planned | in-progress | done` may be published or updated; `dropped` only updates the state of an already bound external issue and does not create one by default
+- `feature_design`: `status: approved` may be published or updated
+- `bug_issue`: `status: confirmed` may be published or updated
 
-PRD 不作为新的本地实体；本地不新增 `.bytetrue/prds/`。
+PRD is not added as a new local entity. No `.bytetrue/prds/` directory is introduced.
 
 ---
 
 ## Actions
 
-`bt-tracker` 统一承载 Matt `to-prd`、`to-issues`、`triage` 的外部 tracker 能力。
+`bt-tracker` is the unified home for the external-tracker capabilities inspired by Matt `to-prd`, `to-issues`, and `triage`.
 
 ```yaml
 actions:
@@ -133,7 +133,7 @@ actions:
 
 ## Sync Policy
 
-默认策略：只同步 `syncable_sources` 中且符合可同步状态映射的 ByteTrue 产物，并在外部副作用前询问用户。
+Default policy: only sync ByteTrue artifacts listed in `syncable_sources` and satisfying the syncable-status mapping, and always ask before performing any external side effect.
 
 ```yaml
 sync_policy: ask
@@ -142,7 +142,7 @@ external_import: manual_only
 update_policy: update_managed_block
 ```
 
-外部 issue body 推荐使用 ByteTrue managed block：
+Recommended external issue bodies use a ByteTrue managed block:
 
 ```md
 <!-- bytetrue:managed:start -->
@@ -150,15 +150,15 @@ Generated from .bytetrue source.
 <!-- bytetrue:managed:end -->
 ```
 
-同步更新时只改 managed block，保留团队手写内容和评论。
+During sync updates, only the managed block is changed. Team-authored body content and comments are preserved.
 
 ---
 
 ## External Metadata
 
-external metadata 直接写回对应源产物，不做中央 sync DB。
+External metadata is written directly back into the corresponding source artifact. There is no central sync DB.
 
-示例：
+Example:
 
 ```yaml
 external:
@@ -170,13 +170,13 @@ external:
   synced_at: 2026-06-07T10:00:00Z
 ```
 
-roadmap item 的 external metadata 写在 `items.yaml` 的 item 上；feature / issue / roadmap PRD 写在各自文档 frontmatter 中。
+For roadmap items, external metadata is written onto the item inside `items.yaml`. For feature, issue, or roadmap PRD, it is written into the document frontmatter.
 
 ---
 
 ## Canonical Labels
 
-ByteTrue 使用稳定 canonical keys；onboard 时允许映射到团队已有 external labels。
+ByteTrue uses stable canonical keys. During onboarding, they may be mapped onto the team's existing external labels.
 
 ```yaml
 labels:
@@ -201,7 +201,7 @@ labels:
     external: needs-triage
 
   needs_info:
-    meaning: Blocked on more user/team information
+    meaning: Blocked on more user or team information
     external: needs-info
 
   ready_for_human:
@@ -224,4 +224,4 @@ status_sync:
   import_external_state: false
 ```
 
-非破坏性状态可同步成 labels；关闭外部 issue 前必须询问用户。外部状态变化不自动回写 `.bytetrue/`。
+Non-destructive state may be synchronized into labels. Before closing an external issue, the user must be asked. External state changes never write back into `.bytetrue/` automatically.

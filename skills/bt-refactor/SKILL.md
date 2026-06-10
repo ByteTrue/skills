@@ -1,185 +1,185 @@
 ---
 name: bt-refactor
-description: 代码优化的子流程入口，处理"行为不变、结构变"的工作（结构 / 性能 / 可读性），按 scan → design → apply 分步执行每步人工放行。触发：用户说"优化一下 / 重构 / 重写 / 拆一下 / 性能不行 / 代码太长"且不夹带行为改动。不处理新需求 / bug / 跨模块架构重划。
+description: Entry point for the code-optimization sub-workflow. It handles work where behavior stays the same but structure changes, structure, performance, readability, and so on, and proceeds in stages: scan → design → apply, with human approval at each stage. Trigger when the user says "optimize", "refactor", "rewrite", "split this up", "performance is bad", or "the code is too long", as long as the request does not include behavior changes. It does not handle new requirements, bugs, or cross-module architecture replanning.
 ---
 
 # bt-refactor
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-AI 自己重构有两个稳定失败模式：一是不知道模块真实需求和约束，改出来的东西功能不等价；二是一次吞掉的范围超过上下文承载，改到后面忘了前面的约束。这流程在"想优化"和"动手改"之间塞了扫描清单 + 方法库，让 AI 只接自己能稳定做对的活。
+When the AI refactors by itself, there are two stable failure modes: first, it does not know the module's real requirements and constraints, so the result is not behavior-equivalent; second, the swallowed scope exceeds what the context window can hold, so by the time it reaches the later changes it has forgotten the earlier constraints. This workflow inserts a scan checklist plus a method library between "want to optimize" and "start editing", so the AI takes only the work it can reliably do correctly.
 
+```text
+scan, gather an optimization list → design, agree with the user which items to do and in what order → apply, execute one by one with a human checkpoint at each step
 ```
-scan（扫优化点清单）→ design（和用户定做哪几条 + 顺序）→ apply（逐条执行，每步人工放行）
-```
 
-**核心纪律**：行为等价是底线。一旦会改外部可观察行为 → 不走 refactor，走 feature（需求变）或 issue（bug 修）。
+**Core discipline**: behavior equivalence is the floor. The moment the change would affect externally observable behavior, it is not refactor anymore. It should instead go to feature, demand change, or issue, bug fix.
 
 ---
 
-## Fastforward 模式（小重构）
+## Fastforward mode, small refactors
 
-单函数 / 单组件 / 1-3 处优化 / 有测试可自证 / 不需要目视——走完整三阶段太重。触发 `bt-refactor-ff`：直接识别、一次对齐、原地改、跑测试自证，不产 scan / design / checklist。
+If the refactor is only one function or one component, only 1-3 optimizations, has tests that can self-prove it, and needs no visual inspection, then the full three-stage flow is too heavy. Trigger `bt-refactor-ff`: it identifies the work directly, aligns once, changes the code in place, and proves it with tests, without producing scan, design, or checklist.
 
-触发："小重构"、"快速重构"、"简单优化下 XX 函数"、"直接改"、"别那么多步骤"。
+Trigger phrases: "small refactor", "quick refactor", "just optimize function XX a bit", "just change it", or "too many steps".
 
-**别走** ff：改动跨 > 1 文件 / 预计动点 > 3 处 / 需要目视验证 / 改公开接口（要 Parallel Change）/ 没有测试覆盖 / 跨模块。遇到劝用户走标准流程。ff 开干后发现变复杂切回完整流程从 scan 开始。
+**Do not use** ff when the change spans more than 1 file, is expected to touch more than 3 places, needs visual verification, changes a public interface, which requires Parallel Change, has no test coverage, or crosses modules. In those cases, recommend the standard flow. If ff starts and the work turns out more complex than expected, switch back to the full flow starting from scan.
 
 ---
 
-## 文件放哪儿
+## Where the files go
 
-```
+```text
 .bytetrue/refactors/{YYYY-MM-DD}-{slug}/
-├── {slug}-scan.md              ← 阶段 1 优化点清单
-├── {slug}-refactor-design.md   ← 阶段 2 执行方案
-├── {slug}-checklist.yaml       ← 阶段 2 生成，阶段 3 推进
-└── {slug}-apply-notes.md       ← 阶段 3 执行记录
+├── {slug}-scan.md              ← stage 1 optimization list
+├── {slug}-refactor-design.md   ← stage 2 execution plan
+├── {slug}-checklist.yaml       ← generated in stage 2, advanced in stage 3
+└── {slug}-apply-notes.md       ← stage 3 execution record
 ```
 
-目录命名同 feature / issue。slug 短到一眼看出改的是什么（`user-form-split`、`export-perf`）。
+The directory naming matches feature and issue. The slug should be short enough to show at a glance what is being changed, such as `user-form-split` or `export-perf`.
 
-为什么单独开目录不混进 features：refactor 产物是"代码当前状态扫描 + 执行记录"时效性强；feature 产物是"为什么这样设计"时效性弱。归档逻辑不一样。
+Why keep refactor in its own directory rather than mixing into features: refactor artifacts are time-sensitive records of "current code scan + execution notes", while feature artifacts are lower-churn records of "why this was designed this way". The archive logic is different.
 
 ---
 
-## 三个阶段
+## Three stages
 
-| 阶段 | 产出 | 谁主导 |
+| Stage | Output | Who Leads |
 |---|---|---|
-| 1 scan | scan.md | AI 扫 + 前置检查，用户勾选 |
-| 2 design | refactor-design.md + checklist.yaml | AI 起草，用户整体 review |
-| 3 apply | 代码改动 + apply-notes.md | AI 执行，每步人工放行 |
+| 1 scan | `scan.md` | AI scans and runs pre-checks, user selects |
+| 2 design | `refactor-design.md` + `checklist.yaml` | AI drafts, user reviews as a whole |
+| 3 apply | code changes + `apply-notes.md` | AI executes, each step requires human approval |
 
-阶段间有 checkpoint：scan 不勾选不进 design；design 不放行不动代码；apply 里 HUMAN 验证项不点头不推进下一步。
-
----
-
-## 阶段 1：scan
-
-### 先跑前置检查（7 条），命中就停
-
-动笔扫之前先跑一遍。命中任何一条 → **中止 scan，给路由建议**，不要硬凑。7 条检查和输出格式见 `reference/refusal-routing.md`。
-
-零条合法输出——扫完真的没发现值得做的就老实说不要凑。
-
-### 扫描范围锁定
-
-进 scan 前确认：**这次扫哪些文件**。默认：
-
-- 用户点名了具体文件 / 组件 → 就扫那些
-- "这个页面" → 入口组件 + 直接 import 的内部模块，不追公共依赖
-- "这个模块" → 模块目录下的文件，不追出模块边界
-- 范围 > 15 文件或 > 3000 行 → 触发第 6 条前置检查请用户先缩范围
-
-范围里要包含测试文件（用来判断第 2 条前置检查的测试覆盖）。
-
-### 扫的时候看什么
-
-按方法库四层当模板找：
-
-- **L1 行为等价迁移**：函数被很多处调用但接口/实现要改 → Parallel Change；整块老逻辑要被新实现替换 → Strangler Fig
-- **L2 代码级重构**：超长函数（> 50 行 / 圈复杂度 > 10）、重复条件片段、神秘临时变量、多层嵌套 if-else
-- **L3 结构拆分**：组件 > 300 行 / 文件承担多件事 / 容器与展示混在一起 / 相同逻辑多组件各写一份（前端）；Controller 直接调 DB / Service 缺失 / Repository 被绕开（后端）
-- **L4 性能**：重复计算（可 memo）/ N+1 查询 / 列表无虚拟化或分页 / 事件监听无清理 / 大对象深响应（Vue）
-
-
-架构改善候选使用 Matt `improve-codebase-architecture` 的判断语言，但只作为 refactor 候选，不直接扩大范围：
-
-- **deep module / shallow module**：优先让小接口隐藏真实复杂度；浅转发层、万能 util、只改名不降复杂度的包装层要谨慎。
-- **seam / adapter**：重构可以提炼 seam 或 adapter，但必须保持行为不变；如果 seam 会改变调用语义，超出 refactor。
-- **deletion test**：删除一个模块后，复杂度若只是散回调用方，说明它可能有存在价值；复杂度若直接消失，可能是无意义中间层。
-- **interface as test surface**：重构后的 public interface 应该更容易作为行为测试面，而不是迫使测试下沉到私有实现。
-完整方法库在 `reference/methods.md`，扫描时全量加载作匹配表。
-
-### 产出格式
-
-`{slug}-scan.md` 两部分：
-
-1. **顶部总览**（一段）：扫描范围 / 发现条数 / 按分类分布 / 按风险分布 / 建议先做哪几条 / 慎做哪几条
-2. **清单条目**（一条一块）：字段顺序和硬约束见 `reference/scan-checklist-format.md`
-
-整份交给用户，**用户勾选 ✓ / ✗**（✗ 写理由）后进阶段 2。**不要替用户勾选**。
+There is a checkpoint between stages: no design until scan has been selected; no code until design is approved; and inside apply, any HUMAN verification item must explicitly pass before the next step starts.
 
 ---
 
-## 阶段 2：design
+## Stage 1: scan
 
-### 输入
+### Run pre-checks first, stop if any one hits
 
-- 用户勾选过的 `{slug}-scan.md`
-- 方法库（每条勾选项必须映射到方法号 M-Ln-NN）
+Before writing the scan list, run the pre-checks once. If any one hits, **stop scan and give the routing recommendation**, rather than padding out a list anyway. The 7 checks and their output format are in `reference/refusal-routing.md`.
 
-### 做的事
+Zero findings is a valid output. If the scan genuinely finds nothing worth doing, say that honestly rather than forcing items into the list.
 
-1. **排顺序**——勾选条目有依赖的排前（L1 的 Parallel Change 通常先跑，L2 的提取跟在后面）。独立的按"低风险 + AI 可自证"优先，HUMAN 验证项排后批量处理
-2. **每条补执行细节**：方法号 / 步骤 / 前置条件 / 退出信号 / 验证责任方（AI / HUMAN）/ 回滚策略
-3. **识别前置依赖**——测试覆盖不够的条目前置"补刻画测试"；改公开接口的前置"搜调用方"
-4. **整体 review**：整稿交用户，放行后 `status: approved`
-5. **抽 checklist**：steps 对应执行顺序，checks 对应每步退出信号
+### Lock the scan scope
 
+Before scanning, confirm: **which files are in scope this time**. Default behavior:
 
-架构类条目在 design 中额外写清：
+- if the user named specific files or components, scan only those
+- if the user says "this page", scan the entry component plus the directly imported internal modules, but do not chase shared dependencies
+- if the user says "this module", scan the files under that module directory, but do not cross the module boundary
+- if the scope exceeds 15 files or 3000 lines, trigger the sixth pre-check and ask the user to narrow it first
 
-- 要变深的 module 是哪个，现有 interface 为什么 shallow。
-- seam / adapter 边界在哪里，哪些调用方不应感知变化。
-- deletion test 的结论。
-- 行为等价如何通过 public interface / existing tests 自证。
-### design 文件结构
+The scope must include test files as well, because they are needed for the second pre-check on test coverage.
+
+### What to look for during scan
+
+Use the four levels of the method library as the template:
+
+- **L1 behavior-equivalent migration**: when a function is widely called but its interface or implementation has to change → Parallel Change; when a whole old block of logic should be replaced by a new implementation → Strangler Fig
+- **L2 code-level refactor**: very long functions, over 50 lines or cyclomatic complexity over 10, repeated conditional fragments, mysterious temporary variables, or deeply nested if-else
+- **L3 structural split**: frontend components over 300 lines, files carrying multiple concerns, containers mixed with presentation, same logic reimplemented in multiple components; backend controllers directly calling DB, missing service layers, or repositories being bypassed
+- **L4 performance**: repeated computations that should be memoized, N+1 queries, lists without virtualization or pagination, event listeners without cleanup, or large objects held in deep reactivity
+
+Use the Matt `improve-codebase-architecture` vocabulary for architecture-improvement candidates, but only as refactor candidates, never as a pretext to enlarge the scope:
+
+- **deep module / shallow module**: prefer modules whose small interface hides real complexity; be skeptical of shallow forwarding layers, universal utils, or wrapper layers that only rename things without reducing complexity
+- **seam / adapter**: refactors may extract seams or adapters, but they must remain behavior-equivalent; if the seam changes caller semantics, it is no longer refactor
+- **deletion test**: if deleting a module merely scatters complexity back into callers, the module may still have value; if complexity vanishes outright, it may be a meaningless middle layer
+- **interface as test surface**: after refactor, the public interface should become a better behavior-test surface rather than forcing tests downward into private implementation
+
+The full method library is in `reference/methods.md`. Load it as the matching table during scan.
+
+### Output format
+
+`{slug}-scan.md` has two parts:
+
+1. **Top-level overview**, one paragraph: scan scope, number of findings, distribution by category, distribution by risk, which items should be done first, and which items should be treated carefully
+2. **Checklist items**, one block per item: the field order and hard constraints are in `reference/scan-checklist-format.md`
+
+Give the whole scan to the user, and let the **user mark ✓ or ✗**, with reasons for ✗, before moving into stage 2. **Do not check them off on the user's behalf.**
+
+---
+
+## Stage 2: design
+
+### Inputs
+
+- the user-selected `{slug}-scan.md`
+- the method library, every selected item must map to a method ID `M-Ln-NN`
+
+### What it does
+
+1. **Order the work** — if selected items have dependencies, put the prerequisites first. L1 items like Parallel Change usually come first, and L2 extractions often follow. Independent items should prioritize low risk plus things the AI can self-prove. HUMAN-verification items should be batched later
+2. **Add execution detail to each item**: method ID, steps, prerequisites, exit signal, verification owner, AI or HUMAN, and rollback strategy
+3. **Identify prerequisites** — items with inadequate test coverage get a prerequisite of "add characterization coverage"; items that change public interfaces get a prerequisite of "search callers"
+4. **Overall review** — present the whole design to the user, and once approved, set `status: approved`
+5. **Extract the checklist** — steps mirror execution order, checks mirror step exit signals
+
+For architecture-oriented items, the design must additionally make these explicit:
+
+- which module is supposed to become deeper, and why the current interface is shallow
+- where the seam or adapter boundary is, and which callers should not perceive the change
+- the result of the deletion test
+- how behavior equivalence will be proven through public interfaces or existing tests
+
+### design file structure
 
 ```markdown
 ---
 doc_type: refactor-design
 refactor: {YYYY-MM-DD}-{slug}
 status: draft | approved
-scope: {扫描范围一句话}
-summary: {本次要做的几条是什么，一句话}
+scope: {one-line scan scope}
+summary: {one-line summary of which items will be done this time}
 ---
 
 # {slug} refactor design
 
-## 1. 本次范围
-- 从 scan 勾选了哪几条（编号）
-- 明确不做的（被 ✗ 的）和理由
-- 预估总工作量 / 总风险档位
+## 1. Scope of this run
+- which scan items were selected, by number
+- which items were explicitly not selected, marked ✗, and why
+- estimated total work and total risk level
 
-## 2. 前置依赖
-- 测试覆盖补齐（如需）
-- 调用方搜索（如需）
-- 其他一次性准备
+## 2. Prerequisites
+- test coverage supplementation, if needed
+- caller search, if needed
+- other one-time preparation
 
-## 3. 执行顺序
-按步骤列，每步一块：
-- 步骤 N：{一句话动作}
-- 引用方法：M-Ln-NN {方法名}
-- 具体操作：{照方法库步骤落到本项目具体文件 / 函数}
-- 退出信号：{AI 跑什么测试 / HUMAN 看什么页面}
-- 验证责任：AI 自证 ｜ HUMAN
-- 回滚：{出问题怎么还原，通常 git revert 某步}
+## 3. Execution order
+One block per step:
+- Step N: {one-line action}
+- Referenced method: M-Ln-NN {method name}
+- Concrete operations: {apply the generic method onto concrete files or functions in this repo}
+- Exit signal: {which tests AI runs / what page HUMAN checks}
+- Verification owner: AI self-proves | HUMAN
+- Rollback: {how to restore if the step fails, usually git revert for that step}
 
-## 4. 风险与看点
-- 高风险步骤汇总
-- 容易出错的点（跨步骤数据流变化等）
+## 4. Risks and watch points
+- summary of high-risk steps
+- places likely to go wrong, such as cross-step data-flow changes
 ```
 
 ---
 
-## 阶段 3：apply
+## Stage 3: apply
 
-### 推进规则
+### Advancement rules
 
-1. **一步一做不批量**——严格按 checklist 顺序，当前步不完成不开下一步
-2. **每步完成走验证**：
-   - AI 自证：跑指定测试 / 类型检查 / lint / grep 无残留旧引用。通过了记 apply-notes 继续
-   - HUMAN 验证：**停下来**汇报"第 N 步已完成，请在 {具体页面 / 操作} 目视确认，确认后我继续"。用户不明确说"继续"就不推进
-3. **偏离当场记**——执行中发现方案没考虑的情况（如有个调用方在动态 import 里），**停下来汇报不发挥**。和用户对齐后追加到 apply-notes，必要时回阶段 2 改 design
-4. **行为等价自检**——每步结束额外问"这一步有没有可能改了外部可观察行为？" 有怀疑就退回当步
+1. **One step at a time, never batch** — follow the checklist order strictly; do not open the next step before the current one is complete
+2. **Verify after each step**:
+   - AI self-proof: run the designated tests, typecheck, lint, or grep that old references are gone. If it passes, record it in apply-notes and continue
+   - HUMAN verification: **stop and report** "step N is complete; please visually confirm at {specific page or operation}; I will continue after your confirmation". If the user does not explicitly say "continue", do not proceed
+3. **Record drift immediately** — if execution discovers something the plan did not consider, such as a caller hidden behind a dynamic import, **stop and report it rather than freelancing**. Align with the user, record it in apply-notes, and if necessary return to stage 2 to update design
+4. **Behavior-equivalence self-check** — after each step, ask "could this step have changed externally observable behavior?" If there is any suspicion, return to that step immediately
 
-架构 deepening 的硬边界：只允许行为等价的 seam / adapter 提炼；一旦要改公开语义、调用协议、模块职责归属，停止 apply，改走 `bt-grill` 问清楚后再决定是 `bt-roadmap`、`bt-feat` 还是更大的 refactor。
+Hard boundary for architecture deepening: only behavior-equivalent seam or adapter extraction is allowed. The moment a public semantic, calling protocol, or module responsibility has to change, stop apply and instead route it through `bt-grill`, then decide whether it belongs to `bt-roadmap`, `bt-feat`, or a larger refactor.
 
-### apply-notes 格式
+### `apply-notes` format
 
 ```markdown
 ---
@@ -189,62 +189,62 @@ refactor: {YYYY-MM-DD}-{slug}
 
 # {slug} apply notes
 
-## 步骤 1: {动作}
-- 完成时间: {date}
-- 改动文件: {file list}
-- 验证结果: {测试输出 / HUMAN 确认语录}
-- 偏离: {无 / 具体描述}
+## Step 1: {action}
+- Completed at: {date}
+- Files changed: {file list}
+- Verification result: {test output / HUMAN confirmation wording}
+- Drift: {none / concrete description}
 
-## 步骤 2: ...
+## Step 2: ...
 ```
 
-### 全部完成后
+### After all steps are complete
 
-- 跑全量测试 + 类型检查 + lint
-- 最后一次请用户整体目视确认（前端：打开主要页面点一圈）
-- 确认通过后收尾 commit，message 引用 refactor 目录
-
----
-
-## 退出条件
-
-- [ ] scan 前置检查跑过，命中的已路由，没命中的才进 scan
-- [ ] `{slug}-scan.md` 用户已勾选（✓/✗）
-- [ ] design 每条勾选项映射到方法号
-- [ ] design 用户整体 review 通过 `status: approved`
-- [ ] checklist.yaml 已生成且通过 `validate-yaml.py`
-- [ ] apply 每步都有验证记录（AI 自证贴日志，HUMAN 贴用户确认语录）
-- [ ] 全量测试 / 类型检查 / lint 通过
-- [ ] 用户最后一次目视确认通过
+- run the full test suite + typecheck + lint
+- ask the user for one final end-to-end visual confirmation, frontend means open the main page and click through the path once
+- after confirmation passes, do the close-out commit, with the message referencing the refactor directory
 
 ---
 
-## 容易踩的坑
+## Exit Conditions
 
-- **AI 硬凑清单**——前置检查明显命中却找理由绕过，扫出一堆"代码可以更优雅"无量化问题的条目
-- **夹带行为改动**——在重构中间"顺便修了 bug / 优化提示文案"——拆成独立 issue 或 feature
-- **跨步骤合并动作**——一次提交做 2-3 步，失去"单步回滚"能力
-- **把口味项列进清单**——命名偏好 / 引号 / 箭头函数 vs function——走 decisions
-- **扫大模块直接动手**——> 15 文件 / > 3000 行不拆就进 scan，产出没法决策的长清单
-- **HUMAN 验证项自己跳过**——前端效果 AI 看不到，不能用"类型检查过了"替代人工目视
-- **覆盖率不够硬上**——没测试的模块直接改，"行为等价"只是口头承诺
-
----
-
-## 与相邻工作流的边界
-
-- **feature**：加新能力 / 改需求。refactor 里冒出"顺便实现 X"停下拆出去
-- **issue**：修 bug / 行为错了。refactor 里发现的 bug 记成新 issue 不偷偷修
-- **decisions**：全项目长期约束（"以后都用 composable"、"禁用 mixin"）。refactor 可引用已有 decision 但不产出 decision
-- **architecture**：跨模块边界重划 / 分层调整。单次 refactor 不跨模块；跨模块要拆成"更新架构 + 记决策 + N 个模块级 refactor"
-- **tricks / learning**：refactor 中发现的手法 → tricks；踩的坑 → learning
+- [ ] the scan pre-checks were run, anything that hit got routed away, and only the non-hit path continued into scan
+- [ ] the user has marked `{slug}-scan.md` with ✓ and ✗
+- [ ] every selected item in design maps to a method ID
+- [ ] design passed whole-document user review and is `status: approved`
+- [ ] `checklist.yaml` has been generated and passes `validate-yaml.py`
+- [ ] every apply step has a verification record, AI self-proof includes logs, HUMAN proof includes the user's confirmation wording
+- [ ] full test suite, typecheck, and lint all pass
+- [ ] the user's final visual confirmation has passed
 
 ---
 
-## 相关文档
+## Easy Pitfalls
 
-- `bt-refactor-ff/SKILL.md` — 小重构超轻量通道
-- `reference/scan-checklist-format.md` — scan 清单条目字段 / 顺序 / 硬约束
-- `reference/refusal-routing.md` — scan 前置检查 7 条 + 路由表
-- `reference/methods.md` — 方法库（L1-L4 四层分类）
-- `.bytetrue/reference/shared-conventions.md` — 跨工作流共享口径
+- **padding the scan list** — a pre-check clearly hits, but the AI finds excuses to bypass it and emits a bunch of vague "could be more elegant" items anyway
+- **smuggling in behavior changes** — "while here I also fixed a bug" or "while here I improved the copy" — split that into an issue or feature instead
+- **merging multiple steps into one action** — a single commit doing 2-3 steps loses the ability to roll back one clean step
+- **putting preference items into the list** — naming taste, quotes, arrow function vs function — those belong in decisions
+- **starting a scan on a large module and moving straight into work** — if it is over 15 files or 3000 lines and not narrowed, the output becomes an undecidable wall of text
+- **skipping HUMAN verification yourself** — the AI cannot see frontend effects; typecheck is not a substitute for human eyes
+- **forcing through despite lack of coverage** — changing an untested module while claiming behavior equivalence only as a verbal promise
+
+---
+
+## Boundary with nearby workflows
+
+- **feature**: add new capability or change requirement. If a refactor discovers "while here we should also implement X", stop and split it out
+- **issue**: fix a bug or wrong behavior. Bugs discovered during refactor should be recorded as new issues, not quietly fixed
+- **decisions**: long-term, project-wide constraints, for example "always use composables" or "ban mixins". Refactor can reference existing decisions, but does not produce new decisions itself
+- **architecture**: cross-module boundary repartition or layering changes. One refactor should stay module-local; cross-module changes should be decomposed into "update architecture + record decision + N module-level refactors"
+- **tricks / learning**: reusable techniques discovered during refactor go into tricks; pitfalls stepped on go into learning
+
+---
+
+## Related documents
+
+- `bt-refactor-ff/SKILL.md` — the ultra-light path for small refactors
+- `reference/scan-checklist-format.md` — fields, order, and hard constraints for scan items
+- `reference/refusal-routing.md` — the 7 pre-checks before scan plus the routing table
+- `reference/methods.md` — the method library, four levels L1-L4
+- `.bytetrue/reference/shared-conventions.md` — shared conventions across workflows

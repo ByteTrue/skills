@@ -1,22 +1,22 @@
-# libdoc 参考模板
+# libdoc reference templates
 
-本文件提供 `bt-libdoc` 使用的 manifest、条目文档模板和源码提取清单。
+This file provides the `manifest`, entry-document templates, and source-extraction checklist used by `bt-libdoc`.
 
-## 1. `manifest.yaml` 格式
+## 1. `manifest.yaml` Format
 
 ```yaml
-project: {项目名}
+project: {project name}
 entry_type: component | function | endpoint | command
-source_root: {源码根路径}
+source_root: {source root path}
 last_scanned: YYYY-MM-DD
 
 entries:
-  - {entry: button, category: 基础组件, source_files: [src/components/Button.vue], doc_path: docs/api/button.md, status: pending, note: ""}
- ```
+  - {entry: button, category: base component, source_files: [src/components/Button.vue], doc_path: docs/api/button.md, status: pending, note: ""}
+```
 
-status 语义：`pending` / `draft` / `current` / `outdated` / `skipped`。
+`status` semantics: `pending` / `draft` / `current` / `outdated` / `skipped`.
 
-## 2. 条目文档 frontmatter
+## 2. Entry Document Frontmatter
 
 ```yaml
 ---
@@ -31,37 +31,37 @@ last_reviewed: YYYY-MM-DD
 ---
 ```
 
-## 3. 条目文档模板
+## 3. Entry Document Template
 
 ```markdown
-## 概述
+## Overview
 
-## API 参考
+## API Reference
 
-## 基本用法
+## Basic Usage
 
-## 典型场景
+## Typical Scenarios
 
-## 注意事项
+## Notes
 
-## 相关条目
+## Related Entries
 ```
 
-模板是最大集，按条目实际情况裁剪。
+This template is the superset. Trim it according to the actual shape of the entry.
 
-## 4. 源码提取清单
+## 4. Source Extraction Checklist
 
-生成条目前必须从源码提取：
+Before generating an entry, you must extract from source code:
 
-1. 接口签名
-2. 类型定义
-3. 默认值
-4. 已有注释
-5. 导出方式
-6. 项目类型特有的附加表面（如 Slots、Events、flag、schema）
+1. Interface signatures
+2. Type definitions
+3. Default values
+4. Existing comments
+5. Export style
+6. Project-type-specific additional surfaces such as slots, events, flags, or schema
 
-规则：
+Rules:
 
-- 以源码为事实源，不编造接口
-- 注释缺失时可根据类型和命名推断，但需说明
-- 源码与方案不一致时，以源码为准写文档
+- Use source code as the source of truth; do not invent interfaces
+- If comments are missing, you may infer from types and naming, but you must say so
+- If source code and the plan disagree, document according to source code

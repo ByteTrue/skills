@@ -1,174 +1,174 @@
-# 重构方法库（1）：L1 行为等价迁移与 L2 代码级重构
+# Refactor Method Library (1): L1 Behavior-Equivalent Migration and L2 Code-Level Refactor
 
-## L1 行为等价迁移
+## L1 Behavior-Equivalent Migration
 
-### M-L1-01 Parallel Change 并行变更
+### M-L1-01 Parallel Change
 
-- **适用**：要替换一个被多处调用的函数/接口/数据结构，直接改会波及太多地方
-- **不适用**：只在一处用的内部函数（直接改就行）
-- **步骤**：
-  1. 新建 `newThing`，行为和 `oldThing` 完全一致（必要时做适配层）
-  2. 调用方一个一个切到 `newThing`，每切一个跑一次测试
-  3. 确认 `oldThing` 全局无引用（grep 可证）后删除
-- **风险点**：步骤 2 期间如果有新代码被加进来继续调 `oldThing`，切换会漏。对 `oldThing` 加 deprecated 标注或 lint 规则防回流
-- **验证**：每步跑测试 + 切换完 grep `oldThing` 全局 0 引用
-- **前后端**：通用
-- **配哪种 scan 项**：某函数 / 接口被 N 处调用，要改签名或实现
+- **Use when**: a function, interface, or data structure used in many places must be replaced, and changing it directly would hit too many callers
+- **Do not use when**: it is only an internal function used in one place, in which case it can be changed directly
+- **Steps**:
+  1. create `newThing`, whose behavior is fully equivalent to `oldThing`, adding an adapter layer if needed
+  2. migrate callers one by one to `newThing`, and run tests after each migration
+  3. once `grep` proves that `oldThing` has zero remaining references, delete it
+- **Risk points**: during step 2, newly added code may still call `oldThing`, causing migration gaps; add a deprecated marker or lint rule to prevent backflow
+- **Validation**: run tests at each step, and after migration, grep confirms zero global references to `oldThing`
+- **Frontend / backend**: generic
+- **Matches which scan item**: a function or interface is called in N places and its signature or implementation needs to change
 
-### M-L1-02 Strangler Fig 绞杀者模式
+### M-L1-02 Strangler Fig
 
-- **适用**：替换一整块老模块（甚至一整个子系统），老的不能立刻删、要长期共存
-- **不适用**：单函数或小范围改动（用 Parallel Change 就够）
-- **步骤**：
-  1. 在老模块外围加一层路由/代理，默认仍走老实现
-  2. 新实现逐个功能点接入，通过路由分流（新功能点走新实现，老功能点仍走老实现）
-  3. 老功能点一个一个迁过来，每迁一个跑全量回归
-  4. 全部迁完，删老模块和路由层
-- **风险点**：路由层成为永久依赖；新老实现中间状态不一致（如共享数据库时 schema 冲突）
-- **验证**：每次迁移后跑全量回归；监控老模块调用次数，应逐步归零
-- **前后端**：通用，后端尤其常见
-- **配哪种 scan 项**："这块老逻辑要整体替换"，不能一次性切
+- **Use when**: a whole legacy module, or even an entire subsystem, must be replaced, but the old one cannot be deleted immediately and needs long-term coexistence
+- **Do not use when**: it is a single function or small-scope change, use Parallel Change instead
+- **Steps**:
+  1. add a routing or proxy layer around the old module, still defaulting to the old implementation
+  2. wire the new implementation in feature point by feature point, routing new points to the new implementation while old points still go to the old one
+  3. migrate old feature points one by one, running full regression after each
+  4. once everything is migrated, delete the old module and the routing layer
+- **Risk points**: the routing layer becomes a permanent dependency; the new and old implementations may diverge in intermediate state, such as schema conflicts on a shared database
+- **Validation**: run full regression after each migration; monitor call counts into the old module and confirm they gradually fall to zero
+- **Frontend / backend**: generic, especially common in backend
+- **Matches which scan item**: "this whole block of old logic needs to be replaced", but it cannot be cut over all at once
 
-### M-L1-03 Branch by Abstraction 分支抽象
+### M-L1-03 Branch by Abstraction
 
-- **适用**：要替换一个被广泛使用的底层库 / 框架 / 核心数据结构
-- **不适用**：改动只影响局部
-- **步骤**：
-  1. 在调用点和老实现之间插入一层抽象接口，调用点改为依赖接口
-  2. 接口的默认实现仍指向老实现，跑测试验证行为不变
-  3. 在接口下实现新版本，通过 feature flag 或配置切换
-  4. 观察一段时间无问题，删除老实现和抽象层
-- **风险点**：抽象层设计不好会泄漏老实现细节到接口；feature flag 忘记清理
-- **验证**：每步跑测试；切换期间对比新老实现的输出
-- **前后端**：通用
-- **配哪种 scan 项**：要换底层依赖（如换 HTTP 客户端、换 ORM、换状态管理库）
+- **Use when**: a widely used low-level library, framework, or core data structure must be replaced
+- **Do not use when**: the change affects only a local area
+- **Steps**:
+  1. insert an abstraction interface between the call site and the old implementation, and change callers to depend on that interface
+  2. let the default implementation of the interface still point at the old implementation, and run tests to confirm behavior stays unchanged
+  3. implement the new version behind the interface and switch through a feature flag or configuration
+  4. after a stable observation period, delete both the old implementation and the abstraction layer
+- **Risk points**: a badly designed abstraction leaks old-implementation details into the interface; feature flags are forgotten and never removed
+- **Validation**: run tests at each step; compare outputs of new and old implementations during the transition
+- **Frontend / backend**: generic
+- **Matches which scan item**: a low-level dependency needs to be swapped, such as an HTTP client, ORM, or state-management library
 
-### M-L1-04 Characterization Test 刻画测试
+### M-L1-04 Characterization Test
 
-- **适用**：老代码没测试、行为不完全清楚，但马上要改——refactor 前置必做
-- **不适用**：代码逻辑极简（< 10 行、无分支）、或已有充分测试
-- **步骤**：
-  1. 对目标函数喂一批真实输入（可从生产日志采样）
-  2. 记录当前输出作为测试断言——不评价这个行为是否"正确"，只固化现状
-  3. 跑测试确认通过，提交
-  4. 之后的重构每步都跑这组测试，任何一条失败都是行为偏离
-- **风险点**：固化的"现状"可能包含已知 bug——如果是故意要修 bug，走 issue 不走 refactor
-- **验证**：重构后测试全通过 = 行为等价
-- **前后端**：通用
-- **配哪种 scan 项**：前置检查第 2 条命中时，用本方法补测试
+- **Use when**: legacy code has no tests and its behavior is not fully clear, but it must be changed now; this is a mandatory prerequisite before refactor
+- **Do not use when**: the code is extremely simple, under 10 lines and branch-free, or already has sufficient tests
+- **Steps**:
+  1. feed a batch of real inputs into the target function, using sampled production logs if needed
+  2. record the current outputs as test assertions — do not judge whether the behavior is "correct", only capture the current state
+  3. run the tests, confirm they pass, and commit them
+  4. run this suite after every later refactor step; any failure means behavior drift
+- **Risk points**: the captured "current state" may include a known bug — if the point is to intentionally fix a bug, route to issue instead of refactor
+- **Validation**: after refactor, all tests still passing proves behavior equivalence
+- **Frontend / backend**: generic
+- **Matches which scan item**: when pre-check #2 hits, use this method to add coverage first
 
 ---
 
-## L2 代码级重构（Fowler 经典）
+## L2 Code-Level Refactor, Fowler classics
 
-### M-L2-01 Extract Function 提取函数
+### M-L2-01 Extract Function
 
-- **适用**：函数内部有一段内聚逻辑可以命名（> 5 行、职责独立）
-- **不适用**：短、命名困难、和外层逻辑强耦合的片段
-- **步骤**：
-  1. 识别要提取的片段，起一个说清"做什么"的名字
-  2. 把用到的外部变量作为参数，把返回给外层的值作为返回值
-  3. 替换原片段为函数调用
-  4. 跑测试
-- **风险点**：参数过多（> 4 个）说明耦合太深，可能要先做 M-L2-07 引入参数对象；副作用跨边界（读写 this / 全局）会让"函数"变成伪装的过程
-- **验证**：跑单元测试
-- **前后端**：通用
-- **配哪种 scan 项**：函数过长 / 圈复杂度高 / 内部有可命名的段落
+- **Use when**: there is a cohesive block inside a function that can be named, usually longer than 5 lines and with an independent responsibility
+- **Do not use when**: the block is short, hard to name, or tightly coupled to the surrounding logic
+- **Steps**:
+  1. identify the block to extract and give it a name that clearly states what it does
+  2. pass all external variables it uses as parameters, and return any values needed by the outer scope
+  3. replace the original block with a function call
+  4. run tests
+- **Risk points**: too many parameters, more than 4, suggests coupling is too deep and may require M-L2-07 Introduce Parameter Object first; side effects that cross the boundary, such as reading or writing `this` or global state, can turn the "function" into a disguised procedure
+- **Validation**: run unit tests
+- **Frontend / backend**: generic
+- **Matches which scan item**: long functions, high cyclomatic complexity, or a block inside a function that can be cleanly named
 
-### M-L2-02 Inline Function 内联函数
+### M-L2-02 Inline Function
 
-- **适用**：函数体比名字更清楚 / 函数已经只剩包装作用 / 函数被调用次数极少
-- **不适用**：函数被广泛使用
-- **步骤**：
-  1. 找出所有调用点
-  2. 每个调用点用函数体替换
-  3. 删函数定义
-  4. 跑测试
-- **风险点**：调用点很多时内联出一堆重复代码；递归函数不能内联
-- **验证**：跑单元测试；grep 原函数名 0 引用
-- **前后端**：通用
-- **配哪种 scan 项**：空壳包装函数 / 抽象做过头的层
+- **Use when**: the function body is clearer than the name, the function has become a wrapper only, or it is called very rarely
+- **Do not use when**: the function is widely used
+- **Steps**:
+  1. find every call site
+  2. replace each call site with the function body
+  3. delete the function definition
+  4. run tests
+- **Risk points**: many call sites may expand into duplicated logic; recursive functions cannot be inlined
+- **Validation**: run unit tests, and grep confirms zero references to the original function name
+- **Frontend / backend**: generic
+- **Matches which scan item**: empty wrapper function or an over-abstracted layer
 
-### M-L2-03 Extract Variable / Replace Temp with Query 提取变量 / 以查询取代临时变量
+### M-L2-03 Extract Variable / Replace Temp with Query
 
-- **适用**：复杂表达式难以理解（长三元、多重计算）；同一计算在多处用到
-- **不适用**：表达式已经清楚
-- **步骤**：
-  1. 把复杂表达式提取到命名变量
-  2. 如果该计算在多处复用，进一步提取为纯函数（query）
-  3. 跑测试
-- **风险点**：过度提取反而让变量满天飞；提取为 query 时要保证无副作用
-- **验证**：跑单元测试
-- **前后端**：通用
-- **配哪种 scan 项**：难懂的长表达式 / 重复计算
+- **Use when**: a complex expression is hard to read, such as a long ternary or compound calculation, or the same calculation is used in multiple places
+- **Do not use when**: the expression is already clear
+- **Steps**:
+  1. extract the complex expression into a named variable
+  2. if the calculation is reused in multiple places, further extract it into a pure function, a query
+  3. run tests
+- **Risk points**: over-extraction causes variable clutter; when extracting into a query, ensure the logic is side-effect free
+- **Validation**: run unit tests
+- **Frontend / backend**: generic
+- **Matches which scan item**: difficult long expressions or repeated calculations
 
-### M-L2-04 Move Function 搬移函数
+### M-L2-04 Move Function
 
-- **适用**：函数更多使用另一个类/模块的数据；或函数和当前模块的主题不符
-- **不适用**：当前位置仍是最自然的位置
-- **步骤**：
-  1. 确认函数在新位置的所有依赖都可达
-  2. 在新位置创建函数，原位置改为转发调用（过渡期）或直接替换所有调用点
-  3. 迁移所有调用点后删原函数
-  4. 跑测试
-- **风险点**：函数依赖原位置的私有状态时不能直接搬
-- **验证**：跑测试；grep 原位置 0 引用
-- **前后端**：通用
-- **配哪种 scan 项**：函数位置错配 / 模块职责模糊
+- **Use when**: the function uses more data from another class or module than from its current one, or the function's theme does not match the current module
+- **Do not use when**: its current location is still the most natural one
+- **Steps**:
+  1. confirm that all dependencies of the function are reachable in the new location
+  2. create the function in the new location, and during the transition either make the old location forward to it or replace all call sites directly
+  3. after all callers are migrated, delete the original function
+  4. run tests
+- **Risk points**: the function cannot be moved directly if it depends on private state from the original location
+- **Validation**: run tests, and grep confirms zero references left in the original location
+- **Frontend / backend**: generic
+- **Matches which scan item**: function placed in the wrong place or vague module responsibility
 
-### M-L2-05 Decompose Conditional 分解条件
+### M-L2-05 Decompose Conditional
 
-- **适用**：if / else 分支内部逻辑长，判断条件本身也复杂
-- **不适用**：分支短且清楚
-- **步骤**：
-  1. 把判断条件提取为命名函数（如 `isEligibleForDiscount(user)`）
-  2. 把各分支体提取为命名函数
-  3. 主体只剩 `if (isX()) doA() else doB()` 的骨架
-  4. 跑测试
-- **风险点**：过度分解让调用链变深
-- **验证**：跑单元测试
-- **前后端**：通用
-- **配哪种 scan 项**：嵌套 if-else / 复杂条件判断
+- **Use when**: the bodies of `if / else` branches are long, and the conditional expression itself is also complex
+- **Do not use when**: the branches are short and already clear
+- **Steps**:
+  1. extract the condition into a named function, for example `isEligibleForDiscount(user)`
+  2. extract each branch body into its own named function
+  3. leave the main body as a simple skeleton, `if (isX()) doA() else doB()`
+  4. run tests
+- **Risk points**: over-decomposition makes the call chain deeper
+- **Validation**: run unit tests
+- **Frontend / backend**: generic
+- **Matches which scan item**: nested if-else or complex conditional logic
 
-### M-L2-06 Replace Conditional with Polymorphism 以多态取代条件
+### M-L2-06 Replace Conditional with Polymorphism
 
-- **适用**：同一个 type / status 字段在多处触发相似的 switch/if-else 分发
-- **不适用**：只在一处分发 / 类型数量不稳定
-- **步骤**：
-  1. 为每个类型建立子类或策略对象，把原分支逻辑放入对应实现
-  2. 调用点改为调用多态方法
-  3. 删除原 switch/if-else
-  4. 跑测试
-- **风险点**：类型爆炸；前端里过度 OO 反而不如 map 查表清晰
-- **验证**：跑单元测试
-- **前后端**：通用
-- **配哪种 scan 项**：同一 type 字段在 3+ 处触发 switch
+- **Use when**: the same `type` or `status` field triggers similar switch or if-else dispatch in multiple places
+- **Do not use when**: dispatch happens in only one place, or the set of types is unstable
+- **Steps**:
+  1. create a subclass or strategy object for each type, and move the original branch logic into the corresponding implementation
+  2. change call sites to invoke the polymorphic method
+  3. delete the original switch or if-else
+  4. run tests
+- **Risk points**: type explosion; on the frontend, excessive OO may be less clear than a lookup map
+- **Validation**: run unit tests
+- **Frontend / backend**: generic
+- **Matches which scan item**: the same type field triggers switches in 3 or more places
 
-### M-L2-07 Introduce Parameter Object 引入参数对象
+### M-L2-07 Introduce Parameter Object
 
-- **适用**：函数参数 > 4 个，或多处函数共享同一组参数
-- **不适用**：参数少且无关
-- **步骤**：
-  1. 把相关参数聚成一个对象 / 结构体
-  2. 函数签名改为接收该对象
-  3. 所有调用点构造对象传入
-  4. 跑测试
-- **风险点**：对象字段和函数实际用到的字段不一致（可能传了不用的字段）
-- **验证**：跑测试
-- **前后端**：通用
-- **配哪种 scan 项**：参数爆炸 / 重复的参数组
+- **Use when**: a function has more than 4 parameters, or multiple functions share the same group of parameters
+- **Do not use when**: parameters are few and unrelated
+- **Steps**:
+  1. group the related parameters into one object or struct
+  2. change the function signature to accept that object
+  3. update all call sites to construct and pass the object
+  4. run tests
+- **Risk points**: the object fields may drift from the fields actually used by the function, so unused fields get passed around
+- **Validation**: run tests
+- **Frontend / backend**: generic
+- **Matches which scan item**: parameter explosion or repeated parameter bundles
 
-### M-L2-08 Replace Nested Conditional with Guard Clauses 守卫语句
+### M-L2-08 Replace Nested Conditional with Guard Clauses
 
-- **适用**：函数开头有多层嵌套 if 检查边界/错误条件
-- **不适用**：条件之间有真实的互斥关系，不是纯守卫
-- **步骤**：
-  1. 把每个边界条件改写为"不满足就提前 return"
-  2. 主体逻辑从嵌套中拉出到顶层
-  3. 跑测试
-- **风险点**：改变了 return 的执行顺序；有 finally / cleanup 逻辑的要小心
-- **验证**：跑测试，覆盖所有边界条件
-- **前后端**：通用
-- **配哪种 scan 项**：深度嵌套 if 检查
+- **Use when**: a function begins with multiple layers of nested if statements checking boundaries or error conditions
+- **Do not use when**: the conditions have real mutual exclusivity rather than just being guards
+- **Steps**:
+  1. rewrite each edge condition as "if not satisfied, return early"
+  2. pull the main logic out of the nesting and back to the top level
+  3. run tests
+- **Risk points**: it changes the order of returns; if there is finally or cleanup logic, be careful
+- **Validation**: run tests covering all boundary conditions
+- **Frontend / backend**: generic
+- **Matches which scan item**: deeply nested if checks
 
 ---

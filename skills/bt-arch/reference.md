@@ -1,173 +1,173 @@
-# bt-arch 参考模板
+# bt-arch reference templates
 
-SKILL.md 只保留流程骨架，具体格式 / 覆盖项 / 报告模板都在这里。
+`SKILL.md` keeps only the workflow skeleton. The concrete formats, coverage items, and report templates all live here.
 
 ---
 
-## 1. 架构文档结构（backfill / update 产出）
+## 1. Architecture Document Structure, Output for `backfill` or `update`
 
 ### 1.1 frontmatter
 
 ```yaml
 ---
 doc_type: architecture
-slug: {英文连字符；和文件名一致}
-scope: {一句话覆盖范围}
-summary: {一句话总结要点}
+slug: {english-hyphenated; must match filename}
+scope: {one-line coverage scope}
+summary: {one-line summary of the key point}
 status: current | draft | outdated
 last_reviewed: YYYY-MM-DD
 tags: []
-depends_on: []   # 其他 architecture doc 的 slug，可选
-implements: []   # 承载的 requirement slug 列表，可空——纯基础设施 / 工具层没有对应 req 是正常的
+depends_on: []   # slugs of other architecture docs, optional
+implements: []   # list of requirement slugs this doc carries; empty is normal for pure infrastructure or tooling layers
 ---
 ```
 
-### 1.2 正文节
+### 1.2 Body Sections
 
 ```markdown
-## 0. 术语
+## 0. Terms
 
-首次引入的专有名词简要定义 + 和相近名词的区分（"本文里 X 指 Y，和代码里的 X' 不是同一个东西"）。没有新术语就省略。
+Briefly define proprietary terms introduced for the first time, plus how they differ from nearby terms, for example "in this document, X means Y, and it is not the same as X' in the code". Omit the whole section if there are no new terms.
 
-## 1. 定位与受众
+## 1. Positioning and Audience
 
-- 项目里哪一块（模块 / 子系统 / 跨模块关注点）
-- 谁会读（feature-design / issue-analyze / 新人上手）
-- 读完能干嘛（定位代码 / 了解对外接口 / 知道约束）
+- which part of the project this covers, such as a module, subsystem, or cross-module concern
+- who will read it, such as feature-design, issue-analyze, or newcomer onboarding
+- what the reader will be able to do afterward, such as locate code, understand external interfaces, or know the constraints
 
-## 2. 结构与交互
+## 2. Structure and Interaction
 
-- 模块怎么划分、依赖方向
-- 对外接口、对内接口
-- 跨模块契约（数据格式 / 调用协议 / 状态归属）
-- 模块 ≤ 2 或关系线性时不画图；否则建议 Mermaid
+- how the modules are divided, and the dependency directions
+- external interfaces and internal interfaces
+- cross-module contracts, such as data shape, call protocol, or state ownership
+- if there are 2 modules or fewer, or the relationships are linear, do not draw a diagram; otherwise Mermaid is recommended
 
-每条结构化断言后附 `file:line` 锚点，或在节末"代码锚点"小节集中给。
+Attach a `file:line` anchor after every structured assertion, or collect them in a "code anchors" subsection at the end of the section.
 
-## 3. 数据与状态
+## 3. Data and State
 
-- 关键类型 / 核心数据结构（简述 + 定义位置 file:line）
-- 所有权归属（谁写谁读）
-- 持久化边界（内存 / 本地 / 数据库 / 外部服务）
+- key types and core data structures, with brief description plus definition location as `file:line`
+- ownership, who writes and who reads
+- persistence boundaries, such as memory, local storage, database, or external service
 
-## 4. 关键决策
+## 4. Key Decisions
 
-不是决策全文，是**引用**——每条一两行：结论一句话 + 引用（`compound/YYYY-MM-DD-decision-{slug}.md` 或用户原话出处）+ 为什么引用到这份 doc 里。
+This is not the full decision text. It is a **reference** section. Each item gets one or two lines: one-sentence conclusion + reference, such as `compound/YYYY-MM-DD-decision-{slug}.md` or the source user quote + why it is referenced in this doc.
 
-没有已落档的决策就省略，或记 `TODO: 某决定应沉淀为 decision`。
+If there is no archived decision yet, omit the section or record `TODO: this decision should be captured as a decision`.
 
-## 5. 代码锚点
+## 5. Code Anchors
 
-"想看代码从哪看"清单：入口文件 / 关键函数 / 关键类型定义。格式：`{file}:{function/class} — 一行说明`。
+A "where to start in code" list: entry files, key functions, and key type definitions. Format: `{file}:{function/class} — one-line note`.
 
-## 6. 已知约束 / 边界情况
+## 6. Known Constraints / Edge Cases
 
-本模块"不能动 / 动了要小心"的硬约束 + 来源（attention.md / decision / learning 等）。
+Hard constraints for this module, things that cannot be changed or must be changed carefully, plus the source, such as attention.md, decision, or learning.
 
-## 7. 相关文档
+## 7. Related Documents
 
-依赖的其他 architecture doc / 承载的 requirement / 相关 decision / learning / trick / explore / 使用本模块的代表性 feature design。
+Other architecture docs this depends on, carried requirements, related decision, learning, trick, explore, or representative feature designs using this module.
 
-## 变更日志（update 模式才有）
+## Change Log, only in `update` mode
 
-- YYYY-MM-DD：{一句话描述}
+- YYYY-MM-DD: {one-line description}
 ```
 
 ---
 
-## 2. backfill / update 自查清单
+## 2. `backfill` or `update` Self-Check List
 
-每条针对一种 AI 默认会犯的错：
+Each item targets a default AI mistake:
 
-1. **每个结构化断言能不能锚到代码？**——锚不到的删掉或标 `TODO: 待确认`
-2. **有没有替用户拍板？**——"关键决策"节是引用已有 decision / 用户原话，还是 AI 编的选型理由？后者一律不许进
-3. **有没有变成代码复述？**——每节至少一句"为什么这么分"，没有这句的节基本就是 `ls` 贴文字
-4. **术语冲突检查做了吗？**——新引入的架构术语 grep（代码、`architecture/` 下所有文档、`compound/`）。冲突就换名或在第 0 节明确区分
-5. **是否和现有 architecture / decision 冲突？**——发现冲突不许"写自己那版"，要么引用要么停下来问用户
-6. **单节长度**——超过 1 屏就该砍或拆
-7. **update 专项**：本次新加 / 改动的段落都有代码变化作为依据？凭空"加听起来更完整的描述"是飘离实际的开端
-
----
-
-## 3. check 模式覆盖项
-
-三个子目标各覆盖 6 类。
-
-### 3.1 design-internal（一份 design 内部一致性）
-
-1. **术语一致性**——第 0 节定义的术语后面有没有被同义词替换或语义漂移
-2. **需求对齐**——第 1 节摘要自洽，没偏离已确认目标
-3. **契约闭环**——第 2 节契约示例在第 3 节有对应改动计划
-4. **示例与决策一致**——契约示例行为是否与关键决策矛盾
-5. **范围守护**——改动计划没超出"明确不做"
-6. **推进可执行性**——推进步骤能验证、依赖前后无矛盾
-
-### 3.2 design-vs-code（design 与代码对得上）
-
-1. **类型一致性**——design 定义的核心类型 / 字段，代码里存在且语义一致
-2. **行为一致性**——design 声明的输入→输出对得上代码实际行为
-3. **写路径一致性**——design 声明的写入口，代码没有额外旁路写入
-4. **边界行为一致性**——design 的异常 / 边界规则代码有实现
-5. **改动边界一致性**——代码没越界或漏实现
-6. **推进结果一致性**——每步退出信号对应代码状态可验证
-
-### 3.3 architecture-folder-internal（多份文档间一致性）
-
-1. **术语一致性**——同概念称呼统一，无同义词漂移或同名异义
-2. **模块边界一致性**——A 说某职责归模块 X，B 是不是也这么说；有没有两份都声称拥有同一块职责
-3. **跨文引用有效性**——`see xxx.md` / `定义见 yyy.md` 引用的目标真的存在
-4. **接口 / 契约对齐**——多份涉及同一接口 / 类型时签名 / 字段 / 语义一致
-5. **依赖关系闭环**——A 声明依赖 B 提供的能力，B 真的暴露了；有没有单向悬空依赖
-6. **同类聚合与命名**——同 type 文档遵循 `{type}-{slug}.md`，根目录某 type ≥6 份是否还平铺（参照 `shared-conventions.md`）
+1. **Can every structured assertion anchor to code?** If not, delete it or mark it `TODO: to be confirmed`
+2. **Did you make decisions on the user's behalf?** In the "Key Decisions" section, are you quoting an existing decision or the user's actual words, or did the AI invent a rationale for a choice? The latter is never allowed
+3. **Did it become code paraphrase?** Each section must contain at least one sentence of "why it is divided this way". Without that, the section is usually just `ls` in prose
+4. **Did you do the terminology collision check?** For any new architecture term, grep it across code, all docs under `architecture/`, and `compound/`. If there is a conflict, rename it or explicitly distinguish it in section 0
+5. **Does it conflict with existing architecture or decisions?** If you find a conflict, do not "write your own version". Either reference the existing one or stop and ask the user
+6. **Section length** — if a section is longer than one screen, it should probably be cut down or split
+7. **`update`-specific**: does every newly added or changed paragraph have code changes as evidence? "Add a description that sounds more complete" without code evidence is the start of drifting away from reality
 
 ---
 
-## 4. check 模式报告模板
+## 3. Coverage Items for `check` Mode
+
+Each of the three sub-goals covers 6 categories.
+
+### 3.1 design-internal, consistency inside one design
+
+1. **term consistency** — whether terms defined in section 0 are later replaced by synonyms or drift in meaning
+2. **requirement alignment** — whether the summary in section 1 is self-consistent and stays aligned with the confirmed goal
+3. **contract closure** — whether contract examples in section 2 correspond to an implementation-change plan in section 3
+4. **example and decision consistency** — whether the behavior in contract examples conflicts with key decisions
+5. **scope guard** — whether the implementation plan goes beyond the explicit non-goals
+6. **rollout executability** — whether the rollout steps are verifiable, and whether there are no contradictions in dependency order
+
+### 3.2 design-vs-code, consistency between design and code
+
+1. **type consistency** — whether core types or fields defined in design exist in code and match semantically
+2. **behavior consistency** — whether input→output behavior declared in design matches actual code behavior
+3. **write-path consistency** — whether the write entry points declared in design have no extra side-write paths in code
+4. **edge-behavior consistency** — whether exception and boundary rules in design are implemented in code
+5. **change-boundary consistency** — whether code neither overreaches nor misses implementation promised by design
+6. **rollout-result consistency** — whether the exit signal for each rollout step can be verified against the code state
+
+### 3.3 architecture-folder-internal, consistency across multiple docs
+
+1. **term consistency** — whether the same concept is named consistently, with no synonym drift or same-name-different-meaning
+2. **module-boundary consistency** — whether if doc A says a responsibility belongs to module X, doc B says the same; whether two docs both claim ownership of the same responsibility
+3. **cross-doc reference validity** — whether targets cited by `see xxx.md` or `defined in yyy.md` actually exist
+4. **interface or contract alignment** — when multiple docs involve the same interface or type, whether signatures, fields, and semantics match
+5. **dependency closure** — whether if A says it depends on a capability from B, B actually exposes it; whether there are one-way dangling dependencies
+6. **same-type grouping and naming** — whether same-type docs follow `{type}-{slug}.md`, and whether a root directory still has 6 or more flat files of the same type, per `shared-conventions.md`
+
+---
+
+## 4. Report Template for `check` Mode
 
 ```markdown
-# 架构一致性检查报告
+# Architecture Consistency Check Report
 
-> 目标: design-internal | design-vs-code | architecture-folder-internal
-> 范围: {feature}/{模块}/{章节范围}
-> 日期: YYYY-MM-DD
-> 结论: pass | pass-with-risk | fail
+> Target: design-internal | design-vs-code | architecture-folder-internal
+> Scope: {feature}/{module}/{section range}
+> Date: YYYY-MM-DD
+> Conclusion: pass | pass-with-risk | fail
 
-## 1. 检查摘要
+## 1. Check Summary
 
-一句话总结。
+One-sentence summary.
 
-## 2. 不一致清单
+## 2. Inconsistency List
 
-| ID | 严重级别 | 位置 | 现象 | 影响 | 建议修复 |
+| ID | Severity | Location | Symptom | Impact | Suggested Fix |
 |---|---|---|---|---|---|
-| AC-01 | 高/中/低 | `{文件}:{行号}` 或 `design 第X节` | 描述 | 后果 | 修复建议（不执行） |
+| AC-01 | high/medium/low | `{file}:{line}` or `design section X` | description | consequence | fix suggestion, without executing it |
 
-## 3. 观察项（范围外，不动手）
+## 3. Observations, out of scope, no action taken
 
-读 `architecture/` 时发现的结构性问题：某个 type ≥6 份仍平铺（应触发 `update` 搬迁）；文件名没遵循 `{type}-{slug}.md`；其他顺带看到的不合理点。没有就省略本节。
+Structural issues noticed while reading `architecture/`: a type still flattened in the root despite 6 or more files and therefore should trigger an `update` migration; filename not following `{type}-{slug}.md`; or any other incidental problem noticed on the way. Omit the section if there are none.
 
-## 4. 一致性良好项
+## 4. Things That Are Consistent
 
-列 2-5 条检查通过的关键点——只有负面信息的报告让用户失去对系统的整体信心。
+List 2-5 key checks that passed. A report containing only negative information makes the user lose confidence in the whole system.
 
-## 5. 建议下一步
+## 5. Suggested Next Step
 
-- **fail**：建议先修哪几条再重跑
-- **pass-with-risk**：实现 / 验收阶段重点回归哪些点
-- **pass**：可进下一阶段
+- **fail**: which items should be fixed first before rerunning
+- **pass-with-risk**: which points should be focused on during implementation or acceptance
+- **pass**: ready to move to the next stage
 ```
 
-**严重级别**：
+**Severity levels**:
 
-- **高**：让实现走错方向，或代码已和 design 实质偏离（漏实现关键契约 / 行为相反 / 术语指代不同的东西）
-- **中**：能猜出意图但留有歧义（同义词漂移 / 契约示例和决策表面对得上但细节冲突 / 退出信号说不清）
-- **低**：表述别扭或可读性问题，不影响理解
+- **high**: would send implementation in the wrong direction, or code has already materially drifted from design, such as missing a key contract, opposite behavior, or terms pointing to different things
+- **medium**: intent is guessable but ambiguity remains, such as synonym drift, contract examples that look aligned with the decision on the surface but conflict in detail, or unclear exit signals
+- **low**: awkward wording or readability issues that do not affect understanding
 
 ---
 
-## 5. compound 检索命令（backfill / update 用）
+## 5. Compound Search Commands, for `backfill` and `update`
 
 ```bash
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter "doc_type=decision|explore|learning" --query "{模块关键词}"
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=decision --filter status=active --query "{模块关键词}"
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter "doc_type=decision|explore|learning" --query "{module keyword}"
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=decision --filter status=active --query "{module keyword}"
 ```

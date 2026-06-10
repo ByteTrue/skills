@@ -1,122 +1,122 @@
 ---
 name: bt-refactor-ff
-description: refactor 流程的超轻量通道——直接识别 1-3 条低风险优化、一次确认、原地改、跑测试自证。触发：用户说"快速重构"、"小重构"、"简单优化下 XX 函数"、"别那么多步骤"，且改动在单函数 / 单组件局部、有测试可自证。
+description: Ultra-light path for the refactor workflow. Directly identify 1-3 low-risk optimizations, get one confirmation, change the code in place, and prove it with tests. Trigger when the user says "quick refactor", "small refactor", "just optimize function XX a bit", or "too many steps", and the change stays local to a single function or component with tests available for self-verification.
 ---
 
 # bt-refactor-ff
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-用户说"优化一下这个函数"而改动明显很小（单函数变长、组件里抽个 composable、一段重复代码合并）时走完整三阶段太重。fastforward 让 AI 像平时一样直接改但守住底线——行为等价、引用经典方法、跑测试自证。
+When the user says "optimize this function" and the change is obviously very small, such as a long single function, extracting a composable from a component, or merging a repeated block, the full three-stage flow is too heavy. Fastforward lets the AI change code directly the way it normally would, while still holding the line on the essentials: behavior equivalence, use of classic methods, and test-backed self-verification.
 
-很轻：没有 scan 清单、没有 design doc、没有 checklist，改完一句话汇报就行。
-
----
-
-## 入场 3 条硬检查（不过就退完整流程）
-
-任一不过就退到 `bt-refactor`：
-
-1. **行为真的不变吗？** 用户描述夹带"顺便支持 X / 改成 Y"——这是行为改动不是 refactor，让用户拆出去走 feature / issue
-2. **范围真的小吗？** 超过 1 个文件 / 单文件超过 100 行改动 / 预计改动点超过 3 处——退完整流程
-3. **有测试能自证吗？** 目标代码有覆盖（单测 / 集成测 / 类型检查能抓到）——没测试就退完整流程，或先做一个 characterization test 再回来
-
-完整 scan 阶段是 7 条入场检查，这里压成最关键 3 条——剩下 4 条（跨模块 / 全口味 / 生成代码 / 扫不完）在"范围真的小吗"里已被隐含排除。
+Very light: no scan checklist, no design doc, no checklist. A one-line report after the change is enough.
 
 ---
 
-## 用经典方法不发挥
+## Three Hard Entry Checks
 
-fastforward 不读完整方法库，但要守住"**每一处改动都能对应到一个经典重构方法**"。AI 心里想不出"我这步是 Extract Function / Memoization / Guard Clauses / ..." 里的哪一个 → 这次不是简单重构退完整流程查方法库。
+If any one fails, fall back to the full `bt-refactor` flow:
 
-常用方法（覆盖 fastforward 80% 场景）：
+1. **Is behavior really unchanged?** If the user's request sneaks in "also support X" or "change it to Y", that is a behavior change rather than a refactor. Ask the user to split it out into feature or issue work.
+2. **Is the scope really small?** If it touches more than 1 file, exceeds 100 lines of changes in a single file, or is expected to require more than 3 change points, fall back to the full flow.
+3. **Are there tests that can prove it?** The target code must already have coverage, such as unit tests, integration tests, or a type check that can catch it. Without tests, fall back to the full flow, or write one characterization test first and return here later.
 
-- **Extract Function**：> 5 行、内聚、能命名的片段 → 抽出独立函数
-- **Extract Variable**：复杂表达式 → 命名变量或 query
-- **Guard Clauses**：开头多层嵌套 if 检查 → 提前 return 拉平
-- **Decompose Conditional**：复杂 if 条件 → 命名为布尔函数
-- **Extract Composable / hook**：组件里封闭的状态 + 副作用 → 独立 composable / hook
-- **Memoization**：重复计算 → computed / useMemo
-- **Cancellation**：副作用缺 cleanup → 加 onUnmounted / useEffect return
-
-想做的动作不在这几种里、不是开箱即用的经典方法（涉及 Parallel Change / Strangler Fig / 分层纠偏）→ 退完整流程。
+The full scan phase has 7 entry checks. Here they are compressed to the 3 most critical ones. The remaining 4, such as cross-module, all-flavor, generated code, or unscannable surface, are already implicitly excluded inside "is the scope really small?"
 
 ---
 
-## 流程
+## Use Classic Methods, Do Not Freestyle
 
-### 1. 一次对齐
+Fastforward does not read the full method library, but it must still hold the rule that **every change must correspond to a classic refactoring method**. If the AI cannot tell itself "this step is Extract Function / Memoization / Guard Clauses / ..." then this is not a simple refactor, and it should fall back to the full flow and consult the method library.
 
-一句话回用户：**"我打算做 {方法名}，动 {具体文件/函数}，改动点 {N} 处，预计影响 {范围}。确认就开干。"**
+Common methods, covering about 80% of fastforward cases:
 
-确认就下一步。用户说"还有个 X 要改"——评估 X 是否破坏入场 3 条，破坏了就退完整流程。
+- **Extract Function**: a cohesive fragment longer than 5 lines that can be named → extract it into its own function
+- **Extract Variable**: complex expression → name it as a variable or query
+- **Guard Clauses**: deeply nested `if` checks at the top → flatten by returning early
+- **Decompose Conditional**: complex `if` condition → name it as a boolean function
+- **Extract Composable / hook**: closed-over state plus side effects inside a component → move into a separate composable or hook
+- **Memoization**: repeated computation → `computed` or `useMemo`
+- **Cancellation**: side effect missing cleanup → add `onUnmounted` or a `useEffect` return cleanup
 
-### 2. 改
+If the intended action is not one of these, or is not a ready-to-use classic method and instead involves things like Parallel Change, Strangler Fig, or structural layer correction, fall back to the full flow.
 
-按经典方法步骤改。不产出 design doc / checklist，代码直接落盘。
+---
 
-### 3. 自证
+## Flow
 
-- 跑测试（单元 / 集成 / 类型检查 / lint）
-- grep 检查旧引用是否清理干净（做了 Extract / Inline 这类）
-- 改了前端状态逻辑跑类型检查 + 已有测试；**不做 UI 目视验证**——要 UI 目视就不该走 fastforward
+### 1. Single Alignment
 
-### 4. 一句话汇报
+Reply to the user in one sentence: **"I plan to do {method name}, touch {specific file/function}, with {N} change points, and the expected impact is {scope}. Confirm and I will start."**
+
+After confirmation, go to the next step. If the user adds "also change X", evaluate whether X breaks any of the 3 entry checks. If it does, fall back to the full flow.
+
+### 2. Change
+
+Apply the change following the steps of the chosen classic method. Do not produce a design doc or checklist. Write code directly.
+
+### 3. Self-Verification
+
+- Run tests: unit, integration, typecheck, or lint
+- `grep` to ensure old references are fully cleaned up, for Extract / Inline style changes
+- If frontend state logic changed, run typecheck and existing tests. **Do not do visual UI verification**. If visual UI inspection is needed, the work should not have been in fastforward in the first place
+
+### 4. One-Line Report
 
 ```
-✓ 已完成。方法：{方法名}。改动：{文件路径:行号范围}。验证：{跑了什么测试 / 通过情况}。
+✓ Done. Method: {method name}. Change: {file path:line range}. Verification: {what tests were run / pass result}.
 ```
 
-有偏离 / apply 过程中发现想再改点别的 → **停下问用户不发挥**。
+If there is drift, or if you discover during the apply step that you want to change something else too, **stop and ask the user instead of freelancing**.
 
 ---
 
-## 文件产出
+## File Output
 
-默认**不建 `.bytetrue/refactors/` 目录**——fastforward 的价值就在不留存档。
+By default, **do not create a `.bytetrue/refactors/` directory**. The value of fastforward is precisely that it leaves no extra archive.
 
-例外：用户明确"这次要留个记录" → 建 `.bytetrue/refactors/{YYYY-MM-DD}-{slug}/{slug}-refactor-note.md`，内容就是上面那句汇报 + 一段"做了什么 / 为什么"。不写 design / checklist。
-
----
-
-## 什么时候跳出 fastforward
-
-改到一半出现以下任一，**停下告诉用户"比预期复杂，建议切回完整流程"**：
-
-- 改动点从 3 个涨到 5+
-- 发现要动的文件不止 1 个
-- 冒出一个不在常用方法清单里的动作
-- 发现没有测试能覆盖
-- 用户追加"顺便改一下 X"带入行为改动
-- 改完 AI 自证失败且不是简单修正能搞定
-
-切回：触发 `bt-refactor` 从 scan 开始。已改的部分要么提交保留、要么 `git restore` 回到干净状态再扫。
+Exception: if the user explicitly says "leave a record for this one", then create `.bytetrue/refactors/{YYYY-MM-DD}-{slug}/{slug}-refactor-note.md`, containing the same one-line report above plus one short paragraph for "what changed / why". Do not write a design or checklist.
 
 ---
 
-## 不做什么
+## When to Exit Fastforward
 
-- **不写 scan / design / checklist** —— 写了就违背 fastforward 存在的理由
-- **不跨多文件改** —— 跨文件就不是"小重构"
-- **不做需要 HUMAN 目视的改动** —— 前端渲染 / 交互 / 性能感知要人看的走完整流程
-- **不碰公开接口** —— 改公开接口要走 Parallel Change，不是 fastforward 能做的
+If any of the following happens halfway through, **stop and tell the user "this is more complex than expected; recommend switching back to the full flow"**:
 
----
+- change points increase from 3 to 5 or more
+- it turns out more than 1 file must be changed
+- a needed action appears that is not in the common-method list
+- there are no tests that can cover it
+- the user adds "also change X" and that introduces a behavior change
+- self-verification fails after the change and it is not fixable by a simple correction
 
-## 容易踩的坑
-
-- **把"小"判断得太宽**：用户说"小重构"但实际动 3 个文件——AI 要老实说"这不算小"
-- **跳过入场 3 条检查就开干**：这个技能的意义就在这 3 条
-- **自证偷懒**：只跑类型检查不跑单元测试，或完全不 grep 旧引用
-- **改中发挥**：看到邻居代码也"顺手改改"——fastforward 范围在确认那一刻就锁死
-- **行为改动伪装成重构**：加新参数、改返回值格式——这是行为改动伪装不了
+To switch back, trigger `bt-refactor` and start from scan. Already changed parts must either be kept as a commit or restored to a clean state with `git restore` before scanning.
 
 ---
 
-## 相关
+## What Not to Do
 
-- `bt-refactor/SKILL.md` — 完整 refactor 流程
-- `bt-refactor/reference/methods.md` — 完整方法库
-- `.bytetrue/reference/system-overview.md` — ByteTrue 体系总览
+- **Do not write scan / design / checklist** — if you write them, you defeat the reason fastforward exists
+- **Do not change across multiple files** — if it spans files, it is no longer a "small refactor"
+- **Do not do changes that require HUMAN visual inspection** — frontend rendering, interaction, and perceived performance changes that humans need to look at belong in the full flow
+- **Do not touch public interfaces** — changing a public interface requires Parallel Change and is not something fastforward can safely do
+
+---
+
+## Easy Pitfalls
+
+- **Judging "small" too loosely**: the user says "small refactor" but the work actually touches 3 files — the AI must honestly say "this does not count as small"
+- **Skipping the three entry checks and starting immediately**: the value of this skill is exactly those 3 checks
+- **Cutting corners in self-verification**: only running typecheck but not unit tests, or not `grep`ing old references at all
+- **Freestyling mid-change**: seeing neighboring code and "cleaning it up while here" — fastforward scope locks the moment the confirmation happens
+- **Behavior change disguised as refactor**: adding a new parameter or changing a return value shape — that is a behavior change and cannot be disguised
+
+---
+
+## Related
+
+- `bt-refactor/SKILL.md` — the full refactor workflow
+- `bt-refactor/reference/methods.md` — the full method library
+- `.bytetrue/reference/system-overview.md` — overview of the ByteTrue system

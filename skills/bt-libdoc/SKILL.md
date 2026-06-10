@@ -1,144 +1,144 @@
 ---
 name: bt-libdoc
-description: 给库的公开表面（组件 / 函数 / 命令）逐条目生成参考文档，带清单追踪，支持单条目和批量。信息源是源码本身（与 guidedoc 任务导向不同）。触发：用户说"写 API 文档"、"组件文档"、"libdoc"，或 acceptance 后发现新增公开接口。
+description: Generate reference documentation entry by entry for a library's public surface, such as components, functions, or commands, with manifest-based tracking and support for both single-entry and batch workflows. The source of truth is the source code itself, unlike guidedoc's task-oriented mode. Trigger when the user says "write API docs", "component docs", or "libdoc", or when acceptance finds a newly added public interface.
 ---
 
 # bt-libdoc
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-guidedoc 教你"怎么用 X 做 Y"，libdoc 告诉你"X 的每个零件长什么样、怎么配"。
+`guidedoc` teaches "how to use X to do Y". `libdoc` tells you "what each part of X looks like and how it is configured".
 
-guidedoc 写错可能是表达不清，libdoc 写错就是错——信息源是源码本身，类型 / 默认值 / 签名都有唯一正确答案。**核心规则：不靠猜、不复制改名、每个条目独立读源码**。
+If guidedoc is wrong, the problem may only be unclear explanation. If libdoc is wrong, it is simply wrong. The source of truth is the source code itself. Types, default values, and signatures each have one correct answer. **Core rule: do not guess, do not copy the previous entry and just rename it, and read the source code independently for every entry.**
 
 ---
 
-## 和 guidedoc 的对比
+## Compared with guidedoc
 
 | | guidedoc | libdoc |
 |---|---|---|
-| 性质 | 任务导向（Tutorial / How-to） | 参考导向（Reference） |
-| 回答 | "如何用 X 实现某个目标" | "X 的每个零件长什么样、怎么配" |
-| 粒度 | 一个 feature / 一个场景一篇 | 一个条目一篇 |
-| 信息源 | 方案 doc + 用户知识 | **源码本身**（类型 / 注释 / 默认值） |
-| 数量级 | 几篇到十几篇 | 几十到上百篇 |
+| Nature | task-oriented, Tutorial / How-to | reference-oriented, Reference |
+| Answers | "How do I use X to achieve a certain goal?" | "What does each part of X look like, and how is it configured?" |
+| Granularity | one feature or one scenario per document | one document per entry |
+| Source of truth | design docs + user knowledge | **the source code itself**, types, comments, default values |
+| Scale | a few to a dozen documents | dozens to hundreds of documents |
 
-互补：guide 引用 libdoc 做详细参考（"完整 props 见 xxx"），libdoc 的"相关条目"链回 guide。
+They complement each other: the guide cites libdoc for detailed reference, such as "see xxx for the full props", and libdoc links back to the guide from "related entries".
 
-## "条目（entry）"
+## "Entry"
 
-| 项目类型 | 条目粒度 |
+| Project Type | Entry Granularity |
 |---|---|
-| UI 组件库 | 一个组件 = 一个条目 |
-| 工具函数库 | 一个模块或函数族 = 一个条目 |
-| API Client | 一个 endpoint 族 = 一个条目 |
-| CLI 工具 | 一个子命令 = 一个条目 |
+| UI component library | one component = one entry |
+| utility function library | one module or function family = one entry |
+| API client | one endpoint family = one entry |
+| CLI tool | one subcommand = one entry |
 
-初始化阶段确认条目粒度后续保持一致——粒度变来变去清单和搜索都会乱。
-
----
-
-## 涉及路径
-
-libdoc 产物**不在 `.bytetrue/` 下**——API 参考是面向外部读者的可发布产物。
-
-- 条目文档 → `docs/api/{slug}.md`
-- 条目清单 → `docs/api/manifest.yaml`
-
-`docs/api/` 是默认约定，项目已有其他约定（`reference/` / `components/`）就以项目为准——开始前先确认。
+Once entry granularity is confirmed during initialization, keep it consistent afterward. If granularity keeps changing, both the manifest and search will become chaotic.
 
 ---
 
-## manifest / 模板 / 源码提取
+## Paths Involved
 
-参考材料在同目录 `reference.md`：
+libdoc artifacts **do not live under `.bytetrue/`** because API reference is a publishable artifact for external readers.
 
-- `manifest.yaml` 完整格式与 status 语义
-- 条目文档 frontmatter 和正文模板
-- 源码提取清单（接口签名、默认值、导出方式等）
+- entry documents → `docs/api/{slug}.md`
+- entry manifest → `docs/api/manifest.yaml`
 
-本技能正文只保留流程约束：**libdoc 以源码为事实源，不靠猜，不复制上一个条目改名**。
-
----
-
-## 工作流
-
-### Phase 1：初始化——扫描与清单
-
-1. **确认项目类型 + 条目粒度 + 输出路径**
-2. **扫描源码目录**——读 `source_root` 下文件结构，识别公开导出按逻辑分组
-3. **生成 `manifest.yaml`**——所有条目初始 `status: pending`；落盘后 `validate-yaml.py --file docs/api/manifest.yaml --yaml-only` 校验；展示给用户 review
-4. **用户确认范围**——可标 `skipped`（内部实现）/ 调整分类 / 合并或拆分
-
-### Phase 2：生成
-
-#### 模式 A：单条目模式
-
-适合 1-3 个条目或首次试跑确认质量。
-
-选定条目 → 读 source_files → 按模板生成 → 用户 review → 落盘 → `validate-yaml.py --file {路径} --require doc_type --require entry --require status` → manifest 对应条目 `status: current`
-
-#### 模式 B：批量模式
-
-适合清单里大量 `pending`。
-
-1. **先出样板**——从清单选 2-3 个有代表性的条目（不同 category）走"读源码 → 提取 → 按模板生成"并落盘，状态先 `draft`（不直接进 current——批量模式下样板是"风格参考样本"等整体 review 一起转 current）
-2. **用户确认质量标准**——review 这 2-3 篇确认模板 / 详略 / 风格。**这步不能跳**——50 篇全白写就因为用户想要的风格不一样
-3. **批量生成**——剩余 `pending` 逐条走"读源码 → 提取 → 生成"，可用 subagent 并行；每条 `status: draft`
-4. **整体 review**——批量完成展示概况（条目数 / 跳过数 / 待确认数）；review 前先 `validate-yaml.py --dir docs/api --require doc_type --require entry --require status` 批量校验
-5. **确认落定**——用户确认后把样板和批量产出一起改 `status: current`
-
-**批量模式硬规则**：
-
-- **每个条目独立读源码**——即使批量也不允许复制上一个改名。两个看起来很像的接口经常有微妙差异
-- **样板确认不可跳**
-- **源码结构特殊（动态导出 / 代码生成）暂标 `skipped` 加 note**——硬猜出来的文档比没文档更有害
-
-### Phase 3：增量更新
-
-代码变更后同步文档。三种入口任选：
-
-- `search-yaml.py` 搜 `status=outdated`——架构 check 或上次更新已标记的
-- 对比 `manifest.yaml` 里 `last_scanned` 之后变更的源码文件
-- `search-yaml.py --sort-by last_reviewed --order asc` 按最久没复核的排在前主动复核
-
-重新读源码 → 对比已有文档 → 增量更新变化部分 → `validate-yaml.py` 校验 → `status: current` + `last_reviewed` 当天。
+`docs/api/` is the default convention. If the project already uses another convention such as `reference/` or `components/`, follow the project. Confirm this before starting.
 
 ---
 
-## 与其他工作流的关系
+## Manifest / Templates / Source Extraction
 
-| 来源 | 关系 |
+Reference material is in `reference.md` in the same directory:
+
+- full `manifest.yaml` format and `status` semantics
+- entry document frontmatter and body template
+- source extraction checklist, including interface signatures, default values, export style, and so on
+
+This skill body keeps only the process constraints: **libdoc uses source code as the source of truth. It does not guess and does not copy the previous entry and rename it.**
+
+---
+
+## Workflow
+
+### Phase 1: Initialization — Scan and Manifest
+
+1. **Confirm project type, entry granularity, and output path**
+2. **Scan the source directory** — read the file structure under `source_root`, identify public exports, and group them logically
+3. **Generate `manifest.yaml`** — every entry starts with `status: pending`; after writing it, validate with `validate-yaml.py --file docs/api/manifest.yaml --yaml-only`; then show it to the user for review
+4. **User confirms the scope** — entries can be marked `skipped` for internal implementation, categories can be adjusted, and entries can be merged or split
+
+### Phase 2: Generation
+
+#### Mode A: Single-entry mode
+
+Suitable for 1-3 entries or an initial trial run to confirm quality.
+
+Pick the entry → read `source_files` → generate according to the template → user reviews → write it to disk → validate with `validate-yaml.py --file {path} --require doc_type --require entry --require status` → set the corresponding entry in the manifest to `status: current`
+
+#### Mode B: Batch mode
+
+Suitable when the manifest still contains many `pending` entries.
+
+1. **Produce exemplars first** — pick 2-3 representative entries from the manifest, covering different categories, and go through "read source → extract → generate by template", then write them to disk. Their status starts as `draft`, not `current`, because in batch mode the exemplars are style references and should become `current` only after overall review.
+2. **User confirms the quality bar** — review these 2-3 entries to confirm template, level of detail, and style. **This step cannot be skipped.** Otherwise 50 documents might be generated in the wrong style.
+3. **Generate in batch** — for each remaining `pending` entry, go through "read source → extract → generate". Subagents may be used in parallel. Each entry gets `status: draft`.
+4. **Overall review** — once the batch is done, show the summary, number of entries, number skipped, number pending confirmation. Before review, run `validate-yaml.py --dir docs/api --require doc_type --require entry --require status` for batch validation.
+5. **Finalize** — after user confirmation, change both the exemplars and the batch output to `status: current`
+
+**Hard rules for batch mode**:
+
+- **Read source code independently for every entry** — even in batch mode, it is not allowed to copy the previous document and rename it. Two interfaces that look similar often differ in subtle ways.
+- **Exemplar confirmation cannot be skipped**
+- **If the source structure is special**, such as dynamic exports or code generation, mark it `skipped` with a note for now. Guessed documentation is more harmful than no documentation.
+
+### Phase 3: Incremental Updates
+
+After code changes, sync the documentation. Any of these three entry points may be used:
+
+- use `search-yaml.py` to find `status=outdated`, either from an architecture check or a previous update that marked them
+- compare the source files changed after `last_scanned` in `manifest.yaml`
+- use `search-yaml.py --sort-by last_reviewed --order asc` to proactively re-review the least recently reviewed entries
+
+Reread the source → compare it with the existing document → update only the changed parts → validate with `validate-yaml.py` → set `status: current` and `last_reviewed` to today.
+
+---
+
+## Relationship with Other Workflows
+
+| Source | Relationship |
 |---|---|
-| `bt-feat-accept` | 验收后新增/修改库公开接口 → 推送"需要更新 libdoc 吗？" |
-| `bt-guide` | guide 引用 libdoc 做详细参考；libdoc "相关条目"链回 guide |
-| `bt-arch` (check) | 检测到接口变更但 libdoc 未同步时把对应条目标 `outdated`，本技能 Phase 3 处理 |
-| `bt-feat-design` | 方案第 2 节可作 libdoc 补充信息源（**但以源码为准**） |
-| `bt-trick` | libdoc "注意事项"与 tricks 重合时交叉引用而不重复写 |
+| `bt-feat-accept` | after acceptance, if new or changed public library interfaces were introduced, it should ask "do you need to update libdoc?" |
+| `bt-guide` | the guide cites libdoc for detailed reference, and libdoc links back to the guide from "related entries" |
+| `bt-arch` in check mode | if it detects an interface change that libdoc has not synced, it marks the corresponding entry `outdated`, and this skill handles it in Phase 3 |
+| `bt-feat-design` | section 2 of the design can be a supplementary information source for libdoc, **but source code still wins** |
+| `bt-trick` | when libdoc "notes" overlap with tricks, cross-reference instead of duplicating content |
 
 ---
 
-## 退出条件
+## Exit Conditions
 
-**Phase 1**：manifest.yaml 已落盘 + 用户已确认范围（含 skipped 理由）+ 粒度和输出路径已确认
+**Phase 1**: `manifest.yaml` has been written, the user has confirmed the scope including reasons for `skipped`, and entry granularity plus output path are confirmed
 
-**Phase 2 单条目**：条目按模板生成 + frontmatter 完整 + API 参考节信息来源于源码提取（非编造）+ 用户确认 + manifest 已更新
+**Phase 2 single-entry mode**: the entry has been generated from the template, frontmatter is complete, the API reference section is based on extracted source information rather than invention, the user has confirmed it, and the manifest has been updated
 
-**Phase 2 批量**：样板（2-3 篇）已获用户确认 + 所有 pending 条目已生成或标 skipped + 用户做了整体 review + manifest 所有条目 status 已同步
+**Phase 2 batch mode**: the exemplars, 2-3 entries, have been confirmed by the user; all `pending` entries have either been generated or marked `skipped`; the user has completed the overall review; and every entry status in the manifest has been synchronized
 
-**Phase 3**：outdated 条目已全部更新或确认不需更新 + manifest 无残留 outdated（除非用户明确暂缓）
+**Phase 3**: every `outdated` entry has either been updated or explicitly confirmed as not needing an update, and no `outdated` entries remain in the manifest unless the user explicitly chose to defer them
 
 ---
 
-## 容易踩的坑
+## Easy Pitfalls
 
-- 没扫清单就写文档——可能遗漏或重复
-- 没读源码就写 API 参考——libdoc 核心价值是准确反映源码
-- 复制上一个条目改名——必然漏掉微妙差异
-- 批量模式跳过样板确认——50 篇全白写
-- 把 spec 信息（不变量 / 测试约束）写进 libdoc——属于 `.bytetrue/`
-- libdoc 和 guidedoc 内容高度重叠——其中一份定位有误
-- `manifest.yaml` 直接删行——改 `status: skipped` 并写 note
-- 源码接口不存在却在文档写了——以源码为事实源不编造
+- writing docs without first scanning the manifest — entries may be missed or duplicated
+- writing API reference without reading source — the core value of libdoc is accurate reflection of source code
+- copying the previous entry and renaming it — subtle differences will inevitably be missed
+- skipping exemplar confirmation in batch mode — 50 documents may be generated in the wrong style
+- writing spec information such as invariants or test constraints into libdoc — those belong under `.bytetrue/`
+- libdoc and guidedoc overlapping too heavily — one of them has the wrong positioning
+- directly deleting a row from `manifest.yaml` — set `status: skipped` and write a note instead
+- documenting an interface that does not exist in source code — use source as truth and do not invent

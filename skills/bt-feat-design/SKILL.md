@@ -1,261 +1,261 @@
 ---
 name: bt-feat-design
-description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作为后续实现和验收的唯一输入，拍板后抽出 checklist。触发：用户说"开始设计方案"、"写 design doc"、"准备实现 XX"，前提是已知道做什么、为谁、怎么算成功。
+description: Stage 1 of the feature workflow. Draft `{slug}-design.md` for a new feature as the only input for later implementation and acceptance, and extract a checklist after the plan is approved. Trigger when the user says "start designing", "write a design doc", or "prepare to implement XX", assuming it is already known what to build, for whom, and what counts as success.
 ---
 
 # bt-feat-design
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-这一阶段的产出是一份方案文件 `{slug}-design.md`，加上从中抽出的行动清单 `{slug}-checklist.yaml`。这两份东西后面会被两个阶段消费——implement 照着推进、acceptance 照着核对，所以这里写错或写漏，下游就跟着错。
+The output of this stage is one design file, `{slug}-design.md`, plus an action checklist extracted from it, `{slug}-checklist.yaml`. These two artifacts are consumed by two later stages, implement executes against them and acceptance verifies against them, so if this stage is wrong or incomplete, everything downstream inherits the error.
 
-> 共享路径和命名约定看 `.bytetrue/reference/shared-conventions.md`。本阶段一般 feature 目录已经由 brainstorm 创建好了；没有的话在这一步建。
+> For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`. In most cases the feature directory has already been created by brainstorm. If not, create it in this step.
 
-> **读完本节后，先跳到「退出后」节看完收尾清单再回来写方案**——退出后第 1 步就是 tracker 同步，你有义务一次性问完。
+> **After reading this section, jump to "After Exit" first and read the close-out checklist before coming back to write the design** — the first close-out item is tracker sync, and you are required to ask it in one pass.
 
-本阶段有三个入口：
+This stage has three entry points:
 
-- **正式起草**：用户已经能讲清楚需求（或已经填好 `{slug}-intent.md`），直接进"流程"一节走完整起草。
-- **初始化模式**：用户说"开一个新需求 / 起个草稿 / 新建一个 feature"，但想自己先写半成品方案而不是口述。走下一节"初始化模式"，建好目录和空 `{slug}-intent.md` 就结束本轮，等用户填完再回来。
-- **从 roadmap 条目起头**：用户说"开始做 roadmap 里的 {子 feature slug}"或"推进 {roadmap} 的下一条"。slug 从 roadmap items.yaml 取，不另起；动笔前要读 roadmap 主文档和 items.yaml 了解上下文和依赖状态；落盘时 frontmatter 要带 `roadmap` / `roadmap_item` 两个字段，同时回写 items.yaml 把对应条目 `status` 改为 `in-progress`、`feature` 填为 feature 目录名。详见下文"从 roadmap 条目起头"。
+- **Formal drafting**: the user can already explain the requirement clearly, or `{slug}-intent.md` is already filled, so go through the full drafting flow in the "workflow" section
+- **Initialization mode**: the user says "open a new demand", "start a draft", or "create a new feature", but wants to write a half-finished plan themselves rather than describing it verbally. Use the next section, initialization mode, create the directory and an empty `{slug}-intent.md`, then end the current run and wait until the user fills it
+- **Starting from a roadmap item**: the user says "start the sub-feature in roadmap {slug}" or "advance the next item in {roadmap}". The slug comes from `items.yaml` and is not invented again. Before writing, read the roadmap main doc and `items.yaml` to understand context and dependency state. When writing, frontmatter must carry `roadmap` and `roadmap_item`, and `items.yaml` must be written back so the corresponding item changes to `status: in-progress` and `feature` becomes the feature directory name. See the section "Starting from a roadmap item" below
 
 ---
 
-## 初始化模式：帮用户建目录和 intent 草稿
+## Initialization mode, create the directory and intent draft for the user
 
-触发：用户想自己写一份半成品方案（`{slug}-intent.md`）作为后续 design 的输入，但不想手动建目录。
+Trigger: the user wants to write a half-finished plan themselves, `{slug}-intent.md`, as input for later design, but does not want to create the directory manually.
 
-动作：
+Actions:
 
-1. **和用户快速对齐两件事**——一句话需求概要 + 敲定 slug（小写字母、数字、连字符；`user-auth`、`export-csv` 这种）。日期取当天（frontmatter 用 `currentDate` 即可）。feature 目录命名是 `YYYY-MM-DD-{slug}`。
-2. **创建 `.bytetrue/features/{YYYY-MM-DD}-{slug}/` 目录**。
-3. **写一份空的 `{slug}-intent.md`** 作为草稿骨架，内容就是下面这段：
+1. **Quickly align on two things with the user** — a one-sentence demand summary plus the slug, lowercase letters, digits, and hyphens, such as `user-auth` or `export-csv`. Use today's date, `currentDate` in frontmatter is enough. The feature directory name is `YYYY-MM-DD-{slug}`
+2. **Create the directory** `.bytetrue/features/{YYYY-MM-DD}-{slug}/`
+3. **Write an empty `{slug}-intent.md`** as the draft skeleton, exactly with the following content:
 
    ```markdown
    ---
    doc_type: feature-intent
    feature: {YYYY-MM-DD}-{slug}
    status: draft
-   summary: {一句话需求，AI 按和用户对齐的结果填}
+   summary: {one-line requirement, filled by the AI according to the aligned wording with the user}
    ---
 
    # {slug} intent
 
-   ## 背景 / 为什么做
+   ## Background / Why this is being done
 
-   （一句话就够）
+   (one sentence is enough)
 
-   ## 大致怎么做
+   ## Roughly how it should work
 
-   （100 字左右描述想法，含关键步骤 / 数据流）
+   (around 100 words describing the idea, including key steps and data flow)
 
-   ## 相关数据结构 / 类型
+   ## Related data structures / types
 
-   （贴相关 types、接口签名、或指向代码位置）
+   (paste related types, interface signatures, or point to code locations)
 
-   ## 已知不做 / 待定
+   ## Known non-goals / TBD
 
-   （可选：明确的边界或自己也没想清楚的地方）
+   (optional: explicit boundaries or things the user themselves has not thought through yet)
    ```
 
-4. **告知用户"骨架已建好，填完后再来找我，我基于 intent 写正式 design"**，然后**本轮结束，不继续推进 design 流程**。
+4. **Tell the user "the skeleton is ready, come back after filling it and I will write the formal design based on the intent"**, and then **end the current run without continuing the design flow**
 
-为什么在这里停？intent 的价值就是让用户离线思考、把脑子里的东西落到纸面。AI 继续问会把 intent 模式退化成 brainstorm，失去意义。
-
----
-
-## 从 roadmap 条目起头
-
-触发：用户说"开始做 roadmap 里的 {子 feature}"或指向 items.yaml 里某条 `planned` 条目。
-
-1. **读 roadmap 上下文**——打开 `{roadmap-slug}-roadmap.md` 和 `{roadmap-slug}-items.yaml`：
-   - 目标条目必须 `status: planned` + `depends_on` 前置全 `done`，否则停下来报告
-   - **必读主文档第 3 节"模块拆分"和第 4 节"接口契约 / 共享协议"**——这是本 feature 的硬约束输入。契约不合理 / 漏了 → 停下来建议回 `bt-roadmap update` 改，**不要在 design 里偷偷绕开**
-2. **slug 从 roadmap 取**，feature 目录 `YYYY-MM-DD-{roadmap 条目 slug}`，不另起
-3. **走"流程"一节**，frontmatter 加 `roadmap` / `roadmap_item` 两字段
-4. **落盘 `status: approved` 同时回写 items.yaml**：对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`，用 `validate-yaml.py` 校验
-
-完整衔接协议看 `.bytetrue/reference/shared-conventions.md` 第 2.5 节。
+Why stop here? The whole value of intent mode is that the user can think offline and put their own thoughts on paper. If the AI keeps asking questions, intent mode collapses back into brainstorm.
 
 ---
 
-## design 写什么、不写什么
+## Starting from a roadmap item
 
-design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在名词层和编排层的现状与变化**。计算层细节（具体怎么写、改哪些函数、测试怎么搭）归 implement。
+Trigger: the user says "start the sub-feature in roadmap {slug}" or points at one `planned` item inside `items.yaml`.
 
-写三类东西，名词层和编排层都用"**现状 → 变化**"两段式：
+1. **Read the roadmap context** — open `{roadmap-slug}-roadmap.md` and `{roadmap-slug}-items.yaml`:
+   - the target item must currently be `status: planned`, and every prerequisite in `depends_on` must already be `done`, otherwise stop and report it
+   - **you must read section 3, module split, and section 4, interface contracts / shared protocols, from the main doc** — these are hard-constraint inputs for this feature. If the contract is unreasonable or incomplete, stop and recommend going back to `bt-roadmap update`; **do not quietly route around it inside design**
+2. **Take the slug from roadmap**, with feature directory `YYYY-MM-DD-{roadmap-item-slug}` and no new slug
+3. **Proceed through the normal workflow section**, adding `roadmap` and `roadmap_item` into frontmatter
+4. **When writing out with `status: approved`, also write back `items.yaml`**: set the corresponding item to `status: in-progress`, set `feature: YYYY-MM-DD-{slug}`, and validate with `validate-yaml.py`
 
-1. **名词层**——值对象 / 实体 / 数据结构 / 对外契约 / 类型定义
-2. **编排层**——主流程 / workflow / 关键编排函数 / 控制流拓扑（线性 / 分支 / 并行 DAG / 状态机）。开头一张主流程图建 mental model
-3. **流程级约束**——错误语义、幂等性、并发 / 顺序、扩展点位置、可观测点。挂载点清单也归这类
-
-4. **测试 seam 规划**——不写测试代码 / framework / mock，但要判断这个 feature 是否适合 TDD：关键行为应该通过哪个 public interface / 可观察行为验证；哪些验收场景适合自动化，哪些只能手工验证；若需要新增 seam，优先最高层 seam。
-
-外加一个**固定结构健康度环节**（第 2.5 节）：评估即将被改动的文件是否偏胖 / 职责混杂、以及新文件要落进的目录是否摊平，决定是否在实现前先做"只搬不改行为"的微重构（拆文件 / 重组目录）。即使结论是"不做"也要在 design 里显式写出来——否则 AI 默认会持续往胖文件里塞代码、往拥挤目录里加文件。这一节随整稿一起进整体 review，不单独走确认。
-
-**判据**：换一种写法名词层或编排层会变得不同 → design 的事；换一种写法只是"代码不那么好看 / 函数拆法不同 / 测试用了别的 framework" → implement 的事。
-
-不写改动文件清单、函数级落点、测试代码、库选型细节——design 阶段还没读完相关代码，预测多半会回头改。implement 拿到 design 后才扫现状决定。
+For the full handoff protocol, see section 2.5 in `.bytetrue/reference/shared-conventions.md`.
 
 ---
 
-## 方案文件是给人概览的，不是给人仔细阅读的
+## What design writes and what it does not write
 
-读者打开 `{slug}-design.md` 是想 5 分钟内抓到要点，不是逐字精读。具体做法：
+Design only covers the orchestration side in the separation between orchestration and computation: **the current state and changes of the term layer and orchestration layer for this feature**. Computation-layer details, exactly how to write it, which functions to change, and how to structure tests, belong to implement.
 
-1. **每节超过 1 屏就砍或拆**——一屏装不下读者会失去定位
-2. **术语先锁死**——动笔前 grep 代码 / 架构 / 历史 feature 防冲突，事后理顺成本远高于预防
-3. **示例优先于定义**——接口行为先给"输入→输出"示例，复杂时再补正式类型
-4. **同一条信息只在最自然的位置出现一次**——重复表述比缺一条还烦
-5. **新逻辑默认放新文件**（写在改动计划里）——文件越大越难分清职责
+Design writes three kinds of things, and both the term layer and orchestration layer use the two-part structure of **current state → change**:
 
----
+1. **Term layer** — value objects, entities, data structures, outward contracts, and type definitions
+2. **Orchestration layer** — the main flow, workflow, key orchestration functions, and control-flow topology, linear, branch, parallel DAG, or state machine. It begins with one main flow diagram that builds the mental model
+3. **Flow-level constraints** — error semantics, idempotency, concurrency or ordering, extension-point placement, and observability points. The mount-point list also belongs here
 
-## 起草时的三条纪律
+4. **Test seam planning** — do not write test code, framework choice, or mock setup, but do decide whether this feature is suitable for TDD: which public interface or observable behavior should validate the key behavior, which acceptance scenarios are suitable for automation, which can only be manually verified, and if a new seam is needed, prefer the highest seam
 
-### 1. 别替用户做决定
+In addition there is one **fixed structural-health section**, section 2.5. It evaluates whether the files about to be modified are already bloated or responsibility-mixed, and whether the directories where new files would land are flattened. Based on that it decides whether a "move only, no behavior change" micro-refactor should happen before implementation, split files or reorganize directories. Even when the conclusion is "do not refactor", it must still be written explicitly in design. Otherwise the AI will, by default, keep stuffing more code into fat files and add more files into crowded directories. This section goes into overall review together with the rest of the draft, and does not require its own separate confirmation.
 
-碰到"用户没说清的角落"默认停下来问，不自己挑一个填上去。具体：
+**Decision rule**: if changing the writing approach would change the term layer or orchestration layer, then it is a design matter. If changing the writing approach only changes "the code looks nicer", "the function is split differently", or "the tests use another framework", then it belongs to implement.
 
-- **声明假设**：非用户原话的判断写成"假设：……"，让用户能精确反驳
-- **给选项不自选**：2-3 种合理做法都摆出来再讲倾向
-- **看不懂就停**：硬猜着写下去到了 acceptance 阶段对不上验收点
-
-### 2. 目标和约束都写成可验证的
-
-- 不写"让它能跑"、"用户体验顺畅"这种弱标准——改写成"输入 A 时返回 B"
-- "明确不做"具体到能被 grep 或测试反向核对，不写"不过度设计"这种空话
-
-### 3. 每个 feature 都要能被卸载
-
-回答："如果想把它拔掉，要拔哪些地方？" 答不出说明边界没想清楚，feature 一上线就变成拆不动的既成事实。
-
-落到挂载点清单（第 2.3 节）。**判据**：删掉这一项，feature 在用户/系统视角是不是就消失了？是→列，否→不列。详细 ✅/❌ 例子和写法看 reference.md。这清单顺带帮你发现自己有没有不小心往太多地方插桩——真挂入点越多代表耦合越散，是个信号。
+Do not write the changed-file inventory, function-level landing points, test code, or library-choice details. At design time you have not yet fully read the relevant code, so such predictions often get revised. Implement reads the current state afterward and decides.
 
 ---
 
-## 流程：什么时候做什么
+## The design file is for overview, not close reading
 
-### 1. 启动检查
+When readers open `{slug}-design.md`, they want to capture the point within 5 minutes, not read it word by word. The practical rules are:
 
-**前置 gate**：需求输入至少含 用户目标 / 核心行为 / 成功标准 / 明确不做 四项（来源 intent / brainstorm / 对话）。缺了补；用户自己说不清就回退到 brainstorm。
-
-**必做 4 条**：
-
-1. **续作检查**——Glob `{slug}-design.md` / `{slug}-intent.md` / `{slug}-brainstorm.md`：
-   - intent / brainstorm：当作输入读入，不重复问已讲清的部分
-   - design `status=draft` 各节基本完整 → 跳到本流程"5. 整体 review"
-   - design 部分节缺失 → 补缺失节，汇报"上次写到 X，补齐统一给你 review"
-   - design `status=approved` → 别默认覆盖，问用户接着改还是另起 slug
-2. **扫 .bytetrue/ 全局输入**——Glob `.bytetrue/` 发现可用目录和文档类型，按类取用：
-   - `architecture/` → 读 ARCHITECTURE.md + 索引 + 相关子系统 doc，关注名词复用和流程级约束
-   - `requirements/` → 有对应 req：frontmatter `requirement` 填 slug，读"用户故事 / 边界"两节；新能力首次出现 → 触发 `bt-req draft` 起草愿景 req，frontmatter `requirement` 填新 slug；纯重构 / 技术债留空
-   - `compound/` → 用 `search-yaml.py --dir .bytetrue/compound` 搜相关 decision / explore / trick / learning；命中冲突 decision 必须正面回应
-   - `features/` → 搜历史 design 有无同类 feature 可参考
-   - 其余目录按内容类型自行判断
-3. **读需求相关的现有代码**——读哪些文件由需求线索决定
-
-**按信号触发 3 条**（没信号跳过）：
-
-- **术语 grep 防冲突**——新概念名没在代码 / 架构 / 历史 feature 里见过时，grep 一遍；冲突就换名或在第 0 节明确区分
-- **复杂度档位对齐**——需求里出现"对外 SDK / 高并发 / 一次性工具"等偏离信号时，打开 `.bytetrue/reference/code-dimensions.md` 列偏离点；无信号写"走默认档位"
-- **grep 找"叫法不同的类似模块"**——直觉"可能已有人做过但命名不同"时，grep 同义词
-
-详细规则看 `.bytetrue/reference/shared-conventions.md` 第 5 节。
-
-### 2. 想清楚这功能该放在哪儿
-
-动笔写名词层 / 编排层前，先回答：**这次要加的东西在项目整体结构里属于哪儿？**
-
-- 现有模块本该承担？→ 在那个模块里扩展，别另起
-- 横跨多个模块？→ 抽公共层 vs 让某一方主导、其他方依赖
-- 跟现有任何模块都不像？→ 新建独立模块/子系统，对外暴露什么、跟别人怎么交互提前想清楚
-- 可能已有模块在做类似的事但叫法不同？→ grep 几个同义词
-
-代价：放错了模块就变"什么都装的筐"；新建平行实现就有几个版本同存。
-
-结论写进第 1 节"决策与约束"。涉及新建模块或跨模块接口时同步写进第 4 节，提示在 `ARCHITECTURE.md` 加指向。
-
-AI 默认翻车的姿势是**不思考就往眼前最顺手的文件里加**。
-
-### 3. 写"现状 → 变化"两段式的名词层和编排层
-
-按 reference.md 模板写第 2 节四个子节（2.1 名词层 / 2.2 编排层 / 2.3 挂载点 / 2.4 推进策略）。重点提示：
-
-- "现状"必须指向代码位置，不能想当然——读者要靠它判断"变化"是否合理
-- 编排层开头一张 mermaid 图建 mental model
-- 挂载点按"删了它 feature 是否消失"判据，3-5 条为正常区间
-- 推进策略按 paradigm 维度切片（编排骨架 → 计算节点 → 持久化 → 测试），不下沉到 file:line
-- **第 2.5 节"结构健康度与微重构"是固定步骤**——按 reference.md 写作要求评估**两类对象**：要改的文件（文件级）+ 要落新文件的目标目录（目录级）。**评估前先查 compound 已有 convention**（关键词围绕"目录组织 / 文件归属 / 命名约定"），命中就直接照办。结论三选一：
-  1. **不做**——文件健康 / 目录不挤 / 改动量小 / 微重构收益不抵风险，写"本次不做微重构，原因：……"
-  2. **做微重构（拆文件）**——文件偏胖或职责混杂但能用 provable refactor（拆函数 / 拆文件 / 移动定义，编译器全程绿灯）解决
-  3. **做微重构（重组目录）**——目标目录摊平且能通过纯文件移动 + import 路径更新解决（编译器全程绿灯）
-
-  选择 2 / 3 时给出"搬什么 → 搬到哪 → 怎么验证行为不变"的具体方案，落进 checklist 作为**第 1 步且独立验证退出**，再开始 feature 主体
-- **重组目录时多问一步：是稳定模式还是一次性整理**——稳定模式（如"自定义业务组件统一放 `components/custom/`"，未来其他 feature 也该遵守）就在 2.5 末尾加"建议沉淀的 convention"段，提示用户 implement 跑通后走 `bt-decide` 归档；一次性整理（只是这个目录碰巧挤了）就只搬不归档。**design 阶段不直接归档**——方案还没真跑过，留钩子给 implement 后再决定
-- **design 只做安全的微重构，边界严格守住**："只搬不改行为"——文件级靠 IDE rename / move + 编译器校验，目录级靠纯文件移动 + import 路径更新 + 编译器校验。一旦涉及改函数签名 / 改返回值结构 / 改调用关系语义 / 模块拆合，就**超出 design 范围**：写进第 2.5 节末尾的"超出范围的观察"里提示用户"建议后续走 `bt-refactor` 处理"，**不阻塞本 feature、不作为前置依赖**。是否真去做、什么时候做由用户在 feature 之外决定
-- **第 2.5 节随整稿一起 review，不单独确认**——和功能方案打包给用户一次过，避免拆成两轮把节奏拖长
-
-### 4. 补齐剩下各节，整稿一次性给 review
-
-按 reference.md 模板补齐剩余节（第 0 / 3 / 4 节）。初稿 frontmatter `status: draft`。
-
-整稿成型后才交给用户看，**不分批 review**——分批用户只看到局部，发现不了"第 1 节范围跟第 2 节变化对不上"这种跨节问题。
-
-第 3 节"验收契约"提示：每条写成"输入 / 触发 → 期望可观察结果"，覆盖正常 + 边界 + 错误。适合 TDD 的 feature 还要写测试 seam 规划：最高层行为 seam、优先 red/green 的 1-3 个行为、手工验证项。不写测试代码 / framework / mock。
-
-### 5. 整体 review
-
-发一次整体 review 提示（提示词在 reference.md 第 5 节）。用户提意见就改，反复直到放行，把 `status` 从 `draft` 改 `approved`。
-
-### 6. 生成 {slug}-checklist.yaml
-
-方案确认后从 `{slug}-design.md` 抽出 `steps` + `checks` 落到 `{slug}-checklist.yaml`。完整格式、提取规则、典型节奏看 reference.md 第 3 节。
-
-落盘后 `python .bytetrue/tools/validate-yaml.py --file {path} --yaml-only` 校验。
-
-### 7. 退出
-
-按下文退出条件核对，引导用户进入阶段 2。
+1. **if a section exceeds one screen, cut or split it** — readers lose their place once it no longer fits
+2. **lock terminology first** — grep code, architecture, and historical features before writing; cleaning it up afterward costs far more than prevention
+3. **prefer examples to definitions** — for interface behavior, show one input→output example first, then add the formal type only when necessary
+4. **state each piece of information only once in the most natural place** — repetition is more annoying than omission
+5. **new logic goes to a new file by default**, recorded inside the change plan, because the larger a file gets, the harder it is to tell what its responsibility is
 
 ---
 
-## 退出条件
+## Three drafting disciplines
 
-用户整体 review 通过，并且：
+### 1. Do not make decisions for the user
 
-- [ ] frontmatter 完整（`doc_type` / `feature` / `status=approved` / `summary` / `tags`），requirement 字段已对齐
-- [ ] 第 1 节含"不做什么"和复杂度档位偏离（或明确走默认）
-- [ ] 第 2.1 / 2.2 用"现状 → 变化"两段式；接口有示例 + 来源位置；编排层开头有主流程图
-- [ ] 第 2.3 挂载点按"删了它 feature 是否消失"判据收紧（一般 3-5 条）
-- [ ] 第 2.4 推进策略按 paradigm 维度切片，每步有退出信号
-- [ ] 第 2.5 结构健康度评估覆盖文件级 + 目录级；评估前已查 compound convention；结论显式写出（不做 / 拆文件 / 重组目录）；选"微重构"时 checklist 第 1 步是它且有独立退出信号；选"重组目录"且属稳定模式时含"建议沉淀的 convention"段；超出"只搬不改行为"的结构性问题列在"超出范围的观察"，仅提示不阻塞
-- [ ] 第 3 节关键场景覆盖正常 + 边界 + 错误；含"明确不做"反向核对项
-- [ ] 第 3 节包含测试 seam 规划，或明确说明本 feature 不适合 TDD / 自动化测试
-- [ ] `{slug}-checklist.yaml` 已落盘并通过 `validate-yaml.py` 校验
-- [ ] roadmap 起头时 items.yaml 已回写（`status: in-progress` + `feature` 填上）
+Whenever you hit a corner the user has not made clear, stop by default and ask. Do not silently pick one answer and write it down. Concretely:
 
----
+- **state assumptions** — if a judgment did not come from the user's actual words, write it as "Assumption: ..."
+- **offer options without self-selecting** — put 2-3 reasonable routes on the table before stating a preference
+- **if you do not understand it, stop** — if you keep guessing and writing, acceptance will eventually expose that the design never matched what needed to be verified
 
-## 退出后
+### 2. Write both goals and constraints in verifiable form
 
-告诉用户："feature design 已 approved，checklist 已就绪。下一步阶段 2 实现，触发 `bt-feat-impl`。"
+- do not write weak standards like "make it work" or "smooth user experience" — rewrite them into things like "when given input A, it returns B"
+- make "explicitly not doing" concrete enough to be reverse-checked by grep or tests; do not write empty phrases such as "avoid over-engineering"
 
-按 `shared-conventions.md` 第 3 节"feature-design"收尾推荐顺序一句话提示（用户"不用"立即跳过）：
+### 3. Every feature must be uninstallable
 
-1. approved feature design 需要团队协作投影 → "要同步或绑定外部 tracker 吗？（`bt-tracker`）"；roadmap 起头时同时提示可更新 / 绑定对应 roadmap item；用户确认前不创建 / 更新外部 issue
+Answer this question: "If we wanted to pull this out again, where exactly would it need to be removed?" If you cannot answer it, the boundary is not clear yet, and once the feature lands it becomes a thing that cannot be cleanly removed.
+
+This lands in the mount-point inventory, section 2.3. **Decision rule**: if removing the item makes the feature disappear from the user or system point of view, include it; otherwise do not. For detailed ✅ and ❌ examples and writing format, see `reference.md`. This list also helps you see whether you accidentally inserted the feature into too many places. Too many mount points is a signal that coupling is spreading out.
 
 ---
 
-## 容易踩的坑
+## Workflow, what to do when
 
-- 没读相关架构 / 术语没 grep 就动笔——方案跟现有代码对不上、术语冲突后 git blame 找十倍时间
-- 用散文描述接口行为，没给具体示例——读者建不起模型
-- 名词层 / 编排层只写"变化"不写"现状"——读者无法判断变化是否合理
-- 把挂载点清单写成改动文件清单——内部改动归 implement，挂载点只列"删了它 feature 就消失"的登记条目
-- 在 design 写测试代码 / framework / mock / 函数级落点——这些归 implement 自决
-- 强行画图——模块 ≤ 2 个、调用线性时画图反而模糊重点
-- 只给半份文档先 review——用户看不出全局一致性
-- 在需求摘要里偷偷扩范围——验收时对不上
+### 1. Startup checks
+
+**Prerequisite gate**: the demand input must contain at least four things, user goal, core behavior, success criteria, and explicit non-goals, coming from intent, brainstorm, or conversation. If one is missing, fill it in. If the user themselves cannot explain it clearly, fall back to brainstorm.
+
+**Four mandatory checks**:
+
+1. **Continuation check** — Glob `{slug}-design.md`, `{slug}-intent.md`, and `{slug}-brainstorm.md`:
+   - if there is intent or brainstorm, treat them as input and do not ask again for things they already made clear
+   - if there is a design with `status=draft` and its sections are mostly complete, jump straight to step 5, overall review
+   - if a design exists but only some sections are missing, fill the missing sections and report "last time it was written up to X; I will fill the missing parts and review the whole thing with you"
+   - if a design exists with `status=approved`, do not silently overwrite it. Ask whether the user wants to keep editing it or start with a new slug
+2. **Scan `.bytetrue/` as global input** — Glob `.bytetrue/`, discover available directory and document types, and read them by type:
+   - `architecture/` → read `ARCHITECTURE.md`, the index, and the relevant subsystem docs, paying attention to term reuse and flow-level constraints
+   - `requirements/` → if there is a corresponding req, fill its slug into frontmatter `requirement`, and read its user stories and boundary sections; if this is the first appearance of a new capability, trigger `bt-req draft` to write the req vision first, then fill the new slug into `requirement`; for pure refactor or technical debt, leave it empty
+   - `compound/` → search relevant decision, explore, trick, and learning with `search-yaml.py --dir .bytetrue/compound`; any conflicting decision hit must be explicitly addressed
+   - `features/` → search whether similar historical feature designs exist as reference
+   - handle other directories according to their content type
+3. **Read the existing code relevant to the demand** — which files to read is decided by the demand clues
+
+**Three signal-triggered checks**, skip if there is no signal:
+
+- **Terminology grep for conflict prevention** — if a new concept name has never been seen in code, architecture, or historical feature docs, grep it once; if there is a conflict, rename it or explicitly distinguish it in section 0
+- **Complexity-dimension alignment** — if the demand includes signals like external SDK, high concurrency, or one-off tool, which deviate from defaults, open `.bytetrue/reference/code-dimensions.md` and list the deviating dimensions; if there is no such signal, write "use the default bundle"
+- **Grep for similar modules with different naming** — if your intuition says "someone may already have done something similar under another name", grep near-synonyms
+
+The detailed rules are in section 5 of `.bytetrue/reference/shared-conventions.md`.
+
+### 2. Think through where this feature belongs
+
+Before writing the term layer or orchestration layer, answer this: **where in the overall project structure does this new thing belong?**
+
+- if an existing module should naturally carry it, extend that module, do not create a parallel structure
+- if it spans multiple modules, decide whether to extract a shared layer or let one side lead and the others depend on it
+- if it looks unlike any existing module, create a new independent module or subsystem, and think through early what it exposes outward and how it interacts with others
+- if a similar thing may already exist but under another name, grep a few synonyms
+
+The cost of placing it wrong is that the module becomes a catch-all bucket, or multiple parallel implementations of the same idea end up coexisting.
+
+Write the conclusion into section 1, decisions and constraints. If it involves a new module or cross-module interface, also write it into section 4 and note that `ARCHITECTURE.md` should later point to it.
+
+The AI's default crash pattern is **adding it into the most convenient file in front of it without thinking**.
+
+### 3. Write the term layer and orchestration layer in "current state → change" form
+
+Follow the template in `reference.md` and write the four subsections of section 2, 2.1 term layer, 2.2 orchestration layer, 2.3 mount points, and 2.4 rollout strategy. Key reminders:
+
+- the "current state" must point to real code locations, not assumptions. Readers rely on it to judge whether the "change" is reasonable
+- orchestration starts with one Mermaid diagram to build the mental model
+- mount points use the "if removed, does the feature disappear?" rule, and 3-5 items is the normal range
+- rollout strategy slices by paradigm dimension, orchestration skeleton → computation node → persistence → tests, and never drops down to `file:line`
+- **section 2.5, structural health and micro-refactor, is mandatory** — follow the writing requirements in `reference.md` to evaluate **two kinds of targets**: the files to be modified, file level, and the directories where new files will land, directory level. **Before evaluating, search existing conventions in compound** around "directory organization / file ownership / naming conventions". If there is a hit, follow it directly. The conclusion must be one of three:
+  1. **do not refactor** — files are healthy, directories are not crowded, or the change is too small for the micro-refactor benefit to outweigh the risk; write "no micro-refactor this time, because ..."
+  2. **do micro-refactor, split files** — the file is bloated or responsibility-mixed, but the problem can be solved with a provable refactor, such as splitting functions, splitting files, or moving definitions while the compiler stays green throughout
+  3. **do micro-refactor, restructure directories** — the target directory is flattened, and it can be solved by pure file moves plus import-path updates while the compiler stays green
+
+  When selecting 2 or 3, give a concrete plan of what moves where and how unchanged behavior will be verified, and land it as **step 1 in the checklist with an independent exit signal** before the main feature steps begin
+- **when restructuring directories, ask one extra question: is this a stable pattern or a one-off cleanup?** If it is a stable pattern, such as "custom business components always go under `components/custom/` and future features should follow this", add a "suggested convention to capture" block at the end of 2.5 so implement can later route it to `bt-decide` after the path proves out. If it is one-off cleanup, move things but do not capture a convention. **Design never archives a convention directly**; the solution has not yet proven itself, so it only leaves the hook
+- **design only allows safe micro-refactors, and the boundary is strict**: "move only, no behavior change". File-level uses IDE rename or move plus compiler validation. Directory-level uses pure file moves plus import-path updates plus compiler validation. Once it involves changing function signatures, changing return shapes, changing call-graph semantics, or splitting or merging modules, it **exceeds the design boundary**. In that case, write it at the end of section 2.5 under "observations beyond scope" and tell the user it is better handled later through `bt-refactor`. **It does not block this feature and does not become a prerequisite.** Whether to do it and when to do it is a decision outside this feature
+- **section 2.5 goes through overall review together with the full draft** — package it together with the feature plan so the user can review it in one pass, instead of stretching the rhythm into two rounds
+
+### 4. Fill the remaining sections and give the whole draft for review at once
+
+Follow the template in `reference.md` to fill the remaining sections, 0, 3, and 4. The initial frontmatter status is `draft`.
+
+Only after the whole draft is formed do you show it to the user. **Do not review in partial batches** — partial review shows the user only local fragments, and they cannot catch cross-section inconsistencies such as section 1 scope not matching section 2 change.
+
+For section 3, acceptance contract, the reminder is: each item should be written as "input or trigger → expected observable result", covering normal path, edge, and error. For features that fit TDD, also write a test seam plan: highest behavior seam, the first 1-3 red/green behaviors, and manual verification items. Do not write test code, framework, or mock setup.
+
+### 5. Overall review
+
+Use the overall review prompt, the wording lives in section 5 of `reference.md`. Revise according to user feedback until they approve it, then change `status` from `draft` to `approved`.
+
+### 6. Generate `{slug}-checklist.yaml`
+
+After the plan is confirmed, extract `steps` and `checks` from `{slug}-design.md` into `{slug}-checklist.yaml`. The full format, extraction rules, and typical rhythm are in section 3 of `reference.md`.
+
+After writing it, validate with `python .bytetrue/tools/validate-yaml.py --file {path} --yaml-only`.
+
+### 7. Exit
+
+Check the exit conditions below and guide the user into stage 2.
+
+---
+
+## Exit Conditions
+
+The user has passed overall review, and:
+
+- [ ] frontmatter is complete, including `doc_type`, `feature`, `status=approved`, `summary`, and `tags`, and the `requirement` field is aligned
+- [ ] section 1 contains explicit non-goals and complexity-dimension deviations, or clearly says it follows the default
+- [ ] sections 2.1 and 2.2 use the "current state → change" structure; interfaces have examples plus source locations; orchestration starts with a main flow diagram
+- [ ] section 2.3 mount points are tightened by the rule "if removed, the feature disappears", usually 3-5 items
+- [ ] section 2.4 rollout strategy is sliced by paradigm dimension, and every step has an exit signal
+- [ ] section 2.5 structural-health evaluation covers both file level and directory level; compound conventions were checked before evaluating; the conclusion is explicit, do not refactor / split files / restructure directories; when "micro-refactor" is selected, checklist step 1 is that micro-refactor with an independent exit signal; when "restructure directories" is selected and it is a stable pattern, the doc includes a "suggested convention to capture" block; any structural problem beyond the boundary of "move only, no behavior change" is listed under "observations beyond scope" and is advisory only
+- [ ] section 3 key scenarios cover normal, edge, and error paths, and include reverse-check items for explicit non-goals
+- [ ] section 3 contains a test seam plan, or explicitly states that the feature is not suitable for TDD or automated testing
+- [ ] `{slug}-checklist.yaml` has been written and passes `validate-yaml.py`
+- [ ] when started from roadmap, `items.yaml` has been written back with `status: in-progress` and `feature` filled
+
+---
+
+## After Exit
+
+Tell the user: "feature design is approved and the checklist is ready. The next stage is implementation. Trigger `bt-feat-impl`."
+
+Following section 3 `feature-design` of `shared-conventions.md`, give one-sentence close-out prompts in order, and skip immediately if the user says "no need":
+
+1. an approved feature design may need collaboration-state projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" When the feature starts from roadmap, also mention that the corresponding roadmap item can be updated or bound. Do not create or update any external issue before explicit user confirmation
+
+---
+
+## Easy Pitfalls
+
+- starting to write before reading related architecture or grep-checking terminology — the plan ends up mismatching existing code, and resolving terminology conflicts later costs an order of magnitude more time
+- describing interface behavior in prose without concrete examples — the reader cannot build a mental model
+- writing only "change" and not "current state" for the term layer or orchestration layer — the reader cannot judge whether the change is reasonable
+- turning the mount-point inventory into a changed-file inventory — internal changes belong to implement; mount points list only the registration points whose removal would make the feature disappear
+- writing test code, framework choice, mock strategy, or function-level landing points in design — all of that belongs to implement
+- forcing diagrams when there are 2 modules or fewer and the call chain is linear — the diagram then blurs the point
+- giving only half a document for review — the user cannot see global consistency
+- quietly expanding scope inside the requirement summary — acceptance will later fail to line up

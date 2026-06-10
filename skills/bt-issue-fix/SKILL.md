@@ -1,187 +1,187 @@
 ---
 name: bt-issue-fix
-description: issue 流程阶段 3——按已确认根因和方案定点修复、验证、写 {slug}-fix-note.md 落档。两个入口：标准路径从 analyze 来，快速通道从 report 直接来。触发：用户说"开始修 bug"、"按分析修"、"动手改代码"。只动方案声明的文件，不顺手优化。
+description: Stage 3 of the issue workflow. Apply a pinpoint fix based on the confirmed root cause and plan, verify it, and archive the result in `{slug}-fix-note.md`. There are two entry points: the standard path comes from analyze, and the fast path comes directly from report. Trigger when the user says "start fixing the bug", "fix it according to the analysis", or "go change the code". Only touch files declared by the plan. Do not optimize adjacent things along the way.
 ---
 
 # bt-issue-fix
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-根因和方案已经确定（标准路径在 analysis、快速通道在 report 阶段口头确认过），你的活是按方案改代码、验证效果、写下修复记录。
+The root cause and fix plan are already determined. In the standard path this happened in analysis, and in the fast path it was confirmed verbally during report. Your job is to change the code according to that plan, verify the result, and write down the fix record.
 
-fix 阶段最容易出问题的不是改代码本身，而是**改的过程中冒出的"顺手"冲动**——顺手优化、顺手重构、顺手加抽象。每项单独看说得通，但合在一个 PR 里让别人分不清"这次到底为了修 bug 改了什么"。
+The easiest way for the fix stage to go wrong is not the code change itself, but the **"while I'm here" impulse** that appears during the change: while I'm here, optimize this; while I'm here, refactor that; while I'm here, add an abstraction. Each item can sound reasonable on its own, but together in a single PR they make it impossible for other people to tell what was changed for the bug itself.
 
-> 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md` 第 0 节和 `bt-issue` 的"文件放哪儿"。
-
----
-
-## 两种入口
-
-### 标准路径（有 analysis）
-
-1. **方案已确认**——读 analysis，确认 `doc_type=issue-analysis` 且 `status=confirmed`，第 5 节用户选定了哪个方案
-2. **上下文读全**：analysis 全文 + report 全文 + analysis 第 1 节定位的所有代码 + `.bytetrue/attention.md` + 沉淀目录搜索：
-   - `python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter status=active --query "{关键词}"`——确认修复方式不违背已有库用法 / 模式
-   - 同样命令换 `--filter doc_type=explore`——确认修复点和已有证据不冲突
-3. **确认起点**——告诉用户"我将按方案 X 修改 {文件列表}，开始修复"，等用户确认才动手
-
-### 快速通道（无 analysis，从 report 直接触发）
-
-进入这个入口时 AI 在 report 阶段已读过代码并对根因有把握。
-
-1. **明确陈述根因**："`{文件}:{行号}` 的 {具体代码} 存在 {问题描述}"，让用户确认根因判断准确
-2. **给修复方案**——改哪里、怎么改（一两句话，不写完整分析文档）
-3. **等用户明确说"对，就这样改"才动手**——不允许"我觉得对，直接改了"
-4. 读 `.bytetrue/attention.md`
-5. **补搜沉淀目录**——快速通道也要查一遍 `compound/`（trick + explore），避免误把已知边界条件当新问题
+> For shared paths and naming conventions, see section 0 of `.bytetrue/reference/shared-conventions.md` and the "where the files go" section in `bt-issue`.
 
 ---
 
-## 实现期间的约束
+## Two Entry Paths
 
-### 只改 analysis 里声明的文件
+### Standard Path, with analysis
 
-修复范围来自 analysis 第 5 节"推荐方案"的"影响面"。超出范围的文件——哪怕顺眼——**不动**。
+1. **The plan is confirmed** — read the analysis, confirm `doc_type=issue-analysis` and `status=confirmed`, and identify which plan the user selected in section 5
+2. **Read the full context**: the full analysis, the full report, all code locations identified in section 1 of the analysis, `.bytetrue/attention.md`, and search the archival directory:
+   - `python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter status=active --query "{keyword}"` — confirm the fix approach does not violate existing library usage or established patterns
+   - the same command with `--filter doc_type=explore` — confirm the fix point does not conflict with existing evidence
+3. **Confirm the starting point** — tell the user "I will modify {file list} according to plan X and start the fix", and wait for their confirmation before touching code
 
-发现范围外值得改的记一条"顺手发现"不改代码：
+### Fast Path, no analysis, triggered directly from report
+
+When entering through this path, the AI already read the code during report and is confident about the root cause.
+
+1. **State the root cause explicitly**: "`{file}:{line}` contains {specific code}, which has {problem description}", and let the user confirm that the root-cause judgment is accurate
+2. **Give the fix plan** — what will be changed and how, in one or two sentences, without writing a full analysis document
+3. **Wait until the user explicitly says "yes, change it that way" before acting** — "I think it's right, so I changed it" is not allowed
+4. Read `.bytetrue/attention.md`
+5. **Search the archival directory as a supplement** — even fast path must check `compound/` once, both trick and explore, to avoid mistaking a known boundary condition for a new issue
+
+---
+
+## Constraints During Implementation
+
+### Only change files declared in analysis
+
+The fix scope comes from the "impact surface" in the recommended plan of section 5 in the analysis. Files outside that scope, no matter how tempting, **must not be changed**.
+
+If you find something worth fixing outside the scope, record it as a "while here I noticed" item and do not change the code:
 
 ```markdown
-> 顺手发现：{文件:行号} {问题简述}。不在本次修复范围，可后续另开 issue。
+> While here I noticed: {file:line} {short problem summary}. It is outside the scope of this fix and can be handled as a separate issue later.
 ```
 
-为什么这么严：顺手改的代码不在分析里，验收对不上，git blame 分不清哪些改动是为这个 bug。
+Why this is strict: changes made "while here" are not in the analysis, acceptance cannot line them up, and `git blame` cannot tell which changes were actually for this bug.
 
-### 改动最小化
+### Keep the change minimal
 
-修复只针对根因，**不引入新抽象、新接口、新模式**。如果发现"要把这个改好得先重构 X"——停下来跟用户确认是否在这个 issue 里做重构，还是拆成独立工作。
+The fix must target only the root cause. **Do not introduce new abstractions, new interfaces, or new patterns**. If you discover that "to fix this cleanly, X needs to be refactored first", stop and confirm with the user whether that refactor should happen inside this issue or be split into separate work.
 
-为什么：bug 修复天然窄场景，引入新抽象意味着只有这一个使用点支撑——典型过早抽象。
+Why: bug fixes are naturally narrow in scenario. Adding a new abstraction means it is supported by only this one use site, which is the classic case of premature abstraction.
 
-### 代码质量反射检查
+### Code-quality reflection check
 
-修 bug 看似动作小但 AI 写修复代码一样会漂——大文件再塞特殊处理、大类再加方法、为绕开边界加 `if` 分支。反射检查见 `shared-conventions.md` 第 7 节。
+Bug fixes often look small, but the AI can still drift while writing them: stuffing another special case into a big file, adding another method into a large class, or adding `if` branches just to get around an edge case. See section 7 of `shared-conventions.md` for the reflection checks.
 
-issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该拆"时默认不在本次 PR 做**——按"改动最小化"记成顺手发现。唯一例外是"不拆就没法干净修这个 bug"，那停下来跟用户确认"修这个 bug 的前置是 {重构动作}，合进来还是拆出去单独做"。
+`issue-fix` is more conservative than `feature-implement`: **when reflection signals are triggered and the conclusion is "this should be split", the default is not to do that split inside this PR**. Record it as a "while here I noticed" item under the minimal-change rule. The only exception is when "without splitting, this bug cannot be fixed cleanly". In that case, stop and confirm with the user: "the prerequisite for fixing this bug cleanly is {refactor action}; should it be included here or split out separately?"
 
+### Prefer a regression seam
 
-### regression seam 优先
+If analysis or the fast-path judgment says there is a suitable behavior seam, prefer writing a failing regression test before the fix. Rules:
 
-如果 analysis / 快速通道判断里存在合适的行为 seam，优先先写一个失败的 regression test，再修 bug。规则：
+- test the public interface or observable behavior, not private implementation details
+- choose the highest seam and the seam closest to user behavior; do not add low-level test-only interfaces for convenience
+- first confirm the test reproduces the bug, red, and then write the minimum fix that makes it pass, green
+- before the regression test turns green, do not refactor; while the test is red, only make the minimum change needed to pass it; code cleanup is allowed only after all relevant tests are green
+- if there is no suitable seam, do not force a fragile test. Explain the reason in `{slug}-fix-note.md`, and optionally record the "missing seam" as a candidate follow-up for `bt-refactor` or `bt-arch`
 
-- 测 public interface / 可观察行为，不测私有实现细节。
-- 选最高层、最接近用户行为的 seam；不要为了测试方便新增低层专用接口。
-- 先确认 test 能复现 bug（red），再写最小修复让它通过（green）。
-- 当前 regression test 变绿前不做 refactor；红灯时只做让测试通过的最小修复，全部相关测试绿灯后才允许整理代码。
-- 没有合适 seam 时不要硬造脆弱测试；在 `{slug}-fix-note.md` 里说明原因，并可把“缺少 seam”记为后续 `bt-refactor` / `bt-arch` 候选。
+For simple bugs, pure configuration, or pure copy changes, a regression test may be omitted, but the verification result must explain what evidence replaced it.
 
-简单 bug / 纯配置 / 纯文案修复可以不写 regression test，但必须在验证结果里说明用什么证据代替。
-### 每完成一处改动必须汇报
+### Report after every completed change
 
-修复汇报模板见同目录 `reference.md`，**不允许含糊汇报**。汇报后停下等用户回复。
-
----
-
-## 验证清单
-
-修复改完后逐项核对：
-
-- [ ] **复现步骤验证**——按 report 第 2 节走一遍，问题不再出现
-- [ ] **期望行为验证**——report 第 3 节"期望行为"现在确实发生
-- [ ] **影响面回归**——analysis 第 4 节"潜在受害模块"每个走一遍最基本的冒烟路径
-- [ ] **前端改动浏览器验证**（如涉及）——按 `.bytetrue/attention.md` 的硬要求执行，不能只 typecheck
-- [ ] **相关测试通过**——有测试覆盖到修复区域就跑一遍
-- [ ] **regression 覆盖**——有合适 seam 时先写失败 regression test 再修复；没有 seam 时在 fix-note 说明原因
+Use the fix report template in `reference.md` in the same directory. **Vague status reports are not allowed.** After the report, stop and wait for the user to reply.
 
 ---
 
-## 修复未生效时：日志调试升级
+## Verification Checklist
 
-走完验证清单仍**问题复现**或行为与期望不符——**别在原有猜测上反复试错**，切换到日志调试模式重新收集运行时证据。
+After the fix is in, check each of these:
 
-为什么切换：反复试错本质是猜测在原假设下还有什么可能性，但如果原假设就错了再猜也是绕圈。日志强制看实际运行时数据，往往一眼看出原假设哪里偏了。
-
-日志调试步骤、用户取日志提示词、循环限制见同目录 `reference.md`。
-
-日志 / instrumentation 约束：
-
-- 临时日志必须带唯一前缀，如 `[DEBUG-{slug}]`，便于 grep 清理。
-- 性能问题优先 baseline / profiler / query plan；不要靠随意日志猜。
-- 修复提交前必须 grep 前缀确认临时日志已清理；保留的正式日志必须说明理由。
+- [ ] **reproduction-step verification** — walk through section 2 of the report and confirm the issue no longer appears
+- [ ] **expected-behavior verification** — what section 3 of the report calls the expected behavior now truly happens
+- [ ] **impact-surface regression** — for every potentially affected module in section 4 of the analysis, run the most basic smoke path once
+- [ ] **browser verification for frontend changes**, if applicable — execute the hard requirement from `.bytetrue/attention.md`; typecheck alone is not enough
+- [ ] **related tests pass** — if tests cover the changed area, run them
+- [ ] **regression coverage** — if there is a suitable seam, write the failing regression test first and then fix; if there is no seam, explain why in the fix note
 
 ---
 
-## 写 {slug}-fix-note.md
+## If the Fix Does Not Work: Escalate to Log Debugging
 
-验证通过后在 issue 目录建 `{slug}-fix-note.md`（位置见 `bt-issue` 的"文件放哪儿"），记录完整闭环。标准路径模板和快速通道模板都在同目录 `reference.md`。
+If you finish the checklist and **the problem still reproduces** or the behavior still does not match the expectation, **do not keep trial-and-erroring on the old guess**. Switch to log-debugging mode and collect runtime evidence again.
 
-fix-note 完成态统一写 `status: confirmed`。不要保留 `draft`：`draft` 表示修复记录未完成 review / 验证，会让后续 `bt-issue` 认为工作流还没闭环。
+Why switch: repeated trial and error is still guessing under the original hypothesis. If the original hypothesis was wrong, more guessing only loops. Logs force you to see the real runtime data, which often makes the incorrect assumption obvious immediately.
 
-fix-note 必须额外记录：
+See `reference.md` in the same directory for the log-debugging steps, the user prompt for collecting logs, and the loop limit.
 
-- regression coverage：新增了哪个测试 / 用哪个现有测试覆盖 / 为什么没有合适 seam。
-- instrumentation cleanup：是否加入过临时日志 / debugger / profiler 记录，如何确认已清理。
-- mini post-mortem：这类 bug 未来靠什么避免（测试、类型、约束、架构 seam、review checklist 等）。
+Constraints for logs and instrumentation:
 
----
-
-## 退出条件
-
-- [ ] 所有改动文件已提交或列清单
-- [ ] 验证清单全部勾选
-- [ ] `{slug}-fix-note.md` 已建并填写完整
-- [ ] fix-note frontmatter `status: confirmed`
-- [ ] regression coverage / 无 seam 原因已写入 fix-note
-- [ ] 临时 instrumentation 已清理或明确说明保留理由
-- [ ] mini post-mortem 已写入 fix-note
-- [ ] 没有未处理的"顺手发现"（都进后续 issue 列表）
-- [ ] 没有范围外改动（或已和用户确认）
-- [ ] 用户明确确认修复完成
+- temporary logs must carry a unique prefix such as `[DEBUG-{slug}]` so they can be cleaned with grep
+- for performance issues, prefer baseline, profiler, or query plan; do not guess from ad hoc logging
+- before committing the fix, grep the prefix and confirm the temporary logs are gone; if a formal log is intentionally kept, the reason must be explained
 
 ---
 
-## 收尾提交
+## Write `{slug}-fix-note.md`
 
-按 `shared-conventions.md` 第 4 节"scoped-commit"规则执行。本阶段：
+After verification passes, create `{slug}-fix-note.md` in the issue directory, location defined in the "where the files go" section of `bt-issue`, and record the full closure. Both the standard-path template and fast-path template are in `reference.md` in the same directory.
 
-- **提交范围**：修复代码 + `{slug}-fix-note.md` + 本次一并更新的 report / analysis
-- 修复闭环后告诉用户"修复验证已完成，`{slug}-fix-note.md` 已落盘"，紧接着问是否需要 commit
+The completed state of the fix note is always `status: confirmed`. Do not leave it at `draft`. `draft` means the fix record has not completed review or verification, which will make later `bt-issue` runs think the workflow is still open.
 
----
+The fix note must additionally record:
 
-## 退出后
-
-告诉用户："issue 修复完成，工作流闭环。report + analysis + fix-note 已存档。"
-
-按 `shared-conventions.md` 第 3 节"issue-fix"收尾推荐顺序各问一句（用户"不用"立即跳过）：
-
-1. 暴露了值得复用的坑点 → "沉淀 learning？（`bt-learn`）"
-2. 沉淀出长期约束 / 规约 / 技术决定 → "归档决定？（`bt-decide`）"
-3. 已修复的 bug issue 需要团队协作状态投影 → "要更新、绑定或请求关闭外部 tracker 吗？（`bt-tracker`）"；没有绑定时可补同步，关闭外部 issue 前必须再次确认
-4. 这个 bug 暴露了项目通用的硬约束 / 命令陷阱 / 环境设置（一两行能讲清、ByteTrue 技能每次启动都该知道）→ "记到 attention.md？（`bt-note`）"
-5. 最后问是否代为提交。同意时按收尾提交规则执行
-
-建议：把 issue 目录文件和代码改动放同一次提交方便追溯；"顺手发现"另开 `bt-issue-report` 处理别塞这个 PR。
-
-修复中发现问题实际是功能缺失（不是 bug）→ 建议另开 `bt-feat`，别在 issue 工作流里偷偷做新功能。
+- regression coverage: which test was added, or which existing test was reused, or why there was no suitable seam
+- instrumentation cleanup: whether temporary logs, debugger, or profiler instrumentation were used, and how cleanup was confirmed
+- mini post-mortem: what should prevent this class of bug in the future, such as tests, types, constraints, architecture seams, or review checklists
 
 ---
 
-## 容易踩的坑
+## Exit Conditions
 
-- 修完没走验证清单就宣告"修好了"
-- 顺手改了 analysis 范围外的代码
-- 修复引入新抽象 / 接口但没停下来确认
-- `{slug}-fix-note.md` 没建就宣告完成
-- 发现影响面回归有问题但写"轻微影响可忽略"——要修到干净
-- 前端改动只 typecheck 就报通过
-- 用户没明确说"修复完成"就结束
-- 修复未生效继续原假设上反复猜测试错，不切换到日志调试
-- 日志调试结束后没清理临时 log 就提交
-- 有合适 seam 却不写 regression test，也不说明原因
-- 临时 debug 前缀没 grep 清理
-- fix-note 只写“已修复”，没有 regression coverage 和 mini post-mortem
-- regression test 还红着就顺手重构——先 green，再 refactor，再重跑测试
-- 收尾时没问用户是否代为 commit
-- 用户没明确同意就 `git commit`
+- [ ] all changed files have either been committed or listed clearly
+- [ ] the full verification checklist is checked off
+- [ ] `{slug}-fix-note.md` has been created and fully filled
+- [ ] the fix note frontmatter is `status: confirmed`
+- [ ] regression coverage or the reason for no seam has been written into the fix note
+- [ ] temporary instrumentation has been cleaned, or the reason for keeping it is explicitly written
+- [ ] the mini post-mortem has been written into the fix note
+- [ ] there are no unhandled "while here I noticed" items, meaning they all went into the follow-up issue list
+- [ ] there are no out-of-scope changes, or the user explicitly approved them
+- [ ] the user has explicitly confirmed that the fix is complete
+
+---
+
+## Close-Out Commit
+
+Follow the "scoped-commit" rules in section 4 of `shared-conventions.md`. At this stage:
+
+- **commit scope**: the fix code, `{slug}-fix-note.md`, and any report or analysis files updated together this time
+- after the fix closes the loop, tell the user "fix verification is complete and `{slug}-fix-note.md` has been written", then immediately ask whether they want a commit
+
+---
+
+## After Exit
+
+Tell the user: "The issue fix is complete and the workflow is closed. Report, analysis, and fix-note have all been archived."
+
+Following section 3 `issue-fix` of `shared-conventions.md`, ask one sentence for each close-out suggestion, and skip immediately if the user says "no need":
+
+1. if this exposed a reusable pitfall → "Do you want to capture it as learning? (`bt-learn`)"
+2. if this surfaced a long-term constraint, convention, or technical decision → "Do you want to archive the decision? (`bt-decide`)"
+3. if this fixed bug issue needs collaboration-state projection → "Do you want to update, bind, or request closure on the external tracker? (`bt-tracker`)" If it was never bound before, sync can still be added. Before closing an external issue, confirm again.
+4. if this bug exposed a project-wide hard constraint, command pitfall, or environment setup that can be explained in one or two lines and should be known at every ByteTrue startup → "Do you want to record it in attention.md? (`bt-note`)"
+5. finally ask whether they want you to commit it. If they agree, execute according to the close-out commit rules
+
+Recommendation: put the issue-directory files and code changes in the same commit for traceability. Handle "while here I noticed" items through a separate `bt-issue-report`, not inside this PR.
+
+If, during fixing, you discover that the real problem is missing functionality rather than a bug, suggest opening `bt-feat` separately rather than quietly building a new feature inside the issue workflow.
+
+---
+
+## Easy Pitfalls
+
+- declaring "fixed" without running the verification checklist
+- casually changing code outside the analysis scope
+- introducing a new abstraction or interface as part of the fix without stopping to confirm
+- declaring completion without creating `{slug}-fix-note.md`
+- finding a regression problem in the impact surface and writing "minor enough to ignore" — it must be fixed cleanly
+- reporting frontend changes as passed based only on typecheck
+- ending the workflow before the user explicitly says the fix is complete
+- if the fix does not work, continuing trial-and-error on the original hypothesis instead of switching to log debugging
+- forgetting to clean temporary logs after log-debugging and then committing them
+- skipping a regression test even though a suitable seam exists, and failing to explain why
+- forgetting to grep-clean the temporary debug prefix
+- writing only "fixed" in the fix note, without regression coverage or mini post-mortem
+- refactoring while the regression test is still red — go green first, then refactor, then rerun the tests
+- forgetting to ask at close-out whether the user wants a commit
+- running `git commit` without explicit user agreement

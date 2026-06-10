@@ -1,221 +1,221 @@
 ---
 name: bt-req
-description: 维护 `.bytetrue/requirements/` 下的能力愿景文档。三种模式 draft / backfill / update。触发：design 阶段起草愿景、acceptance 阶段落档，或用户说"刷新 requirements"、"补一份 req"、"先把愿景写下来"。
+description: Maintain the capability vision documents under `.bytetrue/requirements/` in three modes: `draft`, `backfill`, and `update`. Trigger when a vision is first drafted during design, archived during acceptance, or when the user says "refresh requirements", "backfill a req", or "write down the vision first".
 ---
 
 # bt-req
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-`.bytetrue/requirements/` 是项目的"能力清单"——每份描述**一个能力因什么问题而产生、怎么解决、边界在哪**，写成人话非技术读者也能看懂。架构文档讲"怎么搭"，需求文档讲"为什么要有"。
+`.bytetrue/requirements/` is the project's "capability catalog". Each document describes **what problem created one capability, how the capability solves it, and where its boundaries are**, written in plain language that non-technical readers can also understand. Architecture docs explain "how it is built". Requirement docs explain "why it should exist".
 
-**req 是系统的能力愿景层**——描述"用户需要什么、系统提供什么能力来满足"。三层时间深度用一个 `status` 字段区分：
+**A req is the system's capability-vision layer**. It describes "what the user needs" and "what capability the system provides to satisfy that need". Three levels of time depth are represented by a single `status` field:
 
-- `draft`：用户有这个需要，系统还没实现（未来愿景）
-- `current`：系统正在满足（现在的能力）
-- `outdated`：曾经满足过，现已移除或不再维护（过去的痕迹）
+- `draft`: the user needs this capability, but the system has not implemented it yet, future vision
+- `current`: the system is currently satisfying it, present capability
+- `outdated`: the system once satisfied it, but it has since been removed or is no longer maintained, past trace
 
-**draft req 可以独立于实现存在**——用户说"我想要 X 能力"但还没想好什么时候做，可以先落一份 `status: draft` 的 req 把愿景定下来，后续 roadmap 排期、design 对齐时都有稳定参考。**不做 roadmap 规划不等于不该有愿景文档**。
+**A draft req can exist independently from implementation**. If the user says "I want capability X" but has not decided when it will be built, a `status: draft` req can still be written first to lock down the vision. Then roadmap scheduling and design alignment both have a stable reference. **Not doing roadmap planning does not mean a vision doc should not exist.**
 
-**draft → current 的主路径是 feature-acceptance**：能力实现完成、验收通过后，acceptance 触发 bt-req update 把 `status` 从 `draft` 改为 `current`，同时按实际实现刷新用户故事 / 边界（保留原始愿景不被覆盖，只在文末加变更日志）。
+**The main path from draft to current is feature-acceptance**. After the capability is implemented and accepted, acceptance triggers `bt-req update` to change `status` from `draft` to `current`, and at the same time refreshes the user stories and boundaries according to the real implementation, while keeping the original vision intact and only adding a change log at the end.
 
-**backfill 路径保留**：已经在跑但从没写过 req 的能力，走 backfill 直接落 `status: current`。
+**The backfill path remains valid**: for capabilities that are already running but never got a req, backfill writes them directly as `status: current`.
 
-**不记"怎么分步实现"**——那是 `bt-roadmap` 的事。req 只回答"要什么、为什么"，不回答"第几个 sprint 做、拆成几个子 feature"。
+**Do not record how implementation should be phased**. That is what `bt-roadmap` is for. Req answers only "what is wanted and why", not "in which sprint it will be built" or "how many sub-features it will be split into".
 
-需求文档价值在**扫一眼就抓到重点**——用户故事在最前、痛点和解法各一段短的、边界用列表。AI 容易破坏这个特性的几种问题：
+The value of a requirement doc is that **the point is clear at a glance**. User stories go first, the pain point and solution each fit in a short paragraph, and boundaries are listed. Common AI failure modes that damage this:
 
-- 写成 PRD 格式（字段堆）——读者要一格一格读才能拼出全貌
-- 语气过于 explain——像在上课不是介绍
-- 起花哨标题或用比喻——读者要读半段才知道这能力是什么
-- 把实现细节塞进来——"通过 XXX 服务调用 YYY 接口"
+- writing it in PRD form, as a pile of fields, so the reader must reconstruct the meaning cell by cell
+- sounding overly explanatory, as if lecturing rather than introducing
+- giving it a fancy title or metaphor, so the reader must read half a page before understanding what the capability is
+- stuffing implementation details into it, such as "through service XXX calling interface YYY"
 
-> 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md`。一份样例看 `.bytetrue/reference/requirement-example.md`——起草前读一遍对齐语气。
-
----
-
-## 适用场景
-
-- brainstorm 阶段触发：磋商后愿景清晰 → `draft` 起草愿景落 `status: draft`，后续 design 和 roadmap 都有稳定对齐基准
-- feature-design 阶段触发：新能力首次被设计方案化 → `draft` 起草愿景（用户故事 / 痛点 / 解法 / 边界），落 `status: draft`
-- feature-acceptance 第 6 节触发：draft req 对应的能力实现完成 → `update` 升级为 `current`（保留愿景，追加变更日志）；从未写过 req 的已存在能力 → `backfill` 直接落 `current`；已有 current req 的能力改了边界 / 用户故事 / pitch → `update` 刷新
-- 用户主动盘点：已经在跑的能力从没写过 req（`backfill`）
-- 用户主动修订：能力演进了要刷新（`update`）
-- 用户主动起草愿景：还没排期的未来需求先落一份 `draft` req 把定位定下来
-
-不适用：要写"技术上怎么搭" → `bt-arch`；写单次 feature 方案 → `bt-feat-design`；拍板长期规约 → `bt-decide`；写外部"怎么用" → `bt-guide`；大需求拆几轮做 → `bt-roadmap`。
+> For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`. For a sample, read `.bytetrue/reference/requirement-example.md` before drafting so the tone stays aligned.
 
 ---
 
-## 单目标规则
+## Applicable Scenarios
 
-每次只动一份文档：
+- triggered during brainstorm: after discussion, the vision becomes clear → use `draft` to write the vision and land it as `status: draft`, so design and roadmap later have a stable alignment baseline
+- triggered during feature-design: a new capability is being designed for the first time → use `draft` to write the vision, user stories, pain point, solution, and boundaries, as `status: draft`
+- triggered from section 6 of feature-acceptance: the capability corresponding to a draft req is now implemented → use `update` to upgrade it to `current`, keep the original vision and append a change log; for an existing capability that never had a req, use `backfill` and write it directly as `current`; if a capability that already has a current req changes its boundary, user story, or pitch, use `update` to refresh it
+- proactive user inventory: a capability is already running but never had a req, use `backfill`
+- proactive user revision: the capability evolved and needs refreshing, use `update`
+- proactive user vision drafting: a future need has not even been scheduled yet, but a `draft` req can still be written to lock the positioning first
 
-- **draft**：给还没实现的新能力起草愿景（用户故事 / 痛点 / 解法 / 边界），`status: draft`
-- **backfill**：给已存在但从没写档的能力补一份，`status: current`
-- **update**：按新素材 / 实现变化刷新一份
-
-为什么不允许多份？req 价值在**每份都被读过**——一次吐多份用户没精力逐份 review，最后要么粗糙合入要么放着不看。
-
-### 允许"没有 requirement 的 feature"
-
-纯内部重构 / 技术债清理 / 工具链改造**不新增用户可感能力**的 feature 不强制要 req。feature-design 标"本次不新增能力"即可，不要为凑一份硬写。
+Not applicable: if the job is to write "how it is built technically", use `bt-arch`; if it is to write a one-off feature plan, use `bt-feat-design`; if it is to finalize a long-term convention or technical choice, use `bt-decide`; if it is to write outward-facing "how to use it", use `bt-guide`; if it is to split a large demand across multiple rounds, use `bt-roadmap`.
 
 ---
 
-## 工作流
+## Single-Target Rule
 
-### Phase 1：锁定目标
+Each run touches only one document:
 
-模式 + 目标文档 + 范围。
+- **draft**: draft the vision for a new capability that has not been implemented yet, user story, pain point, solution, and boundaries, with `status: draft`
+- **backfill**: backfill a capability that already exists but was never documented, with `status: current`
+- **update**: refresh one existing document based on new material or implementation changes
 
-**draft 模式**：能力还没实现，凭用户素材（口述 / 产品想法 / 用户反馈）起草愿景。用户故事和痛点要真切，边界要写清楚"不管什么"——愿景的价值正在于把"要做什么"和"不做什么"的线画清楚。
+Why not allow multiple docs at once? The value of req lies in **each document actually being read**. If several are emitted at once, the user cannot review each one deeply, and the result is either rough merges or docs nobody reads.
 
-一份 req 描述**一个能力**。用户说"把这模块的需求全写了"先问清：模块对外提供几个独立能力？每个独立能力一份不要塞一起。
+### Features that are allowed to have no requirement
 
-### Phase 2：读取材料
-
-**共同必读**：`VISION.md`（需求中心索引）+ `requirements/` 下其他 req（判断要不要互引、有没有重复）+ 用户素材（口述 / 产品想法 / 用户反馈 / 已有 feature 散落需求描述）。
-
-**按情况读**：可能承载这能力的 architecture doc（用于 `implemented_by`）；相关已有 feature 方案；compound 沉淀（`python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --query "{能力关键词}"`）。
-
-**draft 额外**：和 roadmap 对一眼——如果已经有 roadmap 提到了这个能力，读一下了解预期的拆解方向，但 req 本身不绑定 roadmap 条目。
-**update 额外**：当前文档全文 + `last_reviewed` 之后相关实现的变化（`git log` 粗扫 `implemented_by` 对应的代码模块）。
-
-### Phase 3：一次性起草
-
-按下文"文档结构"写**完整初稿**不分批。用户故事 / 痛点 / 解法 / 边界四块经常有跨块矛盾（用户故事描述的场景和解法描述的路径对不上），只有放在一起才看得出来。
-
-### Phase 4：自查清单
-
-review 前自跑一遍。每条针对一种 AI 默认会犯的错：
-
-1. **语气是人话吗**——挑一段读出来像在跟朋友介绍吗？还是像在上课 / 写 PRD？后者就重写
-2. **标题平铺吗**——直接说能力是什么，不要比喻 / 花哨。"修 bug 时先探索和分析" > "让 AI 当你的第一个读者"
-3. **用户故事够具体吗**——每条要能想象出具体场景。"作为用户希望系统好用"是废话
-4. **有没有把实现细节塞进来**——不该出现"通过 X 接口"、"用 Z 算法"。有就移到 architecture
-5. **边界写了没**——没写边界的需求会被误用
-6. **pitch 能当宣传词吗**——去技术化、一句话、读者不用上下文也能看懂
-7. **update 专项**：本次新加 / 改的段落都有素材或实现依据？凭空加听起来更完整的描述是漂移开端
-8. **draft 专项**：愿景写清楚了吗——一个不了解项目的人读完"为什么需要"能复述这能力要解决什么痛点？
-
-自查结果简短汇报——发现问题就说怎么处理（删 / 改 / 补），不走过场。
-
-### Phase 5：用户 review
-
-完整初稿贴给用户。改到用户明确"可以了"。
-
-### Phase 6：落盘 + 索引更新
-
-- draft：写入 `requirements/{slug}.md`，`status: draft`、`last_reviewed` 当天
-- backfill：写入 `requirements/{slug}.md`，`status: current`、`last_reviewed` 当天
-- update：覆盖已有，`last_reviewed` 当天；结构性改动大则文末 `变更日志` 加一条；draft → current 的状态升级是结构性改动，**必须**加变更日志
-- **索引更新**：更新 `requirements/VISION.md`——按 status 分组列出所有 req，每条带 pitch 一句话和 status 标记
+Pure internal refactors, technical-debt cleanup, or tooling changes that **do not add any user-perceivable capability** do not require a req. Feature-design can simply mark "this run does not add a new capability". Do not force one just to fill the shape.
 
 ---
 
-## 文档结构
+## Workflow
+
+### Phase 1: Lock the target
+
+Mode, target doc, and scope.
+
+**Draft mode**: the capability does not exist yet, so the vision is drafted from user material such as spoken need, product idea, or user feedback. User stories and pain points must feel real. The boundaries must clearly say what it does not cover. The value of a vision doc is precisely in drawing the line between what will be done and what will not.
+
+One req describes **one capability**. If the user says "write all the requirements for this module", ask first: how many independent outward-facing capabilities does the module provide? Each independent capability gets its own document; do not stuff them together.
+
+### Phase 2: Read the materials
+
+**Required for all modes**: `VISION.md`, the requirements index, the other reqs under `requirements/`, to judge whether there should be cross-links or whether duplication exists, and user material such as spoken descriptions, product ideas, user feedback, or scattered feature-level requirement notes.
+
+**Read as needed**: the architecture docs that may implement this capability, used for `implemented_by`; related existing feature designs; compound artifacts, via `python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --query "{capability keyword}"`.
+
+**Draft-specific**: glance at roadmap. If a roadmap already mentions this capability, read it once to understand the expected decomposition direction, but the req itself must not be bound to roadmap items.
+**Update-specific**: read the full current doc plus a rough `git log` scan of relevant implementation changes after `last_reviewed`, especially in the code modules pointed to by `implemented_by`.
+
+### Phase 3: Draft in one pass
+
+Write the **complete first draft** according to the "document structure" below. Do not emit it in pieces. The user-story, pain-point, solution, and boundary sections often contradict each other across sections, and only a full draft reveals that.
+
+### Phase 4: Self-check list
+
+Run this once yourself before review. Each item targets a default AI mistake:
+
+1. **Does the tone sound like human language?** Read a paragraph out loud. Does it sound like you are introducing it to a friend, or like a lecture or PRD? If it sounds like the latter, rewrite it
+2. **Is the title flat and literal?** Say directly what the capability is. No metaphor, no fancy wording. "Explore and analyze before fixing bugs" is better than "Let AI be your first reader"
+3. **Are the user stories concrete enough?** Each one should let a reader imagine a real scene. "As a user, I hope the system is easy to use" is useless
+4. **Did implementation detail get stuffed in?** There should be no "through interface X" or "using algorithm Z". If present, move it to architecture
+5. **Did you write the boundaries?** A requirement without boundaries will be misused
+6. **Can the pitch work as a promotional line?** It should be non-technical, one sentence, and understandable without extra context
+7. **Update-specific**: do the new or changed paragraphs in this revision each have material or implementation evidence behind them? Adding "sounds more complete" prose without evidence is the start of drift
+8. **Draft-specific**: is the vision clear enough? Can someone unfamiliar with the project retell why this capability is needed after reading it?
+
+Report the self-check result briefly. If problems were found, say how they were handled, delete, rewrite, or supplement. Do not make it ceremonial.
+
+### Phase 5: User review
+
+Show the complete first draft to the user. Keep iterating until the user explicitly says "this is good".
+
+### Phase 6: Write to disk and update the index
+
+- draft: write to `requirements/{slug}.md`, with `status: draft` and `last_reviewed` set to today
+- backfill: write to `requirements/{slug}.md`, with `status: current` and `last_reviewed` set to today
+- update: overwrite the existing doc and set `last_reviewed` to today; if the structural change is large, add one line to the `Change Log` section at the end; draft → current is a structural state change and **must** have a change-log entry
+- **index update**: update `requirements/VISION.md`, grouping all reqs by status and listing each one with its one-line pitch plus status marker
+
+---
+
+## Document Structure
 
 ### frontmatter
 
 ```yaml
 ---
 doc_type: requirement
-slug: {英文连字符；和文件名一致}
-pitch: {一句话去技术化说清楚这能力，可直接当宣传素材}
+slug: {english-hyphenated; must match filename}
+pitch: {one non-technical sentence that makes the capability clear and could be used as promotional copy}
 status: current | draft | outdated
 last_reviewed: YYYY-MM-DD
-implemented_by: []   # 承载的 architecture doc slug 列表，可空
+implemented_by: []   # list of architecture doc slugs that carry it, may be empty
 tags: []
 ---
 ```
 
-### 正文节
+### Body sections
 
 ```markdown
-# {标题 — 直接平铺说这能力是什么，不玩比喻}
+# {title — say directly what the capability is, no metaphor}
 
-## 用户故事
+## User Stories
 
-- 作为 {具体角色 / 处境}，我希望 {能做什么}，而不是 {现在怎么难受}
-- ...（2-4 条，每条一行）
+- As a {specific role or situation}, I want to {do what}, instead of {how it feels painful now}
+- ... 2-4 items, one line each
 
-## 为什么需要
+## Why It Is Needed
 
-一段短的，讲这能力不存在时的痛点。非技术读者也能读懂。直接当宣传素材——痛点描述得越真切，对外讲这系统解决什么问题时就越有抓手。
+One short paragraph describing the pain point when this capability does not exist. A non-technical reader should still understand it. It should work directly as promotional copy. The more real the pain-point description, the more useful it becomes when explaining what problem the system solves.
 
-## 怎么解决
+## How It Solves It
 
-一段短的，讲这能力大概怎么工作。**不写实现细节**——不提模块名 / 接口 / 算法。讲"用户体验上发生了什么"就够。
+One short paragraph describing roughly how the capability works. **Do not write implementation detail**. Do not mention module names, interfaces, or algorithms. Only describe what happens in the user experience.
 
-## 边界
+## Boundaries
 
-- 它不管什么（哪些事情看起来相关但它不负责）
-- 什么情况下别用它
-- 用的前提（用户需要先做什么）
+- what it does not cover, including things that look related but are not its responsibility
+- when not to use it
+- prerequisites, meaning what the user must do first
 ```
 
-### 变更日志（update 模式才有）
+### Change Log, only in `update` mode
 
 ```markdown
-## 变更日志
+## Change Log
 
-- YYYY-MM-DD：{一句话描述}
+- YYYY-MM-DD: {one-line description}
 ```
 
 ---
 
-## 硬性边界
+## Hard Boundaries
 
-1. **语气是人话不是 PRD**——字段堆 / 上课腔 / 花哨标题都不行
-2. **不写实现细节**——只讲"是什么 / 为什么 / 解决什么"，涉及实现的一律移到 architecture
-3. **不替用户编用户故事**——必须来自用户素材或可追溯场景（已有 feature / 用户反馈 / explore），不允许凭空造"听起来合理"的使用场景
-4. **单目标**——一次一份
-5. **不改代码、不改 architecture doc**——只写 req。发现 arch 有问题记"观察项"
-6. **不发散**——范围外问题记观察项
-
----
-
-## 退出条件
-
-- [ ] 已锁定单一模式 + 单一目标
-- [ ] Phase 4 自查清单逐条跑过并汇报
-- [ ] frontmatter 完整（`doc_type: requirement` / `pitch` / `status` / `last_reviewed`）
-- [ ] 正文四节齐全（用户故事 / 为什么需要 / 怎么解决 / 边界）
-- [ ] 用户故事每条能想象具体场景，无"希望系统好用"废话
-- [ ] 没有实现细节塞进来
-- [ ] `pitch` 读起来能直接当宣传词，draft 也能直接当宣传词（愿景也需要卖得出去）
-- [ ] draft：status 为 draft，未编造实现细节，边界画清楚了
-- [ ] update：结构性改动有 `变更日志`（含 draft → current 状态升级）
-- [ ] 用户 review 通过
-- [ ] 没有顺手改代码 / architecture / 其他 spec
-- [ ] 没有范围外文档改动
+1. **Human tone, not PRD tone** — no field piles, no lecture voice, no fancy title
+2. **No implementation detail** — only explain what it is, why it exists, and what it solves; any implementation content belongs in architecture
+3. **Do not invent user stories for the user** — they must come from user material or traceable scenarios, such as an existing feature, user feedback, or explore. Do not fabricate a "plausible sounding" usage scene
+4. **Single target** — one doc per run
+5. **Do not edit code or architecture docs** — this skill writes only req. If architecture has a problem, record it as an observation
+6. **Do not fan out** — out-of-scope issues become observations
 
 ---
 
-## 和其他工作流的关系
+## Exit Conditions
 
-| 方向 | 关系 |
+- [ ] one mode and one target have been locked
+- [ ] the Phase 4 self-check list has been run item by item and the handling was reported
+- [ ] frontmatter is complete, including `doc_type: requirement`, `pitch`, `status`, and `last_reviewed`
+- [ ] the four body sections are complete, user stories, why it is needed, how it solves it, and boundaries
+- [ ] each user story suggests a concrete scene, with no useless lines like "I hope the system is easy to use"
+- [ ] no implementation detail was stuffed into the doc
+- [ ] the `pitch` reads like a direct promotional line, and in draft mode it still reads like a direct promotional line, because a vision must also be sellable
+- [ ] in draft mode, status is `draft`, implementation detail has not been invented, and the boundaries are clearly drawn
+- [ ] in update mode, structural changes have a `Change Log`, including draft → current transitions
+- [ ] the user review passed
+- [ ] no code, architecture, or other spec was edited on the side
+- [ ] there were no out-of-scope document edits
+
+---
+
+## Relationship with Other Workflows
+
+| Direction | Relationship |
 |---|---|
-| `bt-arch` 配合 | req 写"为什么要有"、architecture 写"怎么搭"；arch doc frontmatter 用 `implements: [req-slug]` 反向链 |
-| `bt-brainstorm` 可触发 | 磋商后愿景清晰时可触发 `draft` 模式起草愿景 req |
-| `bt-feat-design` 可写 | design 读已有 req 对齐用户故事和边界；新能力首次设计方案化时触发 `draft` 模式起草愿景 req |
-| `bt-feat-accept` 主路径 | 验收统一处理 req 落档：draft req 对应的能力实现完成触发 `update`（draft → current，保留愿景追加变更日志）；从未写过 req 的能力触发 `backfill`（直接落 current）；已有 current req 的能力改变触发 `update` 刷新 |
-| `bt-roadmap` 配合 | req 记"要什么、为什么"、roadmap 记"怎么分步实现"。roadmap 条目可关联 req slug，但 req 不绑定具体 roadmap。draft req 不给 roadmap 压力——愿景可以先于排期存在 |
-| `bt-onboard` 创建者 | onboard 建 `requirements/` 空目录 + `VISION.md` 空骨架 |
+| works with `bt-arch` | req writes "why this should exist", architecture writes "how it is built"; architecture frontmatter uses `implements: [req-slug]` as the back-link |
+| may be triggered by `bt-brainstorm` | once the vision becomes clear after discussion, `draft` mode can be used to write the req vision |
+| may be written during `bt-feat-design` | design reads existing reqs to align user stories and boundaries; when a new capability is being designed for the first time, it triggers `draft` mode to write the req vision |
+| main path is `bt-feat-accept` | acceptance handles req archival in a unified way: when the capability behind a draft req is implemented, it triggers `update`, draft → current, keeping the original vision and appending a change log; when an existing capability never had a req, it triggers `backfill`, directly as current; when an existing current req changes, it triggers `update` to refresh it |
+| works with `bt-roadmap` | req records "what is wanted and why", roadmap records "how to implement it step by step". Roadmap items may reference req slugs, but req is not bound to a specific roadmap. A draft req does not pressure the roadmap; the vision may exist before scheduling |
+| created by `bt-onboard` | onboard creates the empty `requirements/` directory and the empty `VISION.md` skeleton |
 
 ---
 
-## 常见错误
+## Common Mistakes
 
-- 把 draft req 当 backfill 写——能力还没实现但写了 `status: current`，或编造了解法细节假装已存在
-- backfill 时没确认能力是否真的在代码里跑——凭用户一句话写了一份"听起来合理"的 req
-- draft req 里塞实现细节——还没做就先定了怎么实现，应该在 design 阶段定
-- draft req 边界写太宽——愿景的价值在画线，什么都想要等于什么都没说
-- 写成 PRD 字段堆 / 语气像在上课 / 标题用比喻 / 用户故事太抽象 / 把实现细节塞进来 / 没写边界
-- `pitch` 塞了技术黑话——宣传时抽不出来用
-- 一次起草多份——用户 review 不深
-- 范围太大塞了多个独立能力——拆
-- update 凭空加段——内容会越写越飘离实际
+- treating a draft req like a backfill — the capability is not implemented yet, but the doc is marked `status: current`, or implementation details are invented as if it already exists
+- during backfill, not confirming that the capability is really running in code — writing a "sounds plausible" req from one user sentence
+- stuffing implementation detail into a draft req — deciding how to implement it before the design phase
+- drawing draft boundaries too wide — the value of vision is to draw the line; wanting everything means saying nothing
+- writing it as a PRD field pile, lecture tone, metaphorical title, too-abstract user stories, implementation detail inside, or missing boundaries
+- putting technical jargon into `pitch` — then it cannot be pulled into promotional material
+- drafting multiple docs in one run — the user's review becomes shallow
+- stuffing multiple independent capabilities into one oversized scope — split them
+- adding paragraphs during update without evidence — the content will drift farther and farther from reality

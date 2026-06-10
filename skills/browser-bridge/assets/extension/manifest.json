@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "CS CDP Bridge",
   "version": "2.0",
-  "description": "Cookie 查看器 + CDP 桥接",
+  "description": "Cookie viewer + CDP bridge",
   "permissions": [
     "cookies",
     "tabs",

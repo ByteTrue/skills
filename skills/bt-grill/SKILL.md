@@ -1,194 +1,194 @@
 ---
 name: bt-grill
-description: ByteTrue 方案拷问技能，默认读取 .bytetrue 项目文档和代码上下文来 stress-test plan/design/roadmap/refactor/architecture proposal；显式传 `--lite` / `--no-docs` / “纯 grill-me” 时退化为不读 ByteTrue 文档的轻量追问。Use when user says “grill me”、"拷问我"、"帮我追问"、"stress-test 方案"、"这个设计靠谱吗"、"把计划问透"，或需要在 bt-brainstorm / bt-roadmap / bt-feat-design 前挑战方案。
+description: ByteTrue's plan stress-test skill. By default it reads `.bytetrue` project docs and code context to stress-test a plan, design, roadmap, refactor, architecture proposal, or project-management proposal. When explicitly invoked with `--lite`, `--no-docs`, or "pure grill-me", it degrades into a lightweight questioning mode that does not read ByteTrue docs. Use when the user says "grill me", "interrogate this plan", "help me pressure-test it", "stress-test the design", "is this design solid", or "push this plan until it is clear", or when a proposal needs to be challenged before `bt-brainstorm`, `bt-roadmap`, or `bt-feat-design`.
 ---
 
 # bt-grill
 
-`bt-grill` 是 ByteTrue 的“方案拷问 / 压测”技能：把一个计划、设计、路线图、重构方案或项目管理方案问到足够清楚，暴露隐藏假设、术语冲突、决策依赖和验证缺口。
+`bt-grill` is ByteTrue's "plan interrogation / pressure test" skill. It pushes a plan, design, roadmap, refactor proposal, or project-management proposal until it is clear enough, exposing hidden assumptions, terminology conflicts, decision dependencies, and verification gaps.
 
-它融合两种模式：
+It combines two modes:
 
-- **默认：with docs** —— 先读 `.bytetrue/` 里的项目上下文，再拿上下文挑战用户方案；共识形成后必须写入合适的 ByteTrue 文档。
-- **轻量：grill-me** —— 用户显式说 `--lite` / `--no-docs` / “纯 grill-me” / “别读文档只问我” 时，只做对话式追问；仍然可以按需读代码回答事实问题，但不读写 `.bytetrue` 文档。
+- **Default: with docs** — read project context under `.bytetrue/` first, then challenge the user's proposal using that context; once consensus forms, it must be written into the appropriate ByteTrue document
+- **Lightweight: grill-me** — when the user explicitly says `--lite`, `--no-docs`, "pure grill-me", or "do not read docs, just question me", it becomes dialogue-only probing; it may still read code as needed to answer factual questions, but it does not read or write `.bytetrue` docs
 
-## 硬规则
+## Hard Rules
 
-1. **一次只问一个问题**，等用户回答后再继续。
-2. **每个问题都给推荐答案**，不要把空白问题丢给用户。
-3. **能通过读文档或代码回答的，不问用户**——先探索，再把证据带回对话。
-4. **沿决策树推进**——先解决上游依赖问题，再问下游实现细节。
-5. **不为追问而追问**——连续一轮拿不到新信息、用户说“差不多了”、或问题只能靠实现验证时，收束并给下一步。
-6. **不直接替用户拍板**——可以强推荐，但最终要让用户确认。
+1. **Ask only one question at a time**, then wait for the user's answer before continuing
+2. **Give a recommended answer with every question**. Do not dump blank questions on the user
+3. **If the answer can be obtained from docs or code, do not ask the user** — explore first, then bring the evidence back into the conversation
+4. **Advance along the decision tree** — resolve upstream dependency questions first, then downstream implementation details
+5. **Do not keep asking questions for their own sake** — if a round gives no new information, the user says "close enough", or the question can only be answered by implementation, then converge and give the next step
+6. **Do not make the final decision for the user** — you may strongly recommend, but the user must confirm
 
-## 模式选择
+## Mode Selection
 
-### 默认 with-docs 模式
+### Default `with-docs` mode
 
-除非用户显式要求轻量模式，否则按 with-docs 执行。
+Unless the user explicitly asks for lightweight mode, use `with-docs`.
 
-启动时先做最小上下文扫描：
+At startup, do a minimal context scan:
 
-1. 读 `.bytetrue/attention.md`；缺失则说明项目未完整接入 ByteTrue，停止并建议：
-   - 先 `bt-onboard`；或
-   - 用户重新触发 `bt-grill --lite` 跳过 ByteTrue 文档。
-2. 如果存在，读 `.bytetrue/reference/system-overview.md`、`.bytetrue/reference/shared-conventions.md` 和 `.bytetrue/reference/domain-context.md` 的相关部分；项目管理话题还要读 `.bytetrue/reference/project-management.md`。
-3. 根据用户计划里的关键词，查找相关：
-   - `requirements/`：这个能力为什么存在、边界是什么。
-   - `architecture/`：系统现状和约束。
-   - `roadmap/`：是否已有大需求规划或子 feature 依赖。
-   - `features/` / `issues/` / `refactors/`：是否是已有工作的续作。
-   - `compound/`：已有 decision / learning / trick / explore 是否冲突或可复用。
-4. 用户声称“代码现在是 X”时，按需读代码验证；发现冲突必须指出。
-5. 共识形成时，不等到对话结束才提醒“建议沉淀”：按本文“文档写入规则”更新合适的 ByteTrue 文档。
+1. Read `.bytetrue/attention.md`. If it is missing, explain that the project is not fully onboarded to ByteTrue, stop, and suggest either:
+   - `bt-onboard` first, or
+   - the user re-triggering `bt-grill --lite` to skip ByteTrue docs
+2. If it exists, read the relevant parts of `.bytetrue/reference/system-overview.md`, `.bytetrue/reference/shared-conventions.md`, and `.bytetrue/reference/domain-context.md`. For project-management topics, also read `.bytetrue/reference/project-management.md`
+3. Based on keywords in the user's plan, look up relevant:
+   - `requirements/`: why this capability exists and what its boundaries are
+   - `architecture/`: the current system state and constraints
+   - `roadmap/`: whether there is already a large-demand plan or sub-feature dependency
+   - `features/`, `issues/`, `refactors/`: whether this is continuation of existing work
+   - `compound/`: whether there are existing decisions, learnings, tricks, or explores that conflict with or can be reused
+4. When the user claims "the code is currently X", read code as needed to verify it. If you find a conflict, you must point it out.
+5. Once consensus forms, do not wait until the end of the conversation to say "this should be captured". Follow the "document write rules" in this file and update the appropriate ByteTrue document.
 
-### 轻量 grill-me 模式
+### Lightweight `grill-me` mode
 
-触发条件：用户显式说 `--lite`、`--no-docs`、`mode=lite`、"纯 grill-me"、"别读文档"、"只问我"。
+Trigger conditions: the user explicitly says `--lite`, `--no-docs`, `mode=lite`, "pure grill-me", "do not read docs", or "just question me".
 
-行为：
+Behavior:
 
-- 不要求 `.bytetrue/` 存在。
-- 不主动读取 ByteTrue 文档。
-- 不写 `.bytetrue` 文档。
-- 仍遵守：一次一个问题、每题给推荐答案、能读代码回答的就读代码。
-- 如果用户要求“记下来 / 落档”，明确说明这已经切换到 with-docs 模式；切换后先读 `.bytetrue/` 上下文，再写入对应 ByteTrue 文档。
+- `.bytetrue/` is not required
+- do not proactively read ByteTrue docs
+- do not write `.bytetrue` docs
+- still follow: one question at a time, every question includes a recommendation, and if code can answer the fact, read code
+- if the user asks to "record it" or "write it down", state clearly that this switches back to `with-docs` mode; after switching, read `.bytetrue/` context first, then write into the corresponding ByteTrue document
 
-## 拷问方法
+## Interrogation Method
 
-先把用户计划压缩成一句话：
+First compress the user's plan into one sentence:
 
-> 我理解你的计划是：{目标}，通过 {方案}，在 {约束} 下达成 {成功标准}。我先从最影响后续分支的点问起。
+> My understanding of your plan is: achieve {goal} through {approach}, under {constraints}, with {success criteria} as the finish line. I will start with the point that most affects the downstream branches.
 
-然后按下面顺序找“当前最高杠杆问题”，不要机械全问。
+Then, in the following order, find the "highest-leverage current question". Do not ask every section mechanically.
 
-### 1. 目标与成功标准
+### 1. Goal and success criteria
 
-问清楚：
+Clarify:
 
-- 真正要解决的问题是什么？
-- 不做会怎样？
-- 成功怎么外部验证？
-- 这个目标属于 feature、roadmap、refactor、issue、docs，还是项目管理？
+- what is the real problem to solve?
+- what happens if this is not done?
+- how will success be validated from the outside?
+- does this goal belong to feature, roadmap, refactor, issue, docs, or project management?
 
-### 2. 术语与领域边界
+### 2. Terms and domain boundaries
 
-with-docs 模式下，要拿 `.bytetrue/requirements/`、`.bytetrue/architecture/` 和 `compound/decision` 对照：
+In `with-docs` mode, compare against `.bytetrue/requirements/`, `.bytetrue/architecture/`, and `compound/decision`:
 
-- 用户使用的词是否和现有文档冲突？
-- 同一个词是否被拿来表示多个概念？
-- 有没有应该统一的 canonical term？
+- does the user's term conflict with existing docs?
+- is the same term being used to represent multiple concepts?
+- is there a canonical term that should be unified?
 
-发现冲突时直接指出：
+When you find a conflict, point it out directly:
 
-> 这里有个术语冲突：现有文档里 `{term}` 指的是 X，但你刚才像是在说 Y。我的推荐是把 Y 叫 `{new_term}`，否则后面 design 会混。你接受吗？
+> There is a terminology conflict here: in the existing docs, `{term}` means X, but just now you sounded like you meant Y. My recommendation is to call Y `{new_term}`; otherwise the later design will get confused. Do you accept that?
 
-### 3. 方案与替代路线
+### 3. Plan and alternative routes
 
-不要只顺着用户方案问细节。至少检查：
+Do not only follow the user's chosen plan into detail. Check at least:
 
-- 这个方案是不是在解真问题？
-- 有没有更小、更轻、更可逆的路径？
-- 有没有现有架构已经支持的路径？
-- 有没有已有 decision 明确禁止或倾向某方向？
+- is this plan actually solving the real problem?
+- is there a smaller, lighter, more reversible path?
+- is there a path already supported by the current architecture?
+- is there an existing decision that explicitly prohibits or favors a direction?
 
+For architecture candidates or refactor proposals, additionally grill using Matt `improve-codebase-architecture` points:
 
-架构候选 / refactor 方案要额外拷问 Matt `improve-codebase-architecture` 的判断点：
+- is this module becoming **deep**, a small interface hiding more complexity, or just adding another **shallow** forwarding layer?
+- where is the seam or adapter boundary, and which complexities are being trapped behind the adapter?
+- what is the result of the deletion test: if this module disappears, does the complexity disappear, or scatter back into multiple callers?
+- is the public interface rich enough to serve as the behavior-test surface? If tests can only touch private implementation details, the seam is probably cut incorrectly
+- does this belong to behavior-equivalent refactor, feature target state, or architecture-document current-state update? These three must not be mixed
 
-- 这个模块是在变 **deep**（小接口隐藏更多复杂度），还是只是多了一层 **shallow** 转发？
-- seam / adapter 边界在哪里？哪些复杂性被关在 adapter 后面？
-- deletion test 结果是什么：删掉这个模块后，复杂度是消失，还是散回多个调用方？
-- public interface 是否足以作为行为测试面？如果测试只能碰私有实现，说明 seam 可能没切对。
-- 这属于行为等价 refactor、feature 目标态，还是 architecture 文档现状更新？三者不要混。
-提问格式：
+Question format:
 
-> 这里我看到两个路线：A 更快但会积累 X，B 慢一点但和现有 `{doc/code}` 更一致。我的推荐是 B，因为 {理由}。你要选 B，还是有必须走 A 的约束？
+> I see two routes here: A is faster but will accumulate X; B is slower but more consistent with the existing `{doc/code}`. My recommendation is B, because {reason}. Do you want B, or is there a hard constraint that forces A?
 
-### 4. 依赖与顺序
+### 4. Dependencies and order
 
-把计划拆成依赖树，而不是任务列表：
+Break the plan into a dependency tree rather than a task list:
 
-- 哪个决定会改变后面所有问题？先问它。
-- 哪些问题可以延后到实现中验证？标成 open question，不死磕。
-- 哪些工作必须先进 `bt-roadmap`，不能塞进单个 feature？
-- 哪些应该先 `bt-explore` / spike 验证事实？
+- which decision would change every later question? Ask that first
+- which questions can be postponed until implementation and validated there? Mark those as open questions; do not fight to resolve them now
+- which work must first go into `bt-roadmap` and cannot fit inside a single feature?
+- which parts should first be validated through `bt-explore` or a spike?
 
-### 5. 风险与反例场景
+### 5. Risk and counterexample scenarios
 
-主动造具体场景压测：
+Actively construct concrete pressure-test scenarios:
 
-- 最常见路径
-- 边界路径
-- 失败路径
-- 迁移 / 回滚路径
-- 老数据 / 旧接口 / 兼容路径
-- 用户权限 / 多租户 / 并发 / 性能 / 安全等项目相关风险
+- the most common path
+- the boundary path
+- the failure path
+- the migration or rollback path
+- old data, old interfaces, or compatibility path
+- project-relevant risks such as permissions, multi-tenancy, concurrency, performance, or security
 
-每次只挑一个最可能推翻方案的场景问。
+Each time, ask only the single scenario most likely to overturn the plan.
 
-### 6. 文档写入规则
+### 6. Document write rules
 
-with-docs 模式下，重要结论不能只留在对话里，也不能只给“建议沉淀”。每次 grill 收束前必须完成一次文档归属判定，并在用户确认后最小写入合适的 ByteTrue 文档。
+In `with-docs` mode, important conclusions must not remain only in the conversation, and it is not enough to merely say "this should be captured". Before each grill converges, you must complete one document-ownership judgment, and after user confirmation, write the smallest appropriate update into the proper ByteTrue doc.
 
-写入目标：
+Write targets:
 
-- 术语 / 语言共识 / domain glossary → 更新 `.bytetrue/reference/domain-context.md`。
-- 项目管理 provider / label / sync / tracker 规则 → 更新 `.bytetrue/reference/project-management.md`。
-- 能力愿景 / 用户故事 / 边界变清楚 → 走 `bt-req draft/update` 或直接更新对应 requirement。
-- 系统现状或架构约束需要更新 → 走 `bt-arch update` 或更新对应 architecture 文档。
-- 长期技术选择 / 约束 / convention 已拍板 → 走 `bt-decide`，写入 `.bytetrue/compound/` decision。
-- 一两行启动必读注意事项 → 走 `bt-note`，写入 `.bytetrue/attention.md`。
-- 调研事实或代码证据 → 走 `bt-explore`，写入 `.bytetrue/compound/` explore。
-- 大需求拆解 ready → 走 `bt-roadmap`，写入 `.bytetrue/roadmap/{slug}/`。
-- 单 feature ready → 走 `bt-feat-design`；必要时先落 feature brainstorm。
+- terminology, language consensus, or domain glossary → update `.bytetrue/reference/domain-context.md`
+- project-management provider, label, sync, or tracker rules → update `.bytetrue/reference/project-management.md`
+- capability vision, user stories, or boundaries became clearer → use `bt-req draft/update` or update the corresponding requirement directly
+- current system state or architecture constraints need updating → use `bt-arch update` or update the relevant architecture doc
+- long-term technical choice, constraint, or convention has been finalized → use `bt-decide` and write into `.bytetrue/compound/` as a decision
+- one or two lines of must-read startup notes → use `bt-note` and write into `.bytetrue/attention.md`
+- investigation facts or code evidence → use `bt-explore` and write into `.bytetrue/compound/` as an explore
+- a large-demand breakdown is ready → use `bt-roadmap` and write into `.bytetrue/roadmap/{slug}/`
+- a single feature is ready → use `bt-feat-design`; if needed, write a feature brainstorm first
 
-未拍板的分歧不要写成 decision。可以写入 roadmap / brainstorm / project-management 的“开放问题”区，但必须标明 `open` / `待确认`。
+Disagreements that are not yet finalized must not be written as decisions. They may be written into the open-question section of roadmap, brainstorm, or project-management, but they must be explicitly marked as `open` or pending confirmation.
 
-如果一次 grill 产生多个归属，按“最稳定、最上游”的文档先写：术语共识 → 长期决策 → 项目管理规则 → roadmap/feature/issue 计划。
+If one grill produces multiple destinations, write the most stable and most upstream document first: terminology consensus → long-term decision → project-management rule → roadmap/feature/issue plan.
 
-## 每轮输出格式
+## Output Format for Each Round
 
-每轮只输出一个问题，格式尽量稳定：
-
-```md
-我先问最影响后续分支的一点：{问题}
-
-我看到的上下文：{来自文档/代码/对话的一两句证据；lite 模式可省略}
-我的推荐答案：{明确推荐 + 理由}
-
-你选 {推荐项}，还是有别的约束让我改判断？
-```
-
-如果需要给选项，最多 2-4 个，且每个选项必须有真实区别。
-
-## 收束条件
-
-出现任一情况就收束：
-
-- 关键决策树已经走完，剩下只是实现细节。
-- 用户说“够了 / 差不多 / 先这样”。
-- 同一问题反复问不出新信息。
-- 问题需要写代码、跑实验或看真实数据才能回答。
-
-收束输出：
+Each round outputs only one question, and the format should stay fairly stable:
 
 ```md
-我们现在的 shared understanding 是：
-1. 已确认：...
-2. 仍开放：...
-3. 最大风险：...
-4. 已写入 / 将写入的文档：...
-5. 推荐下一步：`bt-xxx`，因为 ...
+I will ask the point that most affects the downstream branches first: {question}
+
+What I see in context: {one or two sentences of evidence from docs, code, or the conversation; can be omitted in lite mode}
+My recommended answer: {clear recommendation + reason}
+
+Do you choose {recommended option}, or is there another constraint that should change my judgment?
 ```
 
-如果下一步是项目管理类能力，但 ByteTrue 还没有对应技能，明确说这是后续 additive 方向，暂时用 `bt-roadmap` / `bt-brainstorm` / 手工 issue 拆解承接。
+If options are needed, offer at most 2-4, and each option must reflect a real difference.
 
-## 常见错误
+## Convergence Conditions
 
-- 一次抛 5 个问题，把 grill 变成问卷。
-- 用户说什么都复述接受，不挑战替代方案。
-- with-docs 模式不读 `.bytetrue/` 就开始问。
-- 发现文档 / 代码冲突但怕打断用户，不指出。
-- 追问到实现细节，越过了 `bt-feat-design` / `bt-roadmap` 的职责。
-- 把未拍板的讨论直接写成 decision。
-- 用户明确要 lite，却仍强行读 ByteTrue 文档。
+Converge when any of these happens:
+
+- the key decision tree has been walked, and only implementation detail remains
+- the user says "enough", "close enough", or "let's leave it there"
+- repeated questioning on the same issue yields no new information
+- the question can only be answered by writing code, running experiments, or seeing real data
+
+Convergence output:
+
+```md
+Our current shared understanding is:
+1. Confirmed: ...
+2. Still open: ...
+3. Biggest risk: ...
+4. Docs already written or to be written: ...
+5. Recommended next step: `bt-xxx`, because ...
+```
+
+If the next step belongs to a project-management capability but ByteTrue does not yet have a dedicated skill for it, say clearly that this is a later additive direction, and use `bt-roadmap`, `bt-brainstorm`, or manual issue breakdown as the temporary bridge.
+
+## Common Mistakes
+
+- dumping 5 questions at once and turning grill into a questionnaire
+- accepting whatever the user says without challenging alternative routes
+- starting `with-docs` mode without first reading `.bytetrue/`
+- noticing a docs or code conflict but being afraid to interrupt the user, so you do not point it out
+- drilling down into implementation details and crossing the responsibility line of `bt-feat-design` or `bt-roadmap`
+- writing unresolved discussion directly into a decision document
+- the user explicitly asks for lite mode, yet you still force ByteTrue docs into the turn

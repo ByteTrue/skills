@@ -15,7 +15,7 @@ Use this when a task needs to operate xAI Grok at `https://grok.com` through Bro
 - User messages use `[data-testid="user-message"]`.
 - Assistant responses are in `.response-content-markdown`.
 - The model selector button is `#model-select-trigger` and shows the current model, such as `Auto`.
-- The `新建聊天` button starts a new conversation.
+- The `New chat` button starts a new conversation.
 
 ## Command Patterns
 

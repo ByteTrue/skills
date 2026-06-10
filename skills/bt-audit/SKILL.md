@@ -1,162 +1,162 @@
 ---
 name: bt-audit
-description: 系统审计——从代码中主动发现 bug 隐患、安全漏洞、性能问题、可维护性债务和架构偏离，产出批量发现清单。触发：用户说"审查系统"、"审计代码"、"扫描问题"、"找找 bug"、"有什么可以优化的"。
+description: System audit. Proactively discover bug risks, security vulnerabilities, performance problems, maintainability debt, and architecture drift from the code, and produce a batch findings list. Trigger when the user says "review the system", "audit the code", "scan for problems", "look for bugs", or "what could be optimized".
 ---
 
 # bt-audit
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-`bt-issue` 等你报 bug，`bt-refactor` 等你指优化点，`bt-explore` 等你提问题——但"我也不知道哪有问题，你先扫一遍看看"这个诉求没人接。`bt-audit` 补上这块：**在用户限定的范围内主动扫描，产出一份按严重度 × 性质交叉分类的发现清单**。
+`bt-issue` waits for you to report a known bug. `bt-refactor` waits for you to point at a known optimization target. `bt-explore` waits for you to ask a question. But when the request is "I do not even know where the problems are; scan it first and tell me", nobody else owns that surface. `bt-audit` fills that gap: **within a user-bounded scope, proactively scan the code and produce a findings list cross-classified by severity and nature**.
 
-本技能只发现、不定修。修是 `bt-issue` / `bt-refactor` 的事。
+This skill only finds issues. It does not decide or implement fixes. Fixing belongs to `bt-issue` or `bt-refactor`.
 
 ---
 
-## 文件放哪儿
+## Where the Files Go
 
 ```
 .bytetrue/audits/{YYYY-MM-DD}-{slug}/
-├── index.md           # 速览：范围、总评、发现清单交叉矩阵
+├── index.md           # quick view: scope, overall assessment, and findings matrix
 ├── finding-01.md
 ├── finding-02.md
 └── ...
 ```
 
-日期取审计当天。slug 短到一眼看出审计目标（`auth-module`、`order-flow`、`payment-security`）。
+The date is the audit date. The slug should be short enough to show the target at a glance, such as `auth-module`, `order-flow`, or `payment-security`.
 
-所有 audit 文档带 YAML frontmatter（`doc_type` 分别为 `audit-index` 和 `audit-finding`）便于 `search-yaml.py` 检索。
-
----
-
-## 维度矩阵（交叉分类）
-
-每个发现打两个标签：
-
-**性质**：`bug` | `security` | `performance` | `maintainability` | `arch-drift`
-
-**严重度**：`P0`（必须修）| `P1`（应该修）| `P2`（可以修）
-
-交叉示例：
-- `security` × `P0`：SQL 注入、明文存密码
-- `bug` × `P1`：特定边界条件下空指针，实际触发概率低
-- `performance` × `P2`：循环内多余的对象分配，热点路径才需要改
-
-另外每个发现带 **置信度**（`high` / `medium` / `low`）和**建议动作**（`bt-issue` / `bt-refactor` / `bt-arch` / `bt-grill`）。
-
-完整模板见 `reference.md`。
+All audit documents carry YAML frontmatter, with `doc_type` values `audit-index` and `audit-finding`, so `search-yaml.py` can search them.
 
 ---
 
-## 工作流
+## Dimension Matrix, Cross Classification
 
-### Phase 1：范围收敛
+Every finding gets two labels:
 
-审计不能全仓库盲扫——成本高、噪音大。先帮用户把范围收窄到可执行。
+**nature**: `bug` | `security` | `performance` | `maintainability` | `arch-drift`
 
-问用户三样（有一样就能起步）：
+**severity**: `P0`, must fix; `P1`, should fix; `P2`, could fix
 
-1. **关键词**："跟 auth / payment / upload 相关的"
-2. **模块 / 目录**："`src/services/` 下面"
-3. **一段话描述**："最近用户反馈订单页慢，帮我扫一下订单相关代码"
+Cross examples:
+- `security` × `P0`: SQL injection, storing passwords in plaintext
+- `bug` × `P1`: null pointer on a specific boundary condition with low real-world trigger rate
+- `performance` × `P2`: unnecessary object allocation inside a loop that only matters on hot paths
 
-用户描述已清楚直接进 Phase 2。用户说"整个项目都扫" → 推回去——建议先扫最常改的模块或最近出过问题的区域。
+Each finding also gets **confidence** as `high`, `medium`, or `low`, and a **suggested action** of `bt-issue`, `bt-refactor`, `bt-arch`, or `bt-grill`.
 
-收敛后给用户确认：**"扫 `src/services/order/` 和 `src/api/order.ts`，约 12 个文件，看安全 / 性能 / bug 隐患三个维度。范围 OK 吗？"**
-
-### Phase 2：扫描
-
-按用户圈定的维度逐维扫描（用户没指定就全扫 5 维）：
-
-- **bug 隐患**：空值路径、边界条件缺失、竞态条件、错误处理吞异常、类型断言无保护
-- **安全**：注入风险、敏感数据暴露、权限校验缺失、不安全依赖
-- **性能**：N+1 查询、重复计算、无缓存热点路径、内存泄漏、无分页全量加载
-- **可维护性**：超长函数（> 80 行）、圈复杂度 > 15、重复逻辑块、神秘常量、循环依赖
-- **架构偏离**：代码与 `.bytetrue/architecture/` 记录不一致、分层泄漏、跨模块隐式耦合
-
-架构偏离 / 可维护性扫描时吸收 Matt `improve-codebase-architecture` 的判断语言：
-
-- **deep module / shallow module**：接口是否小而能隐藏复杂度，还是只把调用转发到另一层。
-- **seam / adapter**：是否存在清晰 seam 可替换、测试、隔离外部系统；adapter 是否把复杂性关在边界内。
-- **deletion test**：想象删掉这个模块，复杂度是消失了，还是散落回多个调用方。
-- **interface as test surface**：公共接口是否足以表达行为测试，还是只能靠私有实现细节验证。
-- **architecture friction candidate**：只产出候选，不在 audit 内直接改；用户选择后路由到 `bt-refactor` / `bt-grill` / `bt-arch`。
-
-扫描时用 Glob / Grep / Read 真实读代码。每条发现必须记录 `文件:行号` + 具体代码片段。
-
-**上限**：每种维度最多报 5 条。不是凑数——够了就停，不够也不硬凑。
-
-**置信度口径**：
-- `high`：代码路径可确认触发，影响明确
-- `medium`：静态分析能定位问题，但触发条件不确定
-- `low`：线索可疑，需要进一步确认但值得标记
-
-### Phase 3：定级 + 产出
-
-1. 每个发现打性质 + 严重度 + 置信度 + 建议动作
-2. 写 `index.md`：范围、总评、发现清单表格（交叉分类）
-3. 逐条写 `finding-NN.md`
-
-**先写 index 再写 finding**——这个顺序让 AI 先做整体判断再展开细节，避免陷入单条发现迷失全局。
-
-### Phase 4：建议下一步
-
-index.md 末尾给优先级建议：
-
-- "P0 的 3 条建议立刻开 issue 修"
-- "P1 的 5 条可以排下个迭代"
-- "P2 的 4 条有空再看"
-
-用户选哪条 → 路由到 `bt-issue` 或 `bt-refactor`。`bt-audit` 自己不修。
-
-架构类发现的下一步建议：
-
-- 行为不变的小范围 deepening / seam 改善 → `bt-refactor`。
-- 候选边界还没问透 → `bt-grill`。
-- 代码现状与 architecture 文档不一致 → `bt-arch check/update`。
-- 只是需要理解模块和调用方地图 → `bt-explore module-overview`。
+See `reference.md` for the full template.
 
 ---
 
-## 与相邻技能的边界
+## Workflow
 
-| 技能 | 触发 | bt-audit 怎么对待 |
+### Phase 1: Narrow the Scope
+
+An audit cannot blind-scan the whole repository. That is expensive and noisy. First help the user shrink the scope to something executable.
+
+Ask for three kinds of input, and any one of them is enough to start:
+
+1. **Keywords**: "anything related to auth, payment, or upload"
+2. **Module or directory**: "everything under `src/services/`"
+3. **One-paragraph description**: "users have been saying the order page is slow; audit the order-related code"
+
+If the user's description is already clear, go directly to Phase 2. If the user says "audit the whole project", push back and suggest starting from the most frequently changed module or the area that recently had problems.
+
+After narrowing, confirm with the user: **"I will scan `src/services/order/` plus `src/api/order.ts`, about 12 files, across security, performance, and bug-risk dimensions. Is that scope OK?"**
+
+### Phase 2: Scan
+
+Scan one dimension at a time within the scope defined by the user. If the user did not specify dimensions, scan all 5:
+
+- **bug risks**: null paths, missing boundary conditions, race conditions, swallowed exceptions, unguarded type assertions
+- **security**: injection risk, sensitive data exposure, missing permission checks, unsafe dependencies
+- **performance**: N+1 queries, repeated computation, missing caching on hot paths, memory leaks, full-list loading without pagination
+- **maintainability**: very long functions, cyclomatic complexity above 15, duplicated logic blocks, mysterious constants, cyclic dependencies
+- **architecture drift**: code inconsistent with records under `.bytetrue/architecture/`, layer leakage, implicit cross-module coupling
+
+When scanning architecture drift and maintainability, borrow the judgment vocabulary from Matt `improve-codebase-architecture`:
+
+- **deep module / shallow module**: whether the interface stays small while hiding complexity, or merely forwards calls to another layer
+- **seam / adapter**: whether there is a clear seam for replacement, testing, and external-system isolation; whether the adapter keeps complexity at the boundary
+- **deletion test**: if you imagine deleting the module, does the complexity disappear or scatter back across multiple callers
+- **interface as test surface**: whether the public interface is rich enough to express behavior tests, or whether only private implementation details can be tested
+- **architecture friction candidate**: only produce candidates; do not directly change anything inside the audit. After the user chooses, route to `bt-refactor`, `bt-grill`, or `bt-arch`
+
+Use Glob, Grep, and Read to inspect the real code while scanning. Every finding must record `file:line` and a concrete code snippet.
+
+**Upper bound**: at most 5 findings per dimension. Do not pad the count. Stop when the top ones are enough; if there are fewer, report fewer.
+
+**Confidence semantics**:
+- `high`: the code path clearly proves the trigger and the impact is explicit
+- `medium`: static analysis points to the problem, but the triggering condition is uncertain
+- `low`: the clue looks suspicious and deserves marking, but further confirmation is needed
+
+### Phase 3: Classify and Produce Output
+
+1. Give each finding nature, severity, confidence, and suggested action
+2. Write `index.md` with scope, overall assessment, and the findings table as a cross-classified matrix
+3. Write one `finding-NN.md` per finding
+
+**Write the index first, then the individual findings**. This order forces the AI to make the overall judgment before expanding details, rather than getting lost in one finding and losing the global picture.
+
+### Phase 4: Suggest Next Steps
+
+At the end of `index.md`, give priority-based recommendations:
+
+- "The 3 P0 items should be opened as issues and fixed immediately"
+- "The 5 P1 items can be scheduled for the next iteration"
+- "The 4 P2 items can wait until there is time"
+
+When the user picks one, route to `bt-issue` or `bt-refactor`. `bt-audit` does not fix it itself.
+
+Next-step suggestions for architecture findings:
+
+- small-scope deepening or seam improvement with unchanged behavior → `bt-refactor`
+- candidate boundaries that have not been challenged hard enough yet → `bt-grill`
+- code state inconsistent with the architecture docs → `bt-arch check/update`
+- only need to understand the module and caller map → `bt-explore module-overview`
+
+---
+
+## Boundary with Neighbor Skills
+
+| Skill | Trigger | How bt-audit treats it |
 |---|---|---|
-| `bt-issue` | 用户报已知 bug | audit 发现 bug 后建议开 `bt-issue` |
-| `bt-refactor` | 用户指已知优化点 | audit 发现可优化点后建议开 `bt-refactor` |
-| `bt-explore` | 围绕一个问题查代码 | audit 是批量扫多个维度，不等同于 explore |
-| `bt-arch` | 维护架构文档 | bt-arch 维护文档，bt-audit 检查代码是否偏离文档 |
-| `bt-security-review` | 安全审查 | audit 的安全维度是轻量扫描，深度安全审查走专项 |
+| `bt-issue` | the user reports a known bug | when audit finds a bug, it recommends opening `bt-issue` |
+| `bt-refactor` | the user points to a known optimization target | when audit finds an optimization target, it recommends opening `bt-refactor` |
+| `bt-explore` | inspect code around one question | audit scans across multiple dimensions in bulk; it is not the same thing as explore |
+| `bt-arch` | maintain architecture documents | `bt-arch` maintains docs; `bt-audit` checks whether code has drifted from the docs |
+| `bt-security-review` | security review | the security dimension in audit is a lightweight scan; deep security review belongs to a specialized workflow |
 
 ---
 
-## 守护规则
+## Guard Rules
 
-- **不盲扫全仓库**——Phase 1 必须收敛范围，没范围不动手
-- **每条发现必有证据**——file:line + 代码片段 + 为什么构成问题。不准出现"感觉不好"、"可能有问题"类无证据发现
-- **置信度必标**——不准所有发现都标 `high`
-- **每种维度上限 5 条**——逼 AI 挑最值得报的，不是 dump 所有发现
-- **只发现不定修**——bt-audit 不出代码改动。出现"顺便修了"就算越界
-- **架构偏离引用当前文档**——不准凭记忆判断架构应该长什么样，必须读 `.bytetrue/architecture/` 对照
-- **旧审计标注过期**——同名模块新审计覆盖旧审计时，旧 index 标 `status: superseded` + `superseded-by: {新目录}`
-
----
-
-## 退出条件
-
-- [ ] 审计范围已和用户确认
-- [ ] 各维度扫描完成，至少有一个发现（若零发现：告知用户此范围内未发现明显问题）
-- [ ] index.md 含完整交叉分类表
-- [ ] 每条发现 file:line + evidence + confidence
-- [ ] 每种维度 ≤ 5 条
-- [ ] 给用户按优先级排列的下一步建议
+- **Do not blind-scan the whole repository** — Phase 1 must narrow the scope; without scope, do not start
+- **Every finding must have evidence** — `file:line` plus code snippet plus why it constitutes a problem. Do not allow findings like "feels bad" or "might have a problem" without evidence
+- **Confidence must be labeled** — do not mark every finding `high`
+- **Maximum 5 findings per dimension** — this forces the AI to choose the most valuable ones instead of dumping everything
+- **Only find, do not decide the fix** — `bt-audit` does not produce code changes. If it "fixed something while here", that is out of bounds
+- **Architecture drift must cite current docs** — do not judge architecture from memory. Read `.bytetrue/architecture/` and compare against it
+- **Mark old audits as superseded** — when a new audit covers the same module, the old index must get `status: superseded` plus `superseded-by: {new directory}`
 
 ---
 
-## 相关文档
+## Exit Conditions
 
-- `reference.md` — index.md / finding-NN.md 模板
-- `.bytetrue/reference/shared-conventions.md` — 跨工作流共享口径
-- `.bytetrue/architecture/` — 架构偏离类发现对照源
+- [ ] the audit scope has been confirmed with the user
+- [ ] scanning across the chosen dimensions is complete, with at least one finding, or if there are zero findings, the user has been explicitly told that no obvious problem was found in this scope
+- [ ] `index.md` contains the complete cross-classification table
+- [ ] every finding includes `file:line`, evidence, and confidence
+- [ ] each dimension has 5 findings or fewer
+- [ ] the user has been given next-step suggestions ordered by priority
+
+---
+
+## Related Documents
+
+- `reference.md` — templates for `index.md` and `finding-NN.md`
+- `.bytetrue/reference/shared-conventions.md` — shared conventions across workflows
+- `.bytetrue/architecture/` — comparison source for architecture-drift findings

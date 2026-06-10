@@ -1,255 +1,255 @@
 ---
 name: bt-feat-accept
-description: feature 流程阶段 3——验收闭环：对照 design 核实现 + 回写 architecture / requirement / roadmap，最后产出 {slug}-acceptance.md。触发：用户说"功能写完了验收一下"、"做最后检查"、"准备 merge"、"出验收报告"。前置依赖 bt-feat-impl 完成。
+description: Stage 3 of the feature workflow, acceptance closure. Verify the implementation against the design, write back architecture, requirement, and roadmap, and finally produce `{slug}-acceptance.md`. Trigger when the user says "the feature is done, let's accept it", "do the final check", "prepare to merge", or "produce the acceptance report". The prerequisite is that `bt-feat-impl` has completed.
 ---
 
 # bt-feat-accept
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-代码已经写完，但流程没结束。本阶段做四件事，缺一不可：
+The code may already be written, but the workflow is not finished. This stage does four things, and every one of them is mandatory:
 
-1. **核对实现有没有偏离方案**——逐层对照 `{slug}-design.md`，发现偏差当场修，**不是在报告里"记一下"**就过去
-2. **把 feature 归并到整体架构**——对照方案第 4 节，实际去更新架构中心目录下的相关 doc
-3. **能力落档到 requirement**——draft req 对应的能力实现完成后升级为 current（保留愿景，追加变更日志）；从未写过 req 的能力 backfill
-4. **完成状态回写到 roadmap**——方案 frontmatter 有 `roadmap` / `roadmap_item` 字段时**必须**改 items.yaml 对应条目为 `done` 并同步主文档
+1. **Check whether the implementation drifted from the design** — compare against `{slug}-design.md` layer by layer, and if a deviation is found, fix it immediately, **not just note it in the report**
+2. **Merge the feature back into the overall architecture** — following section 4 of the design, actually update the relevant docs inside the architecture directory
+3. **Write the capability back into requirement** — if the corresponding req was draft, upgrade it to current after the capability is implemented, preserving the original vision and appending a change log; if the capability never had a req, backfill one
+4. **Write completion state back into roadmap** — if the design frontmatter has `roadmap` and `roadmap_item`, the corresponding item in `items.yaml` **must** be changed to `done`, and the main roadmap doc must also be synchronized
 
-漏掉任何一件的代价：架构 doc 过期下个 feature 读到错信息；req 和实际能力脱节；roadmap 规划层和实际进度脱节，下次推进会重复跑流程。
+The cost of missing any one of these: architecture docs go stale and the next feature reads wrong information; req drifts away from the actual capability; roadmap drifts away from actual progress and the next advance repeats work.
 
-**没产出报告 = 工作流未完成**。后人查"上次这个功能验收时确认了哪些行为"，没报告就只能翻 git diff 重新推断。
+**No report means the workflow is incomplete**. When future readers ask "which behaviors were confirmed during acceptance of this feature?", without a report they can only reconstruct it from git diff.
 
-> 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md` 第 0 节。
+> For shared paths and naming conventions, see section 0 of `.bytetrue/reference/shared-conventions.md`.
 
-> **读完本节后，先跳到「退出后」节看完收尾清单再回来填验收模板**——退出后清单比验收模板更容易被跳过，你有义务一次性问完 7 项。
-
----
-
-## 跟 design 的章节强依赖
-
-本技能整套对照表按 design 当前章节编号硬编码。**design 升级章节名 / 编号时本技能必须同步**，否则下面所有"第 X 节"指针都指错地方。
-
-**标准 design 章节快照**：
-
-- 第 0 节：术语约定
-- 第 1 节：决策与约束（需求摘要 / 复杂度档位 / 关键决策 / 前置依赖）
-- 第 2 节：名词与编排（2.1 名词层 / 2.2 编排层 / 2.3 挂载点 / 2.4 推进策略）
-- 第 3 节：验收契约（关键场景清单 + 反向核对项）
-- 第 4 节：与项目级架构文档的关系
-
-**Fastforward design**：第 0 需求摘要 / 第 1 设计方案 / 第 2 验收标准 / 第 3 推进步骤
+> **After reading this section, jump to "After Exit" first and read the close-out checklist before coming back to fill the acceptance template** — the close-out checklist is easier to forget than the template itself, and you are required to ask all 7 items in one pass.
 
 ---
 
-## 启动检查
+## Strong dependency on design section numbering
 
-1. **代码确实实现到位**——git status / 最近提交看到本功能改动，否则退回 implement
-2. **方案 doc 完整**——frontmatter `doc_type=feature-design` / `feature` 一致 / `status=approved` / `summary` 非空 / `tags` ≥ 2；标准 design 第 0/1/2/3 节 + 第 4 节已填写
-3. **`{slug}-checklist.yaml`**——存在且 `feature` 一致；`steps` 全 `done`（有 `pending` 退回 implement）；`checks` 非空全 `pending`
-4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）
-5. **断点恢复**——`{slug}-acceptance.md` 已存在且部分填好 → 从下一个未完成节继续，跳过 checks 中已 `passed` 的项；汇报"上次做到第 X 节，从第 Y 节继续"
+The entire comparison table of this skill is hardcoded against the current section numbering of design. **If design ever changes section names or section numbers, this skill must be updated in sync**, otherwise every pointer to "section X" below becomes wrong.
 
-**Fastforward design 验收报告映射表**：
+**Snapshot of standard design sections**:
 
-| 验收报告节 | 标准 design 对照 | Fastforward design 对照 |
+- section 0: terminology
+- section 1: decisions and constraints, requirement summary, complexity dimensions, key decisions, prerequisites
+- section 2: terms and orchestration, 2.1 term layer, 2.2 orchestration layer, 2.3 mount points, 2.4 rollout strategy
+- section 3: acceptance contract, key scenario list plus reverse-check items
+- section 4: relationship with project-level architecture docs
+
+**Fastforward design**: section 0 requirement summary, section 1 design plan, section 2 acceptance criteria, section 3 rollout steps
+
+---
+
+## Startup checks
+
+1. **The code really has been implemented** — `git status` or recent commits must show the feature's code changes, otherwise send it back to implement
+2. **The design doc is complete** — frontmatter must have matching `doc_type=feature-design` and `feature`, `status=approved`, non-empty `summary`, and at least 2 tags; in standard design, sections 0, 1, 2, 3, and 4 must all be filled
+3. **`{slug}-checklist.yaml`** — it must exist with a matching `feature`; all `steps` must already be `done`, any `pending` means send it back to implement; `checks` must be non-empty and all still `pending`
+4. **Read the full context** — the full design doc, especially section 1 non-goals, section 2.1 interface examples, section 2.2 flow-level constraints, section 2.3 mount points, and section 3 scenarios, plus the checklist, all architecture docs named in section 4, and the code changes from this run, `git log` and `git diff`
+5. **Resume support** — if `{slug}-acceptance.md` already exists and is partially filled, continue from the next unfinished section, skip checklist checks already marked `passed`, and report "last time we got to section X, continuing from section Y"
+
+**Acceptance report mapping for fastforward design**:
+
+| Acceptance-report section | Standard design mapping | Fastforward design mapping |
 |---|---|---|
-| 1 接口契约核对 | 第 2.1 接口示例 | 第 1 节改动点 |
-| 2 行为与决策核对（含挂载点） | 第 1 节 + 第 2.2 + 第 2.3 | 第 0 节；挂载点现场盘点 |
-| 3 验收场景核对 | 第 3 节场景清单 + 反向核对 | 第 2 节验收标准 |
-| 4 术语一致性 | 第 0 节 + 第 2.1 命名 | 检查代码命名一致性 |
-| 5 架构归并 | 第 4 节 | 通常无；写"无架构维度变更" |
+| 1 interface-contract check | section 2.1 interface examples | section 1 change points |
+| 2 behavior and decision check, including mount points | section 1 + section 2.2 + section 2.3 | section 0, plus live mount-point inventory |
+| 3 acceptance-scenario check | section 3 scenario list plus reverse checks | section 2 acceptance criteria |
+| 4 terminology consistency | section 0 + naming in section 2.1 | check naming consistency in code |
+| 5 architecture merge | section 4 | usually none; write "no architecture-scope change" |
 
 ---
 
-## 验收报告模板
+## Acceptance report template
 
-逐节填写**别跳节**。报告路径在 feature 目录下（位置看 `shared-conventions.md` 第 0 节）。
+Fill it **section by section, do not skip sections**. The report path lives inside the feature directory, location defined in section 0 of `shared-conventions.md`.
 
 ```markdown
-# {功能名称} 验收报告
+# {Feature Name} Acceptance Report
 
-> 阶段：阶段 3（验收闭环）
-> 验收日期：YYYY-MM-DD
-> 关联方案 doc：{方案 doc 路径}
+> Stage: stage 3, acceptance closure
+> Acceptance date: YYYY-MM-DD
+> Related design doc: {design doc path}
 
-## 1. 接口契约核对
+## 1. Interface-contract check
 
-对照方案第 2.1 节名词层逐一核查：
+Check each item against the term layer in section 2.1 of the design:
 
-**接口示例逐项核对**：
-- [ ] 示例 A（{文件路径 + 函数名}）：示例输入→输出 → 代码实际行为：{一致 / 偏差说明}
+**Check interface examples one by one**:
+- [ ] Example A, `{file path + function name}`: example input→output → actual code behavior, consistent or drift description
 
-**名词层"现状 → 变化"逐项核对**：
-- [ ] 名词 X：声称的变化 → 代码改动：{一致 / 偏差}
+**Check "current state → change" in the term layer one by one**:
+- [ ] Term X: claimed change → actual code change, consistent or drift
 
-**流程图核对**（第 2.2 节开头 mermaid 图）：
-- [ ] 图中节点 / 调用关系在代码均有实际落点（grep 确认）
+**Check the flow diagram**, the Mermaid at the beginning of section 2.2:
+- [ ] Every node and call relation in the diagram has a real landing point in code, confirmed by grep
 
-发现偏差**先修代码或回填方案 doc**。报告里写"已知偏差暂不处理"是反模式——下次按方案找代码会被绊倒。
+If you find drift, **fix the code or backfill the design first**. Writing "known drift, not handling it for now" inside the report is an anti-pattern. The next person following the design to the code will stumble on it.
 
-## 2. 行为与决策核对
+## 2. Behavior and decision check
 
-对照方案第 1 节 + 第 2.2 节：
+Check against design section 1 and section 2.2:
 
-**需求摘要逐项验证**：
-- [ ] 行为 A：{描述 + 实测结果}
+**Verify the requirement summary one by one**:
+- [ ] Behavior A: {description + actual observed result}
 
-**明确不做逐项核对**（用第 3 节"反向核对项"）：
-- [ ] 范围外事项 X **确实没做**（grep / review 确认）
+**Check explicit non-goals one by one**, using the reverse-check items in section 3:
+- [ ] Out-of-scope item X was **indeed not built**, confirmed by grep or review
 
-**关键决策落地**：
-- [ ] 决策 D1：{决策内容} → 代码体现：{描述}
+**Landing of key decisions**:
+- [ ] Decision D1: {decision content} → where it appears in the code: {description}
 
-**编排层"现状 → 变化"逐项核对**：
-- [ ] 变化 V1：{在哪一步插入 / 哪条分支变更} → 代码实际落点
+**Check "current state → change" in the orchestration layer one by one**:
+- [ ] Change V1: {which step it was inserted at / which branch changed} → actual landing point in code
 
-**流程级约束核对**（错误语义 / 幂等 / 并发 / 扩展点 / 可观测点）：
-- [ ] 纪律 R1：{描述} → 代码遵守方式
+**Check flow-level constraints**: error semantics, idempotency, concurrency, extension points, observability
+- [ ] Constraint R1: {description} → how the code obeys it
 
-**挂载点反向核对（可卸载性）**——对照第 2.3 节，必做两件事：
-- [ ] 挂载点 M1：清单条目 → 代码实际落点：{一致 / 偏差}
-- [ ] **反向核查**（grep）：本 feature 在代码里的所有引用是否都落在清单内？清单外的引用 → 漏记，补进第 2.3 节
-- [ ] **拔除沙盘推演**：按清单逆向操作后是否还有残留？残留 → 写进"遗留"或补挂载点
+**Reverse-check the mount points, removability** — against section 2.3, two things are mandatory:
+- [ ] Mount point M1: list item → actual code landing point, consistent or drift
+- [ ] **Reverse grep check**: do all references to this feature in the code fall inside the list? References outside the list mean omissions, and must be added back into section 2.3
+- [ ] **Removal sandbox thought experiment**: if you reverse the mount-point list, does anything remain? If yes, record it under leftovers or add the missing mount point
 
-Fastforward 方案没有挂载点清单 → 现场 grep 盘点本次改动命中的挂入位置作为卸载依据。
+Fastforward design has no mount-point list, so acceptance must inventory the mount locations live by grep based on the changes made this time.
 
-## 3. 验收场景核对
+## 3. Acceptance-scenario check
 
-对照方案第 3 节关键场景清单，逐条可观察证据验证：
+Against the key scenario list in section 3 of the design, verify each scenario using observable evidence:
 
-- [ ] **S1**：{场景"输入 / 触发 → 期望可观察结果"}
-  - 证据来源：{类型系统 / 单测 / 集成 / 手工 / 肉眼}
-  - 结果：{通过 / 未通过 + 原因 + 补救}
+- [ ] **S1**: {scenario, input / trigger → expected observable result}
+  - evidence source: {type system / unit test / integration / manual / visual}
+  - result: {passed / failed + reason + remedy}
 
-**前端改动必须浏览器肉眼验证**（typecheck 通过不代表用户用起来对）：
-- [ ] UI 区域 X：浏览器验证 OK / 截图链接
+**Frontend changes require browser-eye verification** — passing typecheck does not prove the user experience is correct:
+- [ ] UI area X: browser verification OK / screenshot link
 
-## 4. 术语一致性
+## 4. Terminology consistency
 
-对照方案第 0 节 + 第 2.1 节命名 grep 代码：
+Against design section 0 and section 2.1 naming, grep the code:
 
-- 术语 X：代码命中 N 处全部一致 ✓
-- 防冲突：禁用词 grep 无命中 ✓
+- term X: all N code hits are consistent ✓
+- anti-conflict: grep for forbidden alternative names finds no hits ✓
 
-发现不一致 → 改代码，别在报告里写"已知差异"。
+If inconsistency is found, change the code. Do not write "known difference" in the report.
 
-## 5. 架构归并
+## 5. Architecture merge
 
-**目标**：把本次 feature 里稳定、系统级可见的内容**实际写入** architecture，让读者只看 architecture 就能看懂新能力的存在和形态。**不是加 design 链接就算数**。
+**Goal**: actually write the stable, system-visible part of this feature into architecture, so that a reader who only reads architecture can understand that the new capability now exists and what shape it has. **Adding a design link does not count.**
 
-对照方案第 4 节，三类东西实际写入对应架构 doc：
+Against section 4 of the design, actually write three classes of content into the corresponding architecture docs:
 
-- **名词归并** ← 第 2.1 节新增 / 变化的实体、类型、对外契约 → architecture 的"结构与交互 / 数据与状态"节
-- **动词骨架归并** ← 第 2.2 节跨模块可见的主流程 / 关键编排 → architecture 的结构图 / 模块交互
-- **流程级约束归并** ← 第 2.2 节跨 feature 稳定的约束 → architecture 的"已知约束"节
+- **term merge** ← new or changed entities, types, or outward contracts from section 2.1 → into architecture's structure and interaction / data and state sections
+- **verb skeleton merge** ← main flows and key orchestration that are visible across modules from section 2.2 → into architecture diagrams and module-interaction sections
+- **flow-level constraint merge** ← constraints from section 2.2 that are stable across features → into architecture's known-constraints section
 
-逐项核对：
-- [ ] 架构 doc X（{路径}）：归并内容 {描述}；已写入 ✓ / 不需要（理由：{具体}）
+Check each item:
+- [ ] Architecture doc X, `{path}`: merged content `{description}`; written ✓ / not needed, with concrete reason
 
-方案第 4 节为空或过简 → 在此补充评估：
-- 新增哪些模块 / 改了哪些接口 / 引入哪些跨模块纪律
-- 架构总入口要不要新增描述（描述不是贴链接）
-- `.bytetrue/attention.md` 要不要补新规约或已知坑
+If section 4 of the design is empty or too thin, supplement the evaluation here:
+- what modules were added, what interfaces changed, what cross-module disciplines were introduced
+- whether the top-level architecture entry needs a new description, not just a link
+- whether `.bytetrue/attention.md` needs new conventions or known pitfalls
 
-**判据**：归并完成后，没读过 design 的人打开 architecture 应该能知道"系统里现在有这个能力、它的大致形态、和它交互要遵守什么"。
+**Decision rule**: after merging, a reader who never read the design should be able to open architecture and know "this capability now exists in the system, this is roughly what shape it has, and these are the rules for interacting with it".
 
-## 6. requirement 回写
+## 6. Requirement write-back
 
-req 是能力愿景层，本节是 draft → current 升级和 backfill 的触发点。对照方案 frontmatter 的 `requirement` 和第 1 节需求摘要：
+Req is the capability-vision layer. This section is where draft → current upgrades and backfill are triggered. Compare the `requirement` field in design frontmatter with the requirement summary in section 1:
 
-- [ ] `requirement` 空 + 方案明确"不新增能力"（纯重构 / 技术债）→ 跳过，写"无 requirement 回写"
-- [ ] `requirement` 空 + 新增了用户可感能力 → 触发 `bt-req` **backfill** 直接落 `status: current`
-- [ ] `requirement` 指向 draft req → 触发 `bt-req` **update**：`draft` → `current`，按实际实现刷新用户故事 / 边界，**保留原始愿景**（愿景不被覆盖，只在文末加变更日志记录本次改动）
-- [ ] `requirement` 指向 current req 且本次改了边界 / 用户故事 / pitch → 触发 `bt-req` **update** 刷新
-- [ ] `requirement` 指向 current req 但本次未改用户视角 → 写"req-{slug} 未变，无需更新"
+- [ ] `requirement` is empty and the design explicitly says "no new capability", pure refactor or technical debt → skip, and write "no requirement write-back"
+- [ ] `requirement` is empty but a new user-perceivable capability was added → trigger `bt-req` in **backfill** mode and land it directly as `status: current`
+- [ ] `requirement` points to a draft req → trigger `bt-req` in **update** mode, `draft` → `current`, refreshing user stories and boundaries according to the real implementation, while **preserving the original vision**, meaning the original vision is not overwritten and this run is recorded only in a change log at the end
+- [ ] `requirement` points to a current req and this run changed its boundary, user stories, or pitch → trigger `bt-req` in **update** mode to refresh it
+- [ ] `requirement` points to a current req but this run did not change the user-facing view → write "req-{slug} unchanged, no update needed"
 
-这是**实际写文件的动作**，不是自评"应该不需要改"。
+This is an **actual file-writing action**, not a self-assessment of "probably not needed".
 
-## 7. roadmap 回写
+## 7. Roadmap write-back
 
-对照方案 frontmatter 的 `roadmap` / `roadmap_item`：
+Compare against the `roadmap` and `roadmap_item` fields in design frontmatter:
 
-- [ ] 两字段都空（feature 未从 roadmap 起头）→ 跳过，写"非 roadmap 起头"
-- [ ] 两字段都有值：
-  - 打开 `.bytetrue/roadmap/{roadmap}/{roadmap}-items.yaml`
-  - 找到 `slug: {roadmap_item}`，核对当前 `status: in-progress` + `feature: {目录名}`——不对停下来找原因
-  - 改 `status: done`，用 `validate-yaml.py` 校验
-  - 同步 `{roadmap}-roadmap.md` 主文档第 3 节子 feature 清单的对应条目状态
-- [ ] 两字段不一致（只填了一个）→ 停下来补齐或澄清
+- [ ] both fields are empty, this feature did not start from roadmap → skip, and write "not started from roadmap"
+- [ ] both fields have values:
+  - open `.bytetrue/roadmap/{roadmap}/{roadmap}-items.yaml`
+  - find `slug: {roadmap_item}`, and confirm its current state is `status: in-progress` plus `feature: {directory name}`; if not, stop and find out why
+  - change `status` to `done`, and validate with `validate-yaml.py`
+  - synchronize the corresponding sub-feature entry inside section 3 of `{roadmap}-roadmap.md`
+- [ ] the two fields are inconsistent, only one is filled → stop and fix or clarify
 
-衔接协议看 `shared-conventions.md` 第 2.5 节。和归并 / req 同规则：实际写文件的动作。
+See section 2.5 in `shared-conventions.md` for the handoff protocol. Like architecture merge and req write-back, this is an actual file-writing action.
 
-## 8. attention.md 候选盘点
+## 8. attention.md candidate review
 
-回看本次实现，盘点"每个 feature 都会撞一次"的环境 / 工具 / 工作流类信息。典型候选：编译命令、代理配置、本地起服务步骤、反复踩的环境坑、仓库内非显然的工作流约定。
+Look back at this implementation and inventory environment, tool, and workflow facts that "every future feature will step on once". Typical candidates include build commands, proxy configuration, local service startup steps, recurring environment pitfalls, or non-obvious workflow conventions inside the repository.
 
-**判据**：下一个 feature 的 AI 还会再踩一次的事才记。一次性踩坑、和具体业务耦合的细节归 learning / decide。
+**Decision rule**: only record things that the next feature's AI would likely hit again. One-off pitfalls or details tightly coupled to a specific business case belong in learning or decision.
 
-- [ ] 无候选：写"本 feature 未暴露需要补入 attention.md 的内容"
-- [ ] 有候选：列出来，**不擅自写入**——本节只登记，落不落由用户在"退出后"环节定
-  - 候选 1：{描述 + 建议放 attention.md}
+- [ ] no candidates: write "this feature did not expose anything that needs to be added into attention.md"
+- [ ] candidates exist: list them, but **do not write them in on your own** — this section only registers them, and the decision to actually add them belongs to the user during "After Exit"
+  - candidate 1: {description + recommended attention.md placement}
 
-## 9. 遗留
+## 9. Leftovers
 
-- 后续优化点（已开 issue 或加入 issue 列表）：{列表}
-- 已知限制：{列表}
-- 实现阶段"顺手发现"列表：{列表}
+- later optimization points, already opened as issues or added to an issue list: {list}
+- known limitations: {list}
+- "while here I noticed" items from implementation: {list}
 ```
 
 ---
 
-## 核对节奏
+## Verification rhythm
 
-逐节做。每节完成后**逐条更新 `{slug}-checklist.yaml` 的 `checks`**：通过 → `passed`，失败 → `failed`（先修代码 / 方案再改回 `passed`）。所有 checks 全 `passed` 后报告才算完成。
+Work section by section. After completing each section, **update the `checks` in `{slug}-checklist.yaml` one by one**: passed → `passed`, failed → `failed`, then after the code or design is fixed, change it back to `passed`. The report is not complete until every check is `passed`.
 
-第 1/2 节最容易暴露偏离，先做。第 2 节挂载点反向核对**必须实际 grep + 沙盘推演**，不能凭印象勾选。第 5/6/7 节是写文件的动作，不是自评。
-
----
-
-## 退出条件
-
-- [ ] 验收报告 9 节都填完
-- [ ] 第 1/2 节核对全部勾选，无未处理偏差（含挂载点 grep + 拔除沙盘推演）
-- [ ] 第 3 节场景核对全部勾选，前端已浏览器验证
-- [ ] 第 4 节术语一致性无遗漏
-- [ ] 第 5 节归并：每条有明确结论，需要更新的 doc 已实际写入
-- [ ] 第 6 节 req 回写有结论：跳过 / 未变 / 已 backfill / draft→current / 已 update
-- [ ] 第 7 节 roadmap 回写有结论：跳过（非 roadmap 起头）/ 已更新（items.yaml + 主文档同步，yaml 通过校验）
-- [ ] checklist 所有 checks 都 `passed`
-- [ ] 用户终审确认
+Sections 1 and 2 are the easiest places to expose drift, so do them first. The reverse-check on mount points in section 2 **must** be done with actual grep plus a sandbox removal thought experiment. Do not check it by impression. Sections 5, 6, and 7 are file-writing actions, not self-assessment.
 
 ---
 
-## 退出后
+## Exit Conditions
 
-告诉用户："验收报告已就绪，架构文档已归并，bt-feat 工作流走完。后续 BUG 走 issue 流程。"
-
-按 `shared-conventions.md` 第 3 节收尾推荐顺序逐项一句话提示（用户说"不用"立刻跳过）：
-
-1. 复用价值的坑点 / 经验 → "需要沉淀 learning 吗？（`bt-learn`）"
-2. 长期约束 / 技术选型 → "需要归档决定吗？（`bt-decide`）"
-   - **特检**：design 第 2.5 节是否有"建议沉淀的 convention"段。有就把那条规则原文念给用户："design 2.5 建议沉淀这条 convention：『{规则一句话}』，跑通了，要不要现在 `bt-decide` 归档？"——这种是 design 阶段就识别出的稳定模式，比一般"问问看"更应该主动提
-3. feature design + acceptance report/checklist 需要团队协作状态投影 → "要更新或绑定外部 tracker 吗？（`bt-tracker`）"；roadmap 起头时同时提示可同步 done roadmap item；`bt-tracker` 按 `.bytetrue/reference/project-management.md` 的 `sync_policy` 只做预览和询问，用户确认前不创建 / 更新外部 issue
-4. 接口变更 / 用户可见行为变更 → "需要更新指南吗？（`bt-guide`）"
-5. 库公开接口（组件 / 函数 / 命令）变了 → "需要更新 API 参考吗？（`bt-libdoc`）"
-6. 第 8 节有 attention.md 候选 → 逐条问"候选 X 加到 attention.md 吗？" 用户明确同意 → 触发 `bt-note` 走分节归类 / 查重 / 软上限检查（不在 accept 里手写，避免和 bt-note 各搞一套口径）；**一次一条**
-7. 最后问是否代为 scoped-commit
-
-收尾提交规则看 `shared-conventions.md` 第 4 节。提交范围：功能代码 + 方案 doc + 验收报告 + 本次实际更新的架构 doc / req doc / roadmap items.yaml + 主文档。
+- [ ] all 9 sections of the acceptance report are filled
+- [ ] every item in sections 1 and 2 is checked off, with no unresolved drift, including mount-point grep and removal sandbox thought experiment
+- [ ] every scenario in section 3 is checked off, and frontend changes have browser verification
+- [ ] section 4 terminology consistency has no gaps
+- [ ] section 5 architecture merge has a clear conclusion for every item, and every needed doc update has actually been written
+- [ ] section 6 req write-back has a conclusion, skipped / unchanged / backfilled / draft→current / updated
+- [ ] section 7 roadmap write-back has a conclusion, skipped because not from roadmap, or updated with `items.yaml` plus main doc sync and YAML validation passed
+- [ ] every checklist check is `passed`
+- [ ] the user has done final review confirmation
 
 ---
 
-## 容易踩的坑
+## After Exit
 
-- "测试都过了" → 测试通过 ≠ 验收场景满足，要逐条核对第 3 节
-- "我肉眼看了一下" → 按清单走，逐项勾选
-- 接口偏差在报告里写"已知偏差"而不修代码 / 回填方案
-- 挂载点反向核对只看清单不 grep——漏记的挂载点溜进项目，后面拔不干净
-- 第 3 节前端改动只 typecheck 没浏览器跑过
-- 第 5 节归并写"整体不影响架构"一句话带过，没逐条核查
-- 架构 doc 需要更新而只写"建议以后更新"——归并是当下动作不是建议
-- 第 7 节只改 items.yaml 没同步主文档，两份不一致
-- frontmatter 有 `roadmap` 却在第 7 节写"跳过"——有值就必须回写
-- 报告写完没让用户终审就宣告完成
-- 用户没明确同意就 `git commit`
+Tell the user: "The acceptance report is ready, the architecture docs have been merged, and the bt-feat workflow is complete. Future bugs go through the issue workflow."
+
+Following section 3 of `shared-conventions.md`, give one-sentence close-out prompts in order, and skip immediately if the user says "no need":
+
+1. reusable-value pitfalls or experience → "Do you want to capture it as learning? (`bt-learn`)"
+2. long-term constraints or technology choices → "Do you want to archive the decision? (`bt-decide`)"
+   - **special check**: if section 2.5 of the design contains a "suggested convention to capture" block, read that rule out to the user verbatim: "design 2.5 recommends capturing this convention: '{one-line rule}'. It now works. Do you want to archive it through `bt-decide`?" A stable pattern already identified in design deserves more proactive handling than a generic "want to record something?"
+3. feature design plus acceptance report or checklist may need collaboration-state projection → "Do you want to update or bind an external tracker? (`bt-tracker`)" When the feature started from roadmap, also mention that the done roadmap item can be synced. `bt-tracker` follows `sync_policy` from `.bytetrue/reference/project-management.md`, meaning preview plus asking only, with no external issue creation or update before confirmation
+4. interface changes or user-visible behavior changes → "Do you need to update the guide? (`bt-guide`)"
+5. public library surfaces changed, components, functions, or commands → "Do you need to update the API reference? (`bt-libdoc`)"
+6. if section 8 produced attention.md candidates → ask one by one, "Should candidate X be added to attention.md?" Once the user explicitly agrees, trigger `bt-note` so it can perform section classification, deduplication, and soft-limit checks. **One item at a time**. Do not handwrite it inside acceptance, or you will fork the rules from `bt-note`
+7. finally ask whether you should do a scoped commit
+
+For close-out commit rules, see section 4 of `shared-conventions.md`. The commit scope here is the feature code, the design doc, the acceptance report, and all architecture docs, req docs, roadmap `items.yaml`, and roadmap main doc that were actually updated this time.
+
+---
+
+## Easy Pitfalls
+
+- "all tests pass" → passing tests is not the same thing as acceptance scenarios being satisfied; section 3 still has to be checked one by one
+- "I looked at it with my eyes once" → follow the checklist and check it item by item
+- writing "known drift" in the report for an interface mismatch without fixing code or backfilling design
+- checking mount points only against the list and never grep-checking — missing mount points slip into the project and cannot later be cleanly removed
+- in section 3, frontend changes passed only by typecheck and were never run in a browser
+- section 5 architecture merge is reduced to one sentence like "overall no architecture impact", with no item-by-item verification
+- a needed architecture update is written only as "recommend updating later" — merge is an action now, not a suggestion
+- in section 7, only `items.yaml` is updated, and the main doc is left unsynchronized, so the two are inconsistent
+- the design frontmatter has `roadmap`, but section 7 is written as skipped — if the value exists, the write-back is mandatory
+- the report is finished without asking the user for final review confirmation
+- running `git commit` without explicit user agreement

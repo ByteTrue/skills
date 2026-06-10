@@ -1,132 +1,132 @@
 ---
 name: bt-trick
-description: 把可复用的编程模式 / 库用法 / 技术技巧整理成处方性参考库，三种类型 pattern / library / technique。触发：用户说"记录一个技巧"、"这个用法值得记"、"tricks"、"记录库用法"，或 design / analyze 阶段发现值得沉淀的技巧时推送。
+description: Organize reusable programming patterns, library usage, and technical techniques into a prescriptive reference library, with three types: `pattern`, `library`, and `technique`. Trigger when the user says "record a trick", "this usage is worth remembering", "tricks", or "record this library usage", or when a worthwhile technique surfaces during design or analysis and should be captured.
 ---
 
 # bt-trick
 
-## 启动必读
+## Read Before Starting
 
-开始任何判断或动作前，先读取 `.bytetrue/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `bt-onboard`，不要回退到外部 AI 入口文件。
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
 
-bt-trick 是面向问题的**处方性参考库**，回答：**要做 X，经过验证的正确做法是什么？** 不需要触发事件，任何时候发现值得沉淀的模式或用法都可以直接写。
+`bt-trick` is a problem-oriented **prescriptive reference library**. It answers: **when you need to do X, what is the validated correct way to do it?** It does not need a specific trigger event. Any time a pattern or usage worth preserving is discovered, it can be written directly.
 
-典型内容：某个设计模式在这个项目的标准写法 / 某个库的核心 API 用法 + 已知坑 / 某类操作的命令配方。
+Typical contents: the standard project-specific form of a design pattern, the core API usage plus known pitfalls of a library, or a command recipe for a class of operations.
 
-> 共享路径与命名约定看 `.bytetrue/reference/shared-conventions.md`。产物写入 `.bytetrue/compound/`，命名 `YYYY-MM-DD-trick-{slug}.md`，frontmatter 带 `doc_type: trick`。
+> For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`. Artifacts are written to `.bytetrue/compound/` using the name `YYYY-MM-DD-trick-{slug}.md` and frontmatter `doc_type: trick`.
 
 ---
 
-## 三种类型
+## Three Types
 
-frontmatter 的 `type` 字段：
+The frontmatter `type` field:
 
-| 类型 | 适用情境 | 示例 |
+| Type | When to Use It | Example |
 |---|---|---|
-| `pattern` | 设计模式 / 架构模式 / 编程惯用法 | "用 Repository 模式隔离数据访问层"、"用 Builder 构造复杂配置" |
-| `library` | 某个库 / 框架的用法 / 配置方式 / 常见坑 | "Prisma 事务的正确写法"、"Pinia store 的 action 错误处理" |
-| `technique` | 具体操作技巧 / 工具用法 / 命令配方 | "用 jq 从 JSON 提取嵌套字段"、"git bisect 定位引入 bug 的提交" |
+| `pattern` | design patterns, architecture patterns, or programming idioms | "Use the Repository pattern to isolate the data access layer", "Use Builder to construct complex configuration" |
+| `library` | usage, configuration style, or common pitfalls of a library or framework | "The correct way to write Prisma transactions", "Error handling for Pinia store actions" |
+| `technique` | concrete operational techniques, tool usage, or command recipes | "Use jq to extract nested fields from JSON", "Use git bisect to find the commit that introduced a bug" |
 
-查询用途：查"代码该怎么组织"→ pattern；"库 / 框架某 API 怎么用"→ library；"这类操作怎么做"→ technique。分不清选最接近的，`type` 不影响搜索可用性。
-
----
-
-## 文档格式
-
-frontmatter / 正文模板 / 长示例见同目录 `reference.md`。流程约束：
-
-- `type` 只允许 `pattern` / `library` / `technique`
-- 示例优先用项目真实代码或命令
-- "何时不适用 / 已知坑 / 相关文档"是可选节，用户说"没什么"就省略
+Query purpose: "how should the code be organized?" → `pattern`; "how is this library or framework API used?" → `library`; "how do I perform this class of operation?" → `technique`. If you cannot tell, pick the closest one. `type` does not affect search usability.
 
 ---
 
-## 工作流阶段
+## Document Format
 
-### Phase 1：识别类型
+For frontmatter, body templates, and long examples, see `reference.md` in the same directory. Process constraints:
 
-最多两个问题：
-
-1. "这是关于模式 / 结构、某个库 / 框架的用法，还是操作技巧 / 命令？" → 确定 `type`
-2. "一句话说：遇到什么情况时会用到它？" → 确定 `topic`
-
-用户描述已清楚就跳过直接进 Phase 1.5。
-
-### Phase 1.5：查重叠与意图分流（必做）
-
-按 `shared-conventions.md` §6 第 5/6 条：
-
-- 含"改 / 更新 / 修订 / 补充 / 某条 trick"或指向某份旧文档 → 直接走**更新已有**，不进新建流程
-- 否则用搜索工具 `--query` 查一遍 `topic`，命中相近时把候选列给用户
-
-**更新流程**：读旧文档 → 和用户对齐改哪几节 → 跳过 Phase 2 完整代码调查（被改的节涉及的代码要重读确认未失效）→ 起草 diff 给用户 review → 写回 + `updated: YYYY-MM-DD`。
-
-### Phase 2：代码调查（必做不可跳过）
-
-技巧通过代码体现——**用户不贴代码不等于不需要看代码**。AI 必须主动调查代码仓。
-
-为什么必做：没看代码就写出的"技巧"会停留在抽象层面，下次有人按这条找代码会找不到对应的真实例子，反而失去信心。
-
-1. **根据 topic + type 搜索代码仓**——Grep 关键词（函数名 / 类名 / 库导入 / 模式特征）；搜相关文件；必要时语义搜索补充
-2. **读取关键文件**——技巧实际使用 / 实现的代码位置：`library` 类找 import 和调用处；`pattern` 类找结构性代码（接口定义 / 类继承 / 组合）；`technique` 类找操作步骤对应的脚本或配置
-3. **产出**——记下文件路径和关键代码片段。完全找不到（纯经验性技巧、外部工具用法）就在 Phase 3 起草时说明"本技巧暂无项目内代码实例"
-
-补充：用户附带文件 → 仍要搜一遍代码仓确认有没有其他使用点；搜索结果为空 → 可继续但必须在文档注明；找到的代码和用户描述矛盾 → 主动跟用户确认。
-
-### Phase 3：提炼要点（一次一个问题）
-
-**结合 Phase 2 找到的代码**提问——不问用户已经能在代码看到的东西：
-
-1. "标准做法是什么？"（已看到实现的直接展示理解请用户确认）
-2. "为什么这样做有效？有什么原理？"
-3. "什么情况下不该用它？"（可选）
-4. "踩过坑或要注意的？"（可选，library 重点问）
-5. "代码片段或命令示例？"（已找到实际代码就跳过，直接用真实代码作为示例）
-
-用户说"没什么"或"跳过"就跳过，宁缺节也不用空话填充。
-
-### Phase 4：起草 + 用户 review
-
-AI 一次性起草完整文档（YAML frontmatter + 正文）。示例代码优先用 Phase 2 找到的真实项目代码（可精简），别凭空编写。展示给用户。
-
-### Phase 5：归档
-
-- 新建：写入 `compound/YYYY-MM-DD-trick-{slug}.md`，frontmatter 带 `doc_type: trick`
-- 更新：写回 Phase 1.5 定位的原文件 + `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条处理
-
-### Phase 6：可发现性检查
-
-写完若发现一两行"每次 ByteTrue 技能启动都该知道"的项目硬约束，提示用户用 `bt-note` 追加到 `.bytetrue/attention.md`。不要自作主张改 attention，也不要写外部 AI 入口。
+- `type` only allows `pattern`, `library`, or `technique`
+- examples should prefer real project code or actual commands
+- "When It Does Not Apply", "Known Pitfalls", and "Related Documents" are optional sections and should be omitted if the user says "nothing there"
 
 ---
 
-## 搜索工具
+## Workflow Phases
 
-> 完整语法见 `.bytetrue/reference/tools.md`。
+### Phase 1: Identify the Type
+
+At most two questions:
+
+1. "Is this about a pattern or structure, a library or framework usage, or an operational technique or command?" → determines `type`
+2. "In one sentence: in what situation would someone use this?" → determines `topic`
+
+If the user's description is already clear, skip directly to Phase 1.5.
+
+### Phase 1.5: Check for Overlap and Route Intent (required)
+
+Follow items 5 and 6 in `shared-conventions.md` §6:
+
+- If the request contains "change / update / revise / supplement / a certain trick" or points to an old document, go directly to **update existing** rather than creating a new one
+- Otherwise, use the search tool with `--query` to search once by `topic`, and list similar hits for the user if found
+
+**Update flow**: read the old document → align with the user on which sections need to change → skip the full Phase 2 code investigation, though any code touched by the changed sections still must be reread to confirm it has not gone stale → draft the diff for user review → write back and add `updated: YYYY-MM-DD`.
+
+### Phase 2: Code Investigation (required and cannot be skipped)
+
+Tricks are reflected through code. **The user not pasting code does not mean you can skip looking at code.** The AI must proactively investigate the repository.
+
+Why this is mandatory: a "trick" written without reading the code stays abstract. The next person following it will not be able to find a real corresponding example in the codebase and will lose trust in it.
+
+1. **Search the repository based on `topic` + `type`** — grep by keywords such as function name, class name, library import, or pattern signature; search relevant files; add semantic search if needed
+2. **Read the key files** — the code locations where the trick is actually used or implemented: for `library`, find imports and call sites; for `pattern`, find structural code such as interface definitions, inheritance, or composition; for `technique`, find the script or config corresponding to the operational steps
+3. **Output** — record file paths and key code snippets. If nothing is found at all, such as a purely experience-based trick or an external tool usage, then Phase 3 must state "this trick currently has no in-repo code example"
+
+Supplement: even if the user already attached a file, you must still search the repository once to see whether there are other usage points. If search results are empty, you may continue, but the document must say so. If the found code contradicts the user's description, proactively confirm with the user.
+
+### Phase 3: Distill the Key Points (one question at a time)
+
+Ask questions **based on the code found in Phase 2**. Do not ask the user for information that is already visible in the code:
+
+1. "What is the standard way to do this?" If the implementation is already visible, state your understanding directly and ask the user to confirm
+2. "Why is this effective? What is the principle behind it?"
+3. "When should this not be used?" optional
+4. "Any pitfalls or things to watch for?" optional, but especially important for `library`
+5. "Any code or command example?" If you already found real code, skip asking and use the real code directly as the example
+
+If the user says "nothing there" or "skip it", skip it. It is better to leave out a section than fill it with empty prose.
+
+### Phase 4: Draft + User Review
+
+The AI drafts the full document in one pass, including YAML frontmatter and body. Example code should prefer real project code found in Phase 2, possibly simplified. Do not invent examples. Show it to the user.
+
+### Phase 5: Archive
+
+- New document: write to `compound/YYYY-MM-DD-trick-{slug}.md` with frontmatter `doc_type: trick`
+- Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
+- Supersede: handle it according to item 5 of `shared-conventions.md` §6
+
+### Phase 6: Discoverability Check
+
+After writing, if you notice one or two lines of hard project constraints that "every ByteTrue skill startup should know", suggest that the user append them to `.bytetrue/attention.md` via `bt-note`. Do not change `attention.md` on your own, and do not write to an external AI entry file.
+
+---
+
+## Search Tools
+
+> For the full syntax, see `.bytetrue/reference/tools.md`.
 
 ```bash
-# 按类型 + 框架筛选
+# Filter by type + framework
 
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter type=library --filter framework~={库名}
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter type=library --filter framework~={library-name}
 
-# 按技术栈浏览
+# Browse by stack
 
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter language=typescript --filter status=active
 
-# 归档后查重叠
+# Check overlap after archiving
 
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --query "{关键词}" --json
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --query "{keyword}" --json
 ```
 
 ---
 
-## 守护规则
+## Guard Rules
 
-> 归档类共享规则见 `shared-conventions.md` 第 6 节。本技能特有：
+> For shared rules on archival workflows, see section 6 of `shared-conventions.md`. Rules specific to this skill:
 
-1. **只归档已验证的做法**——"也许应该这样做"不归档；必须用户或 AI 确认过有效
-2. **必须调查代码仓**——Phase 2 不可跳过。示例代码优先用项目真实代码不凭空编写
-3. **不替用户写原理**——用户说不清"为什么有效"就写"原理待补充"，不编造
-4. **示例优先于描述**——能用代码说清楚就用代码
-5. **只认自己的 doc_type**——只读写 `doc_type: trick`
+1. **Archive only validated practices** — "maybe this should be done like this" does not qualify; the user or AI must have confirmed that it works
+2. **You must investigate the repository** — Phase 2 cannot be skipped. Example code should prefer real project code rather than invented snippets
+3. **Do not invent the principle for the user** — if the user cannot explain "why it works", write "principle pending supplementation" instead of fabricating it
+4. **Examples take priority over description** — if code can explain it clearly, use code
+5. **Only recognize your own `doc_type`** — only read and write `doc_type: trick`

@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-CS Browser CLI：给 AI agent 使用的一行式浏览器控制工具。
+CS Browser CLI: a one-line browser control tool for AI agents.
 
-用法：
-    python browser.py exec <javascript>            执行 JS 并返回结构化结果
-    python browser.py scan                         获取简化后的页面 HTML
-    python browser.py evidence <selector>          导出渲染后的组件证据
-    python browser.py tabs                         列出所有浏览器 tab
-    python browser.py navigate <url>               打开 URL
-    python browser.py back                         后退
-    python browser.py forward                      前进
-    python browser.py reload                       重新加载当前页
-    python browser.py newtab [url]                 打开新 tab
-    python browser.py close [tab_id]               关闭 tab
-    python browser.py switch <url-pattern>         切换到匹配的 tab
-    python browser.py screenshot [filepath]        截图
+Usage:
+    python browser.py exec <javascript>            Execute JS and return structured results
+    python browser.py scan                         Get simplified page HTML
+    python browser.py evidence <selector>          Export rendered component evidence
+    python browser.py tabs                         List all browser tabs
+    python browser.py navigate <url>               Open a URL
+    python browser.py back                         Go back
+    python browser.py forward                      Go forward
+    python browser.py reload                       Reload the current page
+    python browser.py newtab [url]                 Open a new tab
+    python browser.py close [tab_id]               Close a tab
+    python browser.py switch <url-pattern>         Switch to a matching tab
+    python browser.py screenshot [filepath]        Capture a screenshot
 
-示例：
+Examples:
     python browser.py exec "document.title"
     python browser.py exec "document.querySelector('.btn').click()"
     python browser.py scan --text-only
@@ -31,8 +31,8 @@ CS Browser CLI：给 AI agent 使用的一行式浏览器控制工具。
 
 import sys, os, json, argparse, io, base64, time
 
-# ── Windows 上强制使用 UTF-8 ──────────────────────────────────────────
-# Windows 控制台默认常是 GBK，遇到 © 等字符会失败
+# Force UTF-8 on Windows
+# Windows consoles often default to GBK, which can fail on characters such as ©
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 if hasattr(sys.stderr, 'reconfigure'):
@@ -45,63 +45,63 @@ if _skill_dir not in sys.path:
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='browser', description='CS 浏览器控制 CLI')
+    parser = argparse.ArgumentParser(prog='browser', description='CS browser control CLI')
     sub = parser.add_subparsers(dest='cmd', required=True)
 
-    p_exec = sub.add_parser('exec', help='在浏览器中执行 JavaScript')
-    p_exec.add_argument('script', help='要执行的 JavaScript 代码')
-    p_exec.add_argument('--tab', help='目标 tab ID')
-    p_exec.add_argument('--no-monitor', action='store_true', help='跳过 DOM diff 监控')
-    p_exec.add_argument('--wait', help='执行前等待出现的 CSS selector')
-    p_exec.add_argument('--wait-ms', type=int, default=10000, help='最长等待毫秒数（默认：10000）')
-    p_exec.add_argument('--timeout', type=int, default=15, help='执行超时秒数（默认：15）')
+    p_exec = sub.add_parser('exec', help='Execute JavaScript in the browser')
+    p_exec.add_argument('script', help='JavaScript code to execute')
+    p_exec.add_argument('--tab', help='Target tab ID')
+    p_exec.add_argument('--no-monitor', action='store_true', help='Skip DOM diff monitoring')
+    p_exec.add_argument('--wait', help='CSS selector to wait for before execution')
+    p_exec.add_argument('--wait-ms', type=int, default=10000, help='Maximum wait time in milliseconds (default: 10000)')
+    p_exec.add_argument('--timeout', type=int, default=15, help='Execution timeout in seconds (default: 15)')
 
-    p_scan = sub.add_parser('scan', help='获取简化后的页面内容')
-    p_scan.add_argument('--tabs-only', action='store_true', help='只返回 tab 列表')
-    p_scan.add_argument('--text-only', action='store_true', help='只返回文本，减少 token')
-    p_scan.add_argument('--size-only', action='store_true', help='只返回内容大小，不返回内容本身')
-    p_scan.add_argument('--tab', help='要扫描的 tab ID')
-    p_scan.add_argument('--wait', help='扫描前等待出现的 CSS selector，适合 SPA')
-    p_scan.add_argument('--wait-ms', type=int, default=10000, help='最长等待毫秒数（默认：10000）')
+    p_scan = sub.add_parser('scan', help='Get simplified page content')
+    p_scan.add_argument('--tabs-only', action='store_true', help='Return only the tab list')
+    p_scan.add_argument('--text-only', action='store_true', help='Return text only, reducing token usage')
+    p_scan.add_argument('--size-only', action='store_true', help='Return only content size, not the content itself')
+    p_scan.add_argument('--tab', help='Tab ID to scan')
+    p_scan.add_argument('--wait', help='CSS selector to wait for before scanning, useful for SPAs')
+    p_scan.add_argument('--wait-ms', type=int, default=10000, help='Maximum wait time in milliseconds (default: 10000)')
 
-    p_evidence = sub.add_parser('evidence', help='导出组件的渲染 DOM、样式、结构和截图证据')
-    p_evidence.add_argument('selector', help='组件根节点的 CSS selector')
-    p_evidence.add_argument('--name', default='component', help='组件名，用于 metadata 和输出目录')
-    p_evidence.add_argument('--out', help='输出目录（默认：component-evidence/<name>）')
-    p_evidence.add_argument('--index', type=int, default=0, help='selector 匹配多个元素时使用的序号')
-    p_evidence.add_argument('--depth', type=int, default=4, help='后代结构深度')
-    p_evidence.add_argument('--tab', help='目标 tab ID')
-    p_evidence.add_argument('--wait', help='抽取前等待出现的 CSS selector')
-    p_evidence.add_argument('--wait-ms', type=int, default=10000, help='最长等待毫秒数（默认：10000）')
-    p_evidence.add_argument('--all-styles', action='store_true', help='捕获全部 computed styles，而不只重要 UI 样式')
+    p_evidence = sub.add_parser('evidence', help='Export rendered DOM, styles, structure, and screenshot evidence for a component')
+    p_evidence.add_argument('selector', help='CSS selector for the component root node')
+    p_evidence.add_argument('--name', default='component', help='Component name, used for metadata and the output directory')
+    p_evidence.add_argument('--out', help='Output directory (default: component-evidence/<name>)')
+    p_evidence.add_argument('--index', type=int, default=0, help='Match index when the selector matches multiple elements')
+    p_evidence.add_argument('--depth', type=int, default=4, help='Descendant-structure depth')
+    p_evidence.add_argument('--tab', help='Target tab ID')
+    p_evidence.add_argument('--wait', help='CSS selector to wait for before extraction')
+    p_evidence.add_argument('--wait-ms', type=int, default=10000, help='Maximum wait time in milliseconds (default: 10000)')
+    p_evidence.add_argument('--all-styles', action='store_true', help='Capture all computed styles instead of only key UI styles')
 
-    sub.add_parser('tabs', help='列出所有浏览器 tab')
+    sub.add_parser('tabs', help='List all browser tabs')
 
-    p_nav = sub.add_parser('navigate', help='打开 URL')
-    p_nav.add_argument('url', help='要打开的 URL')
-    p_nav.add_argument('--no-wait', action='store_true', help='不等待页面加载')
+    p_nav = sub.add_parser('navigate', help='Open a URL')
+    p_nav.add_argument('url', help='URL to open')
+    p_nav.add_argument('--no-wait', action='store_true', help='Do not wait for page load')
 
-    sub.add_parser('back', help='浏览器历史后退')
-    sub.add_parser('forward', help='浏览器历史前进')
-    sub.add_parser('reload', help='重新加载当前页面')
+    sub.add_parser('back', help='Browser history back')
+    sub.add_parser('forward', help='Browser history forward')
+    sub.add_parser('reload', help='Reload the current page')
 
-    p_newtab = sub.add_parser('newtab', help='打开新 tab')
-    p_newtab.add_argument('url', nargs='?', help='可选 URL')
+    p_newtab = sub.add_parser('newtab', help='Open a new tab')
+    p_newtab.add_argument('url', nargs='?', help='Optional URL')
 
-    p_close = sub.add_parser('close', help='关闭 tab')
-    p_close.add_argument('tab_id', nargs='?', help='要关闭的 tab ID，默认当前 tab')
+    p_close = sub.add_parser('close', help='Close a tab')
+    p_close.add_argument('tab_id', nargs='?', help='Tab ID to close, default is the current tab')
 
-    p_switch = sub.add_parser('switch', help='切换到匹配的 tab')
-    p_switch.add_argument('pattern', help='要匹配的 URL 片段')
+    p_switch = sub.add_parser('switch', help='Switch to a matching tab')
+    p_switch.add_argument('pattern', help='URL fragment to match')
 
-    p_screenshot = sub.add_parser('screenshot', help='截取当前 tab')
-    p_screenshot.add_argument('filepath', nargs='?', help='保存 PNG 的路径，默认自动放到临时目录')
+    p_screenshot = sub.add_parser('screenshot', help='Capture the current tab')
+    p_screenshot.add_argument('filepath', nargs='?', help='Path to save the PNG, default is an auto-generated temp path')
 
     args = parser.parse_args()
 
-    # ── 把模块日志重定向到 stderr ─────────────────────────────────────
-    # TMWebDriver 和 simphtml 会把连接日志、执行进度打印到 stdout。
-    # 这里转到 stderr，确保 stdout 只输出干净的 JSON 结果。
+    # Redirect module logs to stderr.
+    # TMWebDriver and simphtml print connection logs and execution progress to stdout.
+    # Redirecting here ensures stdout contains only clean JSON results.
     _real_stdout = sys.stdout
     sys.stdout = sys.stderr
     try:
@@ -145,7 +145,7 @@ def main():
     finally:
         sys.stdout = _real_stdout
 
-    # ── stdout 只输出一行干净 JSON ───────────────────────────────────
+    # stdout should emit only one clean line of JSON
     print(json.dumps(result, ensure_ascii=False, default=str))
 
 
