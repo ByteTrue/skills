@@ -118,7 +118,7 @@ Each of the three sub-goals covers 6 categories.
 3. **cross-doc reference validity** — whether targets cited by `see xxx.md` or `defined in yyy.md` actually exist
 4. **interface or contract alignment** — when multiple docs involve the same interface or type, whether signatures, fields, and semantics match
 5. **dependency closure** — whether if A says it depends on a capability from B, B actually exposes it; whether there are one-way dangling dependencies
-6. **same-type grouping and naming** — whether same-type docs follow `{type}-{slug}.md`, and whether a root directory still has 6 or more flat files of the same type, per `shared-conventions.md`
+6. **same-type grouping and naming** — whether same-type docs follow `{type}-{slug}.md`, and whether a root directory still has 6 or more flat files of the same type, per `.bytetrue/reference/shared-conventions.md`
 
 ---
 

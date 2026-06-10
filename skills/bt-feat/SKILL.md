@@ -7,7 +7,7 @@ description: Sub-workflow entry for new feature development. Move "add capabilit
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 The new-feature flow inserts a design document between "requirement" and "code" so that both sides have a handoff point. If the AI writes code directly from the requirement, three familiar problems appear: names do not line up with the existing code, scope keeps drifting during implementation, and no archive remains after the work is done.
 

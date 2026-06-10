@@ -7,7 +7,7 @@ description: Generate reference documentation entry by entry for a library's pub
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 `guidedoc` teaches "how to use X to do Y". `libdoc` tells you "what each part of X looks like and how it is configured".
 

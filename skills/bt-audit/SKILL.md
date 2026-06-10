@@ -7,7 +7,7 @@ description: System audit. Proactively discover bug risks, security vulnerabilit
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 `bt-issue` waits for you to report a known bug. `bt-refactor` waits for you to point at a known optimization target. `bt-explore` waits for you to ask a question. But when the request is "I do not even know where the problems are; scan it first and tell me", nobody else owns that surface. `bt-audit` fills that gap: **within a user-bounded scope, proactively scan the code and produce a findings list cross-classified by severity and nature**.
 

@@ -7,7 +7,7 @@ description: Sub-workflow entry for fixing bugs. Move from "problem discovered" 
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 The instinctive way to fix a bug is "find the wrong place and patch it", but that instinct keeps recreating the same problems:
 

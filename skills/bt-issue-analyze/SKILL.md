@@ -7,7 +7,7 @@ description: Stage 2 of the issue workflow. Read the report and the code to loca
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 The user has already described the problem clearly. Your job is to **find the root cause by actually reading the code** — not by reasoning in your head and not by guessing on top of the report. Reading the code is the core action. If you skip it, the analysis is worthless.
 

@@ -7,7 +7,7 @@ description: Write or update outward-facing guide documents, including `dev-guid
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 Code solves problems. Documentation lets other people use that code to solve problems. Specs record "what was built" and "why it was built that way", but downstream developers and end users neither need nor should read specs. They need publishable guides written for their own role. `guidedoc` turns specs and code into guides that readers can actually use.
 

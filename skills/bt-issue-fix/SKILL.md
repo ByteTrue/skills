@@ -7,7 +7,7 @@ description: Stage 3 of the issue workflow. Apply a pinpoint fix based on the co
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 The root cause and fix plan are already determined. In the standard path this happened in analysis, and in the fast path it was confirmed verbally during report. Your job is to change the code according to that plan, verify the result, and write down the fix record.
 
@@ -61,7 +61,7 @@ Why: bug fixes are naturally narrow in scenario. Adding a new abstraction means 
 
 ### Code-quality reflection check
 
-Bug fixes often look small, but the AI can still drift while writing them: stuffing another special case into a big file, adding another method into a large class, or adding `if` branches just to get around an edge case. See section 7 of `shared-conventions.md` for the reflection checks.
+Bug fixes often look small, but the AI can still drift while writing them: stuffing another special case into a big file, adding another method into a large class, or adding `if` branches just to get around an edge case. See section 7 of `.bytetrue/reference/shared-conventions.md` for the reflection checks.
 
 `issue-fix` is more conservative than `feature-implement`: **when reflection signals are triggered and the conclusion is "this should be split", the default is not to do that split inside this PR**. Record it as a "while here I noticed" item under the minimal-change rule. The only exception is when "without splitting, this bug cannot be fixed cleanly". In that case, stop and confirm with the user: "the prerequisite for fixing this bug cleanly is {refactor action}; should it be included here or split out separately?"
 
@@ -143,7 +143,7 @@ The fix note must additionally record:
 
 ## Close-Out Commit
 
-Follow the "scoped-commit" rules in section 4 of `shared-conventions.md`. At this stage:
+Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-conventions.md`. At this stage:
 
 - **commit scope**: the fix code, `{slug}-fix-note.md`, and any report or analysis files updated together this time
 - after the fix closes the loop, tell the user "fix verification is complete and `{slug}-fix-note.md` has been written", then immediately ask whether they want a commit
@@ -154,7 +154,7 @@ Follow the "scoped-commit" rules in section 4 of `shared-conventions.md`. At thi
 
 Tell the user: "The issue fix is complete and the workflow is closed. Report, analysis, and fix-note have all been archived."
 
-Following section 3 `issue-fix` of `shared-conventions.md`, ask one sentence for each close-out suggestion, and skip immediately if the user says "no need":
+Following section 3 `issue-fix` of `.bytetrue/reference/shared-conventions.md`, ask one sentence for each close-out suggestion, and skip immediately if the user says "no need":
 
 1. if this exposed a reusable pitfall → "Do you want to capture it as learning? (`bt-learn`)"
 2. if this surfaced a long-term constraint, convention, or technical decision → "Do you want to archive the decision? (`bt-decide`)"

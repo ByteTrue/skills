@@ -70,7 +70,7 @@ Define how the modules interact. This section becomes hard-constraint input for 
 
 ### 4.1 {interface / protocol name 1}
 
-**Direction**: Module A → Module B  
+**Direction**: Module A → Module B
 **Form**: HTTP API / function call / message event / shared database table / file protocol / ...
 
 **Contract**:

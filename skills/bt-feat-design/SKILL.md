@@ -7,7 +7,7 @@ description: Stage 1 of the feature workflow. Draft `{slug}-design.md` for a new
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 The output of this stage is one design file, `{slug}-design.md`, plus an action checklist extracted from it, `{slug}-checklist.yaml`. These two artifacts are consumed by two later stages, implement executes against them and acceptance verifies against them, so if this stage is wrong or incomplete, everything downstream inherits the error.
 
@@ -243,7 +243,7 @@ The user has passed overall review, and:
 
 Tell the user: "feature design is approved and the checklist is ready. The next stage is implementation. Trigger `bt-feat-impl`."
 
-Following section 3 `feature-design` of `shared-conventions.md`, give one-sentence close-out prompts in order, and skip immediately if the user says "no need":
+Following section 3 `feature-design` of `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in order, and skip immediately if the user says "no need":
 
 1. an approved feature design may need collaboration-state projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" When the feature starts from roadmap, also mention that the corresponding roadmap item can be updated or bound. Do not create or update any external issue before explicit user confirmation
 

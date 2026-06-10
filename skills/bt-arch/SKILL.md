@@ -7,7 +7,7 @@ description: Maintain `.bytetrue/architecture/`, the system map that records onl
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 `.bytetrue/architecture/` is the project's "map". Design reads it before writing a plan so it can locate itself. `issue-analyze` reads it to understand module boundaries during root-cause analysis. Newcomers read it to understand roughly what the system looks like. This skill is the unified entry for three jobs: drafting, refreshing, and health-checking.
 
@@ -80,7 +80,7 @@ If the scope is not converged, ask the user to narrow it. A "rewrite the whole m
 
 ### Phase 2: Read the materials
 
-**Required for all modes**: `shared-conventions.md`, `ARCHITECTURE.md`, and the other docs under `architecture/`.
+**Required for all modes**: `.bytetrue/reference/shared-conventions.md`, `ARCHITECTURE.md`, and the other docs under `architecture/`.
 
 **Additional inputs for backfill and update**, see the "reading checklist" in `reference.md`: the code entry points and core files of the target module, user-provided material, related compound artifacts such as decision, explore, and learning, and related existing feature designs. **Update-specific**: read the full current doc plus a rough `git log` scan of code changes since `last_reviewed`.
 
@@ -112,7 +112,7 @@ If the input comes from `bt-explore module-overview` or `zoom-out`, reuse its mo
 
 **backfill**:
 
-- write to `architecture/{type}-{slug}.md`, following the naming rules in section 0 of `shared-conventions.md`, with frontmatter `status: current` and `last_reviewed` set to today
+- write to `architecture/{type}-{slug}.md`, following the naming rules in section 0 of `.bytetrue/reference/shared-conventions.md`, with frontmatter `status: current` and `last_reviewed` set to today
 - **same-type grouping check**, mandatory before writing: according to the "architecture doc grouping rules", if after writing there would be 6 or more docs of the same type in the root directory, move the entire type into `architecture/{type}/`, remove the type prefix from filenames, and update the links in `ARCHITECTURE.md`; include the migration list in the Phase 5 review
 - **index update**: add the new doc to `ARCHITECTURE.md`. Backfill **must** add this. Otherwise the doc exists but nobody will find it. This change is reviewed together, not changed silently
 
@@ -184,6 +184,7 @@ If the input comes from `bt-explore module-overview` or `zoom-out`, reuse its mo
 - paraphrasing code — each section lists only "what is there", never "why it is split this way"
 - emitting partial drafts in batches — the user cannot catch cross-section contradictions
 - terminology conflicts — the new term conflicts with code, other architecture docs, or existing compound artifacts
+- writing or editing multiple architecture docs in one run — the user cannot review all of them properly, so they tend to be merged roughly
 - conflicting with an existing decision and not stopping — quietly writing a contradictory version
 - forgetting to add the `ARCHITECTURE.md` index entry after backfill, so the doc exists but is undiscoverable
 - using backfill for a module that is not yet running in code — that is target state and should go to roadmap

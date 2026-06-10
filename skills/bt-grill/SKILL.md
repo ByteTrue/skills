@@ -1,6 +1,6 @@
 ---
 name: bt-grill
-description: ByteTrue's plan stress-test skill. By default it reads `.bytetrue` project docs and code context to stress-test a plan, design, roadmap, refactor, architecture proposal, or project-management proposal. When explicitly invoked with `--lite`, `--no-docs`, or "pure grill-me", it degrades into a lightweight questioning mode that does not read ByteTrue docs. Use when the user says "grill me", "interrogate this plan", "help me pressure-test it", "stress-test the design", "is this design solid", or "push this plan until it is clear", or when a proposal needs to be challenged before `bt-brainstorm`, `bt-roadmap`, or `bt-feat-design`.
+description: ByteTrue's plan stress-test skill. By default it reads `.bytetrue` project docs and code context to stress-test a plan, design, roadmap, refactor, architecture proposal, or project-management proposal, and in with-docs mode it updates the appropriate ByteTrue docs as terminology or decisions crystallize. When explicitly invoked with `--lite`, `--no-docs`, or "pure grill-me", it degrades into a lightweight questioning mode that does not read ByteTrue docs. Use when the user says "grill me", "interrogate this plan", "help me pressure-test it", "stress-test the design", "is this design solid", or "push this plan until it is clear", or when a proposal needs to be challenged before `bt-brainstorm`, `bt-roadmap`, or `bt-feat-design`.
 ---
 
 # bt-grill
@@ -9,7 +9,7 @@ description: ByteTrue's plan stress-test skill. By default it reads `.bytetrue` 
 
 It combines two modes:
 
-- **Default: with docs** — read project context under `.bytetrue/` first, then challenge the user's proposal using that context; once consensus forms, it must be written into the appropriate ByteTrue document
+- **Default: with docs** — read project context under `.bytetrue/` first, then challenge the user's proposal against that context; as terminology, decisions, or open questions crystallize, capture them in the appropriate ByteTrue document after user confirmation rather than merely suggesting "this should be written down"
 - **Lightweight: grill-me** — when the user explicitly says `--lite`, `--no-docs`, "pure grill-me", or "do not read docs, just question me", it becomes dialogue-only probing; it may still read code as needed to answer factual questions, but it does not read or write `.bytetrue` docs
 
 ## Hard Rules
@@ -40,7 +40,7 @@ At startup, do a minimal context scan:
    - `features/`, `issues/`, `refactors/`: whether this is continuation of existing work
    - `compound/`: whether there are existing decisions, learnings, tricks, or explores that conflict with or can be reused
 4. When the user claims "the code is currently X", read code as needed to verify it. If you find a conflict, you must point it out.
-5. Once consensus forms, do not wait until the end of the conversation to say "this should be captured". Follow the "document write rules" in this file and update the appropriate ByteTrue document.
+5. When a term, language boundary, decision, or open question crystallizes, do not wait until the final summary. Follow the "document write rules" in this file and update the appropriate ByteTrue document after user confirmation.
 
 ### Lightweight `grill-me` mode
 
@@ -128,15 +128,15 @@ Each time, ask only the single scenario most likely to overturn the plan.
 
 ### 6. Document write rules
 
-In `with-docs` mode, important conclusions must not remain only in the conversation, and it is not enough to merely say "this should be captured". Before each grill converges, you must complete one document-ownership judgment, and after user confirmation, write the smallest appropriate update into the proper ByteTrue doc.
+In `with-docs` mode, important conclusions must not remain only in the conversation, and it is not enough to merely say "this should be captured". When terminology is resolved, capture it inline after confirmation rather than batching all glossary work until the end. Before each grill converges, complete one document-ownership judgment; after user confirmation, write the smallest appropriate update into the proper ByteTrue doc.
 
 Write targets:
 
-- terminology, language consensus, or domain glossary → update `.bytetrue/reference/domain-context.md`
+- terminology, language consensus, or domain glossary → update `.bytetrue/reference/domain-context.md`. This file is the ByteTrue equivalent of Matt's `CONTEXT.md`: a glossary and language-boundary document only, not a spec, scratch pad, or home for implementation decisions
 - project-management provider, label, sync, or tracker rules → update `.bytetrue/reference/project-management.md`
 - capability vision, user stories, or boundaries became clearer → use `bt-req draft/update` or update the corresponding requirement directly
 - current system state or architecture constraints need updating → use `bt-arch update` or update the relevant architecture doc
-- long-term technical choice, constraint, or convention has been finalized → use `bt-decide` and write into `.bytetrue/compound/` as a decision
+- finalized long-term technical choice, architecture decision, hard constraint, or convention → use `bt-decide` and write into `.bytetrue/compound/` as a decision. Offer this sparingly: it should be a real decision with meaningful future cost, not just an obvious or easy-to-reverse note
 - one or two lines of must-read startup notes → use `bt-note` and write into `.bytetrue/attention.md`
 - investigation facts or code evidence → use `bt-explore` and write into `.bytetrue/compound/` as an explore
 - a large-demand breakdown is ready → use `bt-roadmap` and write into `.bytetrue/roadmap/{slug}/`
@@ -189,6 +189,9 @@ If the next step belongs to a project-management capability but ByteTrue does no
 - accepting whatever the user says without challenging alternative routes
 - starting `with-docs` mode without first reading `.bytetrue/`
 - noticing a docs or code conflict but being afraid to interrupt the user, so you do not point it out
+- batching resolved terminology until the final summary instead of capturing it when the language consensus forms
+- using `.bytetrue/reference/domain-context.md` as a spec, scratch pad, or implementation-decision document instead of keeping it as glossary and terminology boundaries
 - drilling down into implementation details and crossing the responsibility line of `bt-feat-design` or `bt-roadmap`
 - writing unresolved discussion directly into a decision document
+- creating a decision document for an obvious, easy-to-reverse note that does not carry meaningful future context
 - the user explicitly asks for lite mode, yet you still force ByteTrue docs into the turn

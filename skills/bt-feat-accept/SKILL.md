@@ -7,7 +7,7 @@ description: Stage 3 of the feature workflow, acceptance closure. Verify the imp
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 The code may already be written, but the workflow is not finished. This stage does four things, and every one of them is mandatory:
 
@@ -64,7 +64,7 @@ The entire comparison table of this skill is hardcoded against the current secti
 
 ## Acceptance report template
 
-Fill it **section by section, do not skip sections**. The report path lives inside the feature directory, location defined in section 0 of `shared-conventions.md`.
+Fill it **section by section, do not skip sections**. The report path lives inside the feature directory, location defined in section 0 of `.bytetrue/reference/shared-conventions.md`.
 
 ```markdown
 # {Feature Name} Acceptance Report
@@ -178,7 +178,7 @@ Compare against the `roadmap` and `roadmap_item` fields in design frontmatter:
   - synchronize the corresponding sub-feature entry inside section 3 of `{roadmap}-roadmap.md`
 - [ ] the two fields are inconsistent, only one is filled → stop and fix or clarify
 
-See section 2.5 in `shared-conventions.md` for the handoff protocol. Like architecture merge and req write-back, this is an actual file-writing action.
+See section 2.5 in `.bytetrue/reference/shared-conventions.md` for the handoff protocol. Like architecture merge and req write-back, this is an actual file-writing action.
 
 ## 8. attention.md candidate review
 
@@ -225,7 +225,7 @@ Sections 1 and 2 are the easiest places to expose drift, so do them first. The r
 
 Tell the user: "The acceptance report is ready, the architecture docs have been merged, and the bt-feat workflow is complete. Future bugs go through the issue workflow."
 
-Following section 3 of `shared-conventions.md`, give one-sentence close-out prompts in order, and skip immediately if the user says "no need":
+Following section 3 of `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in order, and skip immediately if the user says "no need":
 
 1. reusable-value pitfalls or experience → "Do you want to capture it as learning? (`bt-learn`)"
 2. long-term constraints or technology choices → "Do you want to archive the decision? (`bt-decide`)"
@@ -236,7 +236,7 @@ Following section 3 of `shared-conventions.md`, give one-sentence close-out prom
 6. if section 8 produced attention.md candidates → ask one by one, "Should candidate X be added to attention.md?" Once the user explicitly agrees, trigger `bt-note` so it can perform section classification, deduplication, and soft-limit checks. **One item at a time**. Do not handwrite it inside acceptance, or you will fork the rules from `bt-note`
 7. finally ask whether you should do a scoped commit
 
-For close-out commit rules, see section 4 of `shared-conventions.md`. The commit scope here is the feature code, the design doc, the acceptance report, and all architecture docs, req docs, roadmap `items.yaml`, and roadmap main doc that were actually updated this time.
+For close-out commit rules, see section 4 of `.bytetrue/reference/shared-conventions.md`. The commit scope here is the feature code, the design doc, the acceptance report, and all architecture docs, req docs, roadmap `items.yaml`, and roadmap main doc that were actually updated this time.
 
 ---
 

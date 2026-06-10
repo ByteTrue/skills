@@ -7,7 +7,7 @@ description: Perform targeted code exploration in the repository and turn "quest
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 If the first time a question is asked it takes two hours to inspect the code, then the second time the answer should be findable within five minutes, provided that the first pass left behind an evidence-backed record. `bt-explore` turns "question → read code → reach conclusion" into a searchable exploration document.
 
@@ -63,7 +63,7 @@ If the user's description is already clear, go directly to Phase 1.5.
 
 ### Phase 1.5: Check for Overlap and Route Intent (required)
 
-Follow items 5 and 6 in `shared-conventions.md` §6:
+Follow items 5 and 6 in `.bytetrue/reference/shared-conventions.md` §6:
 
 - If the request includes "update / revisit / a previous explore / we explored this module before" or points to an old explore document, go to **update or supersede**. Characteristic of explore: when code has changed and the old conclusion is no longer valid, the old document gets `status: outdated` and a new one is created as the superseding current version. If only evidence is being supplemented or the short answer is being tightened while the core conclusion remains the same, then update the existing document.
 - Otherwise, use the search tool to search once by keywords or module. If you hit a similar old explore, read it first. If it already answers the question directly, tell the user "there is already one at {path}; reuse it or re-explore from scratch?"
@@ -91,7 +91,7 @@ Why "stop when enough": exploration is not exhaustive enumeration. It is buildin
 
 - New document: write to `.bytetrue/compound/YYYY-MM-DD-explore-{slug}.md` with frontmatter `doc_type: explore`
 - Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
-- Supersede: follow item 5 of `shared-conventions.md` §6; the old document gets `status: outdated` plus `superseded-by`
+- Supersede: follow item 5 of `.bytetrue/reference/shared-conventions.md` §6; the old document gets `status: outdated` plus `superseded-by`
 
 ### Phase 5: Provide a Suggested Next Step
 
@@ -128,7 +128,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type
 
 ## Guard Rules
 
-> For shared rules on archival workflows, see section 6 of `shared-conventions.md`. Anti-patterns specific to this skill:
+> For shared rules on archival workflows, see section 6 of `.bytetrue/reference/shared-conventions.md`. Anti-patterns specific to this skill:
 
 - giving conclusions without reading the code
 - writing evidence as "it looks like" without `file:line`

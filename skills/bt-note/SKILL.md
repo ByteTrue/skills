@@ -7,7 +7,7 @@ description: Append project fragment knowledge that is "too short to deserve its
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, first check `.bytetrue/attention.md`: if it exists, read it; if `.bytetrue/` itself is missing, tell the user to run `bt-onboard` first; only when `attention.md` is missing may this skill create the fixed-section skeleton first and then write to it. Do not fall back to an external AI entry file.
+Before making any judgment or taking any action, first check `.bytetrue/attention.md`: if it exists, read it; if `.bytetrue/` itself is missing, tell the user to run `bt-onboard` first; only when `attention.md` is missing may this skill create the fixed-section skeleton first and then write to it.
 
 `bt-learn`, `bt-trick`, and `bt-decide` produce standalone markdown files that are found **through search**. `.bytetrue/attention.md` is the **mandatory read** context for ByteTrue skill startup. These two kinds of information have different destinations. This skill is dedicated to the latter: append fragment knowledge that is short, stable, and needed every time into the attention file.
 
@@ -49,11 +49,10 @@ If unsure, ask the user: "Will the AI need to know this in almost every future s
 
 ## Target File
 
-The target file is always `.bytetrue/attention.md`. There is no longer any compatibility for external AI tool entry files such as `AGENTS.md`, `CLAUDE.md`, or `.cursorrules`.
+The target file is always `.bytetrue/attention.md`.
 
 - if `.bytetrue/` does not exist → this repository has not been onboarded to ByteTrue yet, so first ask the user to run `bt-onboard`
 - if `.bytetrue/attention.md` does not exist → treat it as a missing skeleton, create the minimal skeleton first, then write into it
-- even if `AGENTS.md` or `CLAUDE.md` exists, do not read it, do not write to it, and do not ask the user which one they prefer
 
 `attention.md` is ByteTrue's own startup-notes entry point. Its value comes from every ByteTrue skill explicitly requiring it, not from automatic injection by external tools.
 
@@ -153,7 +152,6 @@ If the user says "no need", skip immediately and do not repeat the suggestion.
 ## Easy Pitfalls
 
 - stuffing detailed background or multi-step instructions into `attention.md` — if it exceeds two lines, it should go to `bt-learn`
-- writing into `AGENTS.md` or `CLAUDE.md` — ByteTrue no longer supports these external entry files
 - silently adding new sections — the section list is fixed, and adding one must be discussed with the user first
 - seeing one note and writing several related ones at the same time — one item per run
 - recording short-term state such as "this week we are doing X" or "the current sprint goal is Y" — it will expire, nobody will delete it, and it will gradually become misleading

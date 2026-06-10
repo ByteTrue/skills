@@ -7,7 +7,7 @@ description: Entry point for the code-optimization sub-workflow. It handles work
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 When the AI refactors by itself, there are two stable failure modes: first, it does not know the module's real requirements and constraints, so the result is not behavior-equivalent; second, the swallowed scope exceeds what the context window can hold, so by the time it reaches the later changes it has forgotten the earlier constraints. This workflow inserts a scan checklist plus a method library between "want to optimize" and "start editing", so the AI takes only the work it can reliably do correctly.
 

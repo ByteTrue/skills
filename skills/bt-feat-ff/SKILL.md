@@ -7,7 +7,7 @@ description: Ultra-light path for the feature workflow. Skip design and checklis
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 When the user asks for a small feature, the AI would normally start coding directly anyway. This skill **does not change that**. It does only one thing: before coding, point the AI at the ByteTrue knowledge already captured inside the project, search it as needed, and give the resulting code one extra layer of protection beyond bare coding; after implementation, write back the **minimal `{slug}-ff-note.md`** so this work remains traceable, visible to `bt-arch` and `bt-req` backfill, and eligible for a scoped commit.
 
@@ -28,7 +28,7 @@ Glob `.bytetrue/`, discover the available directories and documents, and use the
   ```
 - **`requirements/`** — read boundaries if there is a relevant requirement
 - **`features/`** — if there is a similar feature, refer to its design
-- **`reference/`** — `shared-conventions.md` and `tools.md`
+- **`reference/`** — `.bytetrue/reference/shared-conventions.md` and `.bytetrue/reference/tools.md`
 
 ---
 
@@ -180,7 +180,7 @@ Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-con
 - **commit scope**: this code change plus `{slug}-ff-note.md`
 - after the ff note is written, tell the user "it is ready; do you want me to commit it?" and only execute after explicit approval
 
-Following section 3 `feature-ff` of `shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+Following section 3 `feature-ff` of `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
 
 1. if it exposed a pitfall → "Capture it as learning? (`bt-learn`)"
 2. if it finalized a long-term constraint → "Archive the decision? (`bt-decide`)"

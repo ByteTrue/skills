@@ -28,7 +28,7 @@ Do this every time first:
 5. if the provider is `github`, check `gh`, `gh auth status`, and `git remote -v`
 6. if the provider is `gitlab`, check `glab`, `glab auth status`, and `git remote -v`
 
-If the provider is `local`, do not create any external issue. Simply explain that no external tracker is configured yet, and offer to help update `project-management.md` or recommend rerunning `bt-onboard`.
+If the provider is `local`, do not create any external issue. Simply explain that no external tracker is configured yet, and offer to help update `.bytetrue/reference/project-management.md` or recommend rerunning `bt-onboard`.
 
 ---
 
@@ -199,7 +199,7 @@ During updates, only replace the content inside that block. Keep all team-writte
 
 ## Statuses and labels
 
-ByteTrue uses canonical keys; external label names come from `project-management.md`:
+ByteTrue uses canonical keys; external label names come from `.bytetrue/reference/project-management.md`:
 
 - `prd`
 - `task`
@@ -280,7 +280,7 @@ Once the following stage outputs satisfy the syncable-source and syncable-status
 
 ## Exit Conditions
 
-- [ ] `project-management.md` has been read and the provider has been confirmed
+- [ ] `.bytetrue/reference/project-management.md` has been read and the provider has been confirmed
 - [ ] before any external side effect, a preview was shown and user confirmation was obtained
 - [ ] after publish, link, or update succeeded, external metadata was written back
 - [ ] triage mode did not automatically modify `.bytetrue`

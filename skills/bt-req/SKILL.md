@@ -7,7 +7,7 @@ description: Maintain the capability vision documents under `.bytetrue/requireme
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 `.bytetrue/requirements/` is the project's "capability catalog". Each document describes **what problem created one capability, how the capability solves it, and where its boundaries are**, written in plain language that non-technical readers can also understand. Architecture docs explain "how it is built". Requirement docs explain "why it should exist".
 

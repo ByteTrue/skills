@@ -64,7 +64,7 @@ The skeleton after onboarding, built by `bt-onboard`:
 - feature / issue / refactor directories: all carry a date prefix, `YYYY-MM-DD-{slug}`
 - archival docs: `compound/YYYY-MM-DD-{doc_type}-{slug}.md`, with the date being the **archival day**
 - architecture docs: `architecture/{type}-{slug}.md`, long-lived and without date prefix; the root entry is always `ARCHITECTURE.md`
-- the project-notes entry is fixed at `.bytetrue/attention.md`; every ByteTrue sub-skill must read it before startup; no more compatibility with external entries such as `AGENTS.md` or `CLAUDE.md`
+- the project-notes entry is fixed at `.bytetrue/attention.md`; every ByteTrue sub-skill must read it before startup
 
 ### Grouping rule for architecture docs, same-type aggregation
 
@@ -243,7 +243,7 @@ The following rules are shared by `bt-learn`, `bt-trick`, `bt-decide`, and `bt-e
 1. **Append, do not delete** — once archived, a document is never deleted unless it is explicitly superseded with `status=superseded`; losing rationale is extremely expensive
 2. **Better absent than low-quality** — if the user cannot explain a section, omit it rather than having the AI fabricate it
 3. **Do not write substantive content on the user's behalf** — the AI is responsible for structure and connective wording; the substantive conclusion must come from the user or from traceable code evidence
-4. **Check attention.md** — after writing, if the archive reveals one or two hard constraints that every startup should know, prompt the user to append them into `.bytetrue/attention.md` through `bt-note`; do not directly edit external AI entry files
+4. **Check attention.md** — after writing, if the archive reveals one or two hard constraints that every startup should know, prompt the user to append them into `.bytetrue/attention.md` through `bt-note`
 5. **Check for overlap before drafting** — before writing, use `search-yaml.py --query` to search for semantically similar older docs. If there is a hit, list the candidates and let the user choose one of three paths:
    - **update existing**, the default priority — reuse the original filename and original creation date, **do not create a new file**; add `updated: YYYY-MM-DD` to frontmatter; for anything beyond a minor revision, add a one-line update note at the end
    - **supersede** — keep the old doc, set `status: superseded` plus `superseded-by: {new filename}`, add `**[Superseded]** see {new slug}` at the top of the old body, and put `supersedes: {old filename}` into the new frontmatter

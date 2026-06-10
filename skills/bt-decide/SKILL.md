@@ -7,7 +7,7 @@ description: Record finalized technical choices, architecture decisions, long-te
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 In a project, "intentional choices" such as technology choices, architecture decisions, long-term constraints, and coding conventions are very easy to lose. Their disappearance triggers no error, and nobody notices when they are gone, but the cost is concrete:
 
@@ -58,7 +58,7 @@ Use **one question** to confirm the critical information rather than showing the
 
 ### Phase 1.5: Check for Overlap and Route Intent (required)
 
-Execute items 5 and 6 in `shared-conventions.md` §6:
+Execute items 5 and 6 in `.bytetrue/reference/shared-conventions.md` §6:
 
 - If the user's wording includes "change / update / overturn / this decision / this technology choice" or explicitly points to an old decision document, go directly to **update or supersede**. Decision-document characteristic: **if the conclusion itself changed, it almost always needs `supersede`**, because the old conclusion must remain visible rather than being overwritten in place. Only when background, alternatives, or impact descriptions are being supplemented should you "update existing"
 - Otherwise, use the search tool below to search once by category plus keywords, and if you hit similar old decisions, list the candidates for the user
@@ -83,7 +83,7 @@ The AI drafts the complete document from the conversation, including YAML frontm
 
 - New document: write to `.bytetrue/compound/YYYY-MM-DD-decision-{slug}.md` with frontmatter `doc_type: decision`
 - Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
-- Supersede: handle it according to item 5 of `shared-conventions.md` §6; old document gets `status: superseded` plus `superseded-by`
+- Supersede: handle it according to item 5 of `.bytetrue/reference/shared-conventions.md` §6; old document gets `status: superseded` plus `superseded-by`
 
 ### Phase 5: Related Workflow Update Prompts
 
@@ -116,7 +116,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type
 
 ## Guard Rules
 
-> For shared guard rules across archival workflows, such as append-only, better absent than low-quality, do not write in place for the user, discoverability, and post-archive overlap checks, see section 6 of `shared-conventions.md`. Rules specific to this skill:
+> For shared guard rules across archival workflows, such as append-only, better absent than low-quality, do not write in place for the user, discoverability, and post-archive overlap checks, see section 6 of `.bytetrue/reference/shared-conventions.md`. Rules specific to this skill:
 
 1. **Archive only finalized decisions** — proposals still under discussion are not archived
 2. **`status=superseded` does not mean deletion** — keep the original text, add `superseded-by`, and add `**[Superseded]** see {new document slug}` at the top of the body

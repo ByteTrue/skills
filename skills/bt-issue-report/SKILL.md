@@ -7,7 +7,7 @@ description: Stage 1 of the issue workflow. Turn a problem into a reproducible a
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 This stage does two things: turn the problem in the user's head into a structured record, and decide between the standard path and the fast path.
 
@@ -142,7 +142,7 @@ Reproduction frequency: {stable / probabilistic, about X% / currently cannot be 
 
 Tell the user: "The issue report is ready. Stage 2 is root-cause analysis. Trigger `bt-issue-analyze` next."
 
-Following section 3 `issue-report` in `shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+Following section 3 `issue-report` in `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
 
 1. a confirmed bug issue may need collaboration projection → "Do you want to sync or bind it to an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit user confirmation
 

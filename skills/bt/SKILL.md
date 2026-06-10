@@ -7,7 +7,7 @@ description: Root entry for the ByteTrue workflow. Introduce the overall system 
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 `bt` is the unified entry point for the ByteTrue workflow family. In most cases, the user will not name a specific `bt-xxx` skill up front. They may only say "I want to add a permission check", "there is a bug here", "introduce bytetrue", or even just send `bt`. This skill is responsible for catching that open-ended input, understanding the intent, and routing to the correct sub-skill.
 

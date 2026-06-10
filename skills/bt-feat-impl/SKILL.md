@@ -7,7 +7,7 @@ description: Stage 2 of the feature workflow. Advance according to the paradigm-
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 At this point the user has already signed off on the design. Your job is to turn that design into code. The thing most likely to go wrong is not the coding itself, but **what to do when implementation discovers a case the design did not cover**. If you brute-force through it, the design becomes decoration. The rules below exist to make "stop and go back" the default action.
 

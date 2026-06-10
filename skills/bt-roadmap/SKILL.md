@@ -7,7 +7,7 @@ description: Turn a demand that is too large to fit into a single feature into c
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 `.bytetrue/roadmap/` is the project's planning layer. Each subdirectory carries one larger demand, and its main document consists of three parts:
 
@@ -191,7 +191,7 @@ At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept`
 
 Tell the user: "The roadmap is ready. Each sub-feature later goes through `bt-feat-design`, and the interface contracts inside the roadmap are hard-constraint input."
 
-Following section 3 `roadmap` in `shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
 
 1. a roadmap PRD or any syncable roadmap items touched in this change, planned, in-progress, or done; dropped items only update already-bound external issues, may need collaboration projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit confirmation
 

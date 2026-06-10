@@ -53,15 +53,9 @@ After startup, **do one scan first and choose the path automatically**. Do not a
 **Check the current state first**:
 
 1. **Check `.bytetrue/`**: if it does not exist, that is a candidate for the empty-repo path; if it exists but is incomplete, that is migration, partial completion
-2. **Compatibility with old ByteTrue names**: ByteTrue has gone through several naming phases, from easysdd to bytetrue to `.bytetrue`. If an old easysdd directory is found, tell the user:
-
-   > Detected old easysdd. Recommend directly running `git mv easysdd .bytetrue`; the structure and frontmatter are fully compatible, and after the rename it is ready to use. Do you want me to do that?
-
-   If they agree, run `git mv easysdd .bytetrue` and then continue along the migration path, which now only needs to fill missing pieces such as `attention.md`, `tools/`, and `reference/`. If they want to keep the old directory, tell them that sub-skills read only `.bytetrue/`, so the old directory will not be read; then proceed along the empty-repo path and build a fresh skeleton
-
-3. **Glob all `.md` files in the repo**, excluding `node_modules/` and `.git/`: look at root-level `DESIGN.md`, `ARCHITECTURE.md`, `SPEC.md`, `README.md`; also `docs/`, `doc/`, `design/`, `spec/`, `wiki/`; and existing files under `.bytetrue/`
-4. **Check `.bytetrue/attention.md`**: if it is missing, list it as a skeleton item that needs to be filled
-5. **Report the scan conclusion**: list the relevant docs found, the path chosen, the reason for that judgment, and any remaining uncertainties
+2. **Glob all `.md` files in the repo**, excluding `node_modules/` and `.git/`: look at root-level `DESIGN.md`, `ARCHITECTURE.md`, `SPEC.md`, `README.md`; also `docs/`, `doc/`, `design/`, `spec/`, `wiki/`; and existing files under `.bytetrue/`
+3. **Check `.bytetrue/attention.md`**: if it is missing, list it as a skeleton item that needs to be filled
+4. **Report the scan conclusion**: list the relevant docs found, the path chosen, the reason for that judgment, and any remaining uncertainties
 
 ---
 
@@ -82,7 +76,7 @@ Execute the following in order, **without waiting for step-by-step user confirma
 - `.bytetrue/tools/`, copied by shell using `cp -rf` or `Copy-Item -Recurse -Force` from `bt-onboard/tools/` in the skill package, **not Read then Write**
 - `.bytetrue/reference/`, initialized from `bt-onboard/reference/` in the skill package; for new projects, copying the whole directory is fine
 
-> **Use shell copy for writing to disk**, not Read then Write — these are shared assets and templates, and Read+Write truncates large files, changes indentation, eats blank lines, and wastes tokens. On migration or rerunning onboard, `domain-context.md` and `project-management.md` are project-owned configuration and must never be overwritten without confirmation. See step 4 of the migration path for concrete commands.
+> **Use shell copy for writing to disk**, not Read then Write — these are shared assets and templates, and Read+Write truncates large files, changes indentation, eats blank lines, and wastes tokens. On migration or rerunning onboard, `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md` are project-owned configuration and must never be overwritten without confirmation. See step 4 of the migration path for concrete commands.
 
 **Step 3: project-management setup**
 
@@ -108,7 +102,7 @@ glab auth status
 git remote -v
 ```
 
-Write the provider, detection result, and the user's chosen label mapping into `.bytetrue/reference/project-management.md`. If the CLI is not installed or not logged in, do not stop onboarding. Write the state as `not_configured` and tell the user they can rerun `bt-onboard` later or update `project-management.md` manually.
+Write the provider, detection result, and the user's chosen label mapping into `.bytetrue/reference/project-management.md`. If the CLI is not installed or not logged in, do not stop onboarding. Write the state as `not_configured` and tell the user they can rerun `bt-onboard` later or update `.bytetrue/reference/project-management.md` manually.
 
 **Step 4: remind about attention.md**
 
@@ -156,8 +150,8 @@ Against the standard skeleton, fill any directory or file that is still missing 
 
 **Handle `.bytetrue/reference/` in two categories**:
 
-- skill-package-managed reference files, such as `shared-conventions.md`, `system-overview.md`, `tools.md`, `maintainer-notes.md`, `code-dimensions.md`, and `requirement-example.md`, may be overwritten by the fresh skill-package version
-- project-owned configuration files, namely `domain-context.md` and `project-management.md`, should only be created from template when missing; if they already exist, they must not be overwritten without explicit confirmation
+- skill-package-managed reference files, such as `.bytetrue/reference/shared-conventions.md`, `.bytetrue/reference/system-overview.md`, `.bytetrue/reference/tools.md`, `.bytetrue/reference/maintainer-notes.md`, `.bytetrue/reference/code-dimensions.md`, and `.bytetrue/reference/requirement-example.md`, may be overwritten by the fresh skill-package version
+- project-owned configuration files, namely `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md`, should only be created from template when missing; if they already exist, they must not be overwritten without explicit confirmation
 
 Before overwriting, list the skill-package-managed files that will be overwritten in the report; when project-owned configuration already exists, list it as "keep existing".
 
@@ -198,7 +192,7 @@ For files the user chooses to skip: **do not move them, do not delete them, and 
 
 Same as in the empty-repo path. Ask for `local | github | gitlab`, detect `gh` / `glab`, auth status, and `git remote -v`, then write or merge the result into `.bytetrue/reference/project-management.md`.
 
-If `project-management.md` already exists, do not overwrite provider, labels, or status sync. Only fill in missing fields, or update after user confirmation.
+If `.bytetrue/reference/project-management.md` already exists, do not overwrite provider, labels, or status sync. Only fill in missing fields, or update after user confirmation.
 
 **Step 7: attention.md reminder**, same as step 4 in the empty-repo path
 
@@ -233,11 +227,10 @@ The placeholder template for `ARCHITECTURE.md` and the minimal template for `att
 
 - **moving or deleting existing files without confirmation** — the core migration rule is that the user decides
 - **filling substantive content into attention.md on the user's behalf** — the AI provides only the skeleton; project owners decide the real content
-- **reintroducing compatibility paths through `AGENTS.md` or `CLAUDE.md`** — the ByteTrue startup-note entry is fixed at `.bytetrue/attention.md`
 - **starting feature or issue work immediately after creating the skeleton** — onboard is environment setup, not feature execution
 - **executing low-confidence mappings directly** — low confidence always means you must ask
 - **treating `.bytetrue/tools/` conservatively and not overwriting it** — shared scripts must be refreshed from the skill package, otherwise users are left on stale tooling after upgrades
-- **overwriting the whole `.bytetrue/reference/` directory** — that wipes project-owned config such as `domain-context.md` and `project-management.md`
+- **overwriting the whole `.bytetrue/reference/` directory** — that wipes project-owned config such as `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md`
 - **moving files manually through Read + Write** — the tools directory and skill-package-managed reference files must be copied through shell commands
 - **forgetting to exclude `node_modules/` and `.git/` in the Glob** — the scan gets flooded with noise
 

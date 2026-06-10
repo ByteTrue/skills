@@ -34,7 +34,7 @@ Misclassifying the case is not a disaster. **Upgrading and downgrading are allow
 
 Do this every time:
 
-1. **Scan the repo once** — read `.bytetrue/attention.md` first; Glob `.bytetrue/` to discover architecture, features, roadmap, brainstorms, compound, and requirements; read the architecture entry, inspect existing features, roadmaps, and brainstorms, and search compound for related pitfalls with `--filter doc_type=learning`; Grep the user's keywords to prevent terminology collisions. If `attention.md` is missing, treat the skeleton as incomplete and do not fall back to external AI entry files
+1. **Scan the repo once** — read `.bytetrue/attention.md` first; Glob `.bytetrue/` to discover architecture, features, roadmap, brainstorms, compound, and requirements; read the architecture entry, inspect existing features, roadmaps, and brainstorms, and search compound for related pitfalls with `--filter doc_type=learning`; Grep the user's keywords to prevent terminology collisions. If `attention.md` is missing, treat the skeleton as incomplete
 2. **Check whether this continues existing work**:
    - are there similarly named brainstorms under `features/`? Similar subdirectories under `roadmap/`? Related idea records under `brainstorms/`?
    - if none, treat it as a new discussion
@@ -163,7 +163,7 @@ Directory conventions:
 
 Write to disk only when the user confirms it is ready to move into design. Do not write files during the discussion itself. `status` is always `confirmed`, never `draft`.
 
-See the "feature brainstorm template" in `reference.md` in the same directory for the template. The frontmatter conventions are shared with design and acceptance; see section 1 of `shared-conventions.md`.
+See the "feature brainstorm template" in `reference.md` in the same directory for the template. The frontmatter conventions are shared with design and acceptance; see section 1 of `.bytetrue/reference/shared-conventions.md`.
 
 **Exit**: proactively ask "is this clear enough to move into design now?" and after confirmation, write it to disk. If the vision, user stories, pain point, and boundaries, is already well discussed, tell the user they may optionally run `bt-req draft` first so the requirement vision is captured before design. Then say "the next `bt-feat-design` will read `{path}`"
 

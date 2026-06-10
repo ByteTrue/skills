@@ -7,7 +7,7 @@ description: Organize reusable programming patterns, library usage, and technica
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 `bt-trick` is a problem-oriented **prescriptive reference library**. It answers: **when you need to do X, what is the validated correct way to do it?** It does not need a specific trigger event. Any time a pattern or usage worth preserving is discovered, it can be written directly.
 
@@ -54,7 +54,7 @@ If the user's description is already clear, skip directly to Phase 1.5.
 
 ### Phase 1.5: Check for Overlap and Route Intent (required)
 
-Follow items 5 and 6 in `shared-conventions.md` §6:
+Follow items 5 and 6 in `.bytetrue/reference/shared-conventions.md` §6:
 
 - If the request contains "change / update / revise / supplement / a certain trick" or points to an old document, go directly to **update existing** rather than creating a new one
 - Otherwise, use the search tool with `--query` to search once by `topic`, and list similar hits for the user if found
@@ -93,11 +93,11 @@ The AI drafts the full document in one pass, including YAML frontmatter and body
 
 - New document: write to `compound/YYYY-MM-DD-trick-{slug}.md` with frontmatter `doc_type: trick`
 - Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
-- Supersede: handle it according to item 5 of `shared-conventions.md` §6
+- Supersede: handle it according to item 5 of `.bytetrue/reference/shared-conventions.md` §6
 
 ### Phase 6: Discoverability Check
 
-After writing, if you notice one or two lines of hard project constraints that "every ByteTrue skill startup should know", suggest that the user append them to `.bytetrue/attention.md` via `bt-note`. Do not change `attention.md` on your own, and do not write to an external AI entry file.
+After writing, if you notice one or two lines of hard project constraints that "every ByteTrue skill startup should know", suggest that the user append them to `.bytetrue/attention.md` via `bt-note`. Do not change `attention.md` on your own.
 
 ---
 
@@ -123,7 +123,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type
 
 ## Guard Rules
 
-> For shared rules on archival workflows, see section 6 of `shared-conventions.md`. Rules specific to this skill:
+> For shared rules on archival workflows, see section 6 of `.bytetrue/reference/shared-conventions.md`. Rules specific to this skill:
 
 1. **Archive only validated practices** — "maybe this should be done like this" does not qualify; the user or AI must have confirmed that it works
 2. **You must investigate the repository** — Phase 2 cannot be skipped. Example code should prefer real project code rather than invented snippets

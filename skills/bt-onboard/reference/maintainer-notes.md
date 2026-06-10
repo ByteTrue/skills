@@ -27,11 +27,11 @@ After a new workflow is stabilized, add one index entry into the "skills split i
 
 ### New cross-stage constraints
 
-If you discover a rule that applies across all stages, for example every spec doc must include a certain field, write it into shared references first, `shared-conventions.md` or `system-overview.md`, rather than changing only one sub-skill.
+If you discover a rule that applies across all stages, for example every spec doc must include a certain field, write it into shared references first, `.bytetrue/reference/shared-conventions.md` or `.bytetrue/reference/system-overview.md`, rather than changing only one sub-skill.
 
 ### New templates / new artifact types
 
-If a new spec artifact is introduced, for example a risk-assessment table or rollback plan, register the path in `shared-conventions.md` first, then reference it from the corresponding stage skill.
+If a new spec artifact is introduced, for example a risk-assessment table or rollback plan, register the path in `.bytetrue/reference/shared-conventions.md` first, then reference it from the corresponding stage skill.
 
 ### Shared terminology table
 
@@ -39,12 +39,12 @@ If ByteTrue itself develops a stable shared terminology set, capture it in share
 
 ### Cross-workflow status overview
 
-At the moment, checking "how many features are currently in progress" or "how many issues remain open" still requires manual querying. If a future `status.py` or `.bytetrue/STATUS.md` is added, register the direction in `shared-conventions.md` first, then implement it.
+At the moment, checking "how many features are currently in progress" or "how many issues remain open" still requires manual querying. If a future `status.py` or `.bytetrue/STATUS.md` is added, register the direction in `.bytetrue/reference/shared-conventions.md` first, then implement it.
 
 ---
 
 ## 3. Maintenance Rules
 
-- every extension must update the index in `system-overview.md` and the related sub-skills in sync
-- it is not allowed to add something only in one sub-skill without registering it in `system-overview.md`
+- every extension must update the index in `.bytetrue/reference/system-overview.md` and the related sub-skills in sync
+- it is not allowed to add something only in one sub-skill without registering it in `.bytetrue/reference/system-overview.md`
 - shared explanations should live under `.bytetrue/reference/` first, not be scattered across sub-skills

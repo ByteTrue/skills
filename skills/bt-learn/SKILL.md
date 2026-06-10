@@ -7,7 +7,7 @@ description: Turn encountered pitfalls or good practices into searchable learnin
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 Every feature or issue fix leaves behind spec files. But specs record "what was done" and "how it was done"; they **do not record "what pitfall we hit" or "what better practice we discovered"**. Teams that do not capture these lessons keep solving the same problem again and again.
 
@@ -16,7 +16,7 @@ Two tracks:
 - **Pitfall track** (`pitfall`): record the problem, root cause, and solution so the same pitfall is not repeated next time
 - **Knowledge track** (`knowledge`): record best practices, workflow improvements, and reusable patterns
 
-Both are written into `.bytetrue/compound/` (for the shared directory, see section 1 "archival documents" in `shared-conventions.md`). This skill outputs frontmatter with `doc_type: learning` and uses the name `YYYY-MM-DD-learning-{slug}.md`.
+Both are written into `.bytetrue/compound/` (for the shared directory, see section 1 "archival documents" in `.bytetrue/reference/shared-conventions.md`). This skill outputs frontmatter with `doc_type: learning` and uses the name `YYYY-MM-DD-learning-{slug}.md`.
 
 ---
 
@@ -57,7 +57,7 @@ If the source is unclear, ask the user **one question** to clarify. Do not guess
 
 ### Phase 1.5: Check for Overlap and Route Intent (required)
 
-Follow items 5 and 6 in `shared-conventions.md` §6:
+Follow items 5 and 6 in `.bytetrue/reference/shared-conventions.md` §6:
 
 - If the request includes "change / update / supplement / a certain learning" or points to an old document, go directly to **update existing**
 - Otherwise, use the search tool once with `--filter tags~=` or `--query`, and if you hit similar old documents, list the candidates for the user
@@ -89,11 +89,11 @@ The AI drafts the full document in one pass, including YAML frontmatter and all 
 
 - New document: write to `compound/YYYY-MM-DD-learning-{slug}.md` using the **archive date of the current day**, with frontmatter `doc_type: learning`
 - Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
-- Supersede: handle it according to item 5 of `shared-conventions.md` §6
+- Supersede: handle it according to item 5 of `.bytetrue/reference/shared-conventions.md` §6
 
 ### Phase 5: Discoverability Check
 
-After writing, if you notice one or two lines of hard project constraints that "every ByteTrue skill startup should know", suggest that the user add them to `.bytetrue/attention.md` via `bt-note`. Do not change `attention.md` on your own, and do not write to an external AI entry file.
+After writing, if you notice one or two lines of hard project constraints that "every ByteTrue skill startup should know", suggest that the user add them to `.bytetrue/attention.md` via `bt-note`. Do not change `attention.md` on your own.
 
 ---
 
@@ -119,7 +119,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type
 
 ## Guard Rules
 
-> For shared rules on archival documents, see section 6 of `shared-conventions.md`. Rules specific to this skill:
+> For shared rules on archival documents, see section 6 of `.bytetrue/reference/shared-conventions.md`. Rules specific to this skill:
 
 1. **Do not mix them into specs** — learning docs do not go into `features/` or `issues/`; specs do not go into `compound/`
 2. **Only recognize your own `doc_type`** — only read and write `doc_type: learning`

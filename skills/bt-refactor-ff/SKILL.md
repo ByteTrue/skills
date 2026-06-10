@@ -7,7 +7,7 @@ description: Ultra-light path for the refactor workflow. Directly identify 1-3 l
 
 ## Read Before Starting
 
-Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete, tell the user to fill it in or run `bt-onboard`, and do not fall back to an external AI entry file.
+Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 When the user says "optimize this function" and the change is obviously very small, such as a long single function, extracting a composable from a component, or merging a repeated block, the full three-stage flow is too heavy. Fastforward lets the AI change code directly the way it normally would, while still holding the line on the essentials: behavior equivalence, use of classic methods, and test-backed self-verification.
 
@@ -118,5 +118,5 @@ To switch back, trigger `bt-refactor` and start from scan. Already changed parts
 ## Related
 
 - `bt-refactor/SKILL.md` — the full refactor workflow
-- `bt-refactor/reference/methods.md` — the full method library
+- `../bt-refactor/reference/methods.md` — the full method library
 - `.bytetrue/reference/system-overview.md` — overview of the ByteTrue system
