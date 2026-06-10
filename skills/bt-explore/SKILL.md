@@ -1,6 +1,6 @@
 ---
 name: bt-explore
-description: Perform targeted code exploration in the repository and turn "question → read code → reach conclusion" into searchable evidence, with three types: `question`, `module-overview`, and `spike`. Trigger when the user says "explore first", "how is X implemented in this repo", "help me get familiar with this module quickly", "zoom out / step up one level and look at the whole thing", or "archive the exploration result".
+description: 'Perform targeted code exploration in the repository and turn "question → read code → reach conclusion" into searchable evidence, with three types: `question`, `module-overview`, and `spike`. Trigger when the user says "explore first", "how is X implemented in this repo", "help me get familiar with this module quickly", "zoom out / step up one level and look at the whole thing", or "archive the exploration result".'
 ---
 
 # bt-explore

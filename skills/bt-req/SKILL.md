@@ -1,6 +1,6 @@
 ---
 name: bt-req
-description: Maintain the capability vision documents under `.bytetrue/requirements/` in three modes: `draft`, `backfill`, and `update`. Trigger when a vision is first drafted during design, archived during acceptance, or when the user says "refresh requirements", "backfill a req", or "write down the vision first".
+description: 'Maintain the capability vision documents under `.bytetrue/requirements/` in three modes: `draft`, `backfill`, and `update`. Trigger when a vision is first drafted during design, archived during acceptance, or when the user says "refresh requirements", "backfill a req", or "write down the vision first".'
 ---
 
 # bt-req

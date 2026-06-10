@@ -1,6 +1,6 @@
 ---
 name: bt-decide
-description: Record finalized technical choices, architecture decisions, long-term constraints, and coding conventions as permanent decision documents in four categories: `tech-stack`, `architecture`, `constraint`, and `convention`. Trigger when the user says "record this decision", "archive the technology choice", "ADR", "record this constraint", or "write down the convention", or after important choices are made in design or analysis. Archive only decisions that have already been finalized; do not archive proposals still under discussion.
+description: 'Record finalized technical choices, architecture decisions, long-term constraints, and coding conventions as permanent decision documents in four categories: `tech-stack`, `architecture`, `constraint`, and `convention`. Trigger when the user says "record this decision", "archive the technology choice", "ADR", "record this constraint", or "write down the convention", or after important choices are made in design or analysis. Archive only decisions that have already been finalized; do not archive proposals still under discussion.'
 ---
 
 # bt-decide

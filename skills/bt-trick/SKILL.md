@@ -1,6 +1,6 @@
 ---
 name: bt-trick
-description: Organize reusable programming patterns, library usage, and technical techniques into a prescriptive reference library, with three types: `pattern`, `library`, and `technique`. Trigger when the user says "record a trick", "this usage is worth remembering", "tricks", or "record this library usage", or when a worthwhile technique surfaces during design or analysis and should be captured.
+description: 'Organize reusable programming patterns, library usage, and technical techniques into a prescriptive reference library, with three types: `pattern`, `library`, and `technique`. Trigger when the user says "record a trick", "this usage is worth remembering", "tricks", or "record this library usage", or when a worthwhile technique surfaces during design or analysis and should be captured.'
 ---
 
 # bt-trick

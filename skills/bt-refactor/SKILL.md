@@ -1,6 +1,6 @@
 ---
 name: bt-refactor
-description: Entry point for the code-optimization sub-workflow. It handles work where behavior stays the same but structure changes, structure, performance, readability, and so on, and proceeds in stages: scan → design → apply, with human approval at each stage. Trigger when the user says "optimize", "refactor", "rewrite", "split this up", "performance is bad", or "the code is too long", as long as the request does not include behavior changes. It does not handle new requirements, bugs, or cross-module architecture replanning.
+description: 'Entry point for the code-optimization sub-workflow. It handles work where behavior stays the same but structure changes, structure, performance, readability, and so on, and proceeds in stages: scan → design → apply, with human approval at each stage. Trigger when the user says "optimize", "refactor", "rewrite", "split this up", "performance is bad", or "the code is too long", as long as the request does not include behavior changes. It does not handle new requirements, bugs, or cross-module architecture replanning.'
 ---
 
 # bt-refactor

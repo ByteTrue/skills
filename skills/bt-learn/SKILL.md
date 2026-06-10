@@ -1,6 +1,6 @@
 ---
 name: bt-learn
-description: Turn encountered pitfalls or good practices into searchable learning documents, with two tracks: `pitfall` and `knowledge`. Trigger when the user says "capture this knowledge", "learning", "record what we learned this time", or when this is suggested at the end of an acceptance or fix flow.
+description: 'Turn encountered pitfalls or good practices into searchable learning documents, with two tracks: `pitfall` and `knowledge`. Trigger when the user says "capture this knowledge", "learning", "record what we learned this time", or when this is suggested at the end of an acceptance or fix flow.'
 ---
 
 # bt-learn

@@ -1,6 +1,6 @@
 ---
 name: bt-issue-fix
-description: Stage 3 of the issue workflow. Apply a pinpoint fix based on the confirmed root cause and plan, verify it, and archive the result in `{slug}-fix-note.md`. There are two entry points: the standard path comes from analyze, and the fast path comes directly from report. Trigger when the user says "start fixing the bug", "fix it according to the analysis", or "go change the code". Only touch files declared by the plan. Do not optimize adjacent things along the way.
+description: 'Stage 3 of the issue workflow. Apply a pinpoint fix based on the confirmed root cause and plan, verify it, and archive the result in `{slug}-fix-note.md`. There are two entry points: the standard path comes from analyze, and the fast path comes directly from report. Trigger when the user says "start fixing the bug", "fix it according to the analysis", or "go change the code". Only touch files declared by the plan. Do not optimize adjacent things along the way.'
 ---
 
 # bt-issue-fix

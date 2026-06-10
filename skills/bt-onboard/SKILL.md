@@ -1,6 +1,6 @@
 ---
 name: bt-onboard
-description: Bring a new repository, or a repository with scattered existing docs, into the ByteTrue system. It auto-chooses between two paths: build the skeleton from scratch for an empty repo, or do audit plus migration mapping for an existing repo with docs. Trigger when the user says "use ByteTrue in this project", "set up ByteTrue structure", "initialize ByteTrue", or "migrate to ByteTrue".
+description: 'Bring a new repository, or a repository with scattered existing docs, into the ByteTrue system. It auto-chooses between two paths: build the skeleton from scratch for an empty repo, or do audit plus migration mapping for an existing repo with docs. Trigger when the user says "use ByteTrue in this project", "set up ByteTrue structure", "initialize ByteTrue", or "migrate to ByteTrue".'
 ---
 
 # bt-onboard

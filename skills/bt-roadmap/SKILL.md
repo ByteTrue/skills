@@ -1,6 +1,6 @@
 ---
 name: bt-roadmap
-description: Turn a demand that is too large to fit into a single feature into complete up-front planning: conceptual design, interface contracts, and a sub-feature decomposition list, stored under `.bytetrue/roadmap/{slug}/`. Two modes: `new` and `update`. Trigger when the user says "I want an X system", "help me break this demand down", "open a roadmap", or when feature-design discovers that the request is actually too large.
+description: 'Turn a demand that is too large to fit into a single feature into complete up-front planning: conceptual design, interface contracts, and a sub-feature decomposition list, stored under `.bytetrue/roadmap/{slug}/`. Two modes: `new` and `update`. Trigger when the user says "I want an X system", "help me break this demand down", "open a roadmap", or when feature-design discovers that the request is actually too large.'
 ---
 
 # bt-roadmap

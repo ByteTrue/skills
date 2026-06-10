@@ -1,6 +1,6 @@
 ---
 name: bt-arch
-description: Maintain `.bytetrue/architecture/`, the system map that records only the current state, in three modes: `update`, `check`, and `backfill`. Trigger when the user says "refresh architecture", "do an architecture check", "backfill the architecture doc for this module", "does the plan match the code", or when a feature stage needs an architecture action first. This skill does not write future plans; future planning belongs to `bt-roadmap`.
+description: 'Maintain `.bytetrue/architecture/`, the system map that records only the current state, in three modes: `update`, `check`, and `backfill`. Trigger when the user says "refresh architecture", "do an architecture check", "backfill the architecture doc for this module", "does the plan match the code", or when a feature stage needs an architecture action first. This skill does not write future plans; future planning belongs to `bt-roadmap`.'
 ---
 
 # bt-arch
