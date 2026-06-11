@@ -204,6 +204,7 @@ refactor: {YYYY-MM-DD}-{slug}
 
 - run the full test suite + typecheck + lint
 - ask the user for one final end-to-end visual confirmation, frontend means open the main page and click through the path once
+- optionally ask "Do you want to add a concise worklog/report-feed entry for this refactor?" (`.bytetrue/reference/worklog-report-feed.md`)
 - after confirmation passes, do the close-out commit, with the message referencing the refactor directory
 
 ---

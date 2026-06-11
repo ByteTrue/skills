@@ -244,7 +244,8 @@ Following section 3 of `.bytetrue/reference/shared-conventions.md`, give one-sen
 4. interface changes or user-visible behavior changes → "Do you need to update the guide? (`bt-guide`)"
 5. public library surfaces changed, components, functions, or commands → "Do you need to update the API reference? (`bt-libdoc`)"
 6. if section 8 produced attention.md candidates → ask one by one, "Should candidate X be added to attention.md?" Once the user explicitly agrees, trigger `bt-note` so it can perform section classification, deduplication, and soft-limit checks. **One item at a time**. Do not handwrite it inside acceptance, or you will fork the rules from `bt-note`
-7. finally ask whether you should do a scoped commit
+7. worklog/report-feed is optional background, not a formal artifact → "Do you want to add a concise worklog/report-feed entry for this work?" (`.bytetrue/reference/worklog-report-feed.md`)
+8. finally ask whether you should do a scoped commit
 
 For close-out commit rules, see section 4 of `.bytetrue/reference/shared-conventions.md`. The commit scope here is the feature code, the design doc, the acceptance report, and all architecture docs, req docs, roadmap `items.yaml`, and roadmap main doc that were actually updated this time.
 

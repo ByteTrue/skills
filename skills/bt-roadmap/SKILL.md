@@ -195,6 +195,7 @@ Tell the user: "The roadmap is ready. Each sub-feature later goes through `bt-fe
 Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
 
 1. a roadmap PRD or any syncable roadmap items touched in this change, planned, in-progress, or done; dropped items only update already-bound external issues, may need collaboration projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit confirmation
+2. if the roadmap session should be visible in reports or handoff context → "Do you want to add a concise worklog/report-feed entry for this roadmap update?" (`.bytetrue/reference/worklog-report-feed.md`)
 
 ---
 

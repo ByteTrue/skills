@@ -71,8 +71,8 @@ items:
     depends_on:
       - implementation-review-gate
       - context-manifest-contract
-    status: planned
-    feature: null
+    status: done
+    feature: 2026-06-11-worklog-report-feed
     minimal_loop: false
     notes: Not a full Trellis per-developer journal and not a source-of-truth replacement.
 

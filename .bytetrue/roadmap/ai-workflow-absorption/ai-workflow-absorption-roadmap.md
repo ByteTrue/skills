@@ -162,8 +162,8 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
 8. **worklog-report-feed** — Add lightweight `.bytetrue/worklog/` report-feed for session/work interval summaries, weekly reports, handoff, and recovery background.
    - module: Work Record Module
    - dependencies: implementation-review-gate, context-manifest-contract
-   - status: planned
-   - corresponding feature: not started
+   - status: done
+   - corresponding feature: 2026-06-11-worklog-report-feed
    - notes: deliberately not full Trellis per-developer journal
 
 9. **onboard-template-rollout** — Update `bt-onboard` templates, current shared references, README/maintainer docs, and install projections so new and existing projects receive the new conventions.

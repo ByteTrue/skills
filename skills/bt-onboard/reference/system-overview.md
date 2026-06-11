@@ -109,6 +109,7 @@ There are only two exceptions: when an issue's root cause is obvious at a glance
 - `.bytetrue/reference/subagent-handoff.md` — handoff prompt contract for implement / check / research roles
 - `.bytetrue/reference/research-first.md` — evidence-before-decision rule for direction-changing technical or external facts
 - `.bytetrue/reference/workflow-state-breadcrumb.md` — optional runtime breadcrumb derived from existing `.bytetrue` artifacts
+- `.bytetrue/reference/worklog-report-feed.md` — lightweight worklog/report-feed for reporting, handoff, recovery, and audit
 - `.bytetrue/reference/maintainer-notes.md` — resume support and registration rules when adding new sub-workflows
 
 The authoritative definition of the directory structure, requirements, architecture, roadmap, features, issues, compound, tools, and reference, lives in `.bytetrue/reference/shared-conventions.md`. If the directory structure ever needs to change, change the template at `bt-onboard/reference/shared-conventions.md` first so that new onboarded projects pick up the new version.

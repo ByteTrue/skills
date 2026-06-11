@@ -162,7 +162,8 @@ Following section 3 `issue-fix` of `.bytetrue/reference/shared-conventions.md`, 
 2. if this surfaced a long-term constraint, convention, or technical decision → "Do you want to archive the decision? (`bt-decide`)"
 3. if this fixed bug issue needs collaboration-state projection → "Do you want to update, bind, or request closure on the external tracker? (`bt-tracker`)" If it was never bound before, sync can still be added. Before closing an external issue, confirm again.
 4. if this bug exposed a project-wide hard constraint, command pitfall, or environment setup that can be explained in one or two lines and should be known at every ByteTrue startup → "Do you want to record it in attention.md? (`bt-note`)"
-5. finally ask whether they want you to commit it. If they agree, execute according to the close-out commit rules
+5. if a concise work record would help reporting, handoff, or recovery → "Do you want to add a concise worklog/report-feed entry for this fix?" (`.bytetrue/reference/worklog-report-feed.md`)
+6. finally ask whether they want you to commit it. If they agree, execute according to the close-out commit rules
 
 Recommendation: put the issue-directory files and code changes in the same commit for traceability. Handle "while here I noticed" items through a separate `bt-issue-report`, not inside this PR.
 
