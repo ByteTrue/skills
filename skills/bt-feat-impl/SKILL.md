@@ -65,7 +65,7 @@ If any of the above fails, return to `bt-feat-design` to complete it. Reason: ev
 ### 3. Read the full context
 
 - the full design doc; in standard design focus especially on section 1, sections 2.1, 2.2, 2.3, 2.4, and section 3
-- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, and `.bytetrue/reference/execution-modes.md`
+- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, `.bytetrue/reference/execution-modes.md`, and `.bytetrue/reference/implementation-review.md`
 - the source locations of interface examples in section 2.1, or the code files named by the change points in section 1 of fastforward design; reading the relevant functions is enough
 
 ### 4. Confirm with the user which step to start from
@@ -166,6 +166,10 @@ The point of the fixed template is that vague status reporting pushes verificati
 ### Did this introduce any new concept or abstraction not present in the design doc?
 {yes / no. If yes, explain whether the design doc was backfilled, standard design updates section 0 and 2.1; fastforward updates section 1, and whether grep conflict-check was done}
 
+### Implementation Review Gate
+**Spec compliance**: passed / failed, with evidence for behavior deltas, acceptance scenarios, no extra behavior outside design, and explicit non-goals guarded
+**Code quality**: passed / failed, with evidence for fresh verification, no debug/temp code, no unplanned refactor, reflection checks handled, and naming/module boundaries consistent
+
 ### Reflection-check self-audit
 {against section 7 of shared-conventions, which signals fired and how they were handled; if none fired, write "none"}
 
@@ -204,6 +208,7 @@ When the type system itself guarantees something, for example a TypeScript signa
 - [ ] the completion report has been output, and the user review passed
 - [ ] there are no unhandled "must stop" signals
 - [ ] every key scenario in section 3 has evidence or test coverage, or in fastforward, every section 2 acceptance criterion has evidence
+- [ ] implementation review gate has passed spec compliance before code quality, with evidence listed in the completion report
 - [ ] if TDD was enabled, red/green/refactor evidence is listed in the completion report
 - [ ] no "while here I noticed" item was secretly fixed; they are all in the issue list
 - [ ] there are no plan-external file changes, or the design doc was updated in sync

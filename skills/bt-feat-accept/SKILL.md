@@ -45,6 +45,7 @@ The entire comparison table of this skill is hardcoded against the current secti
 ## Startup checks
 
 1. **The code really has been implemented** — `git status` or recent commits must show the feature's code changes, otherwise send it back to implement
+1a. **Implementation review gate evidence exists** — the implementation completion report must include `Implementation Review Gate` with separate spec compliance and code quality results; if missing, send it back to implement
 2. **The design doc is complete** — frontmatter must have matching `doc_type=feature-design` and `feature`, `status=approved`, non-empty `summary`, and at least 2 tags; in standard design, sections 0, 1, 2, 3, and 4 must all be filled
 3. **`{slug}-checklist.yaml`** — it must exist with a matching `feature`; all `steps` must already be `done`, any `pending` means send it back to implement; `checks` must be non-empty and all still `pending`
 4. **Read the full context** — the full design doc, especially section 1 non-goals, section 2.1 interface examples, section 2.2 flow-level constraints, section 2.3 mount points, and section 3 scenarios, plus the checklist, all architecture docs named in section 4, and the code changes from this run, `git log` and `git diff`
@@ -208,6 +209,7 @@ Look back at this implementation and inventory environment, tool, and workflow f
 Work section by section. After completing each section, **update the `checks` in `{slug}-checklist.yaml` one by one**: passed → `passed`, failed → `failed`, then after the code or design is fixed, change it back to `passed`. The report is not complete until every check is `passed`.
 
 Sections 1 and 2 are the easiest places to expose drift, so do them first. Section 2 must include Behavior Delta Materialization when the design has Behavior Delta entries, or explicitly verify `Behavior Delta: none`. The reverse-check on mount points in section 2 **must** be done with actual grep plus a sandbox removal thought experiment. Do not check it by impression. Sections 5, 6, and 7 are file-writing actions, not self-assessment.
+Before section 1, confirm that implementation review gate evidence exists. This is only an entry gate: acceptance must still verify every section independently and may reject a passed implementation review.
 
 ---
 
@@ -215,6 +217,7 @@ Sections 1 and 2 are the easiest places to expose drift, so do them first. Secti
 
 - [ ] all 9 sections of the acceptance report are filled
 - [ ] every item in sections 1 and 2 is checked off, with no unresolved drift, including behavior delta materialization, mount-point grep, and removal sandbox thought experiment
+- [ ] implementation review gate evidence existed before acceptance started, and acceptance still performed independent verification
 - [ ] every scenario in section 3 is checked off, and frontend changes have browser verification
 - [ ] section 4 terminology consistency has no gaps
 - [ ] section 5 architecture merge has a clear conclusion for every item, and every needed doc update has actually been written

@@ -23,8 +23,8 @@ items:
     depends_on:
       - behavior-delta-contract
       - risk-mode-discipline
-    status: planned
-    feature: null
+    status: done
+    feature: 2026-06-11-implementation-review-gate
     minimal_loop: false
     notes: Review can run inline first and later be strengthened through subagents.
 

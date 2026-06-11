@@ -127,8 +127,8 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
 3. **implementation-review-gate** — Add spec compliance and code quality review dimensions before feature implementation can enter acceptance.
    - module: Workflow Semantics Module
    - dependencies: behavior-delta-contract, risk-mode-discipline
-   - status: planned
-   - corresponding feature: not started
+   - status: done
+   - corresponding feature: 2026-06-11-implementation-review-gate
    - notes: can work inline first; subagent execution later strengthens it
 
 4. **context-manifest-contract** — Introduce `{slug}-impl-context.jsonl` and `{slug}-check-context.jsonl` plus shared manifest row schema and lifecycle rules.

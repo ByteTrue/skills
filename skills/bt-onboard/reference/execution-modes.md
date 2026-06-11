@@ -50,6 +50,8 @@ Common evidence items:
 - `regression-test`
 - `instrumentation-cleanup`
 - `impact-surface-check`
+- `spec-compliance-review`
+- `code-quality-review`
 - `architecture-question`
 
 ## Selection Rules
