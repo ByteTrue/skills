@@ -107,6 +107,10 @@ Check against design section 1 and section 2.2:
 **Check flow-level constraints**: error semantics, idempotency, concurrency, extension points, observability
 - [ ] Constraint R1: {description} → how the code obeys it
 
+**Behavior Delta Materialization** — if design section 3 contains Behavior Delta entries, check each one against evidence and record the writeback target:
+- [ ] Delta `{ADDED|MODIFIED|REMOVED|RENAMED}: {name}` → evidence `{test/manual/code}` → writeback target `{requirements|architecture|compound|acceptance-only}` → status `{applied|not-needed|follow-up}`
+- [ ] If design says `Behavior Delta: none`, confirm no observable behavior drift was introduced
+
 **Reverse-check the mount points, removability** — against section 2.3, two things are mandatory:
 - [ ] Mount point M1: list item → actual code landing point, consistent or drift
 - [ ] **Reverse grep check**: do all references to this feature in the code fall inside the list? References outside the list mean omissions, and must be added back into section 2.3
@@ -203,14 +207,14 @@ Look back at this implementation and inventory environment, tool, and workflow f
 
 Work section by section. After completing each section, **update the `checks` in `{slug}-checklist.yaml` one by one**: passed → `passed`, failed → `failed`, then after the code or design is fixed, change it back to `passed`. The report is not complete until every check is `passed`.
 
-Sections 1 and 2 are the easiest places to expose drift, so do them first. The reverse-check on mount points in section 2 **must** be done with actual grep plus a sandbox removal thought experiment. Do not check it by impression. Sections 5, 6, and 7 are file-writing actions, not self-assessment.
+Sections 1 and 2 are the easiest places to expose drift, so do them first. Section 2 must include Behavior Delta Materialization when the design has Behavior Delta entries, or explicitly verify `Behavior Delta: none`. The reverse-check on mount points in section 2 **must** be done with actual grep plus a sandbox removal thought experiment. Do not check it by impression. Sections 5, 6, and 7 are file-writing actions, not self-assessment.
 
 ---
 
 ## Exit Conditions
 
 - [ ] all 9 sections of the acceptance report are filled
-- [ ] every item in sections 1 and 2 is checked off, with no unresolved drift, including mount-point grep and removal sandbox thought experiment
+- [ ] every item in sections 1 and 2 is checked off, with no unresolved drift, including behavior delta materialization, mount-point grep, and removal sandbox thought experiment
 - [ ] every scenario in section 3 is checked off, and frontend changes have browser verification
 - [ ] section 4 terminology consistency has no gaps
 - [ ] section 5 architecture merge has a clear conclusion for every item, and every needed doc update has actually been written

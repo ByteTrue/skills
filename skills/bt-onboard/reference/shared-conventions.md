@@ -116,7 +116,7 @@ The granularity of `steps` is the **slice strategy along the orchestration-vs-co
 **Design is responsible for**:
 
 - extracting `steps`, 4-8 steps, each with an independently verifiable exit signal; backend rhythm = orchestration skeleton → computation nodes one by one → connect persistence → test coverage; frontend = static structure → interaction logic → state integration → integration finish
-- extracting `checks`: explicit non-goals in section 1 become scope guards; interfaces in section 2.1 become term contracts; main flow plus flow-level constraints in section 2.2 become orchestration-skeleton checks; mount points in section 2.3 become mount-point checks; scenario list in section 3 becomes acceptance-scenario checks
+- extracting `checks`: explicit non-goals in section 1 become scope guards; interfaces in section 2.1 become term contracts; main flow plus flow-level constraints in section 2.2 become orchestration-skeleton checks; mount points in section 2.3 become mount-point checks; scenario list in section 3 becomes acceptance-scenario checks; section 3.2 Behavior Delta becomes `behavior-delta` checks
 
 **Implement is responsible for**:
 

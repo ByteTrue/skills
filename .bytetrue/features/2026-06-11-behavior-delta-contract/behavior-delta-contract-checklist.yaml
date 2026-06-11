@@ -1,0 +1,51 @@
+feature: 2026-06-11-behavior-delta-contract
+created: 2026-06-11
+
+steps:
+  - action: "Design template contract: update bt-feat-design reference and SKILL reminders"
+    exit_signal: "skills/bt-feat-design/reference.md contains 3.2 Behavior Delta, and skills/bt-feat-design/SKILL.md requires behavior delta or explicit none"
+    status: done
+  - action: "Checklist extraction: add behavior-delta source to current and onboard shared conventions"
+    exit_signal: "both .bytetrue/reference/shared-conventions.md and skills/bt-onboard/reference/shared-conventions.md mention behavior-delta as a checklist source and extraction target"
+    status: done
+  - action: "Acceptance materialization: update bt-feat-accept section 2 template and verification rules"
+    exit_signal: "skills/bt-feat-accept/SKILL.md includes Behavior Delta Materialization without adding a tenth top-level acceptance section"
+    status: done
+  - action: "Smoke validation: verify grep targets, line limits, and yaml state"
+    exit_signal: "behavior delta terms appear only in intended files, edited markdown files stay under 300 lines, and validate-yaml passes for roadmap and feature checklists"
+    status: done
+
+checks:
+  - item: "Behavior Delta term is defined as a design block, not a .bytetrue/specs layer or standalone delta file"
+    source: term-contract
+    status: passed
+  - item: "Delta Materialization term is defined as acceptance evidence plus writeback target/status"
+    source: term-contract
+    status: passed
+  - item: "bt-feat-design/reference.md documents 3.2 Behavior Delta with ADDED, MODIFIED, REMOVED, RENAMED, and explicit none"
+    source: behavior-delta
+    status: passed
+  - item: "bt-feat-design/SKILL.md requires section 3 to include behavior delta or explicit no-behavior-change statement"
+    source: behavior-delta
+    status: passed
+  - item: "bt-feat-accept/SKILL.md section 2 includes Behavior Delta Materialization table and drift handling"
+    source: behavior-delta
+    status: passed
+  - item: "current and onboard shared conventions include behavior-delta in checklist source vocabulary and extraction rules"
+    source: behavior-delta
+    status: passed
+  - item: "No guidance creates .bytetrue/specs or standalone {slug}-delta.md"
+    source: scope-guard
+    status: passed
+  - item: "No top-level feature design or acceptance section renumbering is introduced"
+    source: scope-guard
+    status: passed
+  - item: "Risk mode, context manifest, subagent handoff, hook/breadcrumb, and worklog contracts remain out of scope"
+    source: scope-guard
+    status: passed
+  - item: "Edited markdown files remain under 300 lines"
+    source: acceptance-scenario
+    status: passed
+  - item: "Acceptance can materialize deltas to requirements, architecture, compound, or acceptance-only after evidence"
+    source: acceptance-scenario
+    status: passed

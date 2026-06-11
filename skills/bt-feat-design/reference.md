@@ -34,6 +34,7 @@ Required fields: `doc_type`, `feature`, `status`, `summary`, and `tags`.
   - `### 2.5 Structural Health and Micro-refactor` ← fixed section, explicit conclusion plus optional "observations beyond scope"
 - `## 3. Acceptance Contract`
 - `### 3.1 Test Seam / TDD Plan` optional, but the judgment must be explicit
+- `### 3.2 Behavior Delta` optional when there is behavior change; otherwise explicitly write none
 - `## 4. Relationship with Project-Level Architecture Docs`
 
 ## 3. `{slug}-checklist.yaml` format
@@ -49,7 +50,7 @@ steps:
 
 checks:
   - item: "{check item description}"
-    source: term-contract | orchestration-skeleton | flow-level-constraint | mount-point | scope-guard | acceptance-scenario
+    source: term-contract | orchestration-skeleton | flow-level-constraint | mount-point | scope-guard | acceptance-scenario | behavior-delta
     status: pending
 ```
 
@@ -70,6 +71,7 @@ checks:
 - scope guard ← each non-goal in section 1
 - acceptance scenarios ← each key scenario in section 3
 - test seam / TDD plan ← highest behavior seam, priority red/green behaviors, and manual verification items in section 3.1
+- behavior delta ← each ADDED / MODIFIED / REMOVED / RENAMED behavior in section 3.2, or the explicit statement that there is no behavior-level change
 
 It is not allowed to invent entries that do not exist in the design.
 
@@ -215,6 +217,7 @@ This defines what it means for implement to be complete, and what acceptance wil
 
 - **key scenario list**: write each item as "input or trigger → expected observable result", so it can be verified by one test or one manual operation. Cover normal paths, corresponding to the success criteria, plus key edges, such as boundary values, empty input, upper and lower limits, and key error paths, meaning the observable consequences of the flow-level constraints
 - **reverse-check items for explicit non-goals**: every explicit non-goal from section 1 must be rewritten into something grep-able or testable in reverse, such as "the code must not call X API" or "the output JSON must not contain field Y"
+- **behavior delta**, section 3.2: if observable behavior changes, list entries under `ADDED`, `MODIFIED`, `REMOVED`, or `RENAMED`; if the change is implementation-only, explicitly write `Behavior Delta: none`. Design predicts the intended writeback target, but acceptance performs actual materialization.
 
 #### 3.1 Test seam / TDD plan
 

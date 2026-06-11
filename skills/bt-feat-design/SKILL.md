@@ -204,7 +204,7 @@ Follow the template in `reference.md` to fill the remaining sections, 0, 3, and 
 
 Only after the whole draft is formed do you show it to the user. **Do not review in partial batches** — partial review shows the user only local fragments, and they cannot catch cross-section inconsistencies such as section 1 scope not matching section 2 change.
 
-For section 3, acceptance contract, the reminder is: each item should be written as "input or trigger → expected observable result", covering normal path, edge, and error. For features that fit TDD, also write a test seam plan: highest behavior seam, the first 1-3 red/green behaviors, and manual verification items. Do not write test code, framework, or mock setup.
+For section 3, acceptance contract, the reminder is: each item should be written as "input or trigger → expected observable result", covering normal path, edge, and error. For features that fit TDD, also write a test seam plan: highest behavior seam, the first 1-3 red/green behaviors, and manual verification items. If observable behavior changes, section 3 must include a Behavior Delta block, `ADDED` / `MODIFIED` / `REMOVED` / `RENAMED`; if not, explicitly write `Behavior Delta: none`. Do not write test code, framework, or mock setup.
 
 ### 5. Overall review
 
@@ -234,6 +234,7 @@ The user has passed overall review, and:
 - [ ] section 2.5 structural-health evaluation covers both file level and directory level; compound conventions were checked before evaluating; the conclusion is explicit, do not refactor / split files / restructure directories; when "micro-refactor" is selected, checklist step 1 is that micro-refactor with an independent exit signal; when "restructure directories" is selected and it is a stable pattern, the doc includes a "suggested convention to capture" block; any structural problem beyond the boundary of "move only, no behavior change" is listed under "observations beyond scope" and is advisory only
 - [ ] section 3 key scenarios cover normal, edge, and error paths, and include reverse-check items for explicit non-goals
 - [ ] section 3 contains a test seam plan, or explicitly states that the feature is not suitable for TDD or automated testing
+- [ ] section 3 contains Behavior Delta entries for observable behavior changes, or explicitly states `Behavior Delta: none`
 - [ ] `{slug}-checklist.yaml` has been written and passes `validate-yaml.py`
 - [ ] when started from roadmap, `items.yaml` has been written back with `status: in-progress` and `feature` filled
 

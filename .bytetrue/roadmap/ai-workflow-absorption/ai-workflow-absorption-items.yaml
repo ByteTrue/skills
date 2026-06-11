@@ -1,0 +1,93 @@
+roadmap: ai-workflow-absorption
+created: 2026-06-11
+
+items:
+  - slug: behavior-delta-contract
+    description: Add OpenSpec-style behavior delta blocks to feature design and acceptance, with acceptance materialization back into existing ByteTrue layers.
+    depends_on: []
+    status: done
+    feature: 2026-06-11-behavior-delta-contract
+    minimal_loop: true
+    notes: Demonstrates OpenSpec delta/archive absorption without adding .bytetrue/specs or a standalone delta file.
+
+  - slug: risk-mode-discipline
+    description: Define four execution modes so light work stays light while high-risk work uses Superpowers-style strict TDD, debugging, and architecture evidence.
+    depends_on: []
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: Fuses Matt-derived language with Superpowers discipline rather than treating either source as final.
+
+  - slug: implementation-review-gate
+    description: Add separate spec-compliance and code-quality review gates before feature implementation can enter acceptance.
+    depends_on:
+      - behavior-delta-contract
+      - risk-mode-discipline
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: Review can run inline first and later be strengthened through subagents.
+
+  - slug: context-manifest-contract
+    description: Introduce implementation and check context manifests that list required ByteTrue docs and evidence for implement/check agents.
+    depends_on:
+      - behavior-delta-contract
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: First execution-infrastructure item; proposed files are {slug}-impl-context.jsonl and {slug}-check-context.jsonl.
+
+  - slug: subagent-handoff-roles
+    description: Define ByteTrue implement, check, and research subagent handoff protocol using active work path, design, checklist, and context manifests.
+    depends_on:
+      - context-manifest-contract
+      - implementation-review-gate
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: Strong path targets Pi and Claude first; non-subagent tools use the same protocol inline.
+
+  - slug: research-first-explore-integration
+    description: Route technical-choice and comparable-workflow decisions through bt-explore spike artifacts before design or roadmap decisions.
+    depends_on:
+      - context-manifest-contract
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: Absorbs Trellis research-first while reusing ByteTrue compound explore artifacts.
+
+  - slug: optional-runtime-breadcrumb
+    description: Add optional workflow-state breadcrumb or hook enhancement for Claude plugin and Pi package, deriving state from existing ByteTrue artifacts.
+    depends_on:
+      - context-manifest-contract
+      - subagent-handoff-roles
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: Optional enhancement only; core Skill workflow must still work without hooks.
+
+  - slug: worklog-report-feed
+    description: Add a lightweight ByteTrue worklog/report-feed for session summaries, weekly reports, handoff, recovery background, and AI work audit.
+    depends_on:
+      - implementation-review-gate
+      - context-manifest-contract
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: Not a full Trellis per-developer journal and not a source-of-truth replacement.
+
+  - slug: onboard-template-rollout
+    description: Update bt-onboard templates, current shared references, and install documentation so new projects receive the integrated workflow rules.
+    depends_on:
+      - behavior-delta-contract
+      - risk-mode-discipline
+      - implementation-review-gate
+      - context-manifest-contract
+      - subagent-handoff-roles
+      - research-first-explore-integration
+      - optional-runtime-breadcrumb
+      - worklog-report-feed
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: Final distribution pass after semantics and infrastructure contracts stabilize.
