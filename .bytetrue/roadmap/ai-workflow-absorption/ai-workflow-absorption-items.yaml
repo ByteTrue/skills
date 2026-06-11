@@ -87,7 +87,7 @@ items:
       - research-first-explore-integration
       - optional-runtime-breadcrumb
       - worklog-report-feed
-    status: planned
-    feature: null
+    status: done
+    feature: 2026-06-11-onboard-template-rollout
     minimal_loop: false
     notes: Final distribution pass after semantics and infrastructure contracts stabilize.

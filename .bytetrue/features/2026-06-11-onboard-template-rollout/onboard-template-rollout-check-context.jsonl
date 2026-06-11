@@ -1,0 +1,10 @@
+{"file":".bytetrue/features/2026-06-11-onboard-template-rollout/onboard-template-rollout-design.md","reason":"Acceptance checks scenarios, behavior delta, non-goals, and section 4 writeback.","required":true,"role":"check"}
+{"file":".bytetrue/features/2026-06-11-onboard-template-rollout/onboard-template-rollout-checklist.yaml","reason":"Acceptance must confirm all steps are done and checks are passed.","required":true,"role":"check"}
+{"file":".bytetrue/requirements/onboard-template-rollout.md","reason":"Requirement should be upgraded to current if the feature is accepted.","required":true,"role":"check"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml","reason":"Roadmap item must be moved from in-progress to done during acceptance.","required":true,"role":"check"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap main document must synchronize the done sub-feature state and may complete once all items are done.","required":true,"role":"check"}
+{"file":".bytetrue/architecture/ARCHITECTURE.md","reason":"Acceptance decides whether rollout changed stable architecture facts.","required":true,"role":"check"}
+{"file":".bytetrue/reference/system-overview.md","reason":"Current reference index must remain consistent with onboard template indexes.","required":true,"role":"check"}
+{"file":"skills/bt-onboard/reference/system-overview.md","reason":"Onboard reference index must include the integrated workflow references.","required":true,"role":"check"}
+{"file":"README.md","reason":"Acceptance verifies install projection wording and skill count.","required":true,"role":"check"}
+{"file":"package.json","reason":"Acceptance verifies Pi package manifest resources.","required":true,"role":"check"}

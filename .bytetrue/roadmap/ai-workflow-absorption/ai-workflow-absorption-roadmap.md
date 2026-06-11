@@ -1,7 +1,7 @@
 ---
 doc_type: roadmap
 slug: ai-workflow-absorption
-status: active
+status: completed
 created: 2026-06-11
 last_reviewed: 2026-06-11
 tags: [bytetrue, openspec, superpowers, trellis, workflow-integration, execution-infrastructure]
@@ -169,8 +169,8 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
 9. **onboard-template-rollout** — Update `bt-onboard` templates, current shared references, README/maintainer docs, and install projections so new and existing projects receive the new conventions.
    - module: Template Rollout Module
    - dependencies: behavior-delta-contract, risk-mode-discipline, implementation-review-gate, context-manifest-contract, subagent-handoff-roles, research-first-explore-integration, optional-runtime-breadcrumb, worklog-report-feed
-   - status: planned
-   - corresponding feature: not started
+   - status: done
+   - corresponding feature: 2026-06-11-onboard-template-rollout
    - notes: final integration and distribution pass
 
 **Minimal loop**: after item 1 `behavior-delta-contract` is done, a ByteTrue feature design can declare explicit behavior deltas and acceptance can materialize them back into existing ByteTrue layers, demonstrating the core OpenSpec absorption without introducing a new facts directory.
