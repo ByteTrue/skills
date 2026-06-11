@@ -59,6 +59,7 @@ Rules:
 - linked requirement and roadmap docs
 - implementation review contract
 - relevant decision/explore evidence needed for verification
+- research-first explore artifacts cited by design, roadmap, or grill when they affect implementation or verification
 
 Rows normally reference `.bytetrue` docs or explore/decision evidence, not raw source code files. Implement/check agents read code as needed.
 

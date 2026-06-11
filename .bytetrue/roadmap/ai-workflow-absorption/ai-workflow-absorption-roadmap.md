@@ -148,8 +148,8 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
 6. **research-first-explore-integration** — Route technical-choice and comparable-workflow questions through `bt-explore spike` before design/roadmap decisions, and allow manifests to reference explore evidence.
    - module: Execution Context Module
    - dependencies: context-manifest-contract
-   - status: planned
-   - corresponding feature: not started
+   - status: done
+   - corresponding feature: 2026-06-11-research-first-explore-integration
    - notes: absorbs Trellis research-first without creating a new research directory
 
 7. **optional-runtime-breadcrumb** — Add optional workflow-state breadcrumb / hook / extension path for Claude plugin and Pi package, deriving state from existing `.bytetrue` artifacts.

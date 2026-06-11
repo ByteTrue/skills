@@ -1,0 +1,8 @@
+{"file":".bytetrue/features/2026-06-11-research-first-explore-integration/research-first-explore-integration-design.md","reason":"Acceptance checks scenarios, behavior delta, and section 4 architecture writeback.","required":true,"role":"check"}
+{"file":".bytetrue/features/2026-06-11-research-first-explore-integration/research-first-explore-integration-checklist.yaml","reason":"Acceptance must confirm all steps are done and checks are passed.","required":true,"role":"check"}
+{"file":".bytetrue/requirements/research-first-explore-integration.md","reason":"Requirement should be upgraded to current if the feature is accepted.","required":true,"role":"check"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml","reason":"Roadmap item must be written back from in-progress to done during acceptance.","required":true,"role":"check"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap main doc sub-feature list must be synchronized during acceptance.","required":true,"role":"check"}
+{"file":".bytetrue/architecture/ARCHITECTURE.md","reason":"Architecture must record research-first as evidence-before-decision discipline, not a new facts layer.","required":true,"role":"check"}
+{"file":".bytetrue/reference/context-manifest.md","reason":"Acceptance verifies research-first explore artifacts can be manifest rows.","required":true,"role":"check"}
+{"file":".bytetrue/reference/subagent-handoff.md","reason":"Acceptance verifies research role boundaries remain evidence-only.","required":true,"role":"check"}

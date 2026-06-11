@@ -20,6 +20,7 @@ If the first time a question is asked it takes two hours to inspect the code, th
 - the user asks a concrete question but does not yet want a direct plan or fix
 - a round of evidence-backed exploration is needed before `feature-design`, `issue-analyze`, or `issue-fix`
 - the technical direction is still being discussed and only a lightweight spike is needed, exploration without final decision
+- research-first spike: when external tool behavior, library/API capability, platform hooks, comparable workflows, industry conventions, or performance/cost claims can materially change design, roadmap, or grill direction; see `.bytetrue/reference/research-first.md`
 
 This skill is responsible only for evidence-backed recording of "what was observed". If the user's intent is something else, such as making a decision, writing a prescription, or fixing a bug, route them to the appropriate skill.
 When called as the `research` role from `.bytetrue/reference/subagent-handoff.md`, this skill still only writes evidence-backed explore records and must not make final product, roadmap, or architecture decisions.

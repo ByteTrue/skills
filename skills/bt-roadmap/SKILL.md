@@ -83,6 +83,7 @@ Lock mode, target, and scope. In `new` mode, first settle on an English slug, fo
 **Read as needed**:
 - related compound artifacts: `python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --query "{larger-demand keyword}"`
 - related existing feature designs
+- if roadmap decomposition, interface contracts, or sequencing depend on external tool behavior, library/API capability, platform hooks, comparable workflows, industry convention, or performance/cost claims, require or create a `bt-explore` spike first and cite it; see `.bytetrue/reference/research-first.md`
 
 **Update-specific**: the full current main doc, the current state of `items.yaml`, and the design and acceptance of sub-features that have already started or completed.
 

@@ -51,8 +51,8 @@ items:
     description: Route technical-choice and comparable-workflow decisions through bt-explore spike artifacts before design or roadmap decisions.
     depends_on:
       - context-manifest-contract
-    status: planned
-    feature: null
+    status: done
+    feature: 2026-06-11-research-first-explore-integration
     minimal_loop: false
     notes: Absorbs Trellis research-first while reusing ByteTrue compound explore artifacts.
 

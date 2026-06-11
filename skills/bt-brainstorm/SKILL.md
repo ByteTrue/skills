@@ -110,6 +110,7 @@ If the discussion reaches "whether this direction is viable depends on whether X
 1. **this is a factual question, not a preference question** — for example how an API behaves, whether a library really supports something, or whether a performance characteristic holds, not "which style is nicer"
 2. **the result would change the direction** — whether it succeeds or fails, the discussion will converge afterward
 3. **the cost is controlled** — you judge that a runnable thing can be built in 5-30 minutes. Beyond that, it should either go straight through `bt-feat-ff` or be split into a formal feature
+4. **research-first trigger** — if the factual question depends on external tool behavior, library/API capability, platform hooks, comparable workflows, industry convention, or performance/cost claims, and the answer would materially change the direction, use `bt-explore spike` first and cite the artifact later; see `.bytetrue/reference/research-first.md`
 
 Suggested phrasing: **"This one is hard to settle by thinking. I can build a minimal demo to verify {the thing to verify} in 5-10 minutes. OK?"** The user can then instantly approve or reject.
 

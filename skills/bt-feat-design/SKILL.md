@@ -163,6 +163,7 @@ This lands in the mount-point inventory, section 2.3. **Decision rule**: if remo
 - **Terminology grep for conflict prevention** — if a new concept name has never been seen in code, architecture, or historical feature docs, grep it once; if there is a conflict, rename it or explicitly distinguish it in section 0
 - **Complexity-dimension alignment** — if the demand includes signals like external SDK, high concurrency, or one-off tool, which deviate from defaults, open `.bytetrue/reference/code-dimensions.md` and list the deviating dimensions; if there is no such signal, write "use the default bundle"
 - **Grep for similar modules with different naming** — if your intuition says "someone may already have done something similar under another name", grep near-synonyms
+- **Research-first trigger** — if the design direction depends on external tool behavior, library/API capability, platform hooks, comparable workflows, industry convention, or performance/cost claims, first look for an existing `bt-explore` spike or create one, then cite it; see `.bytetrue/reference/research-first.md`
 
 The detailed rules are in section 5 of `.bytetrue/reference/shared-conventions.md`.
 

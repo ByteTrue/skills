@@ -8,6 +8,7 @@
 - [implementation-review-gate](./implementation-review-gate.md) — ByteTrue 在进入验收前分开检查规格符合度和代码质量。
 - [context-manifest-contract](./context-manifest-contract.md) — ByteTrue 用显式 context manifest 固化 implement / check 阶段必须读取的项目事实和证据。
 - [subagent-handoff-roles](./subagent-handoff-roles.md) — ByteTrue 用统一 handoff 协议把 implement / check / research 工作交给子代理或内联角色。
+- [research-first-explore-integration](./research-first-explore-integration.md) — ByteTrue 在技术选择或外部工作流事实会影响方向时，先用 bt-explore spike 归档证据再进入设计或 roadmap。
 
 ## Draft
 
