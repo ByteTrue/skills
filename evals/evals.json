@@ -1,0 +1,74 @@
+{
+  "skill_name": "bytetrue-workflow-family",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Start the next roadmap-backed feature from ai-workflow-absorption and design it.",
+      "expected_output": "The workflow should route through bt-feat-design, read roadmap hard constraints, create approved design artifacts, checklist, and context manifests only after review.",
+      "files": [
+        ".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md",
+        ".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml"
+      ],
+      "expectations": [
+        "References roadmap contracts as hard constraints",
+        "Writes execution mode and behavior delta sections when relevant",
+        "Generates impl/check context manifests for standard approved designs",
+        "Does not skip user review before implementation"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Implement an approved ByteTrue feature that has context manifests and an implementation review gate.",
+      "expected_output": "The workflow should route through bt-feat-impl, read impl-context, follow checklist steps, and report implementation review gate evidence before acceptance.",
+      "files": [],
+      "expectations": [
+        "Reads required impl-context rows before implementation",
+        "Follows checklist steps in order",
+        "Reports spec-compliance before code-quality review",
+        "Does not enter acceptance early"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Accept a completed feature that started from a roadmap item.",
+      "expected_output": "The workflow should route through bt-feat-accept, read check-context, independently verify scenarios, materialize behavior deltas, and write back architecture, requirement, roadmap, and optional worklog.",
+      "files": [],
+      "expectations": [
+        "Reads required check-context rows",
+        "Checks implementation review evidence without treating it as final acceptance",
+        "Materializes behavior delta writeback",
+        "Updates roadmap item and main roadmap doc",
+        "Offers optional worklog before commit"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Analyze and fix a bug that failed multiple times or may need strict evidence.",
+      "expected_output": "The workflow should route through bt-issue, use strict-evidence or break-loop language when triggered, require root-cause-first diagnosis, and avoid patching blindly.",
+      "files": [],
+      "expectations": [
+        "Records strict-evidence for complex or regression-sensitive bugs",
+        "Escalates repeated failed fixes to break-loop",
+        "Requires regression seam or explains why none exists",
+        "Offers optional worklog after fix closeout"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Initialize ByteTrue in a new project after this roadmap has landed.",
+      "expected_output": "bt-onboard should create the full skeleton, copy all shared references, preserve project-owned config, include worklog, and expose current install/runtime reference wording.",
+      "files": [
+        "skills/bt-onboard/SKILL.md",
+        "skills/bt-onboard/reference/system-overview.md",
+        "skills/bt-onboard/reference/maintainer-notes.md"
+      ],
+      "expectations": [
+        "Skeleton includes worklog",
+        "Managed reference list includes all new workflow references",
+        "Maintainer notes explain reference parity categories",
+        "Project-owned domain-context/project-management are preserved",
+        "README/package projection mentions optional Pi runtime breadcrumb"
+      ]
+    }
+  ]
+}

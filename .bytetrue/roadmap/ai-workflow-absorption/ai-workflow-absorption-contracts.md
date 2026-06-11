@@ -6,7 +6,7 @@ Feature-design must treat these contracts as hard constraints. If a contract nee
 
 ## 1. Behavior Delta Block
 
-**Direction**: Workflow Semantics → Feature Design / Feature Acceptance  
+**Direction**: Workflow Semantics → Feature Design / Feature Acceptance
 **Form**: Markdown block embedded in feature design and acceptance report
 
 Feature design adds:
@@ -54,7 +54,7 @@ Constraints:
 
 ## 2. Risk Mode Classification
 
-**Direction**: Workflow Semantics → Design / Implement / Issue Fix / Acceptance  
+**Direction**: Workflow Semantics → Design / Implement / Issue Fix / Acceptance
 **Form**: Markdown/YAML-compatible classification embedded in design or fix plan
 
 ```yaml
@@ -94,7 +94,7 @@ Constraints:
 
 ## 3. Implementation Review Gate
 
-**Direction**: Workflow Semantics + Execution Context → Feature Implementation / Acceptance  
+**Direction**: Workflow Semantics + Execution Context → Feature Implementation / Acceptance
 **Form**: review checklist and optional subagent roles
 
 ```yaml
@@ -124,7 +124,7 @@ Constraints:
 
 ## 4. Context Manifest Files
 
-**Direction**: Feature Design → Feature Implementation / Check / Optional Subagents  
+**Direction**: Feature Design → Feature Implementation / Check / Optional Subagents
 **Form**: JSONL files in feature directory
 
 ```text
@@ -160,7 +160,7 @@ Rules:
 
 ## 5. Subagent Handoff Protocol
 
-**Direction**: Execution Context → Pi / Claude / other subagent-capable tools  
+**Direction**: Execution Context → Pi / Claude / other subagent-capable tools
 **Form**: prompt prefix + role contract
 
 Every ByteTrue subagent dispatch prompt starts with:
@@ -198,7 +198,7 @@ Constraints:
 
 ## 6. Research-first Integration
 
-**Direction**: Brainstorm / Grill / Roadmap / Feature Design → Explore / Context Manifest  
+**Direction**: Brainstorm / Grill / Roadmap / Feature Design → Explore / Context Manifest
 **Form**: routing rule plus explore artifact references
 
 When a decision depends on external tool behavior, library choice, industry convention, platform hook capability, or comparable workflow design, prefer evidence before asking the user to invent options.
@@ -224,7 +224,7 @@ Constraints:
 
 ## 7. Optional Workflow-state Breadcrumb
 
-**Direction**: Optional Runtime → Agent prompt / hook / extension  
+**Direction**: Optional Runtime → Agent prompt / hook / extension
 **Form**: derived context block, not a new canonical state layer
 
 ```typescript
@@ -254,12 +254,13 @@ Guardrails:
 Constraints:
 - Breadcrumb is optional enhancement only.
 - No core skill may require breadcrumb to function.
-- First supported strong paths: Claude plugin and Pi package.
+- First concrete runtime path: Pi package extension.
+- Claude/plugin-capable tools use the documented manual contract until a verified packaged hook path exists.
 - If breadcrumb state conflicts with file contents, file contents win.
 
 ## 8. Worklog / Report-feed Record
 
-**Direction**: Work Record → Human reporting / handoff / recovery  
+**Direction**: Work Record → Human reporting / handoff / recovery
 **Form**: lightweight markdown record, not full transcript
 
 First version target:

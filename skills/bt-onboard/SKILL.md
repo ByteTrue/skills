@@ -218,7 +218,7 @@ The placeholder template for `ARCHITECTURE.md` and the minimal template for `att
 
 ## Exit Conditions
 
-- [ ] all eight `.bytetrue/` subdirectories exist
+- [ ] all required `.bytetrue/` subdirectories exist, including `worklog/`, `tools/`, and `reference/`
 - [ ] `.bytetrue/attention.md` has been created
 - [ ] `.bytetrue/tools/` has been copied from the skill package
 - [ ] the skill-package-managed files under `.bytetrue/reference/` have been synchronized
