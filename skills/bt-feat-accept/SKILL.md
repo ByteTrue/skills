@@ -22,7 +22,7 @@ The cost of missing any one of these: architecture docs go stale and the next fe
 
 > For shared paths and naming conventions, see section 0 of `.bytetrue/reference/shared-conventions.md`.
 
-> **After reading this section, jump to "After Exit" first and read the close-out checklist before coming back to fill the acceptance template** — the close-out checklist is easier to forget than the template itself, and you are required to ask all 7 items in one pass.
+> **After reading this section, jump to "After Exit" first and read the close-out checklist before coming back to fill the acceptance template** — the close-out checklist is easier to forget than the template itself, and you are required to ask every item in one pass.
 
 ---
 
@@ -45,12 +45,12 @@ The entire comparison table of this skill is hardcoded against the current secti
 ## Startup checks
 
 1. **The code really has been implemented** — `git status` or recent commits must show the feature's code changes, otherwise send it back to implement
-1a. **Implementation review gate evidence exists** — the implementation completion report must include `Implementation Review Gate` with separate spec compliance and code quality results; if missing, send it back to implement
+1a. **Durable implementation report exists** — read `{slug}-implementation-report.md` and confirm `doc_type=feature-implementation-report`, `status=confirmed`, and an `Implementation Review Gate` section with separate spec compliance and code quality results. If the file is missing for a new standard feature, or `{slug}-check-context.jsonl` marks it required, send it back to implement. If the only reason it is missing is that this is a legacy feature from before the report contract, reconstruct the gate once from design + checklist + git diff, write `{slug}-implementation-report.md`, and then continue only if the reconstructed gate passes
 2. **The design doc is complete** — frontmatter must have matching `doc_type=feature-design` and `feature`, `status=approved`, non-empty `summary`, and at least 2 tags; in standard design, sections 0, 1, 2, 3, and 4 must all be filled
 3. **`{slug}-checklist.yaml`** — it must exist with a matching `feature`; all `steps` must already be `done`, any `pending` means send it back to implement; `checks` must be non-empty and all still `pending`
-3a. **Check context manifest** — for new standard features with `{slug}-check-context.jsonl`, read every required row before acceptance; missing required files send the feature back to design or require explicit user downgrade
+3a. **Check context manifest** — for new standard features with `{slug}-check-context.jsonl`, read every required row before acceptance; the planned `{slug}-implementation-report.md` row must exist and be satisfied after implementation; missing required files send the feature back to design/implement or require explicit user downgrade
 3b. **Optional check-role handoff** — if the parent delegates review to a subagent or inline role, use the `check` role in `.bytetrue/reference/subagent-handoff.md`; the role returns evidence/findings only and does not replace this acceptance stage
-4. **Read the full context** — the full design doc, especially section 1 non-goals, section 2.1 interface examples, section 2.2 flow-level constraints, section 2.3 mount points, and section 3 scenarios, plus the checklist, `{slug}-check-context.jsonl` when present, all architecture docs named in section 4, and the code changes from this run, `git log` and `git diff`
+4. **Read the full context** — the full design doc, especially section 1 non-goals, section 2.1 interface examples, section 2.2 flow-level constraints, section 2.3 mount points, and section 3 scenarios, plus the checklist, `{slug}-check-context.jsonl` and `{slug}-implementation-report.md` when present, all architecture docs named in section 4, and the code changes from this run, `git log` and `git diff`
 5. **Resume support** — if `{slug}-acceptance.md` already exists and is partially filled, continue from the next unfinished section, skip checklist checks already marked `passed`, and report "last time we got to section X, continuing from section Y"
 
 **Acceptance report mapping for fastforward design**:
@@ -211,7 +211,7 @@ Look back at this implementation and inventory environment, tool, and workflow f
 Work section by section. After completing each section, **update the `checks` in `{slug}-checklist.yaml` one by one**: passed → `passed`, failed → `failed`, then after the code or design is fixed, change it back to `passed`. The report is not complete until every check is `passed`.
 
 Sections 1 and 2 are the easiest places to expose drift, so do them first. Section 2 must include Behavior Delta Materialization when the design has Behavior Delta entries, or explicitly verify `Behavior Delta: none`. The reverse-check on mount points in section 2 **must** be done with actual grep plus a sandbox removal thought experiment. Do not check it by impression. Sections 5, 6, and 7 are file-writing actions, not self-assessment.
-Before section 1, confirm that implementation review gate evidence exists. This is only an entry gate: acceptance must still verify every section independently and may reject a passed implementation review.
+Before section 1, confirm that durable implementation review gate evidence exists in `{slug}-implementation-report.md` or has been reconstructed for a legacy feature. This is only an entry gate: acceptance must still verify every section independently and may reject a passed implementation review.
 If a check-context manifest exists, verify required rows before section 1. A missing required row is a startup blocker, not a report footnote.
 
 ---
@@ -220,7 +220,7 @@ If a check-context manifest exists, verify required rows before section 1. A mis
 
 - [ ] all 9 sections of the acceptance report are filled
 - [ ] every item in sections 1 and 2 is checked off, with no unresolved drift, including behavior delta materialization, mount-point grep, and removal sandbox thought experiment
-- [ ] implementation review gate evidence existed before acceptance started, and acceptance still performed independent verification
+- [ ] durable implementation review gate evidence existed in `{slug}-implementation-report.md` before acceptance started, or was reconstructed and written there for a legacy feature, and acceptance still performed independent verification
 - [ ] every scenario in section 3 is checked off, and frontend changes have browser verification
 - [ ] section 4 terminology consistency has no gaps
 - [ ] section 5 architecture merge has a clear conclusion for every item, and every needed doc update has actually been written
@@ -247,7 +247,7 @@ Following section 3 of `.bytetrue/reference/shared-conventions.md`, give one-sen
 7. worklog/report-feed is optional background, not a formal artifact → "Do you want to add a concise worklog/report-feed entry for this work?" (`.bytetrue/reference/worklog-report-feed.md`)
 8. finally ask whether you should do a scoped commit
 
-For close-out commit rules, see section 4 of `.bytetrue/reference/shared-conventions.md`. The commit scope here is the feature code, the design doc, the acceptance report, and all architecture docs, req docs, roadmap `items.yaml`, and roadmap main doc that were actually updated this time.
+For close-out commit rules, see section 4 of `.bytetrue/reference/shared-conventions.md`. The commit scope here is the feature code, the design doc, `{slug}-implementation-report.md`, the acceptance report, and all architecture docs, req docs, roadmap `items.yaml`, and roadmap main doc that were actually updated this time.
 
 ---
 
@@ -263,4 +263,5 @@ For close-out commit rules, see section 4 of `.bytetrue/reference/shared-convent
 - in section 7, only `items.yaml` is updated, and the main doc is left unsynchronized, so the two are inconsistent
 - the design frontmatter has `roadmap`, but section 7 is written as skipped — if the value exists, the write-back is mandatory
 - the report is finished without asking the user for final review confirmation
+- accepting chat-only implementation review evidence without a durable `{slug}-implementation-report.md` or explicit legacy reconstruction
 - running `git commit` without explicit user agreement

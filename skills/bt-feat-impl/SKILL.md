@@ -146,7 +146,7 @@ If the reflection check concludes that the code should be split, moved, renamed,
 
 ---
 
-## Fixed-format completion report after everything is done
+## Fixed-format completion report and durable implementation report
 
 Once all steps are complete, use the template below and **stop to wait for user review**.
 
@@ -181,12 +181,27 @@ The point of the fixed template is that vague status reporting pushes verificati
 ### Acceptance-scenario self-check
 **Standard design**: for each key scenario in section 3, what evidence satisfies it, type system / unit test / integration / manual / assert, and whether reverse-check items are guarded
 **Fastforward design**: check each item against the acceptance criteria in section 2
-```
 
 ### TDD / red-green evidence
 {if not enabled: reason / if enabled: for each item, list red test → minimal code → green evidence; if any refactor happened, list the test command rerun after refactor}
+```
 
-After the report, stop and wait for review.
+After the user review passes, write the approved report to `{slug}-implementation-report.md` in the feature directory. Use frontmatter:
+
+```markdown
+---
+doc_type: feature-implementation-report
+feature: {YYYY-MM-DD}-{slug}
+status: confirmed
+summary: {one-line implementation summary}
+---
+
+# {slug} implementation report
+
+{the approved Implementation Completion Report, including Implementation Review Gate and TDD evidence}
+```
+
+This file is the durable evidence consumed by `bt-feat-accept`; a chat-only completion report is not enough.
 
 ---
 
@@ -207,11 +222,11 @@ When the type system itself guarantees something, for example a TypeScript signa
 ## Exit Conditions
 
 - [ ] all steps have status `done`
-- [ ] the completion report has been output, and the user review passed
+- [ ] the completion report has been output, the user review passed, and `{slug}-implementation-report.md` has been written with `status: confirmed`
 - [ ] there are no unhandled "must stop" signals
 - [ ] every key scenario in section 3 has evidence or test coverage, or in fastforward, every section 2 acceptance criterion has evidence
-- [ ] implementation review gate has passed spec compliance before code quality, with evidence listed in the completion report
-- [ ] if TDD was enabled, red/green/refactor evidence is listed in the completion report
+- [ ] implementation review gate has passed spec compliance before code quality, with evidence listed in `{slug}-implementation-report.md`
+- [ ] if TDD was enabled, red/green/refactor evidence is listed in `{slug}-implementation-report.md`
 - [ ] no "while here I noticed" item was secretly fixed; they are all in the issue list
 - [ ] there are no plan-external file changes, or the design doc was updated in sync
 
@@ -219,7 +234,7 @@ When the type system itself guarantees something, for example a TypeScript signa
 
 ## After Exit
 
-Tell the user: "All steps are complete, and the design doc is synchronized. The next stage is acceptance closure. Trigger `bt-feat-accept`."
+Tell the user: "All steps are complete, the implementation report is written, and the design doc is synchronized. The next stage is acceptance closure. Trigger `bt-feat-accept`."
 
 Do not casually start writing the acceptance report yourself. Acceptance needs its own checklist rhythm, and entering it early weakens the gate.
 
@@ -235,6 +250,7 @@ Do not casually start writing the acceptance report yourself. Acceptance needs i
 - introducing a new type or concept without going back to update the design doc
 - adding a patch branch like `if (user is X) { special handling }` without stopping
 - entering acceptance before the user has approved the implementation review
+- leaving implementation review evidence only in chat instead of writing `{slug}-implementation-report.md`
 - leaving the key scenario list without any evidence
 - reading the paradigm-dimension steps as if they were a file:line checklist — steps are slicing strategy, not a diff list; secretly splitting sub-steps inside a step without alignment is bypassing review
 - when TDD is enabled, writing a pile of tests first and then all the implementation — that degrades into horizontal slicing, not tracer bullet

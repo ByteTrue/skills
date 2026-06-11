@@ -44,12 +44,14 @@ After startup, **do one scan first and choose the path automatically**. Do not a
     ├── domain-context.md       terminology / domain glossary / grill-with-docs consensus
     ├── project-management.md   external tracker / labels / sync policy
     ├── tools.md
-    ├── execution-modes.md     workflow heaviness / evidence discipline
+    ├── code-dimensions.md      implementation complexity dimensions
+    ├── execution-modes.md      workflow heaviness / evidence discipline
     ├── implementation-review.md implementation review gate / readiness discipline
-    ├── context-manifest.md      feature-local implement/check read-set contract
+    ├── context-manifest.md     feature-local implement/check read-set contract
     ├── subagent-handoff.md     implement/check/research handoff role contract
     ├── research-first.md       evidence-before-decision trigger and citation rule
     ├── worklog-report-feed.md lightweight worklog / report-feed contract
+    ├── requirement-example.md  requirement writing example
     └── maintainer-notes.md
 ```
 

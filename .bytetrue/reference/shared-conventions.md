@@ -26,11 +26,12 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 │       └── drafts/             可选
 ├── features/              feature spec 聚合根
 │   └── YYYY-MM-DD-{slug}/  每个 feature 一个目录
-│       ├── {slug}-brainstorm.md  （可选，case 2 时产出）
-│       ├── {slug}-design.md      （标准流程）
-│       ├── {slug}-checklist.yaml （标准流程）
-│       ├── {slug}-acceptance.md  （标准流程）
-│       └── {slug}-ff-note.md     （fastforward 通道唯一产物，与上面四份互斥）
+│       ├── {slug}-brainstorm.md        （可选，case 2 时产出）
+│       ├── {slug}-design.md            （标准流程）
+│       ├── {slug}-checklist.yaml       （标准流程）
+│       ├── {slug}-implementation-report.md  （标准流程，bt-feat-impl 写入）
+│       ├── {slug}-acceptance.md        （标准流程）
+│       └── {slug}-ff-note.md           （fastforward 通道唯一产物，与上面五份互斥）
 ├── issues/                issue spec 聚合根
 │   └── YYYY-MM-DD-{slug}/
 │       ├── {slug}-report.md
@@ -99,6 +100,8 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 
 **feature spec**：brainstorm / design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。`status`：brainstorm = `confirmed`（落盘即确认无 draft）；design = `draft` / `approved`；acceptance 见对应技能。
 
+**feature implementation report**：`bt-feat-impl` 在用户 review 通过后写 `{slug}-implementation-report.md`，frontmatter 使用 `doc_type: feature-implementation-report`、`feature`、`status: confirmed`、`summary`。它是 `bt-feat-accept` 启动时读取的持久 Implementation Review Gate 证据；聊天里的完成报告不能替代它。
+
 **issue spec**：report / analysis / fix-note 共用 `doc_type` / `issue` / `status` / `tags`。三阶段完成态统一用 `status: confirmed`；`draft` 表示该阶段仍未完成 review / 验证。`severity` / `root_cause_type` / `path` 由对应阶段按需补。
 
 **归档类（compound）**：
@@ -132,6 +135,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 **implement 的职责**：
 
 - 按 `steps` 顺序执行，每步完成把 status `pending` → `done`
+- 用户通过 completion report review 后，写入 `{slug}-implementation-report.md`，为 acceptance 保留持久 Implementation Review Gate 证据
 - 实现到具体文件级时需要拆分某步、或发现微重构是其前置（参考第 7 节反射检查）→ 跟用户对齐后追加 / 拆分 steps，**不偷偷做**
 - 不改写 `checks`
 

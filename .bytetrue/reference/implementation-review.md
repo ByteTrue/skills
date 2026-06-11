@@ -5,7 +5,7 @@ It does not replace acceptance. It only proves that implementation has reviewed 
 
 ## Gate Shape
 
-Use this shape in implementation completion reports:
+Use this shape in implementation completion reports and the durable `{slug}-implementation-report.md` file:
 
 ```yaml
 implementation_review:
@@ -16,6 +16,25 @@ implementation_review:
     status: passed | failed
     evidence: []
 ```
+
+## Durable Report Artifact
+
+After implementation user review passes, `bt-feat-impl` writes:
+
+```text
+.bytetrue/features/YYYY-MM-DD-{slug}/{slug}-implementation-report.md
+```
+
+Required frontmatter:
+
+```yaml
+doc_type: feature-implementation-report
+feature: YYYY-MM-DD-{slug}
+status: confirmed
+summary: {one-line implementation summary}
+```
+
+This file stores the approved implementation completion report, including the Implementation Review Gate and TDD/red-green evidence. `bt-feat-accept` reads it as startup evidence; chat-only reports are not sufficient.
 
 ## Ordered Reviews
 
@@ -47,7 +66,7 @@ Required checks:
 
 ## Completion Report Section
 
-Add this section to the implementation completion report:
+Add this section to both the chat completion report and `{slug}-implementation-report.md`:
 
 ```markdown
 ### Implementation Review Gate
@@ -71,4 +90,4 @@ Add this section to the implementation completion report:
 - Spec compliance must pass before code quality is meaningful.
 - Inline review is mandatory; subagent review is optional future enhancement.
 - Acceptance still verifies independently and may reject a passed implementation review.
-- Missing review evidence sends the feature back to implementation.
+- Missing durable review evidence sends new features back to implementation; legacy features may reconstruct the report once during acceptance when they predate this contract.

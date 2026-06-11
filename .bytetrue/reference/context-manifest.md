@@ -1,7 +1,7 @@
 # ByteTrue Context Manifest
 
 Context manifests are feature-local JSONL files that tell later stages which project facts and evidence must be read.
-They do not replace design, checklist, requirements, architecture, or acceptance reports.
+They do not replace design, checklist, requirements, architecture, implementation reports, or acceptance reports.
 
 ## File Names
 
@@ -10,13 +10,15 @@ For a standard approved feature design:
 ```text
 .bytetrue/features/YYYY-MM-DD-{slug}/
 ├── {slug}-impl-context.jsonl
-└── {slug}-check-context.jsonl
+├── {slug}-check-context.jsonl
+└── {slug}-implementation-report.md   # written by bt-feat-impl after user review passes
 ```
 
 - `impl-context` is consumed by `bt-feat-impl`.
-- `check-context` is consumed by `bt-feat-accept` and future check roles.
+- `check-context` is consumed by `bt-feat-accept` and future check roles; it should include the planned implementation report path.
 - `subagent-handoff` roles consume these files as their explicit read-set; see `.bytetrue/reference/subagent-handoff.md`.
 - Legacy feature directories without manifests remain readable; new approved designs should create both files.
+- `{slug}-implementation-report.md` is not created by design; implementation writes it as durable review-gate evidence before acceptance.
 
 ## Row Shape
 
@@ -57,7 +59,7 @@ Rules:
 - design acceptance contract and behavior delta source
 - architecture merge targets from design section 4
 - linked requirement and roadmap docs
-- implementation review contract
+- implementation review contract and `{slug}-implementation-report.md`
 - relevant decision/explore evidence needed for verification
 - research-first explore artifacts cited by design, roadmap, or grill when they affect implementation or verification
 
@@ -67,6 +69,7 @@ Rows normally reference `.bytetrue` docs or explore/decision evidence, not raw s
 
 - Missing required files block the stage until fixed or explicitly downgraded by the user.
 - Missing optional files may be skipped, but the stage report should mention the skip when relevant.
+- Legacy feature directories that predate implementation reports may reconstruct the report once during acceptance only when no required manifest row points to the missing report.
 - Paths outside the repository are invalid unless the user explicitly approved them for that run.
 - Do not copy document bodies into the manifest.
 

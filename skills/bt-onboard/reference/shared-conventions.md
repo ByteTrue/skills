@@ -26,11 +26,12 @@ The skeleton after onboarding, built by `bt-onboard`:
 │       └── drafts/             optional
 ├── features/              feature-spec aggregate root
 │   └── YYYY-MM-DD-{slug}/ one directory per feature
-│       ├── {slug}-brainstorm.md  optional, produced only in case 2
-│       ├── {slug}-design.md      standard flow
-│       ├── {slug}-checklist.yaml standard flow
-│       ├── {slug}-acceptance.md  standard flow
-│       └── {slug}-ff-note.md     the only artifact in the fastforward path, mutually exclusive with the four files above
+│       ├── {slug}-brainstorm.md        optional, produced only in case 2
+│       ├── {slug}-design.md            standard flow
+│       ├── {slug}-checklist.yaml       standard flow
+│       ├── {slug}-implementation-report.md  standard flow, written by `bt-feat-impl`
+│       ├── {slug}-acceptance.md        standard flow
+│       └── {slug}-ff-note.md           the only artifact in the fastforward path, mutually exclusive with the five files above
 ├── issues/                issue-spec aggregate root
 │   └── YYYY-MM-DD-{slug}/
 │       ├── {slug}-report.md
@@ -99,6 +100,8 @@ Change the template at `bt-onboard/reference/shared-conventions.md` so that new 
 
 **feature spec**: brainstorm, design, and acceptance share `doc_type`, `feature`, `status`, `summary`, and `tags`. Each sub-skill adds only its own extra fields. `status`: brainstorm = `confirmed`, because writing to disk already means confirmed and there is no draft; design = `draft` / `approved`; acceptance defines its own completion semantics.
 
+**Feature implementation report**: `bt-feat-impl` writes `{slug}-implementation-report.md` after user review passes, with frontmatter `doc_type: feature-implementation-report`, `feature`, `status: confirmed`, and `summary`. It is the durable Implementation Review Gate evidence read by `bt-feat-accept`; a chat-only completion report does not replace it.
+
 **issue spec**: report, analysis, and fix-note share `doc_type`, `issue`, `status`, and `tags`. Across all three issue stages, the completed state is uniformly `status: confirmed`; `draft` means the stage is not yet fully reviewed or verified. Fields such as `severity`, `root_cause_type`, and `path` are added by the corresponding stage as needed.
 
 **Archival documents, `compound`**:
@@ -132,6 +135,7 @@ The granularity of `steps` is the **slice strategy along the orchestration-vs-co
 **Implement is responsible for**:
 
 - executing `steps` in order, changing status from `pending` → `done` one step at a time
+- writing `{slug}-implementation-report.md` after the user approves the completion report, preserving Implementation Review Gate evidence for acceptance
 - when concrete file-level implementation requires splitting a step, or when a micro-refactor is discovered to be its prerequisite, see section 7 reflection checks, align with the user and then append or split the steps, **never silently**
 - never rewriting `checks`
 

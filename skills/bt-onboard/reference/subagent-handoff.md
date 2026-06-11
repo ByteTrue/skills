@@ -41,7 +41,7 @@ May write:
 
 - implementation changes inside approved scope
 - checklist `steps[].status`
-- implementation completion report
+- `{slug}-implementation-report.md` after parent/user review passes
 
 Must not:
 
@@ -56,7 +56,7 @@ Reads:
 - approved design
 - checklist
 - `{slug}-check-context.jsonl`
-- current git diff / implementation report
+- current git diff and `{slug}-implementation-report.md`
 
 May write:
 
@@ -101,6 +101,7 @@ The parent session owns:
 - lifecycle transitions into implementation or acceptance
 
 Child reports are evidence, not final truth. If a child is blocked or says context is missing, update the manifest, design, or plan instead of retrying blindly.
+The parent must persist implementation review evidence before entering acceptance; child check reports can support that evidence but do not replace `{slug}-implementation-report.md`.
 
 ## Role Source
 
