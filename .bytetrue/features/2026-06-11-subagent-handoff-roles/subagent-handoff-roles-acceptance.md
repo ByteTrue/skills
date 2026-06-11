@@ -25,7 +25,7 @@
 
 **Requirement summary**
 
-- [x] Shared handoff protocol exists for subagent-capable tools and inline fallback.
+- [x] Shared handoff protocol exists for native subagent, non-interactive child agent, and inline fallback modes.
 - [x] Implementation, checking, and research roles are defined.
 - [x] Parent orchestrator retains scope, user alignment, final synthesis, and lifecycle transitions.
 - [x] Onboard releases and indexes the new reference.

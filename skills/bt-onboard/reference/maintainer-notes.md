@@ -53,7 +53,7 @@ At the moment, checking "how many features are currently in progress" or "how ma
 
 When changing `skills/bt-onboard/reference/`, audit it against the current project `.bytetrue/reference/` before acceptance:
 
-- **managed identical**: shared contract files should match current and onboard copies exactly, for example execution modes, implementation review, context manifest, subagent handoff, research-first, workflow-state breadcrumb, and worklog report-feed.
+- **managed identical**: shared contract files should match current and onboard copies exactly, for example execution modes, implementation review, context manifest, subagent handoff, research-first, and worklog report-feed.
 - **managed localized/current-specific**: the same contract may be expressed differently for project readability, for example current Chinese system overview versus onboard English template.
 - **project-owned**: `domain-context.md` and `project-management.md` must not be overwritten without explicit confirmation.
 

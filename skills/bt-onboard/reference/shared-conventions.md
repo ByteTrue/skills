@@ -63,7 +63,6 @@ The skeleton after onboarding, built by `bt-onboard`:
     ├── context-manifest.md     feature-local implement/check read-set contract
     ├── subagent-handoff.md     implement/check/research handoff role contract
     ├── research-first.md       evidence-before-decision trigger and citation rule
-    ├── workflow-state-breadcrumb.md optional runtime breadcrumb contract
     ├── worklog-report-feed.md lightweight worklog / report-feed contract
     ├── maintainer-notes.md     maintainer-only workflow family notes
     └── requirement-example.md  requirement writing example

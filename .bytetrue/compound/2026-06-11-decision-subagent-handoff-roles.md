@@ -58,7 +58,7 @@ Rejected. `check` can provide findings and evidence, but `bt-feat-accept` remain
 
 ## Consequences
 
-- Future subagent-capable workflows have a stable prompt prefix and role boundary.
+- Future native subagent, non-interactive child agent, and inline-role workflows have a stable prompt prefix and role boundary.
 - Tools without subagents can still use the same role contract inline.
 - The `check` role absorbs Superpowers reviewer discipline without adding a separate `reviewer` role.
 - The `research` role reuses ByteTrue `bt-explore` / `doc_type: explore` rather than creating a new research directory.

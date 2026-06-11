@@ -108,7 +108,6 @@ There are only two exceptions: when an issue's root cause is obvious at a glance
 - `.bytetrue/reference/context-manifest.md` — feature-local implement/check JSONL read-set contract
 - `.bytetrue/reference/subagent-handoff.md` — handoff prompt contract for implement / check / research roles
 - `.bytetrue/reference/research-first.md` — evidence-before-decision rule for direction-changing technical or external facts
-- `.bytetrue/reference/workflow-state-breadcrumb.md` — optional runtime breadcrumb derived from existing `.bytetrue` artifacts
 - `.bytetrue/reference/worklog-report-feed.md` — lightweight worklog/report-feed for reporting, handoff, recovery, and audit
 - `.bytetrue/reference/maintainer-notes.md` — resume support and registration rules when adding new sub-workflows
 

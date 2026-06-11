@@ -22,7 +22,7 @@ tags: [workflow, subagent, handoff, execution-context]
 
 ## 边界
 
-- 不实现 hook / breadcrumb；那属于 `optional-runtime-breadcrumb`。
+- 不实现 hook / breadcrumb；runtime adapter 不属于 ByteTrue core。
 - 不实现 research-first 触发路由；那属于 `research-first-explore-integration`。
 - 不创建 project-specific `.pi/agents` 或 `.claude/agents`；本 feature 只定义 handoff prompt protocol。
 - 不要求所有工具都支持 subagent；无 subagent 的工具按同一 role contract 内联执行。

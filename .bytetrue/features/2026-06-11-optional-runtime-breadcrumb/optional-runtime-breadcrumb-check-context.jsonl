@@ -1,8 +1,0 @@
-{"file":".bytetrue/features/2026-06-11-optional-runtime-breadcrumb/optional-runtime-breadcrumb-design.md","reason":"Acceptance checks scenarios, behavior delta, non-goals, and section 4 architecture writeback.","required":true,"role":"check"}
-{"file":".bytetrue/features/2026-06-11-optional-runtime-breadcrumb/optional-runtime-breadcrumb-checklist.yaml","reason":"Acceptance must confirm all steps are done and checks are passed.","required":true,"role":"check"}
-{"file":".bytetrue/requirements/optional-runtime-breadcrumb.md","reason":"Requirement should be upgraded to current if the feature is accepted.","required":true,"role":"check"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml","reason":"Roadmap item must be moved from in-progress to done during acceptance.","required":true,"role":"check"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap main document must synchronize the done sub-feature state.","required":true,"role":"check"}
-{"file":".bytetrue/architecture/ARCHITECTURE.md","reason":"Architecture must record breadcrumb as optional runtime aid, not source of truth.","required":true,"role":"check"}
-{"file":".bytetrue/reference/context-manifest.md","reason":"Acceptance verifies breadcrumb points to manifests without replacing them.","required":true,"role":"check"}
-{"file":".bytetrue/reference/subagent-handoff.md","reason":"Acceptance verifies no subagent dispatch behavior is introduced.","required":true,"role":"check"}

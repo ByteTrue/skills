@@ -17,6 +17,16 @@ Context manifest: .bytetrue/features/YYYY-MM-DD-{slug}/{slug}-{impl|check}-conte
 
 For research tasks that do not belong to one feature yet, replace design/checklist with a scoped question and the relevant `.bytetrue` evidence paths.
 
+## Dispatch Mode Selection
+
+Use the lightest available execution surface, in this order:
+
+1. **Native subagent** — if the harness provides a built-in subagent, fork, task, or agent tool, dispatch the role there with the Active Work Block.
+2. **Non-interactive child agent** — if no native subagent exists but the harness can run a synchronous non-interactive child agent, such as a `-p` / `--print` / `--mode text` command, pass the same Active Work Block and wait for its report.
+3. **Inline role execution** — if neither option exists, the parent session performs the role inline while following the same read/write boundaries.
+
+The parent must not implement a custom runtime dispatcher just to satisfy this contract. The child report is evidence only; the parent still owns user alignment, scope changes, lifecycle transitions, and final synthesis. Do not run background child agents for ByteTrue lifecycle work.
+
 ## Roles
 
 ### implement

@@ -16,7 +16,7 @@ tags: [subagent, handoff, execution-context, workflow-infrastructure]
 - **Subagent Handoff Protocol**: the fixed prompt contract used when a parent session delegates ByteTrue work to a child agent or performs the same role inline. Anti-conflict: it is not an automatic dispatcher or runtime hook.
 - **Handoff Role**: one of `implement`, `check`, or `research`, each with different read/write authority. `check` includes the reviewer responsibility from Superpowers: spec-compliance review before code-quality review. Anti-conflict: a role is not a new ByteTrue stage.
 - **Parent Orchestrator**: the main session that owns scope, user alignment, final synthesis, and acceptance progression. Anti-conflict: child agents do not own the lifecycle.
-- **Child Agent**: a subagent or inline role executor given a bounded task and explicit context manifest. Anti-conflict: child agents must not launch their own subagents unless explicitly assigned a fanout task.
+- **Child Agent**: a native subagent, synchronous non-interactive child agent, or inline role executor given a bounded task and explicit context manifest. Anti-conflict: child agents must not launch their own subagents unless explicitly assigned a fanout task.
 - **Active Work Block**: the required prompt prefix that names active feature path, role, design, checklist, and manifest. Anti-conflict: it is not workflow-state breadcrumb; hooks are a later feature.
 
 ## 1. Decisions and Constraints
@@ -49,7 +49,7 @@ Explicit non-goals:
 This is a workflow-contract and prompt-shape change. It follows the internal workflow/tooling default bundle. Deviations:
 
 - **Public surface = stable**: future handoffs must use the role contract.
-- **Integration = optional runtime**: subagent-capable tools can use it directly; other tools use it inline.
+- **Integration = optional dispatch surface**: use native subagent when available, synchronous non-interactive child agent when available, and inline role execution otherwise.
 - **Testability = static contract verification**: verify with grep, line counts, YAML validation, and context-manifest smoke checks.
 
 ### Execution mode
@@ -223,7 +223,7 @@ Reverse-check items:
 ### 3.1 Test Seam / TDD Plan
 
 - **TDD applicability**: not strict TDD. This is a workflow-contract and prompt-shape feature.
-- **Highest behavior seam**: future subagent prompts and inline role execution reports.
+- **Highest behavior seam**: future native subagent prompts, non-interactive child-agent prompts, and inline role execution reports.
 - **Priority red/green behaviors**:
   1. before implementation, no shared `subagent-handoff.md`; after implementation, current/onboard copies exist;
   2. implementation and check stage guidance point to role contract;
@@ -241,7 +241,7 @@ Reverse-check items:
 
 - Source: existing `bt-feat-impl`, `bt-feat-accept`, and `bt-explore` role boundaries.
 - Before: delegation rules were implicit or tool-specific.
-- After: role handoff is explicit and can be used by subagent-capable tools or inline fallback.
+- After: role handoff is explicit and can be used through native subagents, non-interactive child agents, or inline fallback.
 
 ## 4. Relationship with Project-Level Architecture Docs
 

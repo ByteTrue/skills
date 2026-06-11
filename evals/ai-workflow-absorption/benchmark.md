@@ -20,7 +20,7 @@ See `../evals.json` for the five realistic prompts:
 
 | Configuration | Passed | Failed | Total | Pass rate |
 |---|---:|---:|---:|---:|
-| old_skill_baseline (`origin/main`) | 6 | 17 | 23 | 26% |
+| old_skill_baseline (`origin/main`) | 7 | 16 | 23 | 30% |
 | pr_branch (`feat/onboard-template-rollout`) | 23 | 0 | 23 | 100% |
 
 ## Key improvements observed
@@ -29,7 +29,7 @@ See `../evals.json` for the five realistic prompts:
 - Feature implementation now has explicit implementation review gate evidence before acceptance.
 - Feature acceptance now reads check-context, materializes behavior delta, and still verifies independently.
 - Issue workflows now have strict-evidence / break-loop vocabulary for high-risk debugging.
-- Onboard templates now include the full shared reference set, worklog directory, reference parity maintenance rules, and README/package projection for the optional Pi runtime breadcrumb.
+- Onboard templates now include the full shared reference set, worklog directory, reference parity maintenance rules, and a pure-skills README/package projection.
 
 ## Residual risks
 

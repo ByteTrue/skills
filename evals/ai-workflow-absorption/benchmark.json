@@ -7,139 +7,421 @@
     "executor_model": "static-artifact-review",
     "analyzer_model": "human-reviewed",
     "timestamp": "2026-06-11T00:00:00Z",
-    "evals_run": [1, 2, 3, 4, 5],
+    "evals_run": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
     "runs_per_configuration": 1,
-    "notes": "Lightweight skill-creator-style evaluation for PR #2. This benchmark compares expected workflow behavior available in origin/main versus the PR branch by static artifact review, not live agent transcripts."
+    "notes": "Lightweight skill-creator-style evaluation for PR #2. This benchmark compares expected pure-skills workflow behavior available in origin/main versus the PR branch by static artifact review, not live agent transcripts."
   },
   "runs": [
     {
       "eval_id": 1,
       "eval_name": "roadmap-backed-feature-design",
       "configuration": "old_skill_baseline",
-      "result": {"pass_rate": 0.25, "passed": 1, "failed": 3, "total": 4, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "References roadmap contracts as hard constraints", "passed": true, "evidence": "Existing bt-roadmap/bt-feat-design already used roadmap hard constraints."},
-        {"text": "Writes execution mode and behavior delta sections when relevant", "passed": false, "evidence": "origin/main lacks the finalized behavior delta and execution-mode contracts."},
-        {"text": "Generates impl/check context manifests", "passed": false, "evidence": "origin/main lacks context manifest generation."},
-        {"text": "Does not skip user review before implementation", "passed": true, "evidence": "Existing design workflow has review gate."}
+        {
+          "text": "References roadmap contracts as hard constraints",
+          "passed": true,
+          "evidence": "Existing bt-roadmap/bt-feat-design already used roadmap hard constraints."
+        },
+        {
+          "text": "Writes execution mode and behavior delta sections when relevant",
+          "passed": false,
+          "evidence": "origin/main lacks the finalized behavior delta and execution-mode contracts."
+        },
+        {
+          "text": "Generates impl/check context manifests",
+          "passed": false,
+          "evidence": "origin/main lacks context manifest generation."
+        },
+        {
+          "text": "Does not skip user review before implementation",
+          "passed": true,
+          "evidence": "Existing design workflow has review gate."
+        }
       ]
     },
     {
       "eval_id": 1,
       "eval_name": "roadmap-backed-feature-design",
       "configuration": "pr_branch",
-      "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "References roadmap contracts as hard constraints", "passed": true, "evidence": "ai-workflow roadmap contracts are read by feature design artifacts."},
-        {"text": "Writes execution mode and behavior delta sections when relevant", "passed": true, "evidence": "bt-feat-design and reference templates include execution mode and Behavior Delta."},
-        {"text": "Generates impl/check context manifests", "passed": true, "evidence": "bt-feat-design requires impl/check JSONL manifests for standard approved designs."},
-        {"text": "Does not skip user review before implementation", "passed": true, "evidence": "Existing review gate preserved; design artifacts remain approved before implementation."}
+        {
+          "text": "References roadmap contracts as hard constraints",
+          "passed": true,
+          "evidence": "ai-workflow roadmap contracts are read by feature design artifacts."
+        },
+        {
+          "text": "Writes execution mode and behavior delta sections when relevant",
+          "passed": true,
+          "evidence": "bt-feat-design and reference templates include execution mode and Behavior Delta."
+        },
+        {
+          "text": "Generates impl/check context manifests",
+          "passed": true,
+          "evidence": "bt-feat-design requires impl/check JSONL manifests for standard approved designs."
+        },
+        {
+          "text": "Does not skip user review before implementation",
+          "passed": true,
+          "evidence": "Existing review gate preserved; design artifacts remain approved before implementation."
+        }
       ]
     },
     {
       "eval_id": 2,
       "eval_name": "feature-implementation-readiness",
       "configuration": "old_skill_baseline",
-      "result": {"pass_rate": 0.25, "passed": 1, "failed": 3, "total": 4, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "Reads required impl-context rows", "passed": false, "evidence": "origin/main has no impl-context manifest contract."},
-        {"text": "Follows checklist steps in order", "passed": true, "evidence": "Existing bt-feat-impl follows checklist order."},
-        {"text": "Reports spec-compliance before code-quality review", "passed": false, "evidence": "origin/main lacks Implementation Review Gate."},
-        {"text": "Does not enter acceptance early", "passed": false, "evidence": "origin/main has no explicit implementation-review evidence gate before acceptance."}
+        {
+          "text": "Reads required impl-context rows",
+          "passed": false,
+          "evidence": "origin/main has no impl-context manifest contract."
+        },
+        {
+          "text": "Follows checklist steps in order",
+          "passed": true,
+          "evidence": "Existing bt-feat-impl follows checklist order."
+        },
+        {
+          "text": "Reports spec-compliance before code-quality review",
+          "passed": false,
+          "evidence": "origin/main lacks Implementation Review Gate."
+        },
+        {
+          "text": "Does not enter acceptance early",
+          "passed": false,
+          "evidence": "origin/main has no explicit implementation-review evidence gate before acceptance."
+        }
       ]
     },
     {
       "eval_id": 2,
       "eval_name": "feature-implementation-readiness",
       "configuration": "pr_branch",
-      "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "Reads required impl-context rows", "passed": true, "evidence": "bt-feat-impl startup reads impl-context and required rows block missing files."},
-        {"text": "Follows checklist steps in order", "passed": true, "evidence": "Existing behavior preserved."},
-        {"text": "Reports spec-compliance before code-quality review", "passed": true, "evidence": "Implementation Review Gate reference and bt-feat-impl completion report require it."},
-        {"text": "Does not enter acceptance early", "passed": true, "evidence": "bt-feat-accept startup checks implementation review evidence."}
+        {
+          "text": "Reads required impl-context rows",
+          "passed": true,
+          "evidence": "bt-feat-impl startup reads impl-context and required rows block missing files."
+        },
+        {
+          "text": "Follows checklist steps in order",
+          "passed": true,
+          "evidence": "Existing behavior preserved."
+        },
+        {
+          "text": "Reports spec-compliance before code-quality review",
+          "passed": true,
+          "evidence": "Implementation Review Gate reference and bt-feat-impl completion report require it."
+        },
+        {
+          "text": "Does not enter acceptance early",
+          "passed": true,
+          "evidence": "bt-feat-accept startup checks implementation review evidence."
+        }
       ]
     },
     {
       "eval_id": 3,
       "eval_name": "feature-acceptance-writeback",
       "configuration": "old_skill_baseline",
-      "result": {"pass_rate": 0.4, "passed": 2, "failed": 3, "total": 5, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 0.4,
+        "passed": 2,
+        "failed": 3,
+        "total": 5,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "Reads required check-context rows", "passed": false, "evidence": "origin/main has no check-context manifest contract."},
-        {"text": "Checks implementation review evidence", "passed": false, "evidence": "origin/main lacks implementation review gate."},
-        {"text": "Materializes behavior delta writeback", "passed": false, "evidence": "origin/main lacks Behavior Delta materialization."},
-        {"text": "Updates roadmap item and main roadmap doc", "passed": true, "evidence": "Existing acceptance writes roadmap state."},
-        {"text": "Offers optional worklog before commit", "passed": false, "evidence": "origin/main has no worklog/report-feed closeout prompt."}
+        {
+          "text": "Reads required check-context rows",
+          "passed": false,
+          "evidence": "origin/main has no check-context manifest contract."
+        },
+        {
+          "text": "Checks implementation review evidence",
+          "passed": false,
+          "evidence": "origin/main lacks implementation review gate."
+        },
+        {
+          "text": "Materializes behavior delta writeback",
+          "passed": false,
+          "evidence": "origin/main lacks Behavior Delta materialization."
+        },
+        {
+          "text": "Updates roadmap item and main roadmap doc",
+          "passed": true,
+          "evidence": "Existing acceptance writes roadmap state."
+        },
+        {
+          "text": "Offers optional worklog before commit",
+          "passed": false,
+          "evidence": "origin/main has no worklog/report-feed closeout prompt."
+        }
       ]
     },
     {
       "eval_id": 3,
       "eval_name": "feature-acceptance-writeback",
       "configuration": "pr_branch",
-      "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "Reads required check-context rows", "passed": true, "evidence": "bt-feat-accept startup checks check-context required rows."},
-        {"text": "Checks implementation review evidence", "passed": true, "evidence": "bt-feat-accept startup requires Implementation Review Gate evidence but still verifies independently."},
-        {"text": "Materializes behavior delta writeback", "passed": true, "evidence": "bt-feat-accept section 2 includes Behavior Delta Materialization."},
-        {"text": "Updates roadmap item and main roadmap doc", "passed": true, "evidence": "Existing behavior preserved and used throughout roadmap features."},
-        {"text": "Offers optional worklog before commit", "passed": true, "evidence": "bt-feat-accept closeout includes optional worklog prompt before scoped commit."}
+        {
+          "text": "Reads required check-context rows",
+          "passed": true,
+          "evidence": "bt-feat-accept startup checks check-context required rows."
+        },
+        {
+          "text": "Checks implementation review evidence",
+          "passed": true,
+          "evidence": "bt-feat-accept startup requires Implementation Review Gate evidence but still verifies independently."
+        },
+        {
+          "text": "Materializes behavior delta writeback",
+          "passed": true,
+          "evidence": "bt-feat-accept section 2 includes Behavior Delta Materialization."
+        },
+        {
+          "text": "Updates roadmap item and main roadmap doc",
+          "passed": true,
+          "evidence": "Existing behavior preserved and used throughout roadmap features."
+        },
+        {
+          "text": "Offers optional worklog before commit",
+          "passed": true,
+          "evidence": "bt-feat-accept closeout includes optional worklog prompt before scoped commit."
+        }
       ]
     },
     {
       "eval_id": 4,
       "eval_name": "issue-strict-evidence-routing",
       "configuration": "old_skill_baseline",
-      "result": {"pass_rate": 0.25, "passed": 1, "failed": 3, "total": 4, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "Records strict-evidence for complex bugs", "passed": false, "evidence": "origin/main lacks execution mode vocabulary."},
-        {"text": "Escalates repeated failed fixes to break-loop", "passed": false, "evidence": "origin/main lacks break-loop execution mode."},
-        {"text": "Requires regression seam or explains why none exists", "passed": true, "evidence": "Existing issue-fix has regression test/seam discipline from Matt absorption."},
-        {"text": "Offers optional worklog after fix closeout", "passed": false, "evidence": "origin/main lacks worklog prompt."}
+        {
+          "text": "Records strict-evidence for complex bugs",
+          "passed": false,
+          "evidence": "origin/main lacks execution mode vocabulary."
+        },
+        {
+          "text": "Escalates repeated failed fixes to break-loop",
+          "passed": false,
+          "evidence": "origin/main lacks break-loop execution mode."
+        },
+        {
+          "text": "Requires regression seam or explains why none exists",
+          "passed": true,
+          "evidence": "Existing issue-fix has regression test/seam discipline from Matt absorption."
+        },
+        {
+          "text": "Offers optional worklog after fix closeout",
+          "passed": false,
+          "evidence": "origin/main lacks worklog prompt."
+        }
       ]
     },
     {
       "eval_id": 4,
       "eval_name": "issue-strict-evidence-routing",
       "configuration": "pr_branch",
-      "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "Records strict-evidence for complex bugs", "passed": true, "evidence": "bt-issue-analyze maps enhanced diagnose to strict-evidence."},
-        {"text": "Escalates repeated failed fixes to break-loop", "passed": true, "evidence": "bt-issue-analyze/fix include break-loop escalation for repeated failures."},
-        {"text": "Requires regression seam or explains why none exists", "passed": true, "evidence": "bt-issue-fix strict-evidence rules require seam/fresh verification unless explained."},
-        {"text": "Offers optional worklog after fix closeout", "passed": true, "evidence": "bt-issue-fix closeout includes optional worklog prompt."}
+        {
+          "text": "Records strict-evidence for complex bugs",
+          "passed": true,
+          "evidence": "bt-issue-analyze maps enhanced diagnose to strict-evidence."
+        },
+        {
+          "text": "Escalates repeated failed fixes to break-loop",
+          "passed": true,
+          "evidence": "bt-issue-analyze/fix include break-loop escalation for repeated failures."
+        },
+        {
+          "text": "Requires regression seam or explains why none exists",
+          "passed": true,
+          "evidence": "bt-issue-fix strict-evidence rules require seam/fresh verification unless explained."
+        },
+        {
+          "text": "Offers optional worklog after fix closeout",
+          "passed": true,
+          "evidence": "bt-issue-fix closeout includes optional worklog prompt."
+        }
       ]
     },
     {
       "eval_id": 5,
       "eval_name": "onboard-integrated-template",
       "configuration": "old_skill_baseline",
-      "result": {"pass_rate": 0.2, "passed": 1, "failed": 4, "total": 5, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 0.4,
+        "passed": 2,
+        "failed": 3,
+        "total": 5,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "Skeleton includes worklog", "passed": false, "evidence": "origin/main lacks worklog skeleton."},
-        {"text": "Managed reference list includes all new workflow references", "passed": false, "evidence": "origin/main lacks several ai-workflow references."},
-        {"text": "Maintainer notes explain reference parity categories", "passed": false, "evidence": "origin/main lacks reference parity audit categories."},
-        {"text": "Project-owned refs are preserved", "passed": true, "evidence": "Existing onboard already preserves domain-context and project-management."},
-        {"text": "README/package projection mentions optional Pi runtime breadcrumb", "passed": false, "evidence": "origin/main has no pi.extensions or README breadcrumb note."}
+        {
+          "text": "Skeleton includes worklog",
+          "passed": false,
+          "evidence": "origin/main lacks worklog skeleton."
+        },
+        {
+          "text": "Managed reference list includes all new workflow references",
+          "passed": false,
+          "evidence": "origin/main lacks several ai-workflow references."
+        },
+        {
+          "text": "Maintainer notes explain reference parity categories",
+          "passed": false,
+          "evidence": "origin/main lacks reference parity audit categories."
+        },
+        {
+          "text": "Project-owned refs are preserved",
+          "passed": true,
+          "evidence": "Existing onboard already preserves domain-context and project-management."
+        },
+        {
+          "text": "README/package projection remains skills-only and does not register runtime extensions",
+          "passed": true,
+          "evidence": "origin/main is skills-only; it lacks the new rollout references and worklog but does not register runtime extensions."
+        }
       ]
     },
     {
       "eval_id": 5,
       "eval_name": "onboard-integrated-template",
       "configuration": "pr_branch",
-      "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": null, "tokens": null, "tool_calls": 0, "errors": 0},
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": null,
+        "tokens": null,
+        "tool_calls": 0,
+        "errors": 0
+      },
       "expectations": [
-        {"text": "Skeleton includes worklog", "passed": true, "evidence": "bt-onboard skeleton includes `.bytetrue/worklog/`."},
-        {"text": "Managed reference list includes all new workflow references", "passed": true, "evidence": "bt-onboard managed list includes execution modes, implementation review, context manifest, subagent handoff, research-first, breadcrumb, and worklog."},
-        {"text": "Maintainer notes explain reference parity categories", "passed": true, "evidence": "current/onboard maintainer notes include Reference Parity Audit categories."},
-        {"text": "Project-owned refs are preserved", "passed": true, "evidence": "onboard still excludes domain-context and project-management from overwrite."},
-        {"text": "README/package projection mentions optional Pi runtime breadcrumb", "passed": true, "evidence": "README Pi install text mentions optional runtime extension and package has pi.extensions."}
+        {
+          "text": "Skeleton includes worklog",
+          "passed": true,
+          "evidence": "bt-onboard skeleton includes `.bytetrue/worklog/`."
+        },
+        {
+          "text": "Managed reference list includes all new workflow references",
+          "passed": true,
+          "evidence": "bt-onboard managed list includes execution modes, implementation review, context manifest, subagent handoff, research-first, and worklog."
+        },
+        {
+          "text": "Maintainer notes explain reference parity categories",
+          "passed": true,
+          "evidence": "current/onboard maintainer notes include Reference Parity Audit categories."
+        },
+        {
+          "text": "Project-owned refs are preserved",
+          "passed": true,
+          "evidence": "onboard still excludes domain-context and project-management from overwrite."
+        },
+        {
+          "text": "README/package projection remains skills-only and does not register runtime extensions",
+          "passed": true,
+          "evidence": "README Pi install text describes skills-only package and package.json has pi.skills without pi.extensions."
+        }
       ]
     }
   ],
   "summary": {
-    "old_skill_baseline": {"passed": 6, "failed": 17, "total": 23, "pass_rate": 0.26},
-    "pr_branch": {"passed": 23, "failed": 0, "total": 23, "pass_rate": 1.0},
-    "delta_pass_rate": 0.74
+    "old_skill_baseline": {
+      "passed": 7,
+      "failed": 16,
+      "total": 23,
+      "pass_rate": 0.3
+    },
+    "pr_branch": {
+      "passed": 23,
+      "failed": 0,
+      "total": 23,
+      "pass_rate": 1.0
+    },
+    "delta_pass_rate": 0.7
   }
 }

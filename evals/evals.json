@@ -56,7 +56,7 @@
     {
       "id": 5,
       "prompt": "Initialize ByteTrue in a new project after this roadmap has landed.",
-      "expected_output": "bt-onboard should create the full skeleton, copy all shared references, preserve project-owned config, include worklog, and expose current install/runtime reference wording.",
+      "expected_output": "bt-onboard should create the full skeleton, copy all shared references, preserve project-owned config, include worklog, and keep the install projection skills-only.",
       "files": [
         "skills/bt-onboard/SKILL.md",
         "skills/bt-onboard/reference/system-overview.md",
@@ -67,7 +67,7 @@
         "Managed reference list includes all new workflow references",
         "Maintainer notes explain reference parity categories",
         "Project-owned domain-context/project-management are preserved",
-        "README/package projection mentions optional Pi runtime breadcrumb"
+        "README/package projection remains skills-only and does not register runtime extensions"
       ]
     }
   ]

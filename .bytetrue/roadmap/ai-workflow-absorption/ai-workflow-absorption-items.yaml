@@ -45,7 +45,7 @@ items:
     status: done
     feature: 2026-06-11-subagent-handoff-roles
     minimal_loop: false
-    notes: Strong path targets Pi and Claude first; non-subagent tools use the same protocol inline.
+    notes: Dispatch ladder is native subagent first, then synchronous non-interactive child agent, then inline role execution; ByteTrue core does not implement a custom dispatcher.
 
   - slug: research-first-explore-integration
     description: Route technical-choice and comparable-workflow decisions through bt-explore spike artifacts before design or roadmap decisions.
@@ -57,14 +57,14 @@ items:
     notes: Absorbs Trellis research-first while reusing ByteTrue compound explore artifacts.
 
   - slug: optional-runtime-breadcrumb
-    description: Add optional workflow-state breadcrumb or hook enhancement for Claude plugin and Pi package, deriving state from existing ByteTrue artifacts.
+    description: Dropped from the core roadmap: runtime breadcrumb hooks/adapters are outside the pure-skills ByteTrue core.
     depends_on:
       - context-manifest-contract
       - subagent-handoff-roles
-    status: done
-    feature: 2026-06-11-optional-runtime-breadcrumb
+    status: dropped
+    feature: null
     minimal_loop: false
-    notes: Optional enhancement only; core Skill workflow must still work without hooks.
+    notes: Dropped during PR review; future runtime adapters may be planned separately if they are implemented fully rather than as half-documentation.
 
   - slug: worklog-report-feed
     description: Add a lightweight ByteTrue worklog/report-feed for session summaries, weekly reports, handoff, recovery background, and AI work audit.
@@ -85,7 +85,6 @@ items:
       - context-manifest-contract
       - subagent-handoff-roles
       - research-first-explore-integration
-      - optional-runtime-breadcrumb
       - worklog-report-feed
     status: done
     feature: 2026-06-11-onboard-template-rollout

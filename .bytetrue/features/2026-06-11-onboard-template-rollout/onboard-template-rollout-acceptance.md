@@ -8,10 +8,10 @@
 
 **Interface examples**
 
-- [x] Reference parity audit: current `.bytetrue/reference/` and `skills/bt-onboard/reference/` both contain 15 markdown files.
-- [x] Managed contract parity: execution modes, implementation review, context manifest, subagent handoff, research-first, workflow-state breadcrumb, and worklog report-feed match current/onboard copies.
-- [x] Install projection: `package.json` parses and exposes both `pi.skills` and `pi.extensions`; Claude plugin and marketplace JSON parse.
-- [x] README projection: Pi install section now says the package loads skills plus optional read-only workflow-state breadcrumb runtime extension.
+- [x] Reference parity audit: current `.bytetrue/reference/` and `skills/bt-onboard/reference/` both contain 14 markdown files.
+- [x] Managed contract parity: execution modes, implementation review, context manifest, subagent handoff, research-first, and worklog report-feed match current/onboard copies.
+- [x] Install projection: `package.json` parses, exposes `pi.skills`, and does not expose `pi.extensions`; Claude plugin and marketplace JSON parse.
+- [x] README projection: Pi install section keeps the package described as a skills-only bundle.
 
 **Current state → change**
 
@@ -29,7 +29,7 @@
 - [x] `bt-onboard` skeleton and managed reference list include the new references and `.bytetrue/worklog/`.
 - [x] Current and onboard reference file sets match.
 - [x] Intentional project-owned / localized differences are documented in maintainer notes.
-- [x] README describes Pi package as skills plus optional runtime extension.
+- [x] README describes Pi package as skills plus runtime adapters are deferred.
 - [x] package/plugin metadata validates.
 - [x] Roadmap is now ready to complete because every item is done.
 
@@ -67,10 +67,10 @@
 
 ## 3. Acceptance-scenario check
 
-- [x] **S1 reference filename parity**: current/onboard reference file sets match, 15 files each.
+- [x] **S1 reference filename parity**: current/onboard reference file sets match, 14 files each.
 - [x] **S2 new references indexed**: all AI workflow absorption references and worklog directory are in `bt-onboard` / system overview indexes.
 - [x] **S3 worklog directory included**: `bt-onboard` skeleton includes `.bytetrue/worklog/.gitkeep`.
-- [x] **S4 install projection accurate**: package JSON validates, `pi.skills` and `pi.extensions` are present, Claude plugin metadata validates, README mentions optional Pi runtime extension.
+- [x] **S4 install projection accurate**: package JSON validates, `pi.skills` is present, `pi.extensions` is absent, Claude plugin metadata validates, and README does not claim a runtime extension.
 - [x] **S5 skill count accurate**: README badge count 28 matches actual `SKILL.md` count 28.
 - [x] **S6 no release side effects**: no publish, tag, push, tracker sync, marketplace publish, or external release command was run.
 - [x] **S7 no new workflow behavior**: only templates, reference docs, README, metadata verification, and roadmap/requirement state were changed.

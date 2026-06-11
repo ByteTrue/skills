@@ -29,14 +29,14 @@ Success means:
 
 - `bt-onboard` skeleton and managed-reference list include every new reference and `.bytetrue/worklog/`;
 - current `.bytetrue/reference/` and onboard template references have the same file set, with intentional project-owned exceptions documented;
-- README describes the Pi package as skills plus optional runtime extension, not skills-only;
+- README describes the Pi package as skills-only, not skills-only;
 - package/plugin metadata still validates and lists the correct install projections;
 - roadmap `onboard-template-rollout` is later accepted as done and the whole roadmap is ready to complete once all items are done;
 - no new workflow contract, runtime feature, tracker sync, release publish, or external push is performed.
 
 Explicit non-goals:
 
-- do not redesign behavior delta, execution modes, implementation review, context manifest, subagent handoff, research-first, breadcrumb, or worklog contracts;
+- do not redesign behavior delta, execution modes, implementation review, context manifest, subagent handoff, research-first, or worklog contracts;
 - do not overwrite `domain-context.md` or `project-management.md` project content;
 - do not publish package/plugin releases or run external marketplace commands;
 - do not change skill descriptions unless the rollout audit finds a direct mismatch;
@@ -66,7 +66,7 @@ TDD is not suitable; this is a documentation/template rollout feature.
 1. **Do a parity audit, not blind copy.**
    - Reason: some current reference files are project-owned or localized and should intentionally differ from onboard templates.
 2. **README gets the minimum install-projection update.**
-   - Reason: package now includes `pi.extensions`; users should know Pi install gives optional breadcrumb runtime enhancement.
+   - Reason: package should remain skills-only; runtime adapters are deferred.
 3. **Do not expand this into a release process.**
    - Reason: publishing tags/npm/marketplace belongs outside this feature and requires explicit user approval.
 4. **Mark current/onboard reference mismatches with categories.**
@@ -82,8 +82,8 @@ TDD is not suitable; this is a documentation/template rollout feature.
 
 - `bt-onboard` already lists the new references through `worklog-report-feed`, including `.bytetrue/worklog/`.
 - Current and onboard reference directories currently have the same `.md` filename set, but some files differ by design or project ownership.
-- README still says the Pi package install path but does not mention that the package now carries an optional runtime extension.
-- `package.json` registers both `pi.skills` and `pi.extensions`; Claude plugin metadata is metadata-only and should remain valid.
+- README still says the Pi package install path and should keep the core package skills-only.
+- `package.json` registers `pi.skills` and does not register `pi.extensions`; Claude plugin metadata is metadata-only and should remain valid.
 - Root README badge says 28 skills, and the repo currently has 28 `SKILL.md` files.
 
 #### Change
@@ -100,14 +100,14 @@ Reference parity audit categories:
 Update README install section to state:
 
 ```text
-Pi package installs ByteTrue skills and the optional read-only breadcrumb extension.
+Pi package installs ByteTrue skills only; runtime adapters are deferred outside core.
 Tools that only support Agent Skills can still install the skills-only bundle through npx skills add.
 ```
 
 Run static checks:
 
 ```text
-- package.json parses and pi.skills / pi.extensions exist
+- package.json parses, `pi.skills` exists, and `pi.extensions` is absent
 - .claude-plugin/*.json parse
 - find skills -maxdepth 2 -name SKILL.md count matches README badge
 - current/onboard reference filename sets match
@@ -134,9 +134,9 @@ The previous eight features have individually updated their current and onboard 
 
 - Perform reference filename parity check between `.bytetrue/reference/` and `skills/bt-onboard/reference/`.
 - Confirm every new shared reference is in `bt-onboard` inventory and current/onboard system overview.
-- Update README Pi install text to mention optional runtime extension.
+- Update README Pi install text to mention runtime adapters are deferred.
 - If plugin metadata remains valid and unchanged, record that no plugin metadata edit is needed.
-- If package metadata already registers extension, preserve it and verify.
+- If package metadata registers runtime extensions, remove them unless a separate runtime-adapter feature explicitly owns them.
 - Acceptance later should mark the roadmap item done; if all roadmap items are done, note that roadmap can be completed.
 
 Flow-level constraints:
@@ -150,7 +150,7 @@ Flow-level constraints:
 ### 2.3 Mount-Point Inventory
 
 - `README.md`: installation / Pi package description update.
-- `package.json`: verify `pi.skills` and `pi.extensions`; edit only if drift is found.
+- `package.json`: verify `pi.skills` exists and `pi.extensions` is absent; edit only if drift is found.
 - `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`: verify valid; edit only if metadata drift is found.
 - `skills/bt-onboard/SKILL.md`: verify skeleton and managed reference list; edit only if missing entries are found.
 - `skills/bt-onboard/reference/maintainer-notes.md` and `.bytetrue/reference/maintainer-notes.md`: add reference parity / rollout maintenance note if missing.
@@ -162,7 +162,7 @@ Flow-level constraints:
 1. **Reference parity audit**: compare current/onboard reference filename sets and classify content differences.
    - exit signal: parity report is available in implementation report and any missing files are resolved.
 2. **Install projection update**: verify package/plugin metadata and update README install wording.
-   - exit signal: JSON parses, README mentions Pi skills + optional runtime extension, skill count stays correct.
+   - exit signal: JSON parses, README mentions pure-skills Pi package, skill count stays correct.
 3. **Onboard maintenance note**: update maintainer notes or onboard reference guidance for future parity checks.
    - exit signal: maintainers can tell managed vs project-owned reference differences.
 4. **Validation**: run YAML/JSON/line-count/grep checks and no-release scope guard.
@@ -188,9 +188,9 @@ No micro-refactor is needed. This is a small integration pass; avoid restructuri
 Key scenarios:
 
 1. **Reference filename parity**: current and onboard reference `.md` filename sets match, with project-owned exceptions documented.
-2. **New references indexed**: execution modes, implementation review, context manifest, subagent handoff, research-first, workflow-state breadcrumb, and worklog are listed in `bt-onboard` and system overview references.
+2. **New references indexed**: execution modes, implementation review, context manifest, subagent handoff, research-first, and worklog are listed in `bt-onboard` and system overview references.
 3. **Worklog directory included**: `bt-onboard` creates `.bytetrue/worklog/.gitkeep`.
-4. **Install projection accurate**: `package.json` validates, `pi.skills` and `pi.extensions` are present, Claude plugin metadata validates, and README mentions optional Pi runtime extension.
+4. **Install projection accurate**: `package.json` validates, `pi.skills` is present, `pi.extensions` is absent, Claude plugin metadata validates, and README does not claim a runtime extension.
 5. **Skill count accurate**: README skill badge count matches actual `SKILL.md` count.
 6. **No release side effects**: no publish, tag, push, external tracker, or marketplace command is run.
 7. **No new workflow behavior**: this feature only synchronizes templates, references, README, and metadata.
@@ -218,7 +218,7 @@ Reverse-check items:
 #### MODIFIED
 
 - Source: README and onboard maintenance guidance.
-- Before: install docs describe Pi package install but do not call out optional runtime extension; maintenance docs do not explain reference parity categories.
+- Before: install docs describe Pi package install but do not call out runtime adapters are deferred; maintenance docs do not explain reference parity categories.
 - After: install docs and maintainer notes describe the integrated package/reference state accurately.
 
 ## 4. Relationship with Project-Level Architecture Docs

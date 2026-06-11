@@ -11,9 +11,9 @@ tags: [onboard, templates, reference-parity, install-projection]
 
 ## Context
 
-The `ai-workflow-absorption` roadmap added several shared workflow contracts: behavior delta, execution modes, implementation review, context manifest, subagent handoff, research-first, optional runtime breadcrumb, and worklog/report-feed.
+The `ai-workflow-absorption` roadmap added several shared workflow contracts: behavior delta, execution modes, implementation review, context manifest, subagent handoff, research-first, and worklog/report-feed.
 
-Each feature updated its own affected skills and references, but a final distribution pass was needed to prove new projects receive the integrated set through `bt-onboard`, and that installation projections accurately describe the package after the Pi breadcrumb extension was added.
+Each feature updated its own affected skills and references, but a final distribution pass was needed to prove new projects receive the integrated set through `bt-onboard`, and that installation projections accurately describe the package after runtime adapters were deferred out of core.
 
 ## Decision
 
@@ -21,14 +21,14 @@ ByteTrue treats `skills/bt-onboard/reference/` as the package-managed publicatio
 
 Reference parity categories are:
 
-- **managed identical**: shared contract files must match current and onboard copies exactly, such as execution modes, implementation review, context manifest, subagent handoff, research-first, workflow-state breadcrumb, and worklog report-feed.
+- **managed identical**: shared contract files must match current and onboard copies exactly, such as execution modes, implementation review, context manifest, subagent handoff, research-first, and worklog report-feed.
 - **managed localized/current-specific**: content may differ for local readability or current-project phrasing while preserving the same contract, such as current Chinese system overview versus onboard English template.
 - **project-owned**: `domain-context.md` and `project-management.md` must not be overwritten without explicit confirmation.
 
 The final rollout also requires install projections to be accurate:
 
-- `package.json` must expose `pi.skills` and `pi.extensions` when both resources exist.
-- README must explain that Pi package install loads skills plus the optional read-only workflow-state breadcrumb extension.
+- `package.json` must expose `pi.skills`; runtime adapters stay outside the core skill bundle unless planned separately.
+- README must keep the Pi package install described as skills-only unless a future runtime-adapter feature explicitly changes that.
 - Claude plugin metadata must remain valid and must not claim hook behavior unless a packaged hook path is verified.
 
 ## Alternatives Considered
@@ -47,11 +47,11 @@ Rejected. Publishing packages, tags, external tracker sync, marketplace publicat
 
 ### Leave README unchanged
 
-Rejected. After `optional-runtime-breadcrumb`, the Pi package is no longer skills-only; the install docs need to say that the optional extension is included.
+Rejected. ByteTrue core remains skills-only; install docs should not imply runtime adapters are part of the core package.
 
 ## Consequences
 
-- New onboarded projects receive the full integrated reference set, including worklog/report-feed and workflow-state breadcrumb contracts.
+- New onboarded projects receive the full integrated reference set, including worklog/report-feed contracts.
 - Future maintainers have a clear rule for distinguishing true drift from intentional reference differences.
 - Package/plugin metadata and README install docs are consistent with current repository state.
 - No new workflow behavior, CLI, release, tag, push, marketplace command, or external sync is introduced by rollout.

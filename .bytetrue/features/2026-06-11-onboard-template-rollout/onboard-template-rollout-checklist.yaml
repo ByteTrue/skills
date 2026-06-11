@@ -6,7 +6,7 @@ steps:
     exit_signal: "parity result is documented in implementation report and missing reference files are resolved"
     status: done
   - action: "Install projection update: verify package/plugin metadata and update README Pi package wording"
-    exit_signal: "package/plugin JSON parse, README mentions Pi skills plus optional runtime extension, and skill count is accurate"
+    exit_signal: "package/plugin JSON parse, README mentions the pure-skills Pi package, and skill count is accurate"
     status: done
   - action: "Onboard maintenance note: document reference parity categories for future maintainers"
     exit_signal: "current and onboard maintainer notes explain managed-identical, managed-localized/current-specific, and project-owned reference categories"
@@ -25,10 +25,10 @@ checks:
   - item: "bt-onboard inventory includes all AI workflow absorption references and worklog directory"
     source: mount-point
     status: passed
-  - item: "README Pi install text mentions skills plus optional runtime extension"
+  - item: "README Pi install text mentions skills plus runtime adapters are deferred"
     source: acceptance-scenario
     status: passed
-  - item: "package.json includes pi.skills and pi.extensions and parses"
+  - item: "package.json includes pi.skills, omits pi.extensions, and parses"
     source: mount-point
     status: passed
   - item: "Claude plugin and marketplace metadata parse without claiming hook support"

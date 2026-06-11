@@ -23,7 +23,7 @@ tags: [workflow, context-manifest, implementation-context, check-context]
 ## 边界
 
 - 不实现 subagent dispatch；那属于 `subagent-handoff-roles`。
-- 不实现 hook / breadcrumb；那属于 `optional-runtime-breadcrumb`。
+- 不实现 hook / breadcrumb；runtime adapter 不属于 ByteTrue core。
 - 不实现 research-first 路由；那属于 `research-first-explore-integration`。
 - 不把 raw code files 作为 manifest 默认内容；manifest 优先引用 `.bytetrue` 文档和 explore / decision 证据。
 - 不替代 design / checklist / acceptance report；manifest 只是读取清单。

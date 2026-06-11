@@ -63,7 +63,6 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
     ├── context-manifest.md     feature-local implement/check read-set contract
     ├── subagent-handoff.md     implement/check/research handoff role contract
     ├── research-first.md       evidence-before-decision trigger and citation rule
-    ├── workflow-state-breadcrumb.md optional runtime breadcrumb contract
     ├── worklog-report-feed.md lightweight worklog / report-feed contract
     ├── maintainer-notes.md     维护者说明
     └── requirement-example.md  requirement 写法示例

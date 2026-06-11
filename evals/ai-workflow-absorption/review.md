@@ -16,7 +16,7 @@ Live agent transcript benchmarking would be useful as a future stronger signal, 
 
 - Baseline lacks most of the new cross-stage contracts, so it passes only existing human-review and roadmap basics.
 - PR branch satisfies all benchmark expectations in the five prompt categories.
-- No expectation relies on `.bytetrue/specs/`, automatic subagent dispatch, mandatory hooks, or worklog-as-source-of-truth behavior.
+- No expectation relies on `.bytetrue/specs/`, automatic subagent dispatch, runtime hooks, or worklog-as-source-of-truth behavior.
 
 ## Artifacts
 

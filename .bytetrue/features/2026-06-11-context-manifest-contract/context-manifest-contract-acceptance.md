@@ -109,5 +109,5 @@ A reader of architecture now sees behavior delta, execution modes, implementatio
 ## 9. Leftovers
 
 - Later optimization points: none.
-- Known limitations: subagent prompt protocol is intentionally deferred to `subagent-handoff-roles`; hook/breadcrumb is intentionally deferred to `optional-runtime-breadcrumb`; research routing is intentionally deferred to `research-first-explore-integration`.
+- Known limitations: subagent prompt protocol is intentionally deferred to `subagent-handoff-roles`; hooks/runtime adapters are intentionally deferred outside the core roadmap; research routing is intentionally deferred to `research-first-explore-integration`.
 - While-here observations: none.

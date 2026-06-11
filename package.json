@@ -17,9 +17,6 @@
     "skills": [
       "./skills/*/SKILL.md"
     ],
-    "extensions": [
-      "./extensions/bytetrue-breadcrumb.ts"
-    ],
     "image": "https://raw.githubusercontent.com/ByteTrue/skills/main/asset/PromotionalImage.png"
   }
 }

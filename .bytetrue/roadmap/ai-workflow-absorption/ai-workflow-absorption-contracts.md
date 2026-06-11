@@ -222,43 +222,7 @@ Constraints:
 - Durable choices still go through user confirmation and `bt-decide` when appropriate.
 - Context manifests may include explore artifacts if implement/check agents need them.
 
-## 7. Optional Workflow-state Breadcrumb
-
-**Direction**: Optional Runtime → Agent prompt / hook / extension
-**Form**: derived context block, not a new canonical state layer
-
-```typescript
-type ByteTrueWorkflowState = {
-  mode: "none" | "roadmap" | "feature-design" | "feature-impl" | "feature-accept" | "issue" | "refactor";
-  artifact: string | null;
-  status: string | null;
-  next_action: string;
-  guardrails: string[];
-}
-```
-
-Rendered block:
-
-```text
-<bytetrue-workflow-state>
-Mode: feature-impl
-Artifact: .bytetrue/features/2026-06-11-example/example-design.md
-Status: checklist step 3 pending
-Next action: continue the next pending checklist step; do not enter acceptance yet
-Guardrails:
-- read design + checklist + impl-context
-- do not change scope without design update
-</bytetrue-workflow-state>
-```
-
-Constraints:
-- Breadcrumb is optional enhancement only.
-- No core skill may require breadcrumb to function.
-- First concrete runtime path: Pi package extension.
-- Claude/plugin-capable tools use the documented manual contract until a verified packaged hook path exists.
-- If breadcrumb state conflicts with file contents, file contents win.
-
-## 8. Worklog / Report-feed Record
+## 7. Worklog / Report-feed Record
 
 **Direction**: Work Record → Human reporting / handoff / recovery
 **Form**: lightweight markdown record, not full transcript
