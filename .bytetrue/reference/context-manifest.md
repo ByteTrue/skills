@@ -75,13 +75,14 @@ Rows normally reference `.bytetrue` docs or explore/decision evidence, not raw s
 A quick smoke check is enough:
 
 ```bash
-python3 - <<'PY'
+python3 - .bytetrue/features/YYYY-MM-DD-{slug}/{slug}-impl-context.jsonl \
+  .bytetrue/features/YYYY-MM-DD-{slug}/{slug}-check-context.jsonl <<'PY'
 import json, pathlib, sys
 for path in sys.argv[1:]:
     for i, line in enumerate(pathlib.Path(path).read_text().splitlines(), 1):
         if not line.strip():
             continue
         row = json.loads(line)
-        assert row.get('file') and row.get('reason'), (path, i)
-PY .bytetrue/features/YYYY-MM-DD-{slug}/{slug}-impl-context.jsonl
+        assert row.get("file") and row.get("reason"), (path, i)
+PY
 ```

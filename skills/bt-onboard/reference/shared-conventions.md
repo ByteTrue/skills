@@ -48,13 +48,25 @@ The skeleton after onboarding, built by `bt-onboard`:
 ├── brainstorm/            spike experiment area during brainstorm, temporary artifacts from `bt-brainstorm`
 │   └── {slug}/            one subdirectory per spike, filenames arbitrary
 │                          cleanup is not forced after validation; conclusions are written back into the corresponding brainstorm note
+├── worklog/               lightweight report-feed / handoff / recovery records
+│   └── YYYY-MM.md         split as YYYY-MM-02.md before the markdown line limit is reached
 ├── tools/                 shared scripts across workflows, released from the skill package by onboard
 └── reference/             shared reference docs, released from the skill package by onboard
     ├── shared-conventions.md   directory structure / frontmatter / stage handoff rules
     ├── system-overview.md      overview of the ByteTrue system
     ├── domain-context.md       canonical terms / domain glossary / terminology boundaries
     ├── project-management.md   external tracker / labels / sync policy
-    └── tools.md                shared script usage
+    ├── tools.md                shared script usage
+    ├── code-dimensions.md      implementation complexity dimensions
+    ├── execution-modes.md      workflow heaviness / evidence discipline
+    ├── implementation-review.md implementation review gate / readiness discipline
+    ├── context-manifest.md     feature-local implement/check read-set contract
+    ├── subagent-handoff.md     implement/check/research handoff role contract
+    ├── research-first.md       evidence-before-decision trigger and citation rule
+    ├── workflow-state-breadcrumb.md optional runtime breadcrumb contract
+    ├── worklog-report-feed.md lightweight worklog / report-feed contract
+    ├── maintainer-notes.md     maintainer-only workflow family notes
+    └── requirement-example.md  requirement writing example
 ```
 
 ### Naming rules

@@ -48,13 +48,25 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 ├── brainstorm/            brainstorm 阶段 spike 实验代码区（bt-brainstorm 临时产出）
 │   └── {slug}/            一次 spike 一个子目录，文件名随意
 │                          验完不强制清理，结论回写到对应 brainstorm note
+├── worklog/               轻量工作记录 / 报告 feed / handoff / recovery 记录
+│   └── YYYY-MM.md         接近 md 行数上限前拆成 YYYY-MM-02.md 等分片
 ├── tools/                 跨工作流共享脚本（onboard 从技能包释放）
 └── reference/             共享参考文档（onboard 从技能包释放）
     ├── shared-conventions.md   目录结构 / frontmatter / 阶段衔接口径
     ├── system-overview.md      ByteTrue 体系总览
     ├── domain-context.md       canonical terms / domain glossary / 术语边界
     ├── project-management.md   external tracker / labels / sync policy
-    └── tools.md                共享脚本用法
+    ├── tools.md                共享脚本用法
+    ├── code-dimensions.md      实现复杂度维度
+    ├── execution-modes.md      workflow 轻重 / 证据纪律
+    ├── implementation-review.md implementation review gate / readiness discipline
+    ├── context-manifest.md     feature-local implement/check read-set contract
+    ├── subagent-handoff.md     implement/check/research handoff role contract
+    ├── research-first.md       evidence-before-decision trigger and citation rule
+    ├── workflow-state-breadcrumb.md optional runtime breadcrumb contract
+    ├── worklog-report-feed.md lightweight worklog / report-feed contract
+    ├── maintainer-notes.md     维护者说明
+    └── requirement-example.md  requirement 写法示例
 ```
 
 ### 命名规则

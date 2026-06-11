@@ -42,6 +42,8 @@ After installation, use the namespaced entry points:
 pi install git:github.com/ByteTrue/skills
 ```
 
+The Pi package loads all ByteTrue skills and also includes an optional read-only workflow-state breadcrumb runtime extension. If you only want standard Agent Skills behavior, use the `npx skills add` path below or disable the extension through Pi package filtering/config.
+
 Try the package for one run (`-e` / `--extension` loads the git package into a temporary directory for this pi process only, without writing settings):
 
 ```bash
