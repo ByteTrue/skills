@@ -15,6 +15,7 @@ For a standard approved feature design:
 
 - `impl-context` is consumed by `bt-feat-impl`.
 - `check-context` is consumed by `bt-feat-accept` and future check roles.
+- `subagent-handoff` roles consume these files as their explicit read-set; see `.bytetrue/reference/subagent-handoff.md`.
 - Legacy feature directories without manifests remain readable; new approved designs should create both files.
 
 ## Row Shape

@@ -141,8 +141,8 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
 5. **subagent-handoff-roles** — Define ByteTrue implement/check/research subagent handoff protocol using active work path, design/checklist, and context manifest.
    - module: Execution Context Module
    - dependencies: context-manifest-contract, implementation-review-gate
-   - status: planned
-   - corresponding feature: not started
+   - status: done
+   - corresponding feature: 2026-06-11-subagent-handoff-roles
    - notes: first target is Pi/Claude; tools without subagents use the same contract inline
 
 6. **research-first-explore-integration** — Route technical-choice and comparable-workflow questions through `bt-explore spike` before design/roadmap decisions, and allow manifests to reference explore evidence.

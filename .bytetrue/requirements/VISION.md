@@ -7,6 +7,7 @@
 - [execution-modes](./execution-modes.md) — ByteTrue 可以按任务风险选择轻量、标准、严格证据或破循环工作流。
 - [implementation-review-gate](./implementation-review-gate.md) — ByteTrue 在进入验收前分开检查规格符合度和代码质量。
 - [context-manifest-contract](./context-manifest-contract.md) — ByteTrue 用显式 context manifest 固化 implement / check 阶段必须读取的项目事实和证据。
+- [subagent-handoff-roles](./subagent-handoff-roles.md) — ByteTrue 用统一 handoff 协议把 implement / check / research 工作交给子代理或内联角色。
 
 ## Draft
 

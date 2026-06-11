@@ -46,6 +46,7 @@ After startup, **do one scan first and choose the path automatically**. Do not a
     ├── execution-modes.md     workflow heaviness / evidence discipline
     ├── implementation-review.md implementation review gate / readiness discipline
     ├── context-manifest.md      feature-local implement/check read-set contract
+    ├── subagent-handoff.md     implement/check/research handoff role contract
     └── maintainer-notes.md
 ```
 
@@ -153,7 +154,7 @@ Against the standard skeleton, fill any directory or file that is still missing 
 
 **Handle `.bytetrue/reference/` in two categories**:
 
-- skill-package-managed reference files, such as `.bytetrue/reference/shared-conventions.md`, `.bytetrue/reference/system-overview.md`, `.bytetrue/reference/tools.md`, `.bytetrue/reference/maintainer-notes.md`, `.bytetrue/reference/code-dimensions.md`, `.bytetrue/reference/execution-modes.md`, `.bytetrue/reference/implementation-review.md`, `.bytetrue/reference/context-manifest.md`, and `.bytetrue/reference/requirement-example.md`, may be overwritten by the fresh skill-package version
+- skill-package-managed reference files, such as `.bytetrue/reference/shared-conventions.md`, `.bytetrue/reference/system-overview.md`, `.bytetrue/reference/tools.md`, `.bytetrue/reference/maintainer-notes.md`, `.bytetrue/reference/code-dimensions.md`, `.bytetrue/reference/execution-modes.md`, `.bytetrue/reference/implementation-review.md`, `.bytetrue/reference/context-manifest.md`, `.bytetrue/reference/subagent-handoff.md`, and `.bytetrue/reference/requirement-example.md`, may be overwritten by the fresh skill-package version
 - project-owned configuration files, namely `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md`, should only be created from template when missing; if they already exist, they must not be overwritten without explicit confirmation
 
 Before overwriting, list the skill-package-managed files that will be overwritten in the report; when project-owned configuration already exists, list it as "keep existing".

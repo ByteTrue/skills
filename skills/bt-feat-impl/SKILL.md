@@ -67,6 +67,7 @@ If any of the above fails, return to `bt-feat-design` to complete it. Reason: ev
 - the full design doc; in standard design focus especially on section 1, sections 2.1, 2.2, 2.3, 2.4, and section 3
 - `{slug}-checklist.yaml`, `{slug}-impl-context.jsonl` when present, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, `.bytetrue/reference/execution-modes.md`, `.bytetrue/reference/implementation-review.md`, and `.bytetrue/reference/context-manifest.md`
 - for new standard features with `{slug}-impl-context.jsonl`, read every required row before coding; if a required file is missing, stop and return to design or ask the user to downgrade that row
+- if the parent session delegates implementation to a subagent or performs it as an inline role, use the `implement` role in `.bytetrue/reference/subagent-handoff.md`; the parent still owns scope changes and lifecycle transitions
 - the source locations of interface examples in section 2.1, or the code files named by the change points in section 1 of fastforward design; reading the relevant functions is enough
 
 ### 4. Confirm with the user which step to start from

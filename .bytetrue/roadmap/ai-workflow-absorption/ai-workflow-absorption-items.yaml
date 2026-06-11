@@ -42,8 +42,8 @@ items:
     depends_on:
       - context-manifest-contract
       - implementation-review-gate
-    status: planned
-    feature: null
+    status: done
+    feature: 2026-06-11-subagent-handoff-roles
     minimal_loop: false
     notes: Strong path targets Pi and Claude first; non-subagent tools use the same protocol inline.
 

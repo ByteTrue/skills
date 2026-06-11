@@ -22,6 +22,7 @@ If the first time a question is asked it takes two hours to inspect the code, th
 - the technical direction is still being discussed and only a lightweight spike is needed, exploration without final decision
 
 This skill is responsible only for evidence-backed recording of "what was observed". If the user's intent is something else, such as making a decision, writing a prescription, or fixing a bug, route them to the appropriate skill.
+When called as the `research` role from `.bytetrue/reference/subagent-handoff.md`, this skill still only writes evidence-backed explore records and must not make final product, roadmap, or architecture decisions.
 
 > For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`. Artifacts are written to `.bytetrue/compound/` using the name `YYYY-MM-DD-explore-{slug}.md` and frontmatter `doc_type: explore`.
 
