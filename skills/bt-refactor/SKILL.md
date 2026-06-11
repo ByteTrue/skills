@@ -27,6 +27,8 @@ Trigger phrases: "small refactor", "quick refactor", "just optimize function XX 
 
 **Do not use** ff when the change spans more than 1 file, is expected to touch more than 3 places, needs visual verification, changes a public interface, which requires Parallel Change, has no test coverage, or crosses modules. In those cases, recommend the standard flow. If ff starts and the work turns out more complex than expected, switch back to the full flow starting from scan.
 
+Execution-mode mapping: `bt-refactor-ff` is `light`; the normal scan → design → apply flow is `standard`; if the scan reveals regression-sensitive behavior, missing characterization evidence, or architecture friction, upgrade to `strict-evidence` or `break-loop` and stop to choose the correct workflow rather than forcing a refactor. See `.bytetrue/reference/execution-modes.md`.
+
 ---
 
 ## Where the files go

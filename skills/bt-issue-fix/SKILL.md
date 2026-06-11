@@ -77,6 +77,8 @@ If analysis or the fast-path judgment says there is a suitable behavior seam, pr
 
 For simple bugs, pure configuration, or pure copy changes, a regression test may be omitted, but the verification result must explain what evidence replaced it.
 
+If the confirmed analysis or fast-path plan records `execution_mode.level: strict-evidence`, the regression seam and fresh verification are mandatory unless the fix note explains why no seam exists. If it records `break-loop`, do not continue normal fixing; stop and return to issue analysis, grill, refactor, or roadmap discussion before another patch attempt.
+
 ### Report after every completed change
 
 Use the fix report template in `reference.md` in the same directory. **Vague status reports are not allowed.** After the report, stop and wait for the user to reply.
@@ -98,7 +100,7 @@ After the fix is in, check each of these:
 
 ## If the Fix Does Not Work: Escalate to Log Debugging
 
-If you finish the checklist and **the problem still reproduces** or the behavior still does not match the expectation, **do not keep trial-and-erroring on the old guess**. Switch to log-debugging mode and collect runtime evidence again.
+If you finish the checklist and **the problem still reproduces** or the behavior still does not match the expectation, **do not keep trial-and-erroring on the old guess**. Switch to log-debugging mode and collect runtime evidence again; after 2-3 failed fix attempts, treat the situation as `break-loop` and question the plan or architecture before another patch.
 
 Why switch: repeated trial and error is still guessing under the original hypothesis. If the original hypothesis was wrong, more guessing only loops. Logs force you to see the real runtime data, which often makes the incorrect assumption obvious immediately.
 

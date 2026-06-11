@@ -87,6 +87,7 @@ This is the design's "what it is / why" section. Do not write implementation det
 
 - **Requirement summary**: what is being built, for whom, what success looks like, and what is explicitly not being done
 - **Complexity dimension**: record only the dimensions that deviate from the default bundle, with the default bundle defined in the "common default combinations" table at the end of `.bytetrue/reference/code-dimensions.md`. Format: `{dimension name} = {level}, reason for deviating from default {default level}: ...`. If everything stays on default, write one sentence saying it follows the default bundle for that scenario with no deviations
+- **Execution mode**: record `execution_mode.level`, `triggers`, and `required_evidence` when workflow heaviness matters; use `.bytetrue/reference/execution-modes.md`. Keep it separate from code dimensions.
 - **Key decisions**: choices, tradeoffs, hard constraints, or rejected alternatives. Every decision must answer "if we chose a different approach, how would the term layer or orchestration layer differ?" If it cannot answer that, then it is not a design decision, only an implementation detail
 - **Prerequisite dependencies**: fill this only when implementation later finds that the target file has structural problems that need to be resolved first and then comes back to revise the design
 

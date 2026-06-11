@@ -201,6 +201,7 @@ Follow the template in `reference.md` and write the four subsections of section 
 ### 4. Fill the remaining sections and give the whole draft for review at once
 
 Follow the template in `reference.md` to fill the remaining sections, 0, 3, and 4. The initial frontmatter status is `draft`.
+For section 1, also record `execution_mode` when the work is not obviously standard. Use `.bytetrue/reference/execution-modes.md` to choose light / standard / strict-evidence / break-loop, and keep this separate from code dimensions.
 
 Only after the whole draft is formed do you show it to the user. **Do not review in partial batches** — partial review shows the user only local fragments, and they cannot catch cross-section inconsistencies such as section 1 scope not matching section 2 change.
 
@@ -228,6 +229,7 @@ The user has passed overall review, and:
 
 - [ ] frontmatter is complete, including `doc_type`, `feature`, `status=approved`, `summary`, and `tags`, and the `requirement` field is aligned
 - [ ] section 1 contains explicit non-goals and complexity-dimension deviations, or clearly says it follows the default
+- [ ] section 1 records `execution_mode`, or explicitly says standard mode is sufficient
 - [ ] sections 2.1 and 2.2 use the "current state → change" structure; interfaces have examples plus source locations; orchestration starts with a main flow diagram
 - [ ] section 2.3 mount points are tightened by the rule "if removed, the feature disappears", usually 3-5 items
 - [ ] section 2.4 rollout strategy is sliced by paradigm dimension, and every step has an exit signal

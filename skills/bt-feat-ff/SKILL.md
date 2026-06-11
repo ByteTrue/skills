@@ -47,6 +47,8 @@ If there is a hit, fold the conclusion into the implementation, **write accordin
 
 These are the compressed versions of the hard constraints from design and implement. No design doc does not mean no discipline. These rules exist to stop the default AI failure modes while "just start coding" is in effect.
 
+This path is `execution_mode.level: light` only. If strict-evidence or break-loop triggers appear, such as regression-sensitive behavior, complex business logic, cross-boundary contracts, or repeated failed fixes, stop and route back to the standard feature or issue workflow. See `.bytetrue/reference/execution-modes.md`.
+
 ### Think "where should this live?" before you write
 
 Spend 30 seconds answering: **where in the project structure does this new thing belong?**

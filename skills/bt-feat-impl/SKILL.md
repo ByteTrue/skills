@@ -42,7 +42,7 @@ If halfway through coding you find a corner the design did not cover, edge behav
 Frontmatter must have matching `doc_type=feature-design` and `feature`, `status=approved`, non-empty `summary`, and `tags` length at least 2.
 
 **Standard design**, sections 0, 1, 2, 3, and 4:
-- section 0 has content; section 1 contains explicit non-goals and complexity dimensions
+- section 0 has content; section 1 contains explicit non-goals, complexity dimensions, and execution mode or a standard-mode statement
 - section 2.1 term layer uses the two-part "current state → change" structure, and every added or changed interface has at least one example plus source location
 - section 2.2 orchestration layer starts with a main flow diagram, fully describes current state → change, and already records flow-level constraints
 - section 2.3 mount points follow the rule "would the feature disappear if this were removed?", and do not mistakenly include internal code edits
@@ -65,7 +65,7 @@ If any of the above fails, return to `bt-feat-design` to complete it. Reason: ev
 ### 3. Read the full context
 
 - the full design doc; in standard design focus especially on section 1, sections 2.1, 2.2, 2.3, 2.4, and section 3
-- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, and `.bytetrue/attention.md`
+- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, and `.bytetrue/reference/execution-modes.md`
 - the source locations of interface examples in section 2.1, or the code files named by the change points in section 1 of fastforward design; reading the relevant functions is enough
 
 ### 4. Confirm with the user which step to start from
@@ -96,7 +96,7 @@ The most common violation is "while here I also did the next step". Every step h
 
 ### TDD / vertical-slice discipline, enabled when applicable
 
-Enable TDD discipline when the user explicitly asks for TDD, when design section 3.1 recommends TDD, when the work involves complex business logic, or when the change is regression-sensitive. Simple UI, copy, or config changes do not require it.
+Enable TDD discipline when the user explicitly asks for TDD, when design section 3.1 recommends TDD, when execution mode is `strict-evidence`, when the work involves complex business logic, or when the change is regression-sensitive. Simple UI, copy, or config changes do not require it unless the design explicitly upgrades the mode.
 
 When enabled, follow Matt `tdd` rhythm:
 

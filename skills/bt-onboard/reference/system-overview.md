@@ -103,6 +103,7 @@ There are only two exceptions: when an issue's root cause is obvious at a glance
 - `.bytetrue/reference/domain-context.md` — canonical terms, domain glossary, and terminology consensus formed by `bt-grill` with docs
 - `.bytetrue/reference/project-management.md` — external tracker provider, labels, sync policy, and GitHub / GitLab / local collaboration rules
 - `.bytetrue/reference/tools.md` — usage of `search-yaml.py` and `validate-yaml.py`
+- `.bytetrue/reference/execution-modes.md` — workflow heaviness and evidence discipline for light / standard / strict-evidence / break-loop modes
 - `.bytetrue/reference/maintainer-notes.md` — resume support and registration rules when adding new sub-workflows
 
 The authoritative definition of the directory structure, requirements, architecture, roadmap, features, issues, compound, tools, and reference, lives in `.bytetrue/reference/shared-conventions.md`. If the directory structure ever needs to change, change the template at `bt-onboard/reference/shared-conventions.md` first so that new onboarded projects pick up the new version.

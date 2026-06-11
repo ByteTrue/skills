@@ -13,8 +13,8 @@ items:
   - slug: risk-mode-discipline
     description: Define four execution modes so light work stays light while high-risk work uses Superpowers-style strict TDD, debugging, and architecture evidence.
     depends_on: []
-    status: planned
-    feature: null
+    status: done
+    feature: 2026-06-11-risk-mode-discipline
     minimal_loop: false
     notes: Fuses Matt-derived language with Superpowers discipline rather than treating either source as final.
 

@@ -120,8 +120,8 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
 2. **risk-mode-discipline** — Define the 4 execution modes and integrate Matt + Superpowers TDD/debug/architecture strictness rules into design, implementation, issue, and refactor workflows.
    - module: Workflow Semantics Module
    - dependencies: none
-   - status: planned
-   - corresponding feature: not started
+   - status: done
+   - corresponding feature: 2026-06-11-risk-mode-discipline
    - notes: key design task to keep Superpowers strengths without imposing global heaviness
 
 3. **implementation-review-gate** — Add spec compliance and code quality review dimensions before feature implementation can enter acceptance.

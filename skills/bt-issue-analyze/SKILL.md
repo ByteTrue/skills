@@ -44,6 +44,8 @@ Trigger the enhanced `diagnose` discipline from Matt in any of the following cas
 - a first fix attempt has already failed to solve it
 - logs, debugger, profiler, or query plan are needed to decide
 
+When this discipline triggers, record `execution_mode.level: strict-evidence` unless the analysis is already about repeated failed fixes or architecture friction; in that case record `break-loop` and route back to plan or architecture discussion before another fix attempt. See `.bytetrue/reference/execution-modes.md`.
+
 When triggered, additionally record the following in the analysis:
 
 1. **feedback loop** — is there a repeatable failure signal? A command, reproduction step, test, or log assertion all count. If reproduction is not stable, the goal is to increase the reproduction rate, not to pretend it is already stable
