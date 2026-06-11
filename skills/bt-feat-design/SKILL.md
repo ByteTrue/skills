@@ -10,6 +10,7 @@ description: Stage 1 of the feature workflow. Draft `{slug}-design.md` for a new
 Before making any judgment or taking any action, read `.bytetrue/attention.md` first; if it is missing, treat the skeleton as incomplete and tell the user to fill it in or run `bt-onboard`.
 
 The output of this stage is one design file, `{slug}-design.md`, plus an action checklist extracted from it, `{slug}-checklist.yaml`. These two artifacts are consumed by two later stages, implement executes against them and acceptance verifies against them, so if this stage is wrong or incomplete, everything downstream inherits the error.
+For standard feature designs, approved close-out also creates two feature-local context manifests, `{slug}-impl-context.jsonl` and `{slug}-check-context.jsonl`, so implementation and acceptance know which `.bytetrue` facts must be read.
 
 > For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`. In most cases the feature directory has already been created by brainstorm. If not, create it in this step.
 
@@ -216,6 +217,7 @@ Use the overall review prompt, the wording lives in section 5 of `reference.md`.
 After the plan is confirmed, extract `steps` and `checks` from `{slug}-design.md` into `{slug}-checklist.yaml`. The full format, extraction rules, and typical rhythm are in section 3 of `reference.md`.
 
 After writing it, validate with `python .bytetrue/tools/validate-yaml.py --file {path} --yaml-only`.
+Also write `{slug}-impl-context.jsonl` and `{slug}-check-context.jsonl` following `.bytetrue/reference/context-manifest.md`. Baseline rows should include the design, checklist, linked requirement, roadmap docs if present, architecture docs named in section 4, execution modes, implementation review, and cited compound evidence.
 
 ### 7. Exit
 
@@ -238,6 +240,7 @@ The user has passed overall review, and:
 - [ ] section 3 contains a test seam plan, or explicitly states that the feature is not suitable for TDD or automated testing
 - [ ] section 3 contains Behavior Delta entries for observable behavior changes, or explicitly states `Behavior Delta: none`
 - [ ] `{slug}-checklist.yaml` has been written and passes `validate-yaml.py`
+- [ ] `{slug}-impl-context.jsonl` and `{slug}-check-context.jsonl` have been written for standard designs, or the design explicitly explains why manifests are not applicable
 - [ ] when started from roadmap, `items.yaml` has been written back with `status: in-progress` and `feature` filled
 
 ---

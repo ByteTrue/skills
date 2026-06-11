@@ -1,0 +1,51 @@
+feature: 2026-06-11-context-manifest-contract
+created: 2026-06-11
+
+steps:
+  - action: "Shared contract: add context-manifest.md to current project and onboard template"
+    exit_signal: "both copies define impl/check file names, JSONL row shape, required semantics, and validation rules"
+    status: done
+  - action: "Design generation: update bt-feat-design to create impl/check context manifests after checklist generation"
+    exit_signal: "future approved standard designs produce {slug}-impl-context.jsonl and {slug}-check-context.jsonl with baseline required rows"
+    status: done
+  - action: "Implementation and acceptance consumption: update bt-feat-impl and bt-feat-accept startup rules"
+    exit_signal: "implementation reads impl-context and acceptance reads check-context, and missing required files block new-feature stages"
+    status: done
+  - action: "Template/index sync and validation: update onboard/system references and run static checks"
+    exit_signal: "onboard inventory includes context-manifest.md, references point to it, markdown files stay under 300 lines, YAML validates, and sample JSONL rows parse"
+    status: done
+
+checks:
+  - item: "Context Manifest term is distinct from design, checklist, and source of truth"
+    source: term-contract
+    status: passed
+  - item: "Implementation Context Manifest and Check Context Manifest are separately defined"
+    source: term-contract
+    status: passed
+  - item: "Manifest Row shape includes file, reason, optional required, section, and role"
+    source: term-contract
+    status: passed
+  - item: "bt-feat-design creates both context manifests after checklist generation"
+    source: orchestration-skeleton
+    status: passed
+  - item: "bt-feat-impl reads impl-context and blocks missing required rows for new features"
+    source: orchestration-skeleton
+    status: passed
+  - item: "bt-feat-accept reads check-context and blocks missing required rows for new features"
+    source: orchestration-skeleton
+    status: passed
+  - item: "Manifest rows contain paths and reasons only, not copied document bodies"
+    source: flow-level-constraint
+    status: passed
+  - item: "Raw code files are not required as default manifest rows"
+    source: scope-guard
+    status: passed
+  - item: "No subagent dispatch, hook/breadcrumb, research-first routing, worklog, or CLI behavior is introduced"
+    source: scope-guard
+    status: passed
+  - item: "Behavior Delta entries are materialized during acceptance"
+    source: behavior-delta
+    status: passed
+  - item: "Edited markdown files remain under 300 lines and sample JSONL rows parse"
+    source: acceptance-scenario
+    status: passed

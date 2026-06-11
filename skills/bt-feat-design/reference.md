@@ -54,6 +54,17 @@ checks:
     status: pending
 ```
 
+## 3.1 Context manifest JSONL format
+
+Approved standard designs also produce two JSONL read-set files next to the design and checklist:
+
+```text
+{slug}-impl-context.jsonl
+{slug}-check-context.jsonl
+```
+
+Each non-empty line is one object with `file` and `reason`; optional fields are `required`, `section`, and `role`. See `.bytetrue/reference/context-manifest.md` for the full contract. Baseline rows come from the design frontmatter, roadmap fields, section 4 architecture targets, execution mode, implementation review, and cited compound evidence. Raw code files are not default rows.
+
 `steps`, produced during design:
 
 - grain is at the paradigm dimension, **not file:line or function level**; concrete file touchpoints are implement's job

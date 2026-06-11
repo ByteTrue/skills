@@ -134,8 +134,8 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
 4. **context-manifest-contract** — Introduce `{slug}-impl-context.jsonl` and `{slug}-check-context.jsonl` plus shared manifest row schema and lifecycle rules.
    - module: Execution Context Module
    - dependencies: behavior-delta-contract
-   - status: planned
-   - corresponding feature: not started
+   - status: done
+   - corresponding feature: 2026-06-11-context-manifest-contract
    - notes: first execution-infrastructure minimal loop
 
 5. **subagent-handoff-roles** — Define ByteTrue implement/check/research subagent handoff protocol using active work path, design/checklist, and context manifest.

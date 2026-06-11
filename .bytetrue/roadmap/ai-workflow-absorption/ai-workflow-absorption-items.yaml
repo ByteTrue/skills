@@ -32,8 +32,8 @@ items:
     description: Introduce implementation and check context manifests that list required ByteTrue docs and evidence for implement/check agents.
     depends_on:
       - behavior-delta-contract
-    status: planned
-    feature: null
+    status: done
+    feature: 2026-06-11-context-manifest-contract
     minimal_loop: false
     notes: First execution-infrastructure item; proposed files are {slug}-impl-context.jsonl and {slug}-check-context.jsonl.
 
