@@ -1,0 +1,8 @@
+{"file":".bytetrue/features/2026-06-11-optional-runtime-breadcrumb/optional-runtime-breadcrumb-design.md","reason":"Approved design defines breadcrumb scope, resolver rules, runtime boundary, and non-goals.","required":true,"role":"implement"}
+{"file":".bytetrue/features/2026-06-11-optional-runtime-breadcrumb/optional-runtime-breadcrumb-checklist.yaml","reason":"Implementation must execute rollout steps in order and update step status.","required":true,"role":"implement"}
+{"file":".bytetrue/requirements/optional-runtime-breadcrumb.md","reason":"Requirement explains user-visible optional runtime breadcrumb capability and boundaries.","required":true,"role":"implement"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap defines optional runtime module and item sequencing.","required":true,"role":"both"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-contracts.md","reason":"Optional Workflow-state Breadcrumb contract is a hard roadmap companion constraint.","required":true,"section":"7. Optional Workflow-state Breadcrumb","role":"both"}
+{"file":".bytetrue/reference/context-manifest.md","reason":"Context manifest is one of the artifacts the breadcrumb should point to, not replace.","required":true,"role":"implement"}
+{"file":".bytetrue/reference/subagent-handoff.md","reason":"Breadcrumb must not become subagent dispatch and should remain separate from handoff protocol.","required":true,"role":"implement"}
+{"file":".bytetrue/reference/research-first.md","reason":"Breadcrumb must not implement research routing or background research.","required":true,"role":"implement"}

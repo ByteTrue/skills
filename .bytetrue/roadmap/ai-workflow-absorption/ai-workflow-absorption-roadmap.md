@@ -155,8 +155,8 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
 7. **optional-runtime-breadcrumb** — Add optional workflow-state breadcrumb / hook / extension path for Claude plugin and Pi package, deriving state from existing `.bytetrue` artifacts.
    - module: Optional Runtime Module
    - dependencies: context-manifest-contract, subagent-handoff-roles
-   - status: planned
-   - corresponding feature: not started
+   - status: done
+   - corresponding feature: 2026-06-11-optional-runtime-breadcrumb
    - notes: optional enhancement; core skills remain functional without it
 
 8. **worklog-report-feed** — Add lightweight `.bytetrue/worklog/` report-feed for session/work interval summaries, weekly reports, handoff, and recovery background.

@@ -61,8 +61,8 @@ items:
     depends_on:
       - context-manifest-contract
       - subagent-handoff-roles
-    status: planned
-    feature: null
+    status: done
+    feature: 2026-06-11-optional-runtime-breadcrumb
     minimal_loop: false
     notes: Optional enhancement only; core Skill workflow must still work without hooks.
 
