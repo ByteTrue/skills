@@ -93,7 +93,7 @@ Why "stop when enough": exploration is not exhaustive enumeration. It is buildin
 
 - New document: write to `.bytetrue/compound/YYYY-MM-DD-explore-{slug}.md` with frontmatter `doc_type: explore`
 - Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
-- Supersede: follow item 5 of `.bytetrue/reference/shared-conventions.md` §6; the old document gets `status: archived` + `validity: outdated` plus `superseded-by`
+- Supersede: follow item 5 of `.bytetrue/reference/shared-conventions.md` §6; the old document gets `status: archived` + `validity: outdated` plus `superseded_by`
 
 ### Phase 5: Provide a Suggested Next Step
 

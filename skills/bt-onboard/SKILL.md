@@ -114,7 +114,7 @@ glab auth status
 git remote -v
 ```
 
-Write the provider, detection result, repository URL, and sync policy into `.bytetrue/config.yaml`; keep label meanings and sync semantics in `.bytetrue/reference/project-management.md`. If the CLI is not installed or not logged in, do not stop onboarding. Write the state as `not_configured` in `.bytetrue/config.yaml` and tell the user they can rerun `bt-onboard` later or update `.bytetrue/config.yaml` manually.
+Write the provider, detection result, repository URL, and sync policy into `.bytetrue/config.yaml`; keep label meanings and sync semantics in `.bytetrue/reference/project-management.md`. If the CLI is not installed or not logged in, do not stop onboarding. Write `provider_status: unavailable` in `.bytetrue/config.yaml` and tell the user they can rerun `bt-onboard` later or update `.bytetrue/config.yaml` manually.
 
 **Step 4: remind about attention.md**
 
