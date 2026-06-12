@@ -2,7 +2,7 @@
 doc_type: feature-implementation-report
 feature: 2026-06-12-workflow-control-plane-contract
 status: done
-summary: Implemented ByteTrue control-plane contract for config, canonical status, continuation routing, brainstorm paths, behavior writeback, and volume-control policy.
+summary: Implemented ByteTrue control-plane contract for config, canonical status, continuation routing, brainstorm paths, behavior writeback, and maintainer-only docs guidance cleanup.
 ---
 
 # workflow-control-plane-contract implementation report
@@ -60,7 +60,7 @@ This feature is a workflow-contract / documentation implementation; no runtime f
 - Updated `skills/bt-feat/SKILL.md` with deterministic resume routing for half-finished features.
 - Standardized open brainstorm path as `.bytetrue/brainstorms/{slug}/brainstorm.md` in `bt-brainstorm` and shared conventions.
 
-**Step 3: Behavior writeback and project line-policy**
+**Step 3: Behavior writeback and maintainer-only docs cleanup**
 
 - Updated `bt-feat-accept` to name `Current Behavior` and `Observable Contract` as stable Behavior Delta writeback targets.
 - Clarified `AGENTS.md` and `CLAUDE.md`: the maintainer-only documentation guidance is a repository skill/reference maintenance heuristic, not a universal ByteTrue artifact rule.
@@ -97,7 +97,7 @@ No. All introduced concepts were in the approved design:
 - `ADDED`: `bt` / `bt-feat` can route continuation requests by artifact state.
 - `ADDED`: `.bytetrue/brainstorms/` is now the canonical open discussion path.
 - `MODIFIED`: Behavior Delta writeback now names `Current Behavior` and `Observable Contract`.
-- `MODIFIED`: volume-control policy is project-scoped, not a ByteTrue universal artifact rule.
+- `MODIFIED`: maintainer-only docs guidance cleanup is project-scoped, not a ByteTrue universal artifact rule.
 
 **Code quality**: passed
 
@@ -119,7 +119,7 @@ All implementation steps are `done`:
 steps:
   - Config and status contract: done
   - Continuation and brainstorm routing: done
-  - Behavior writeback and project line-policy: done
+  - Behavior writeback and maintainer-only docs cleanup: done
   - Onboard/index sync and validation: done
 ```
 
@@ -134,13 +134,13 @@ Ruby frontmatter parse: 28 skills passed
 npx skills add . --list: found 28 skills
 reference parity: ok, 15 files
 JSONL smoke parse: ok
-skill/reference docs volume check: not applicable to ByteTrue workflow config
+skill/reference document-volume check: removed from ByteTrue workflow config
 git diff --check: passed
 ```
 
 ### Acceptance-scenario self-check
 
-1. **Machine-readable config**: satisfied by `.bytetrue/config.yaml` and current/onboard `config.md`.
+1. **Machine-readable config**: satisfied by `.bytetrue/config.yaml` and current/onboard `config.schema.yaml` plus `config.md` semantics.
 2. **Canonical status vocabulary**: satisfied by shared conventions and shipped skill/reference grep checks; old status field values no longer appear in shipped skills/references.
 3. **Continuation routing**: satisfied by `bt` and `bt-feat` continuation/resume routing rules.
 4. **Open brainstorm path**: satisfied by `.bytetrue/brainstorms/.gitkeep`, `bt-brainstorm`, and shared conventions.

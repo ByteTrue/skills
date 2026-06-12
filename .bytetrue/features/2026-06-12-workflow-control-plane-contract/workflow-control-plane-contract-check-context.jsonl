@@ -2,8 +2,10 @@
 {"file":".bytetrue/features/2026-06-12-workflow-control-plane-contract/workflow-control-plane-contract-checklist.yaml","reason":"Acceptance must confirm steps done and checks passed.","required":true,"role":"check"}
 {"file":".bytetrue/features/2026-06-12-workflow-control-plane-contract/workflow-control-plane-contract-implementation-report.md","reason":"Implementation report stores durable Implementation Review Gate evidence.","required":true,"role":"check"}
 {"file":".bytetrue/requirements/workflow-control-plane-contract.md","reason":"Requirement should become current/done if feature is accepted.","required":true,"role":"check"}
-{"file":".bytetrue/reference/shared-conventions.md","reason":"Current conventions should reflect config/status/brainstorms/line-policy updates.","required":true,"role":"check"}
+{"file":".bytetrue/reference/shared-conventions.md","reason":"Current conventions should reflect config/status/brainstorms/maintainer-only docs cleanup updates.","required":true,"role":"check"}
 {"file":".bytetrue/architecture/ARCHITECTURE.md","reason":"Architecture should record control-plane current fact after acceptance.","required":true,"role":"check"}
 {"file":"skills/bt/SKILL.md","reason":"Root router must have deterministic continuation behavior.","required":true,"role":"check"}
 {"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Acceptance verifies the control-plane remediation is traceable in the AI workflow absorption roadmap.","required":true,"role":"check"}
 {"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml","reason":"Acceptance verifies the added roadmap item is done and linked to this feature.","required":true,"role":"check"}
+{"file":".bytetrue/reference/config.schema.yaml","reason":"Acceptance verifies config schema is separated from prose config semantics.","required":true,"role":"check"}
+{"file":"skills/bt-onboard/reference/config.schema.yaml","reason":"Acceptance verifies onboard releases the same config schema.","required":true,"role":"check"}

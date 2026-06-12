@@ -2,35 +2,9 @@
 
 `.bytetrue/config.yaml` stores machine-readable project choices. Reference documents explain semantics; config owns current values.
 
-## Shape (schema example, not current values)
+## Schema
 
-```text
-version: 1
-workflow:
-  mode: manual | auto
-  ask_before: [operation_key, ...]
-tracker:
-  provider: local | github | gitlab
-  provider_status: unknown | configured | unavailable
-  sync_policy: ask | never | auto_preview
-  sync_direction: outbound_only
-  external_import: manual_only
-  update_policy: update_managed_block
-  repository:
-    remote_url: <url | null>
-    tracker_url: <url | null>
-  cli:
-    gh:
-      installed: true | false | null
-      auth: ok | missing | unknown
-    glab:
-      installed: true | false | null
-      auth: ok | missing | unknown
-dispatch:
-  preferred: auto | native_subagent | non_interactive_child | inline
-  allow_non_interactive_child: true | false
-  allow_background_agents: true | false
-```
+Machine-readable shape, required fields, allowed values, and onboarding defaults live in `.bytetrue/reference/config.schema.yaml`. This Markdown file explains field semantics and consumption rules only; it does not own current values or the schema.
 
 ## Workflow Mode
 

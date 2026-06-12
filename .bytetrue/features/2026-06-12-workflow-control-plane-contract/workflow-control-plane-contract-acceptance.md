@@ -13,7 +13,7 @@ summary: Accepted workflow control-plane contract for config, canonical status, 
 
 ## 1. Interface-contract check
 
-- [x] `Project Config`: `.bytetrue/config.yaml` exists and parses. Current tracker/workflow/dispatch/docs values now live there.
+- [x] `Project Config`: `.bytetrue/config.yaml` exists and parses. Current tracker/workflow/dispatch values now live there.
 - [x] `Canonical Status`: shared conventions define `pending`, `active`, `done`, `dropped`, `archived` as the only status vocabulary for workflow artifacts.
 - [x] `Continuation Scan`: `bt` may read minimal artifact state for named continuation requests, and `bt-feat` has a deterministic resume table.
 - [x] `Open Brainstorm`: `.bytetrue/brainstorms/{slug}/brainstorm.md` is the open discussion path; feature-local brainstorm remains in the feature directory.
@@ -29,12 +29,12 @@ summary: Accepted workflow control-plane contract for config, canonical status, 
 
 | Delta | Evidence | Writeback target | Status |
 |---|---|---|---|
-| ADDED: machine-readable config | `.bytetrue/config.yaml`, `.bytetrue/reference/config.md` | architecture + requirement | applied |
+| ADDED: machine-readable config | `.bytetrue/config.yaml`, `.bytetrue/reference/config.schema.yaml`, `.bytetrue/reference/config.md` | architecture + requirement | applied |
 | ADDED: canonical status vocabulary | shared conventions current/onboard copies | architecture + requirement | applied |
 | ADDED: deterministic continuation routing | `skills/bt/SKILL.md`, `skills/bt-feat/SKILL.md` | architecture + acceptance | applied |
 | ADDED: open brainstorm path | `.bytetrue/brainstorms/.gitkeep`, `bt-brainstorm`, shared conventions | architecture + shared conventions | applied |
 | MODIFIED: Behavior Delta writeback target | `bt-feat-accept` mentions Current Behavior / Observable Contract | acceptance + architecture | applied |
-| MODIFIED: volume-control policy | AGENTS/CLAUDE/worklog reference wording | acceptance-only + maintainer guidance | applied |
+| MODIFIED: maintainer-only docs guidance cleanup | AGENTS/CLAUDE-only maintainer guidance cleanup | acceptance-only | applied |
 
 ## 3. Acceptance-scenario check
 
@@ -43,7 +43,7 @@ summary: Accepted workflow control-plane contract for config, canonical status, 
 - [x] S3 continuation routing: `bt` and `bt-feat` contain explicit routing for named continuation requests and half-implemented features.
 - [x] S4 open brainstorm path: `.bytetrue/brainstorms/` exists and `bt-brainstorm` uses plural `brainstorms/` for open records.
 - [x] S5 behavior writeback: `bt-feat-accept` mentions `Current Behavior` and `Observable Contract`.
-- [x] S6 volume-control policy: no hard-coded worklog maintainer-only artifact guidance remains in shipped skills/references.
+- [x] S6 maintainer-only docs guidance cleanup: no workflow document-volume config remains in shipped skills/references.
 - [x] S7 onboard sync: exact current/onboard parity passes for 7 package-managed contract reference files; the remaining 8 shared reference files are project-owned/localized or intentionally divergent, with the roadmap item state machine semantically aligned in both copies.
 
 No frontend/browser verification is applicable.
@@ -75,6 +75,6 @@ No frontend/browser verification is applicable.
 
 ## 9. Leftovers
 
-- Later optimization: `bt-tracker/SKILL.md` is close to this repository's skill/reference maintenance line threshold; future tracker changes should move detailed tables to a reference file.
+- Later optimization: `future tracker changes should keep detailed tables in reference files rather than expanding the skill entry.
 - Known limitation: auto mode is implemented as pure skill continuation semantics only; no daemon, hook, background executor, or CLI auto-runner is implemented in this feature.
 - While-here items: none.

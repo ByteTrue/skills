@@ -46,6 +46,7 @@ After startup, **do one scan first and choose the path automatically**. Do not a
     ├── project-management.md   external tracker / labels / sync policy
     ├── tools.md
     ├── config.md                project config field semantics
+    ├── config.schema.yaml        machine-readable config schema and onboarding defaults
     ├── code-dimensions.md      implementation complexity dimensions
     ├── execution-modes.md      workflow heaviness / evidence discipline
     ├── implementation-review.md implementation review gate / readiness discipline
@@ -83,7 +84,7 @@ Execute the following in order, **without waiting for step-by-step user confirma
 
 - `.bytetrue/{requirements,roadmap,features,issues,compound,brainstorms,worklog}/.gitkeep`
 - `.bytetrue/attention.md`, using the minimal template in `reference.md` in the same directory
-- `.bytetrue/config.yaml`, initialized from the selected tracker/workflow defaults
+- `.bytetrue/config.yaml`, initialized from user-selected values guided by `.bytetrue/reference/config.schema.yaml`
 - `.bytetrue/architecture/ARCHITECTURE.md`, using the placeholder template in `reference.md` in the same directory
 - `.bytetrue/tools/`, copied by shell using `cp -rf` or `Copy-Item -Recurse -Force` from `bt-onboard/tools/` in the skill package, **not Read then Write**
 - `.bytetrue/reference/`, initialized from `bt-onboard/reference/` in the skill package; for new projects, copying the whole directory is fine
@@ -92,7 +93,7 @@ Execute the following in order, **without waiting for step-by-step user confirma
 
 **Step 3: project config setup**
 
-Before writing `.bytetrue/config.yaml`, guide the user through every current config group, then write the selected values once:
+Before writing `.bytetrue/config.yaml`, read `.bytetrue/reference/config.schema.yaml`, guide the user through every required config group, then write the selected values once:
 
 1. **Workflow** — choose `workflow.mode` (`manual` default, or `auto`) and review the `workflow.ask_before` operation-key list that auto mode must stop on. The list is project-owned; seed a conservative default but let the user add or remove keys before writing.
 2. **Tracker** — choose `tracker.provider` (`local | github | gitlab`), `tracker.sync_policy` (`ask | never | auto_preview`), and keep first-version supported values for `sync_direction`, `external_import`, and `update_policy` unless the user explicitly asks for an unsupported value, in which case stop and explain it is not supported yet.
@@ -251,6 +252,6 @@ The placeholder template for `ARCHITECTURE.md` and the minimal template for `att
 - `.bytetrue/reference/system-overview.md` — overview of the ByteTrue system
 - `.bytetrue/reference/shared-conventions.md` — the authoritative version of directory structure and shared conventions
 - `.bytetrue/reference/domain-context.md` — project terminology, domain glossary, and grill-with-docs consensus
-- `.bytetrue/config.yaml` — current workflow/tracker/dispatch/docs values; `.bytetrue/reference/project-management.md` — external tracker labels and sync semantics
+- `.bytetrue/config.yaml` — current workflow/tracker/dispatch values; `.bytetrue/reference/config.schema.yaml` — machine-readable config schema and onboarding defaults; `.bytetrue/reference/project-management.md` — external tracker labels and sync semantics
 - `.bytetrue/attention.md` — project notes that every ByteTrue skill must read at startup
 - `.bytetrue/architecture/ARCHITECTURE.md` — architecture entry skeleton

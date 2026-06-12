@@ -15,7 +15,7 @@ tags: [workflow, config, status, auto, brainstorm]
 ## 0. Terminology
 
 - **Skills-first Control Plane**: deterministic project configuration and artifact conventions that ByteTrue skills can read. It may later be supported by CLI/scripts, but is not a hidden runtime, daemon, or hook system.
-- **Project Config**: `.bytetrue/config.yaml`, the machine-readable home for tracker, workflow mode, dispatch preference, ask-before boundaries, and project doc policy.
+- **Project Config**: `.bytetrue/config.yaml`, the machine-readable home for tracker, workflow mode, dispatch preference, and ask-before boundaries. Its machine-readable schema/default seed lives in `.bytetrue/reference/config.schema.yaml`; prose semantics live in `.bytetrue/reference/config.md`.
 - **Canonical Status**: the only allowed `status` vocabulary for ByteTrue workflow artifacts: `pending`, `active`, `done`, `dropped`, `archived`.
 - **Continuation Scan**: the `bt` / `bt-feat` logic that maps existing artifacts to the correct next skill when the user says “continue X”.
 - **Open Brainstorm**: a large or still-uncommitted discussion stored under `.bytetrue/brainstorms/{slug}/`, separate from feature-local `{slug}-brainstorm.md`.
@@ -57,7 +57,7 @@ TDD is not applicable.
 
 ### 1.5 Key decisions
 
-1. Add `.bytetrue/config.yaml` and `.bytetrue/reference/config.md`.
+1. Add `.bytetrue/config.yaml`, `.bytetrue/reference/config.schema.yaml`, and `.bytetrue/reference/config.md`.
 2. Define canonical `status` values: `pending`, `active`, `done`, `dropped`, `archived`.
 3. Replace status words such as `approved`, `confirmed`, `current`, `completed`, and `outdated` in workflow artifacts with the canonical vocabulary.
 4. When extra meaning is needed, use non-status fields such as `reviewed: true`, `current: true`, `validity: current|outdated`, `review_result: approved`, or `superseded_by`, rather than inventing another status value.
@@ -65,7 +65,7 @@ TDD is not applicable.
 6. Standardize `.bytetrue/brainstorms/` for open large discussion records.
 7. Strengthen Behavior Delta materialization into requirement `Current Behavior` and architecture `Observable Contract` sections when stable.
 8. Keep only two workflow modes: `manual` and `auto`.
-9. Make volume-control policy configurable/project-scoped, with this repo defaulting to stricter skill/reference docs but not universal design/acceptance limits.
+9. Keep maintainer-only document volume guidance outside ByteTrue workflow config and shipped skills; it belongs only in repository agent instructions.
 
 ## 2. Terms and orchestration
 
@@ -73,22 +73,8 @@ TDD is not applicable.
 
 - **Project Config**
   - Current state: current tracker and sync values live inside `project-management.md` prose/YAML.
-  - Change: add `.bytetrue/config.yaml`; reference docs explain the fields, but config owns current values.
-  - Shape example, not current values:
-    ```text
-    version: 1
-    workflow:
-      mode: manual | auto
-      ask_before: [operation_key, ...]
-    tracker:
-      provider: local | github | gitlab
-      sync_policy: ask | never | auto_preview
-    dispatch:
-      preferred: auto | native_subagent | non_interactive_child | inline
-      allow_non_interactive_child: true | false
-      allow_background_agents: true | false
-    ```
-  - Source location: `.bytetrue/reference/project-management.md`, `.bytetrue/reference/subagent-handoff.md`, `AGENTS.md`.
+  - Change: add `.bytetrue/config.yaml`; add `.bytetrue/reference/config.schema.yaml` for machine-readable shape/default seed; keep `.bytetrue/reference/config.md` as prose semantics only. Config owns current values.
+  - Source location: `.bytetrue/reference/config.schema.yaml`, `.bytetrue/reference/config.md`, `.bytetrue/reference/project-management.md`, `.bytetrue/reference/subagent-handoff.md`.
 
 - **Canonical Status**
   - Current state: statuses differ by layer: `draft`, `approved`, `confirmed`, `current`, `completed`, `outdated`, `done`, `dropped`.
@@ -153,7 +139,7 @@ Flow constraints:
 
 - `.bytetrue/config.yaml`: new config values.
 - `.bytetrue/reference/config.md` and onboard copy: config field reference.
-- `.bytetrue/reference/shared-conventions.md` and onboard copy: canonical status, brainstorms path, config path, volume-control policy.
+- `.bytetrue/reference/shared-conventions.md` and onboard copy: canonical status, brainstorms path, config path, maintainer-only docs guidance cleanup.
 - `AGENTS.md` / `CLAUDE.md`: clarify maintainer-only documentation guidance as this repo's skill/reference maintenance rule.
 - `skills/bt/SKILL.md`: status-aware continuation routing.
 - `skills/bt-feat/SKILL.md`: deterministic feature resume table.
@@ -219,9 +205,9 @@ No runtime TDD. Static verification:
 - **Before**: materialization can stay mostly in acceptance report.
 - **After**: stable behavior writes into requirement `Current Behavior` or architecture `Observable Contract`.
 
-- **Source**: volume-control policy and existing worklog/shared-conventions wording that hard-codes maintainer-only documentation guidances.
+- **Source**: maintainer-only docs guidance cleanup and existing worklog/shared-conventions wording that hard-codes maintainer-only documentation guidances.
 - **Before**: project rules or worklog/reference text can imply ByteTrue artifacts universally need a split.
-- **After**: shipped skills and references do not hard-code a universal artifact volume rule; volume controls belong to project config or repo-local maintainer policy.
+- **After**: shipped skills and references do not hard-code a universal artifact volume rule; maintainer-only document guidance belongs outside ByteTrue workflow config.
 
 #### REMOVED
 

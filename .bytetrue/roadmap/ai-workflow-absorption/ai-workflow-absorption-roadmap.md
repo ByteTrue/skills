@@ -11,7 +11,7 @@ related_architecture: [ARCHITECTURE]
 
 # AI Workflow Absorption Roadmap
 
-> Detailed executable interface contracts are split into `ai-workflow-absorption-contracts.md` to keep each markdown file under the repository 300-volume control. Feature-design must treat that companion file as part of this roadmap's hard constraints.
+> Detailed executable interface contracts are split into `ai-workflow-absorption-contracts.md` to keep the roadmap documents focused. Feature-design must treat that companion file as part of this roadmap's hard constraints.
 
 ## 1. Background
 

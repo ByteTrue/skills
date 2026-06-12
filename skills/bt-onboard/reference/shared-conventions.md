@@ -13,7 +13,7 @@ The skeleton after onboarding, built by `bt-onboard`:
 ```text
 .bytetrue/
 ├── attention.md           project notes that every ByteTrue skill must read at startup
-├── config.yaml            machine-readable project config (workflow / tracker / dispatch / docs)
+├── config.yaml            machine-readable project config (workflow / tracker / dispatch)
 ├── requirements/          capability vision layer, "what users need and what capability the system provides to satisfy it", across past / present / future
 │   ├── VISION.md          central index, grouped by status, with one-line pitch per item
 │   └── {slug}.md          one file per capability, flat, produced by `bt-req`
@@ -60,6 +60,7 @@ The skeleton after onboarding, built by `bt-onboard`:
     ├── project-management.md   external tracker / labels / sync policy
     ├── tools.md                shared script usage
     ├── config.md              `.bytetrue/config.yaml` field semantics
+    ├── config.schema.yaml       machine-readable schema / onboard defaults for `.bytetrue/config.yaml`
     ├── code-dimensions.md      implementation complexity dimensions
     ├── execution-modes.md      workflow heaviness / evidence discipline
     ├── implementation-review.md implementation review gate / readiness discipline

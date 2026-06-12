@@ -104,6 +104,7 @@ There are only two exceptions: when an issue's root cause is obvious at a glance
 - `.bytetrue/reference/project-management.md` — external tracker provider, labels, sync policy, and GitHub / GitLab / local collaboration rules
 - `.bytetrue/reference/tools.md` — usage of `search-yaml.py` and `validate-yaml.py`
 - `.bytetrue/reference/config.md` — field semantics for `.bytetrue/config.yaml`
+- `.bytetrue/reference/config.schema.yaml` — machine-readable schema and onboarding defaults for `.bytetrue/config.yaml`
 - `.bytetrue/reference/execution-modes.md` — workflow heaviness and evidence discipline for light / standard / strict-evidence / break-loop modes
 - `.bytetrue/reference/implementation-review.md` — implementation review gate between `bt-feat-impl` and `bt-feat-accept`
 - `.bytetrue/reference/context-manifest.md` — feature-local implement/check JSONL read-set contract

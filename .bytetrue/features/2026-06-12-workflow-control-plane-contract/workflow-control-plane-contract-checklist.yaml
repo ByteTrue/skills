@@ -10,10 +10,10 @@ steps:
     source: design-section-2
     status: done
     exit_signal: "bt and bt-feat route continue-feature requests by artifact state; brainstorms/ is canonical open discussion path"
-  - action: "Behavior writeback and project line-policy: update acceptance and volume-control wording"
+  - action: "Behavior writeback and maintainer-only docs cleanup: update acceptance and maintainer-only docs wording"
     source: behavior-delta
     status: done
-    exit_signal: "bt-feat-accept mentions Current Behavior / Observable Contract; no shipped skill/reference hard-codes a universal artifact volume rule"
+    exit_signal: "bt-feat-accept mentions Current Behavior / Observable Contract; no shipped skill/reference carries workflow document-volume config"
   - action: "Onboard/index sync and validation"
     source: rollout
     status: done

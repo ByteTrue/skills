@@ -13,7 +13,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 ```
 .bytetrue/
 ├── attention.md           ByteTrue 技能启动必读的项目注意事项
-├── config.yaml            机器可读项目配置（workflow / tracker / dispatch / docs）
+├── config.yaml            机器可读项目配置（workflow / tracker / dispatch）
 ├── requirements/          能力愿景层（"用户需要什么、系统提供什么能力来满足"，过去/现在/未来）
 │   ├── VISION.md           中心索引（按 status 分组，每条带 pitch 一句话）
 │   └── {slug}.md           一个能力一份，扁平（bt-req 产出）
@@ -60,6 +60,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
     ├── project-management.md   external tracker / labels / sync policy
     ├── tools.md                共享脚本用法
     ├── config.md              `.bytetrue/config.yaml` 字段语义
+    ├── config.schema.yaml       `.bytetrue/config.yaml` 机器可读 schema / onboard defaults
     ├── code-dimensions.md      实现复杂度维度
     ├── execution-modes.md      workflow 轻重 / 证据纪律
     ├── implementation-review.md implementation review gate / readiness discipline

@@ -8,3 +8,5 @@
 {"file":"skills/bt-feat-accept/SKILL.md","reason":"Acceptance must materialize stable behavior deltas into existing fact layers.","required":true,"role":"implement"}
 {"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap now records workflow-control-plane-contract as PR review remediation under AI workflow absorption.","required":true,"role":"both"}
 {"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml","reason":"Roadmap item state links this accepted feature back to the absorption roadmap.","required":true,"role":"both"}
+{"file":".bytetrue/reference/config.schema.yaml","reason":"Machine-readable config schema and onboarding defaults are part of the control-plane contract.","required":true,"role":"both"}
+{"file":"skills/bt-onboard/reference/config.schema.yaml","reason":"Onboard template copy of the config schema must stay synchronized.","required":true,"role":"implement"}

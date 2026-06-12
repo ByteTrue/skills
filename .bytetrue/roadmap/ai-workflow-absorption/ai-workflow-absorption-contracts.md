@@ -1,6 +1,6 @@
 # AI Workflow Absorption Contracts
 
-This companion document is part of `ai-workflow-absorption-roadmap.md`. It is split out only to keep each markdown file under the repository 300-volume control.
+This companion document is part of `ai-workflow-absorption-roadmap.md`. It is split out only to keep the roadmap documents focused.
 
 Feature-design must treat these contracts as hard constraints. If a contract needs to change, update the roadmap first.
 
