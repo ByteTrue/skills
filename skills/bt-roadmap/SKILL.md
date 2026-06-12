@@ -123,7 +123,7 @@ Show the main doc and `items.yaml` to the user in full. Keep iterating until the
 
 ### Phase 6: Write to disk
 
-**new**: create `.bytetrue/roadmap/{slug}/`; write the main doc with `status: active`, `created`, and `last_reviewed` set to today; write `items.yaml` with every entry `status: planned` and `feature: null`; validate with `validate-yaml.py`.
+**new**: create `.bytetrue/roadmap/{slug}/`; write the main doc with `status: active`, `created`, and `last_reviewed` set to today; write `items.yaml` with every entry `status: pending` and `feature: null`; validate with `validate-yaml.py`.
 
 **update**: modify the main doc with `last_reviewed` set to today, and add a change-log line at the end when the structural change is large; modify the corresponding items in `items.yaml`, and for dropped items do not delete them, set `status: dropped` and leave the reason; then validate yaml again.
 
@@ -139,7 +139,7 @@ When the user says "start working on sub-feature {X} in the roadmap":
 
 1. `bt-feat-design`, or ff or brainstorm if appropriate, creates the feature directory
 2. the design frontmatter carries `roadmap: {slug}` and `roadmap_item: {sub-slug}`
-3. the corresponding item in `items.yaml` is updated to `status: in-progress` and `feature: YYYY-MM-DD-{slug}`
+3. the corresponding item in `items.yaml` is updated to `status: active` and `feature: YYYY-MM-DD-{slug}`
 
 This responsibility belongs to `bt-feat-design`, not this skill.
 
@@ -155,7 +155,7 @@ At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept`
 
 ### lifecycle of roadmap itself
 
-- when all items are `done` or `dropped`, the main doc `status` becomes `completed`, and the directory stays as historical archive
+- when all items are `done`, `dropped`, or `archived`, the main doc `status` becomes `completed`, and the directory stays as historical archive
 - if there is no progress for a long time, set `status: paused` and add the reason in the main doc
 
 ---

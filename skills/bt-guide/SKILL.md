@@ -63,7 +63,7 @@ python .bytetrue/tools/search-yaml.py --dir docs/user --filter doc_type=user-gui
 doc_type: dev-guide | user-guide
 slug: {english-hyphenated}
 component: {related module name or feature slug}
-status: draft | current | outdated
+status: pending | done | archived
 summary: {one-line description of what it covers}
 tags: []
 last_reviewed: YYYY-MM-DD
@@ -130,9 +130,9 @@ Optional. Links or explanations for related features.
 
 1. **Clarify scope** — track, dev / user / both, scope, new or update, and information sources. Do design docs already exist? Is there already a guide for the same component? What code needs to be read?
 2. **Collect inputs** — read the design doc, especially section 0 terminology, section 2 interface contract, and section 1 user-visible behavior, then use `search-yaml.py` under `docs/` to confirm whether an existing guide already exists. If an existing guide is found and marked `outdated`, classify the task as an **update**
-3. **Draft** — draft according to the track structure and set frontmatter `status: draft`. Constraint: write only content for the target reader. **Do not move "implementation hints" or internal design straight out of the design doc.** Terminology must match section 0 of the design doc. Code examples must come from real code; do not invent interfaces.
+3. **Draft** — draft according to the track structure and set frontmatter `status: active`. Constraint: write only content for the target reader. **Do not move "implementation hints" or internal design straight out of the design doc.** Terminology must match section 0 of the design doc. Code examples must come from real code; do not invent interfaces.
 4. **User review** — show the draft and confirm section by section whether the scope is covered, whether the descriptions are accurate, and whether any part would be hard for the intended reader to understand
-5. **Write to disk** — after user approval, write to the chosen path, set `status: current`, and set `last_reviewed` to today. For updates, do direct edits for small changes. For major changes such as restructuring or a shift in reader positioning, first mark the old document `status: outdated` and keep it as reference, then write a new one
+5. **Write to disk** — after user approval, write to the chosen path, set `status: done` and `current: true`, and set `last_reviewed` to today. For updates, do direct edits for small changes. For major changes such as restructuring or a shift in reader positioning, first mark the old document `status: archived` + `validity: outdated` and keep it as reference, then write a new one
 
 ---
 

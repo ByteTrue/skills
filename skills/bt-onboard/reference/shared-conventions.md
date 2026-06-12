@@ -13,6 +13,7 @@ The skeleton after onboarding, built by `bt-onboard`:
 ```text
 .bytetrue/
 ├── attention.md           project notes that every ByteTrue skill must read at startup
+├── config.yaml            machine-readable project config (workflow / tracker / dispatch / docs)
 ├── requirements/          capability vision layer, "what users need and what capability the system provides to satisfy it", across past / present / future
 │   ├── VISION.md          central index, grouped by status, with one-line pitch per item
 │   └── {slug}.md          one file per capability, flat, produced by `bt-req`
@@ -46,11 +47,11 @@ The skeleton after onboarding, built by `bt-onboard`:
 ├── compound/              unified directory for archival document types
 │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │                          where doc_type ∈ {learning, trick, decision, explore}
-├── brainstorm/            spike experiment area during brainstorm, temporary artifacts from `bt-brainstorm`
-│   └── {slug}/            one subdirectory per spike, filenames arbitrary
-│                          cleanup is not forced after validation; conclusions are written back into the corresponding brainstorm note
+├── brainstorms/           open large discussions / grill outputs not ready for roadmap, plus spike sandbox
+│   └── {slug}/            one subdirectory per open discussion; `brainstorm.md` records conclusions, spike files may sit next to it
+│                          feature-local brainstorm notes still live under `features/{feature}/{slug}-brainstorm.md`
 ├── worklog/               lightweight report-feed / handoff / recovery records
-│   └── YYYY-MM.md         split as YYYY-MM-02.md before the markdown line limit is reached
+│   └── YYYY-MM.md         split as YYYY-MM-02.md only when project doc policy requires it
 ├── tools/                 shared scripts across workflows, released from the skill package by onboard
 └── reference/             shared reference docs, released from the skill package by onboard
     ├── shared-conventions.md   directory structure / frontmatter / stage handoff rules
@@ -58,6 +59,7 @@ The skeleton after onboarding, built by `bt-onboard`:
     ├── domain-context.md       canonical terms / domain glossary / terminology boundaries
     ├── project-management.md   external tracker / labels / sync policy
     ├── tools.md                shared script usage
+    ├── config.md              `.bytetrue/config.yaml` field semantics
     ├── code-dimensions.md      implementation complexity dimensions
     ├── execution-modes.md      workflow heaviness / evidence discipline
     ├── implementation-review.md implementation review gate / readiness discipline
@@ -98,11 +100,11 @@ Change the template at `bt-onboard/reference/shared-conventions.md` so that new 
 
 ## 1. Shared metadata conventions
 
-**feature spec**: brainstorm, design, and acceptance share `doc_type`, `feature`, `status`, `summary`, and `tags`. Each sub-skill adds only its own extra fields. `status`: brainstorm = `confirmed`, because writing to disk already means confirmed and there is no draft; design = `draft` / `approved`; acceptance defines its own completion semantics.
+**Canonical status vocabulary**: every ByteTrue workflow artifact uses only `pending`, `active`, `done`, `dropped`, or `archived` in `status`. Do not invent extra status words; use explicit fields such as `review_result: approved`, `current: true`, `validity: outdated`, or `superseded_by` for extra semantics.
 
-**Feature implementation report**: `bt-feat-impl` writes `{slug}-implementation-report.md` after user review passes, with frontmatter `doc_type: feature-implementation-report`, `feature`, `status: confirmed`, and `summary`. It is the durable Implementation Review Gate evidence read by `bt-feat-accept`; a chat-only completion report does not replace it.
+**Feature implementation report**: `bt-feat-impl` writes `{slug}-implementation-report.md` after user review passes, with frontmatter `doc_type: feature-implementation-report`, `feature`, `status: done`, and `summary`. It is the durable Implementation Review Gate evidence read by `bt-feat-accept`; a chat-only completion report does not replace it.
 
-**issue spec**: report, analysis, and fix-note share `doc_type`, `issue`, `status`, and `tags`. Across all three issue stages, the completed state is uniformly `status: confirmed`; `draft` means the stage is not yet fully reviewed or verified. Fields such as `severity`, `root_cause_type`, and `path` are added by the corresponding stage as needed.
+**issue spec**: report, analysis, and fix-note share `doc_type`, `issue`, `status`, and `tags`. Use `status: active` while a stage is not fully reviewed or verified, `status: done` when complete, and `status: dropped` when abandoned. Fields such as `severity`, `root_cause_type`, and `path` are added by the corresponding stage as needed.
 
 **Archival documents, `compound`**:
 
@@ -113,7 +115,7 @@ Change the template at `bt-onboard/reference/shared-conventions.md` so that new 
 - each sub-skill recognizes only its own `doc_type` and never reads or writes another
 - common fields such as `status` follow the semantics in this file
 
-**External-reader docs**, guidedoc and libdoc, have frontmatter defined by their own skills. Unless otherwise specified, `draft` means pending review, `current` means currently valid, and `outdated` means code has changed and the doc now needs synchronization.
+**External-reader docs**, guidedoc and libdoc, have frontmatter defined by their own skills. Unless otherwise specified, `active` means pending review, `done` + `current: true` means currently valid, and `archived` + `validity: outdated` means code has changed and the doc now needs synchronization.
 
 **Writing constraint**: when a sub-skill mentions fields, it should prefer to mention only the extra fields or the stage-specific status changes, and should not restate the full shared-field system again.
 
@@ -122,7 +124,7 @@ Change the template at `bt-onboard/reference/shared-conventions.md` so that new 
 ## 2. `{slug}-checklist.yaml` lifecycle
 
 - it is the only execution checklist for the feature workflow
-- it is generated once by `bt-feat-design` after design is approved, producing both `steps` and `checks`
+- it is generated once by `bt-feat-design` after design review passes, producing both `steps` and `checks`
 - `bt-feat-ff` **does not generate** a checklist, and also does not produce design or acceptance; it is the ultra-light path that skips the spec flow and writes code directly. The only trace it leaves is the post-implementation `{slug}-ff-note.md`, which participates in scoped commit and can later be found by `bt-arch` or `bt-req` backfill
 
 The granularity of `steps` is the **slice strategy along the orchestration-vs-computation dimension** — "orchestration skeleton first, then computation nodes, then persistence and testing", meaning minimal workflow first and then nodes one by one. It **must not** descend to `file:line` or function level. The actual file choices are decided by implement.
@@ -164,7 +166,7 @@ planned      → dropped       (`bt-roadmap update` changes it when the user dec
 **`bt-feat-design` is responsible for**, when starting from roadmap:
 
 1. adding `roadmap: {roadmap-slug}` and `roadmap_item: {sub-feature slug}` into design.md frontmatter
-2. changing the corresponding item in `items.yaml` to `status: in-progress` and setting `feature: YYYY-MM-DD-{slug}`
+2. changing the corresponding item in `items.yaml` to `status: active` and setting `feature: YYYY-MM-DD-{slug}`
 3. validating yaml
 
 When a feature starts directly and does not come from roadmap, both fields remain empty, and no roadmap write is triggered.
@@ -191,7 +193,7 @@ Any item involving `bt-tracker` must follow the `sync_policy` in `.bytetrue/refe
 
 **feature-design** close-out should ask in this order:
 
-1. `bt-tracker`: sync or bind the approved feature design; if the feature started from roadmap, also update or bind the corresponding roadmap item
+1. `bt-tracker`: sync or bind feature designs with `status: done` and `review_result: approved`; if the feature started from roadmap, also update or bind the corresponding roadmap item
 
 **feature-acceptance** close-out should ask in this order:
 
@@ -205,7 +207,7 @@ Any item involving `bt-tracker` must follow the `sync_policy` in `.bytetrue/refe
 
 **issue-report** close-out should ask in this order:
 
-1. `bt-tracker`: sync or bind the confirmed bug issue
+1. `bt-tracker`: sync or bind bug issues with `status: done`
 
 **issue-fix** close-out should ask in this order:
 

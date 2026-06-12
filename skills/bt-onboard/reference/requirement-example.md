@@ -27,7 +27,8 @@ The example below is taken from ByteTrue's own capability, the exploration-and-a
 doc_type: requirement
 slug: issue-flow
 pitch: Let AI explore and analyze first before editing code when fixing bugs
-status: current
+status: done
+current: true
 last_reviewed: 2026-04-21
 implemented_by:
   - arch-bt-issue

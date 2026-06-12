@@ -23,7 +23,7 @@ entries:
 doc_type: lib-api-ref
 entry: {entry}
 category: {category}
-status: draft | current | outdated
+status: pending | done | archived
 source_files: [{source_files}]
 summary: {summary}
 tags: []

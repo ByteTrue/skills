@@ -1,0 +1,37 @@
+version: 1
+
+workflow:
+  mode: manual # manual | auto
+  ask_before:
+    - git_commit
+    - git_push
+    - external_tracker_write
+    - destructive_command
+    - scope_change
+
+tracker:
+  provider: local # local | github | gitlab
+  provider_status: configured
+  sync_policy: ask # ask | never | auto_preview
+  sync_direction: outbound_only
+  external_import: manual_only
+  update_policy: update_managed_block
+  repository:
+    remote_url: https://github.com/ByteTrue/skills.git
+    tracker_url: https://github.com/ByteTrue/skills/issues
+  cli:
+    gh:
+      installed: true
+      auth: ok
+    glab:
+      installed: false
+      auth: unknown
+
+dispatch:
+  preferred: auto # auto | native_subagent | non_interactive_child | inline
+  allow_non_interactive_child: true
+  allow_background_agents: false
+
+docs:
+  line_limit_scope: skill-docs-only # none | skill-docs-only | all-markdown
+  max_skill_doc_lines: 300

@@ -21,7 +21,7 @@ The easiest way for the fix stage to go wrong is not the code change itself, but
 
 ### Standard Path, with analysis
 
-1. **The plan is confirmed** — read the analysis, confirm `doc_type=issue-analysis` and `status=confirmed`, and identify which plan the user selected in section 5
+1. **The plan is confirmed** — read the analysis, confirm `doc_type=issue-analysis` and `status=done`, and identify which plan the user selected in section 5
 2. **Read the full context**: the full analysis, the full report, all code locations identified in section 1 of the analysis, `.bytetrue/attention.md`, and search the archival directory:
    - `python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter status=active --query "{keyword}"` — confirm the fix approach does not violate existing library usage or established patterns
    - the same command with `--filter doc_type=explore` — confirm the fix point does not conflict with existing evidence
@@ -118,7 +118,7 @@ Constraints for logs and instrumentation:
 
 After verification passes, create `{slug}-fix-note.md` in the issue directory, location defined in the "where the files go" section of `bt-issue`, and record the full closure. Both the standard-path template and fast-path template are in `reference.md` in the same directory.
 
-The completed state of the fix note is always `status: confirmed`. Do not leave it at `draft`. `draft` means the fix record has not completed review or verification, which will make later `bt-issue` runs think the workflow is still open.
+The completed state of the fix note is always `status: done`. Do not leave it at `draft`. `active` means the fix record has not completed review or verification, which will make later `bt-issue` runs think the workflow is still open.
 
 The fix note must additionally record:
 
@@ -133,7 +133,7 @@ The fix note must additionally record:
 - [ ] all changed files have either been committed or listed clearly
 - [ ] the full verification checklist is checked off
 - [ ] `{slug}-fix-note.md` has been created and fully filled
-- [ ] the fix note frontmatter is `status: confirmed`
+- [ ] the fix note frontmatter is `status: done`
 - [ ] regression coverage or the reason for no seam has been written into the fix note
 - [ ] temporary instrumentation has been cleaned, or the reason for keeping it is explicitly written
 - [ ] the mini post-mortem has been written into the fix note

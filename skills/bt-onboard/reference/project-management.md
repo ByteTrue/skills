@@ -12,7 +12,7 @@ Chosen by the user during onboarding:
 
 ```yaml
 provider: local | github | gitlab
-sync_policy: ask
+sync_policy: ask | never | auto_preview
 ```
 
 - `local`: use only `.bytetrue/`, create no external issues
@@ -31,27 +31,7 @@ This layer does not design any API, token, or SDK adapter.
 
 ## Current Project Configuration
 
-`bt-onboard` maintains this section. The YAML in the rule sections expresses default semantics; this section is the current project's actual choice.
-
-```yaml
-provider: local # local | github | gitlab
-provider_status: not_configured # configured | not_configured
-sync_policy: ask
-
-repository:
-  remote_url: TODO
-  tracker_url: TODO
-
-cli:
-  gh:
-    installed: unknown # true | false | unknown
-    auth: unknown # ok | failed | unknown
-  glab:
-    installed: unknown # true | false | unknown
-    auth: unknown # ok | failed | unknown
-```
-
-If the user chooses `github` or `gitlab` but the CLI is not installed or not logged in, keep the provider selection, but mark `provider_status` as `not_configured`; do not stop onboarding.
+Current provider, sync policy, repository, and CLI detection values live in `.bytetrue/config.yaml`. This document defines provider semantics, syncable sources, labels, and writeback rules.
 
 ---
 
@@ -95,10 +75,10 @@ not_syncable_by_default:
 
 Syncable-status mapping:
 
-- `roadmap_prd`: `status: active | completed | paused` counts as reviewed planning content and may be published or updated; `draft` does not sync
-- `roadmap_item`: `status: planned | in-progress | done` may be published or updated; `dropped` only updates the state of an already bound external issue and does not create one by default
-- `feature_design`: `status: approved` may be published or updated
-- `bug_issue`: `status: confirmed` may be published or updated
+- `roadmap_prd`: `status: active | done` counts as reviewed planning content and may be published or updated; `pending` does not sync
+- `roadmap_item`: `status: pending | active | done` may be published or updated; `dropped` only updates the state of an already bound external issue and does not create one by default
+- `feature_design`: `status: done` with `review_result: approved` may be published or updated
+- `bug_issue`: `status: done` may be published or updated
 
 PRD is not added as a new local entity. No `.bytetrue/prds/` directory is introduced.
 

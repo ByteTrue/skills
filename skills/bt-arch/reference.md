@@ -14,7 +14,7 @@ doc_type: architecture
 slug: {english-hyphenated; must match filename}
 scope: {one-line coverage scope}
 summary: {one-line summary of the key point}
-status: current | draft | outdated
+status: done | pending | archived
 last_reviewed: YYYY-MM-DD
 tags: []
 depends_on: []   # slugs of other architecture docs, optional

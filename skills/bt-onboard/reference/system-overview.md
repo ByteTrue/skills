@@ -82,9 +82,9 @@ All four share the `.bytetrue/compound/` directory, and are distinguished by the
 
 These four classes of documents each control a different time scale and must not be mixed:
 
-- **vision archive**, requirements — describes "what users need and what capability the system provides to satisfy it". The single `status` field distinguishes three time depths: `draft`, future vision; `current`, present capability; `outdated`, past trace. A draft req can exist independently from implementation — lock down the vision first, so roadmap scheduling and design implementation have a stable alignment target later
+- **vision archive**, requirements — describes "what users need and what capability the system provides to satisfy it". The `status` field uses the canonical five-state vocabulary; future/current/outdated semantics use fields such as `current` and `validity`. A draft req can exist independently from implementation — lock down the vision first, so roadmap scheduling and design implementation have a stable alignment target later
 - **structure archive**, architecture — describes "what structure the system currently uses to implement it". It records only current state and is updated alongside code during feature-acceptance by default; when necessary, `bt-arch` refreshes it proactively. **It never records "which layer will be added in the future"**
-- **planning archive**, roadmap — describes "how this larger demand will be implemented step by step next". It stays independent from vision and structure archives. Changing the plan should not force edits to requirements or architecture. When all items are `done` or `dropped`, the roadmap enters `completed` status and remains as historical archive
+- **planning archive**, roadmap — describes "how this larger demand will be implemented step by step next". It stays independent from vision and structure archives. Changing the plan should not force edits to requirements or architecture. When all items are `done`, `dropped`, or `archived`, the roadmap uses `status: done` and remains as historical archive
 - **one-off actions**, feature / issue / refactor — the spec for one concrete thing being done right now. Once the action is complete, the stable parts are extracted into the vision archive, structure archive, and capture docs
 
 When the user says something like "I want an X system", which is a large demand, first use roadmap to split it into sub-features, then run the feature workflow one item at a time. Starting directly with one giant feature would produce an oversized design that does not fit, and even if it is split later there is no stable tracking handle.
@@ -103,6 +103,7 @@ There are only two exceptions: when an issue's root cause is obvious at a glance
 - `.bytetrue/reference/domain-context.md` — canonical terms, domain glossary, and terminology consensus formed by `bt-grill` with docs
 - `.bytetrue/reference/project-management.md` — external tracker provider, labels, sync policy, and GitHub / GitLab / local collaboration rules
 - `.bytetrue/reference/tools.md` — usage of `search-yaml.py` and `validate-yaml.py`
+- `.bytetrue/reference/config.md` — field semantics for `.bytetrue/config.yaml`
 - `.bytetrue/reference/execution-modes.md` — workflow heaviness and evidence discipline for light / standard / strict-evidence / break-loop modes
 - `.bytetrue/reference/implementation-review.md` — implementation review gate between `bt-feat-impl` and `bt-feat-accept`
 - `.bytetrue/reference/context-manifest.md` — feature-local implement/check JSONL read-set contract
@@ -111,7 +112,7 @@ There are only two exceptions: when an issue's root cause is obvious at a glance
 - `.bytetrue/reference/worklog-report-feed.md` — lightweight worklog/report-feed for reporting, handoff, recovery, and audit
 - `.bytetrue/reference/maintainer-notes.md` — resume support and registration rules when adding new sub-workflows
 
-The authoritative definition of the directory structure, requirements, architecture, roadmap, features, issues, compound, tools, and reference, lives in `.bytetrue/reference/shared-conventions.md`. If the directory structure ever needs to change, change the template at `bt-onboard/reference/shared-conventions.md` first so that new onboarded projects pick up the new version.
+The authoritative definition of the directory structure, config.yaml, requirements, architecture, roadmap, features, issues, compound, brainstorms, worklog, tools, and reference, lives in `.bytetrue/reference/shared-conventions.md`. If the directory structure ever needs to change, change the template at `bt-onboard/reference/shared-conventions.md` first so that new onboarded projects pick up the new version.
 
 ## Related
 

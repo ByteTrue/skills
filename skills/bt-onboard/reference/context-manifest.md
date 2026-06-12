@@ -5,7 +5,7 @@ They do not replace design, checklist, requirements, architecture, implementatio
 
 ## File Names
 
-For a standard approved feature design:
+For a standard reviewed feature design:
 
 ```text
 .bytetrue/features/YYYY-MM-DD-{slug}/
@@ -17,7 +17,7 @@ For a standard approved feature design:
 - `impl-context` is consumed by `bt-feat-impl`.
 - `check-context` is consumed by `bt-feat-accept` and future check roles; it should include the planned implementation report path.
 - `subagent-handoff` roles consume these files as their explicit read-set; see `.bytetrue/reference/subagent-handoff.md`.
-- Legacy feature directories without manifests remain readable; new approved designs should create both files.
+- Legacy feature directories without manifests remain readable; new reviewed designs should create both files.
 - `{slug}-implementation-report.md` is not created by design; implementation writes it as durable review-gate evidence before acceptance.
 
 ## Row Shape

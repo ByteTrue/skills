@@ -39,7 +39,7 @@ If halfway through coding you find a corner the design did not cover, edge behav
 
 ### 1. Is the design document strong enough to support implementation?
 
-Frontmatter must have matching `doc_type=feature-design` and `feature`, `status=approved`, non-empty `summary`, and `tags` length at least 2.
+Frontmatter must have matching `doc_type=feature-design` and `feature`, `status=done`, `review_result=approved`, non-empty `summary`, and `tags` length at least 2.
 
 **Standard design**, sections 0, 1, 2, 3, and 4:
 - section 0 has content; section 1 contains explicit non-goals, complexity dimensions, and execution mode or a standard-mode statement
@@ -192,7 +192,7 @@ After the user review passes, write the approved report to `{slug}-implementatio
 ---
 doc_type: feature-implementation-report
 feature: {YYYY-MM-DD}-{slug}
-status: confirmed
+status: done
 summary: {one-line implementation summary}
 ---
 
@@ -222,7 +222,7 @@ When the type system itself guarantees something, for example a TypeScript signa
 ## Exit Conditions
 
 - [ ] all steps have status `done`
-- [ ] the completion report has been output, the user review passed, and `{slug}-implementation-report.md` has been written with `status: confirmed`
+- [ ] the completion report has been output, the user review passed, and `{slug}-implementation-report.md` has been written with `status: done`
 - [ ] there are no unhandled "must stop" signals
 - [ ] every key scenario in section 3 has evidence or test coverage, or in fastforward, every section 2 acceptance criterion has evidence
 - [ ] implementation review gate has passed spec compliance before code quality, with evidence listed in `{slug}-implementation-report.md`

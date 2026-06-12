@@ -30,7 +30,7 @@ Required frontmatter:
 ```yaml
 doc_type: feature-implementation-report
 feature: YYYY-MM-DD-{slug}
-status: confirmed
+status: done
 summary: {one-line implementation summary}
 ```
 

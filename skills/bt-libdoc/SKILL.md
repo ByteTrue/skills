@@ -78,7 +78,8 @@ This skill body keeps only the process constraints: **libdoc uses source code as
 
 Suitable for 1-3 entries or an initial trial run to confirm quality.
 
-Pick the entry → read `source_files` → generate according to the template → user reviews → write it to disk → validate with `validate-yaml.py --file {path} --require doc_type --require entry --require status` → set the corresponding entry in the manifest to `status: current`
+Pick the entry → read `source_files` → generate according to the template → user reviews → write it to disk → validate with `validate-yaml.py --file {path} --require doc_type --require entry --require status` → set the corresponding entry in the manifest to `status: done
+current: true`
 
 #### Mode B: Batch mode
 
@@ -86,9 +87,10 @@ Suitable when the manifest still contains many `pending` entries.
 
 1. **Produce exemplars first** — pick 2-3 representative entries from the manifest, covering different categories, and go through "read source → extract → generate by template", then write them to disk. Their status starts as `draft`, not `current`, because in batch mode the exemplars are style references and should become `current` only after overall review.
 2. **User confirms the quality bar** — review these 2-3 entries to confirm template, level of detail, and style. **This step cannot be skipped.** Otherwise 50 documents might be generated in the wrong style.
-3. **Generate in batch** — for each remaining `pending` entry, go through "read source → extract → generate". Subagents may be used in parallel. Each entry gets `status: draft`.
+3. **Generate in batch** — for each remaining `pending` entry, go through "read source → extract → generate". Subagents may be used in parallel. Each entry gets `status: active`.
 4. **Overall review** — once the batch is done, show the summary, number of entries, number skipped, number pending confirmation. Before review, run `validate-yaml.py --dir docs/api --require doc_type --require entry --require status` for batch validation.
-5. **Finalize** — after user confirmation, change both the exemplars and the batch output to `status: current`
+5. **Finalize** — after user confirmation, change both the exemplars and the batch output to `status: done
+current: true`
 
 **Hard rules for batch mode**:
 
@@ -104,7 +106,7 @@ After code changes, sync the documentation. Any of these three entry points may 
 - compare the source files changed after `last_scanned` in `manifest.yaml`
 - use `search-yaml.py --sort-by last_reviewed --order asc` to proactively re-review the least recently reviewed entries
 
-Reread the source → compare it with the existing document → update only the changed parts → validate with `validate-yaml.py` → set `status: current` and `last_reviewed` to today.
+Reread the source → compare it with the existing document → update only the changed parts → validate with `validate-yaml.py` → set `status: done` and `current: true` and `last_reviewed` to today.
 
 ---
 

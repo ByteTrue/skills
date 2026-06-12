@@ -12,7 +12,7 @@
 
 ```yaml
 provider: local | github | gitlab
-sync_policy: ask
+sync_policy: ask | never | auto_preview
 ```
 
 - `local`：只使用 `.bytetrue/`，不创建外部 issue。
@@ -31,27 +31,7 @@ sync_policy: ask
 
 ## Current Project Configuration
 
-本节记录当前项目实际选择；规则章节里的 YAML 是默认语义。当前 ByteTrue 自举项目暂不自动同步外部 tracker，因此 provider 保持 `local`。
-
-```yaml
-provider: local # local | github | gitlab
-provider_status: configured
-sync_policy: ask
-
-repository:
-  remote_url: https://github.com/ByteTrue/skills.git
-  tracker_url: https://github.com/ByteTrue/skills/issues
-
-cli:
-  gh:
-    installed: true
-    auth: ok
-  glab:
-    installed: false
-    auth: unknown
-```
-
-如果后续决定让 ByteTrue 自身也同步到 GitHub Issues，可把 provider 改为 `github`，并通过 `bt-tracker` publish/link/triage。
+Current provider, sync policy, repository, and CLI detection values live in `.bytetrue/config.yaml`. This document defines provider semantics, syncable sources, labels, and writeback rules.
 
 ---
 
@@ -95,10 +75,10 @@ not_syncable_by_default:
 
 可同步状态映射：
 
-- `roadmap_prd`：`status: active | completed | paused` 视为已 review 的规划口径，可 publish / update；`draft` 不同步。
-- `roadmap_item`：`status: planned | in-progress | done` 可 publish / update；`dropped` 只更新已绑定外部 issue 的状态，不默认新建。
-- `feature_design`：`status: approved` 可 publish / update。
-- `bug_issue`：`status: confirmed` 可 publish / update。
+- `roadmap_prd`：`status: active | done` 视为已 review 的规划口径，可 publish / update；`pending` 不同步。
+- `roadmap_item`：`status: pending | active | done` 可 publish / update；`dropped` 只更新已绑定外部 issue 的状态，不默认新建。
+- `feature_design`：`status: done` 且 `review_result: approved` 可 publish / update。
+- `bug_issue`：`status: done` 可 publish / update。
 
 PRD 不作为新的本地实体；本地不新增 `.bytetrue/prds/`。
 

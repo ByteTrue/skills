@@ -17,11 +17,11 @@ Before making any judgment or taking any action, read `.bytetrue/attention.md` f
 - `current`: the system is currently satisfying it, present capability
 - `outdated`: the system once satisfied it, but it has since been removed or is no longer maintained, past trace
 
-**A draft req can exist independently from implementation**. If the user says "I want capability X" but has not decided when it will be built, a `status: draft` req can still be written first to lock down the vision. Then roadmap scheduling and design alignment both have a stable reference. **Not doing roadmap planning does not mean a vision doc should not exist.**
+**A draft req can exist independently from implementation**. If the user says "I want capability X" but has not decided when it will be built, a `status: active` req can still be written first to lock down the vision. Then roadmap scheduling and design alignment both have a stable reference. **Not doing roadmap planning does not mean a vision doc should not exist.**
 
 **The main path from draft to current is feature-acceptance**. After the capability is implemented and accepted, acceptance triggers `bt-req update` to change `status` from `draft` to `current`, and at the same time refreshes the user stories and boundaries according to the real implementation, while keeping the original vision intact and only adding a change log at the end.
 
-**The backfill path remains valid**: for capabilities that are already running but never got a req, backfill writes them directly as `status: current`.
+**The backfill path remains valid**: for capabilities that are already running but never got a req, backfill writes them directly as `status: done` and `current: true`.
 
 **Do not record how implementation should be phased**. That is what `bt-roadmap` is for. Req answers only "what is wanted and why", not "in which sprint it will be built" or "how many sub-features it will be split into".
 
@@ -38,8 +38,8 @@ The value of a requirement doc is that **the point is clear at a glance**. User 
 
 ## Applicable Scenarios
 
-- triggered during brainstorm: after discussion, the vision becomes clear → use `draft` to write the vision and land it as `status: draft`, so design and roadmap later have a stable alignment baseline
-- triggered during feature-design: a new capability is being designed for the first time → use `draft` to write the vision, user stories, pain point, solution, and boundaries, as `status: draft`
+- triggered during brainstorm: after discussion, the vision becomes clear → use `draft` to write the vision and land it as `status: active`, so design and roadmap later have a stable alignment baseline
+- triggered during feature-design: a new capability is being designed for the first time → use `draft` to write the vision, user stories, pain point, solution, and boundaries, as `status: active`
 - triggered from section 6 of feature-acceptance: the capability corresponding to a draft req is now implemented → use `update` to upgrade it to `current`, keep the original vision and append a change log; for an existing capability that never had a req, use `backfill` and write it directly as `current`; if a capability that already has a current req changes its boundary, user story, or pitch, use `update` to refresh it
 - proactive user inventory: a capability is already running but never had a req, use `backfill`
 - proactive user revision: the capability evolved and needs refreshing, use `update`
@@ -53,8 +53,8 @@ Not applicable: if the job is to write "how it is built technically", use `bt-ar
 
 Each run touches only one document:
 
-- **draft**: draft the vision for a new capability that has not been implemented yet, user story, pain point, solution, and boundaries, with `status: draft`
-- **backfill**: backfill a capability that already exists but was never documented, with `status: current`
+- **draft**: draft the vision for a new capability that has not been implemented yet, user story, pain point, solution, and boundaries, with `status: active`
+- **backfill**: backfill a capability that already exists but was never documented, with `status: done` and `current: true`
 - **update**: refresh one existing document based on new material or implementation changes
 
 Why not allow multiple docs at once? The value of req lies in **each document actually being read**. If several are emitted at once, the user cannot review each one deeply, and the result is either rough merges or docs nobody reads.
@@ -109,8 +109,8 @@ Show the complete first draft to the user. Keep iterating until the user explici
 
 ### Phase 6: Write to disk and update the index
 
-- draft: write to `requirements/{slug}.md`, with `status: draft` and `last_reviewed` set to today
-- backfill: write to `requirements/{slug}.md`, with `status: current` and `last_reviewed` set to today
+- draft: write to `requirements/{slug}.md`, with `status: active` and `last_reviewed` set to today
+- backfill: write to `requirements/{slug}.md`, with `status: done` and `current: true` and `last_reviewed` set to today
 - update: overwrite the existing doc and set `last_reviewed` to today; if the structural change is large, add one line to the `Change Log` section at the end; draft → current is a structural state change and **must** have a change-log entry
 - **index update**: update `requirements/VISION.md`, grouping all reqs by status and listing each one with its one-line pitch plus status marker
 
@@ -125,7 +125,7 @@ Show the complete first draft to the user. Keep iterating until the user explici
 doc_type: requirement
 slug: {english-hyphenated; must match filename}
 pitch: {one non-technical sentence that makes the capability clear and could be used as promotional copy}
-status: current | draft | outdated
+status: done | pending | archived
 last_reviewed: YYYY-MM-DD
 implemented_by: []   # list of architecture doc slugs that carry it, may be empty
 tags: []
@@ -210,7 +210,8 @@ One short paragraph describing roughly how the capability works. **Do not write 
 
 ## Common Mistakes
 
-- treating a draft req like a backfill — the capability is not implemented yet, but the doc is marked `status: current`, or implementation details are invented as if it already exists
+- treating a draft req like a backfill — the capability is not implemented yet, but the doc is marked `status: done
+current: true`, or implementation details are invented as if it already exists
 - during backfill, not confirming that the capability is really running in code — writing a "sounds plausible" req from one user sentence
 - stuffing implementation detail into a draft req — deciding how to implement it before the design phase
 - drawing draft boundaries too wide — the value of vision is to draw the line; wanting everything means saying nothing

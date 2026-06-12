@@ -11,6 +11,7 @@
 - [research-first-explore-integration](./research-first-explore-integration.md) — ByteTrue 在技术选择或外部工作流事实会影响方向时，先用 bt-explore spike 归档证据再进入设计或 roadmap。
 - [worklog-report-feed](./worklog-report-feed.md) — ByteTrue 提供轻量工作记录 feed，用于周报、handoff、恢复背景和 AI 工作审计。
 - [onboard-template-rollout](./onboard-template-rollout.md) — ByteTrue 在 AI workflow absorption 收尾时同步 onboard 模板、reference、README 和安装投影，确保新项目获得完整新工作流。
+- [workflow-control-plane-contract](./workflow-control-plane-contract.md) — ByteTrue 统一配置、状态词表、续接扫描、开放 brainstorm 和行为沉淀口径。
 
 ## Draft
 

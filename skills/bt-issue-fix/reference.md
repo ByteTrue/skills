@@ -52,7 +52,7 @@ Please reproduce the issue using these steps and paste the logs:
 ---
 doc_type: issue-fix
 issue: {issue directory name}
-status: confirmed
+status: done
 path: standard
 fix_date: YYYY-MM-DD
 related: [{relative path to slug-analysis.md}]
@@ -92,7 +92,7 @@ What would prevent this kind of bug in the future: {tests / types / constraints 
 ---
 doc_type: issue-fix
 issue: {issue directory name}
-status: confirmed
+status: done
 path: fast-track
 fix_date: YYYY-MM-DD
 tags: []

@@ -11,13 +11,14 @@ feature: 2026-04-12-user-auth
 requirement: user-auth-email
 roadmap: permission-system           # optional, fill only when this feature starts from a roadmap item
 roadmap_item: permission-rbac-core   # optional, the slug in the corresponding roadmap items.yaml
-status: draft
+status: active
+review_result: pending
 summary: Support users logging into the admin console via email verification code
 tags: [auth, email, login]
 ---
 ```
 
-Required fields: `doc_type`, `feature`, `status`, `summary`, and `tags`.
+Required fields: `doc_type`, `feature`, `status`, `review_result`, `summary`, and `tags`.
 
 - `requirement`: fill in the corresponding req slug; pure refactor or technical debt may leave it empty
 - `roadmap` and `roadmap_item`: fill them only when starting from a roadmap item; either both filled or both empty

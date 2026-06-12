@@ -119,7 +119,8 @@ Give the whole scan to the user, and let the **user mark ✓ or ✗**, with reas
 1. **Order the work** — if selected items have dependencies, put the prerequisites first. L1 items like Parallel Change usually come first, and L2 extractions often follow. Independent items should prioritize low risk plus things the AI can self-prove. HUMAN-verification items should be batched later
 2. **Add execution detail to each item**: method ID, steps, prerequisites, exit signal, verification owner, AI or HUMAN, and rollback strategy
 3. **Identify prerequisites** — items with inadequate test coverage get a prerequisite of "add characterization coverage"; items that change public interfaces get a prerequisite of "search callers"
-4. **Overall review** — present the whole design to the user, and once approved, set `status: approved`
+4. **Overall review** — present the whole design to the user, and once approved, set `status: done
+review_result: approved`
 5. **Extract the checklist** — steps mirror execution order, checks mirror step exit signals
 
 For architecture-oriented items, the design must additionally make these explicit:
@@ -135,7 +136,8 @@ For architecture-oriented items, the design must additionally make these explici
 ---
 doc_type: refactor-design
 refactor: {YYYY-MM-DD}-{slug}
-status: draft | approved
+status: active | done
+review_result: pending | approved
 scope: {one-line scan scope}
 summary: {one-line summary of which items will be done this time}
 ---
@@ -214,7 +216,8 @@ refactor: {YYYY-MM-DD}-{slug}
 - [ ] the scan pre-checks were run, anything that hit got routed away, and only the non-hit path continued into scan
 - [ ] the user has marked `{slug}-scan.md` with ✓ and ✗
 - [ ] every selected item in design maps to a method ID
-- [ ] design passed whole-document user review and is `status: approved`
+- [ ] design passed whole-document user review and is `status: done
+review_result: approved`
 - [ ] `checklist.yaml` has been generated and passes `validate-yaml.py`
 - [ ] every apply step has a verification record, AI self-proof includes logs, HUMAN proof includes the user's confirmation wording
 - [ ] full test suite, typecheck, and lint all pass

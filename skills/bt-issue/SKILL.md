@@ -39,7 +39,7 @@ The date is fixed to the **day the problem was discovered or reported** and neve
 
 `{slug}-fix-note.md` is a **mandatory artifact** for stage 3, no matter whether the fix is simple or complex. It is not ceremony; it is traceability evidence. Without it, next time a similar issue appears you can only reconstruct it from `git log`.
 
-All issue documents carry YAML frontmatter with `doc_type` values `issue-report`, `issue-analysis`, and `issue-fix` so that `search-yaml.py` can search them by `severity`, `tags`, and `status`. The finished state across all three issue stages is uniformly `status: confirmed`; `draft` only means that this stage has not completed review or verification yet.
+All issue documents carry YAML frontmatter with `doc_type` values `issue-report`, `issue-analysis`, and `issue-fix` so that `search-yaml.py` can search them by `severity`, `tags`, and `status`. The finished state across all three issue stages is uniformly `status: done`; `draft` only means that this stage has not completed review or verification yet.
 
 ---
 
@@ -81,8 +81,8 @@ When entering this skill, `Glob .bytetrue/issues/` first. Read the existing file
 | `report.md` exists, but no `analysis.md` | `bt-issue-analyze` |
 | `analysis.md` exists, code not changed yet | `bt-issue-fix` |
 | Code is already changed, but no fix verification record yet | `bt-issue-fix` (verification flow) |
-| `fix-note.md` exists and `status: confirmed` | the issue is already closed; do not re-enter fix flow. If collaboration projection is needed, suggest `bt-tracker` |
-| `fix-note.md` exists but `status: draft` | first inspect the verification record in the body, related commits, and worktree. If the evidence is complete, say only that the fix note needs to be changed to `status: confirmed`; do not directly declare the fix incomplete |
+| `fix-note.md` exists and `status: done` | the issue is already closed; do not re-enter fix flow. If collaboration projection is needed, suggest `bt-tracker` |
+| `fix-note.md` exists but `status: active` | first inspect the verification record in the body, related commits, and worktree. If the evidence is complete, say only that the fix note needs to be changed to `status: done`; do not directly declare the fix incomplete |
 | Not sure | read the existing files yourself and match them against the table above |
 
 If the user's description is actually a **new feature request rather than a bug**, tell them to use `bt-feat`.

@@ -45,8 +45,8 @@ The entire comparison table of this skill is hardcoded against the current secti
 ## Startup checks
 
 1. **The code really has been implemented** — `git status` or recent commits must show the feature's code changes, otherwise send it back to implement
-1a. **Durable implementation report exists** — read `{slug}-implementation-report.md` and confirm `doc_type=feature-implementation-report`, `status=confirmed`, and an `Implementation Review Gate` section with separate spec compliance and code quality results. If the file is missing for a new standard feature, or `{slug}-check-context.jsonl` marks it required, send it back to implement. If the only reason it is missing is that this is a legacy feature from before the report contract, reconstruct the gate once from design + checklist + git diff, write `{slug}-implementation-report.md`, and then continue only if the reconstructed gate passes
-2. **The design doc is complete** — frontmatter must have matching `doc_type=feature-design` and `feature`, `status=approved`, non-empty `summary`, and at least 2 tags; in standard design, sections 0, 1, 2, 3, and 4 must all be filled
+1a. **Durable implementation report exists** — read `{slug}-implementation-report.md` and confirm `doc_type=feature-implementation-report`, `status=done`, and an `Implementation Review Gate` section with separate spec compliance and code quality results. If the file is missing for a new standard feature, or `{slug}-check-context.jsonl` marks it required, send it back to implement. If the only reason it is missing is that this is a legacy feature from before the report contract, reconstruct the gate once from design + checklist + git diff, write `{slug}-implementation-report.md`, and then continue only if the reconstructed gate passes
+2. **The design doc is complete** — frontmatter must have matching `doc_type=feature-design` and `feature`, `status=done`, `review_result=approved`, non-empty `summary`, and at least 2 tags; in standard design, sections 0, 1, 2, 3, and 4 must all be filled
 3. **`{slug}-checklist.yaml`** — it must exist with a matching `feature`; all `steps` must already be `done`, any `pending` means send it back to implement; `checks` must be non-empty and all still `pending`
 3a. **Check context manifest** — for new standard features with `{slug}-check-context.jsonl`, read every required row before acceptance; the planned `{slug}-implementation-report.md` row must exist and be satisfied after implementation; missing required files send the feature back to design/implement or require explicit user downgrade
 3b. **Optional check-role handoff** — if the parent delegates review to a subagent or inline role, use the `check` role in `.bytetrue/reference/subagent-handoff.md`; the role returns evidence/findings only and does not replace this acceptance stage
@@ -166,10 +166,10 @@ If section 4 of the design is empty or too thin, supplement the evaluation here:
 Req is the capability-vision layer. This section is where draft → current upgrades and backfill are triggered. Compare the `requirement` field in design frontmatter with the requirement summary in section 1:
 
 - [ ] `requirement` is empty and the design explicitly says "no new capability", pure refactor or technical debt → skip, and write "no requirement write-back"
-- [ ] `requirement` is empty but a new user-perceivable capability was added → trigger `bt-req` in **backfill** mode and land it directly as `status: current`
-- [ ] `requirement` points to a draft req → trigger `bt-req` in **update** mode, `draft` → `current`, refreshing user stories and boundaries according to the real implementation, while **preserving the original vision**, meaning the original vision is not overwritten and this run is recorded only in a change log at the end
-- [ ] `requirement` points to a current req and this run changed its boundary, user stories, or pitch → trigger `bt-req` in **update** mode to refresh it
-- [ ] `requirement` points to a current req but this run did not change the user-facing view → write "req-{slug} unchanged, no update needed"
+- [ ] `requirement` is empty but a new user-perceivable capability was added → trigger `bt-req` in **backfill** mode and land it directly as `status: done` with `current: true`
+- [ ] `requirement` points to an active/pending req → trigger `bt-req` in **update** mode, `status: active|pending` → `status: done` with `current: true`, refreshing user stories and boundaries according to the real implementation, while **preserving the original vision**, meaning the original vision is not overwritten and this run is recorded only in a change log at the end
+- [ ] `requirement` points to a current req (`status: done`, `current: true`) and this run changed its boundary, user stories, or pitch → trigger `bt-req` in **update** mode to refresh it
+- [ ] `requirement` points to a current req (`status: done`, `current: true`) but this run did not change the user-facing view → write "req-{slug} unchanged, no update needed"
 
 This is an **actual file-writing action**, not a self-assessment of "probably not needed".
 
@@ -180,7 +180,7 @@ Compare against the `roadmap` and `roadmap_item` fields in design frontmatter:
 - [ ] both fields are empty, this feature did not start from roadmap → skip, and write "not started from roadmap"
 - [ ] both fields have values:
   - open `.bytetrue/roadmap/{roadmap}/{roadmap}-items.yaml`
-  - find `slug: {roadmap_item}`, and confirm its current state is `status: in-progress` plus `feature: {directory name}`; if not, stop and find out why
+  - find `slug: {roadmap_item}`, and confirm its current state is `status: active` plus `feature: {directory name}`; if not, stop and find out why
   - change `status` to `done`, and validate with `validate-yaml.py`
   - synchronize the corresponding sub-feature entry inside section 3 of `{roadmap}-roadmap.md`
 - [ ] the two fields are inconsistent, only one is filled → stop and fix or clarify
@@ -240,7 +240,7 @@ Following section 3 of `.bytetrue/reference/shared-conventions.md`, give one-sen
 1. reusable-value pitfalls or experience → "Do you want to capture it as learning? (`bt-learn`)"
 2. long-term constraints or technology choices → "Do you want to archive the decision? (`bt-decide`)"
    - **special check**: if section 2.5 of the design contains a "suggested convention to capture" block, read that rule out to the user verbatim: "design 2.5 recommends capturing this convention: '{one-line rule}'. It now works. Do you want to archive it through `bt-decide`?" A stable pattern already identified in design deserves more proactive handling than a generic "want to record something?"
-3. feature design plus acceptance report or checklist may need collaboration-state projection → "Do you want to update or bind an external tracker? (`bt-tracker`)" When the feature started from roadmap, also mention that the done roadmap item can be synced. `bt-tracker` follows `sync_policy` from `.bytetrue/reference/project-management.md`, meaning preview plus asking only, with no external issue creation or update before confirmation
+3. reviewed feature design plus acceptance report or checklist may need collaboration-state projection → "Do you want to update or bind an external tracker? (`bt-tracker`)" When the feature started from roadmap, also mention that the done roadmap item can be synced. `bt-tracker` follows `sync_policy` from `.bytetrue/reference/project-management.md`, meaning preview plus asking only, with no external issue creation or update before confirmation
 4. interface changes or user-visible behavior changes → "Do you need to update the guide? (`bt-guide`)"
 5. public library surfaces changed, components, functions, or commands → "Do you need to update the API reference? (`bt-libdoc`)"
 6. if section 8 produced attention.md candidates → ask one by one, "Should candidate X be added to attention.md?" Once the user explicitly agrees, trigger `bt-note` so it can perform section classification, deduplication, and soft-limit checks. **One item at a time**. Do not handwrite it inside acceptance, or you will fork the rules from `bt-note`

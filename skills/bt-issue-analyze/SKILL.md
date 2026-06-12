@@ -19,9 +19,9 @@ After analyzing, do not go straight into the fix. Show the user 2-3 repair optio
 
 ## Startup Checks
 
-1. **The issue report exists and has been confirmed** — read `{slug}-report.md`, confirm `doc_type=issue-report` and `status=confirmed`, and confirm all five sections are filled. If incomplete or the status is wrong, return to `bt-issue-report`. If `bt-issue-report` has already classified this as the standard path, stay on the standard path and do not reclassify
+1. **The issue report exists and has been confirmed** — read `{slug}-report.md`, confirm `doc_type=issue-report` and `status=done`, and confirm all five sections are filled. If incomplete or the status is wrong, return to `bt-issue-report`. If `bt-issue-report` has already classified this as the standard path, stay on the standard path and do not reclassify
 2. **Resume support** — if `{slug}-analysis.md` already exists, inspect which of the 5 sections are already filled:
-   - if all are filled but `status=draft`, jump to checkpoint
+   - if all are filled but `status=active`, jump to checkpoint
    - if only some are filled, report "last time we got to step X, resuming from step Y"
 3. **Read the full context**:
    - the full issue report and `.bytetrue/attention.md`
@@ -98,7 +98,7 @@ List 2-3 directions. For each one, explain: what it does, where it changes, and 
 ---
 doc_type: issue-analysis
 issue: {issue directory name}
-status: draft
+status: active
 root_cause_type: logic | state-pollution | data-format | concurrency | config | missing-guard
 related: [{relative path to slug-report.md}]
 tags: []
@@ -182,7 +182,7 @@ After writing, **do not start fixing immediately**:
 - [ ] at least 2 repair options plus a recommendation are present
 - [ ] for complex bugs, feedback loop, hypotheses, instrumentation, and regression seam were recorded, or the reason it was not triggered is explicit
 - [ ] the user explicitly confirmed "the analysis is accurate; fix it using option X"
-- [ ] frontmatter is `status: confirmed`
+- [ ] frontmatter is `status: done`
 
 ---
 

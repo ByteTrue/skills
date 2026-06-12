@@ -20,7 +20,7 @@ This stage has three entry points:
 
 - **Formal drafting**: the user can already explain the requirement clearly, or `{slug}-intent.md` is already filled, so go through the full drafting flow in the "workflow" section
 - **Initialization mode**: the user says "open a new demand", "start a draft", or "create a new feature", but wants to write a half-finished plan themselves rather than describing it verbally. Use the next section, initialization mode, create the directory and an empty `{slug}-intent.md`, then end the current run and wait until the user fills it
-- **Starting from a roadmap item**: the user says "start the sub-feature in roadmap {slug}" or "advance the next item in {roadmap}". The slug comes from `items.yaml` and is not invented again. Before writing, read the roadmap main doc and `items.yaml` to understand context and dependency state. When writing, frontmatter must carry `roadmap` and `roadmap_item`, and `items.yaml` must be written back so the corresponding item changes to `status: in-progress` and `feature` becomes the feature directory name. See the section "Starting from a roadmap item" below
+- **Starting from a roadmap item**: the user says "start the sub-feature in roadmap {slug}" or "advance the next item in {roadmap}". The slug comes from `items.yaml` and is not invented again. Before writing, read the roadmap main doc and `items.yaml` to understand context and dependency state. When writing, frontmatter must carry `roadmap` and `roadmap_item`, and `items.yaml` must be written back so the corresponding item changes to `status: active` and `feature` becomes the feature directory name. See the section "Starting from a roadmap item" below
 
 ---
 
@@ -38,7 +38,7 @@ Actions:
    ---
    doc_type: feature-intent
    feature: {YYYY-MM-DD}-{slug}
-   status: draft
+   status: active
    summary: {one-line requirement, filled by the AI according to the aligned wording with the user}
    ---
 
@@ -69,14 +69,14 @@ Why stop here? The whole value of intent mode is that the user can think offline
 
 ## Starting from a roadmap item
 
-Trigger: the user says "start the sub-feature in roadmap {slug}" or points at one `planned` item inside `items.yaml`.
+Trigger: the user says "start the sub-feature in roadmap {slug}" or points at one `pending` item inside `items.yaml`.
 
 1. **Read the roadmap context** — open `{roadmap-slug}-roadmap.md` and `{roadmap-slug}-items.yaml`:
-   - the target item must currently be `status: planned`, and every prerequisite in `depends_on` must already be `done`, otherwise stop and report it
+   - the target item must currently be `status: pending`, and every prerequisite in `depends_on` must already be `done`, otherwise stop and report it
    - **you must read section 3, module split, and section 4, interface contracts / shared protocols, from the main doc** — these are hard-constraint inputs for this feature. If the contract is unreasonable or incomplete, stop and recommend going back to `bt-roadmap update`; **do not quietly route around it inside design**
 2. **Take the slug from roadmap**, with feature directory `YYYY-MM-DD-{roadmap-item-slug}` and no new slug
 3. **Proceed through the normal workflow section**, adding `roadmap` and `roadmap_item` into frontmatter
-4. **When writing out with `status: approved`, also write back `items.yaml`**: set the corresponding item to `status: in-progress`, set `feature: YYYY-MM-DD-{slug}`, and validate with `validate-yaml.py`
+4. **When the design review passes, write the design as `status: done` plus `review_result: approved`, and also write back `items.yaml`**: set the corresponding item to `status: active`, set `feature: YYYY-MM-DD-{slug}`, and validate with `validate-yaml.py`
 
 For the full handoff protocol, see section 2.5 in `.bytetrue/reference/shared-conventions.md`.
 
@@ -147,9 +147,9 @@ This lands in the mount-point inventory, section 2.3. **Decision rule**: if remo
 
 1. **Continuation check** — Glob `{slug}-design.md`, `{slug}-intent.md`, and `{slug}-brainstorm.md`:
    - if there is intent or brainstorm, treat them as input and do not ask again for things they already made clear
-   - if there is a design with `status=draft` and its sections are mostly complete, jump straight to step 5, overall review
+   - if there is a design with `status=active` and its sections are mostly complete, jump straight to step 5, overall review
    - if a design exists but only some sections are missing, fill the missing sections and report "last time it was written up to X; I will fill the missing parts and review the whole thing with you"
-   - if a design exists with `status=approved`, do not silently overwrite it. Ask whether the user wants to keep editing it or start with a new slug
+   - if a design exists with `status=done` and `review_result=approved`, do not silently overwrite it. Ask whether the user wants to keep editing it or start with a new slug
 2. **Scan `.bytetrue/` as global input** — Glob `.bytetrue/`, discover available directory and document types, and read them by type:
    - `architecture/` → read `ARCHITECTURE.md`, the index, and the relevant subsystem docs, paying attention to term reuse and flow-level constraints
    - `requirements/` → if there is a corresponding req, fill its slug into frontmatter `requirement`, and read its user stories and boundary sections; if this is the first appearance of a new capability, trigger `bt-req draft` to write the req vision first, then fill the new slug into `requirement`; for pure refactor or technical debt, leave it empty
@@ -202,7 +202,7 @@ Follow the template in `reference.md` and write the four subsections of section 
 
 ### 4. Fill the remaining sections and give the whole draft for review at once
 
-Follow the template in `reference.md` to fill the remaining sections, 0, 3, and 4. The initial frontmatter status is `draft`.
+Follow the template in `reference.md` to fill the remaining sections, 0, 3, and 4. The initial frontmatter status is `active`.
 For section 1, also record `execution_mode` when the work is not obviously standard. Use `.bytetrue/reference/execution-modes.md` to choose light / standard / strict-evidence / break-loop, and keep this separate from code dimensions.
 
 Only after the whole draft is formed do you show it to the user. **Do not review in partial batches** — partial review shows the user only local fragments, and they cannot catch cross-section inconsistencies such as section 1 scope not matching section 2 change.
@@ -211,7 +211,7 @@ For section 3, acceptance contract, the reminder is: each item should be written
 
 ### 5. Overall review
 
-Use the overall review prompt, the wording lives in section 5 of `reference.md`. Revise according to user feedback until they approve it, then change `status` from `draft` to `approved`.
+Use the overall review prompt, the wording lives in section 5 of `reference.md`. Revise according to user feedback until they approve it, then change `status` from `active` to `done` and set `review_result: approved`.
 
 ### 6. Generate `{slug}-checklist.yaml`
 
@@ -230,7 +230,7 @@ Check the exit conditions below and guide the user into stage 2.
 
 The user has passed overall review, and:
 
-- [ ] frontmatter is complete, including `doc_type`, `feature`, `status=approved`, `summary`, and `tags`, and the `requirement` field is aligned
+- [ ] frontmatter is complete, including `doc_type`, `feature`, `status=done`, `review_result=approved`, `summary`, and `tags`, and the `requirement` field is aligned
 - [ ] section 1 contains explicit non-goals and complexity-dimension deviations, or clearly says it follows the default
 - [ ] section 1 records `execution_mode`, or explicitly says standard mode is sufficient
 - [ ] sections 2.1 and 2.2 use the "current state → change" structure; interfaces have examples plus source locations; orchestration starts with a main flow diagram
@@ -242,7 +242,7 @@ The user has passed overall review, and:
 - [ ] section 3 contains Behavior Delta entries for observable behavior changes, or explicitly states `Behavior Delta: none`
 - [ ] `{slug}-checklist.yaml` has been written and passes `validate-yaml.py`
 - [ ] `{slug}-impl-context.jsonl` and `{slug}-check-context.jsonl` have been written for standard designs, with check-context including the planned `{slug}-implementation-report.md`, or the design explicitly explains why manifests are not applicable
-- [ ] when started from roadmap, `items.yaml` has been written back with `status: in-progress` and `feature` filled
+- [ ] when started from roadmap, `items.yaml` has been written back with `status: active` and `feature` filled
 
 ---
 
@@ -252,7 +252,7 @@ Tell the user: "feature design is approved and the checklist is ready. The next 
 
 Following section 3 `feature-design` of `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in order, and skip immediately if the user says "no need":
 
-1. an approved feature design may need collaboration-state projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" When the feature starts from roadmap, also mention that the corresponding roadmap item can be updated or bound. Do not create or update any external issue before explicit user confirmation
+1. a reviewed feature design (`status: done`, `review_result: approved`) may need collaboration-state projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" When the feature starts from roadmap, also mention that the corresponding roadmap item can be updated or bound. Do not create or update any external issue before explicit user confirmation
 
 ---
 

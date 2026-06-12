@@ -27,7 +27,8 @@ description: 一份好的 requirement doc 长什么样——供 bt-req 起草时
 doc_type: requirement
 slug: issue-flow
 pitch: 修 bug 时先让 AI 探索和分析，再动手改
-status: current
+status: done
+current: true
 last_reviewed: 2026-04-21
 implemented_by:
   - arch-bt-issue

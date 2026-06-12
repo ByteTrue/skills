@@ -82,7 +82,7 @@ If the user is unsure, recommend one but let the user make the final call.
 ---
 doc_type: issue-report
 issue: {issue directory name}
-status: draft
+status: active
 severity: P0 | P1 | P2 | P3
 summary: {one-line summary of the symptom}
 tags: []
@@ -134,7 +134,7 @@ Reproduction frequency: {stable / probabilistic, about X% / currently cannot be 
 - [ ] expected and actual behavior are explicitly written separately
 - [ ] reproduction steps are executable, or explicitly explained as "cannot reproduce stably"
 - [ ] the user explicitly says "the report is good; move to the next step"
-- [ ] frontmatter is updated to `status: confirmed`
+- [ ] frontmatter is updated to `status: done`
 
 ---
 
@@ -144,7 +144,7 @@ Tell the user: "The issue report is ready. Stage 2 is root-cause analysis. Trigg
 
 Following section 3 `issue-report` in `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
 
-1. a confirmed bug issue may need collaboration projection → "Do you want to sync or bind it to an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit user confirmation
+1. a reviewed bug issue (`status: done`) may need collaboration projection → "Do you want to sync or bind it to an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit user confirmation
 
 Do not start root-cause analysis on your own. The human checkpoint between stages is a hard workflow constraint.
 

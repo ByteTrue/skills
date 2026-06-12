@@ -29,6 +29,9 @@ This skill writes neither code nor documents. It does only one thing: look at wh
 ├── {slug}-intent.md           ← optional stage 1 draft pre-input (a partial draft written by the user)
 ├── {slug}-design.md           ← stage 1 design document
 ├── {slug}-checklist.yaml      ← stage 1 generated steps + checks; statuses updated during stages 2 and 3
+├── {slug}-impl-context.jsonl  ← implementation read-set
+├── {slug}-check-context.jsonl ← acceptance/check read-set
+├── {slug}-implementation-report.md ← stage 2 durable completion + review evidence
 └── {slug}-acceptance.md       ← stage 3 acceptance report
 ```
 
@@ -63,7 +66,7 @@ When the requirement is clear and the scope is small, the full four-stage flow i
 
 ## Routing: Which Sub-skill the User Should Use Now
 
-When entering this skill, `Glob .bytetrue/features/` first and inspect the existing artifacts. **Do not rely only on the user's verbal claim**. When the user says "the design is done", that does not mean it is actually complete. Read it yourself.
+When entering this skill, `Glob .bytetrue/features/` first and inspect the existing artifacts. **Do not rely only on the user's verbal claim**. For continuation requests, match the named slug/directory and read minimal frontmatter plus checklist statuses; do not infer activity from directory existence alone.
 
 | Current State | Trigger Which Sub-skill |
 |---|---|
@@ -74,9 +77,12 @@ When entering this skill, `Glob .bytetrue/features/` first and inspect the exist
 | `{slug}-intent.md` is already filled | `bt-feat-design` (read the intent as input) |
 | The user says "fast mode / fastforward" | `bt-feat-ff` |
 | `{slug}-brainstorm.md` exists and it is time to move into design | `bt-feat-design` |
-| `{slug}-design.md` is approved and code has not started yet | `bt-feat-impl` |
-| Fastforward design is already confirmed | `bt-feat-impl` |
-| Code is done and needs acceptance | `bt-feat-accept` |
+| No design exists, or design exists with `status: active` | `bt-feat-design` |
+| Design exists with `status: done` and `review_result: approved`, but checklist steps are missing, pending, or failed | `bt-feat-impl` |
+| Checklist steps are all `done`, but `{slug}-implementation-report.md` is missing or not `status: done` | `bt-feat-impl` |
+| Implementation report is `status: done`, but checklist checks are `pending` or `failed`, or acceptance is missing | `bt-feat-accept` |
+| Acceptance exists with `status: done` | feature is already complete; do not continue unless the user asks for a new change, bug fix, or follow-up feature |
+| Fastforward note exists with `status: done` | fastforward feature is already complete; route new behavior changes to a new feature or issue |
 | The user says "I want an X system" and it is a large demand | route to `bt-brainstorm` for triage, most likely case 3 → `bt-roadmap` |
 | A sub-feature in roadmap is ready to start | `bt-feat-design` via the "starting from a roadmap item" entry |
 | Not sure whether the design is complete | read it yourself and match it against the table above |

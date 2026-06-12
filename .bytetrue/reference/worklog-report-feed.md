@@ -11,14 +11,14 @@ Default path:
 .bytetrue/worklog/YYYY-MM.md
 ```
 
-If the monthly file would exceed the repository markdown limit, continue in split files:
+If the monthly file becomes too long for the project documentation policy, continue in split files:
 
 ```text
 .bytetrue/worklog/YYYY-MM-02.md
 .bytetrue/worklog/YYYY-MM-03.md
 ```
 
-Keep every worklog markdown file under 300 lines.
+Follow the project doc policy from `.bytetrue/config.yaml`. When a monthly worklog becomes too long for the project, continue in the next split file.
 
 ## Entry Shape
 

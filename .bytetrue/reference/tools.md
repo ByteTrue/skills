@@ -58,7 +58,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter language=typescript
 
 # 搜索 feature 方案 doc
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/features --filter doc_type=feature-design --filter status=approved
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/features --filter doc_type=feature-design --filter status=done --filter review_result=approved
 
 # 输出控制
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=decision --filter status=active --full

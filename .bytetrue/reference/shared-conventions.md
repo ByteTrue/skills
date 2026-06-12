@@ -13,6 +13,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 ```
 .bytetrue/
 ├── attention.md           ByteTrue 技能启动必读的项目注意事项
+├── config.yaml            机器可读项目配置（workflow / tracker / dispatch / docs）
 ├── requirements/          能力愿景层（"用户需要什么、系统提供什么能力来满足"，过去/现在/未来）
 │   ├── VISION.md           中心索引（按 status 分组，每条带 pitch 一句话）
 │   └── {slug}.md           一个能力一份，扁平（bt-req 产出）
@@ -46,11 +47,11 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 ├── compound/              沉淀类文档统一目录
 │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │                          doc_type ∈ {learning, trick, decision, explore}
-├── brainstorm/            brainstorm 阶段 spike 实验代码区（bt-brainstorm 临时产出）
-│   └── {slug}/            一次 spike 一个子目录，文件名随意
-│                          验完不强制清理，结论回写到对应 brainstorm note
+├── brainstorms/           开放式大讨论 / grill 后未进 roadmap 的记录与 spike sandbox
+│   └── {slug}/            一次开放讨论一个子目录，`brainstorm.md` 记录结论，spike 文件可并列存放
+│                          feature-local brainstorm 仍放在 `features/{feature}/{slug}-brainstorm.md`
 ├── worklog/               轻量工作记录 / 报告 feed / handoff / recovery 记录
-│   └── YYYY-MM.md         接近 md 行数上限前拆成 YYYY-MM-02.md 等分片
+│   └── YYYY-MM.md         项目文档策略需要时再拆成 YYYY-MM-02.md 等分片
 ├── tools/                 跨工作流共享脚本（onboard 从技能包释放）
 └── reference/             共享参考文档（onboard 从技能包释放）
     ├── shared-conventions.md   目录结构 / frontmatter / 阶段衔接口径
@@ -58,6 +59,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
     ├── domain-context.md       canonical terms / domain glossary / 术语边界
     ├── project-management.md   external tracker / labels / sync policy
     ├── tools.md                共享脚本用法
+    ├── config.md              `.bytetrue/config.yaml` 字段语义
     ├── code-dimensions.md      实现复杂度维度
     ├── execution-modes.md      workflow 轻重 / 证据纪律
     ├── implementation-review.md implementation review gate / readiness discipline
@@ -98,11 +100,11 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 
 ## 1. 共享元数据口径
 
-**feature spec**：brainstorm / design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。`status`：brainstorm = `confirmed`（落盘即确认无 draft）；design = `draft` / `approved`；acceptance 见对应技能。
+**status 统一词表**：所有 ByteTrue workflow artifact 的 `status` 只使用 `pending` / `active` / `done` / `dropped` / `archived`。额外语义不要发明新 status，用字段表达：`review_result: approved`、`current: true`、`validity: outdated`、`superseded_by` 等。
 
-**feature implementation report**：`bt-feat-impl` 在用户 review 通过后写 `{slug}-implementation-report.md`，frontmatter 使用 `doc_type: feature-implementation-report`、`feature`、`status: confirmed`、`summary`。它是 `bt-feat-accept` 启动时读取的持久 Implementation Review Gate 证据；聊天里的完成报告不能替代它。
+**feature implementation report**：`bt-feat-impl` 在用户 review 通过后写 `{slug}-implementation-report.md`，frontmatter 使用 `doc_type: feature-implementation-report`、`feature`、`status: done`、`summary`。它是 `bt-feat-accept` 启动时读取的持久 Implementation Review Gate 证据；聊天里的完成报告不能替代它。
 
-**issue spec**：report / analysis / fix-note 共用 `doc_type` / `issue` / `status` / `tags`。三阶段完成态统一用 `status: confirmed`；`draft` 表示该阶段仍未完成 review / 验证。`severity` / `root_cause_type` / `path` 由对应阶段按需补。
+**issue spec**：report / analysis / fix-note 共用 `doc_type` / `issue` / `status` / `tags`。未完成 review / 验证用 `status: active`；完成用 `status: done`；放弃用 `status: dropped`。`severity` / `root_cause_type` / `path` 由对应阶段按需补。
 
 **归档类（compound）**：
 
@@ -152,19 +154,19 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 **items.yaml 状态机**：
 
 ```
-planned  → in-progress  （bt-feat-design 启动 feature 时改）
-in-progress → done      （bt-feat-accept 验收完成时改）
-planned  → dropped      （bt-roadmap update 模式，用户决定不做时改）
+pending → active   （bt-feat-design 启动 feature 时改）
+active  → done     （bt-feat-accept 验收完成时改）
+pending → dropped  （bt-roadmap update 模式，用户决定不做时改）
 ```
 
-`done` / `dropped` 是终态。需要回退重做的新加一条 slug 略改的条目，不改终态。
+`done` / `dropped` / `archived` 是终态。需要回退重做的新加一条 slug 略改的条目，不改终态。
 
-**bt-roadmap 的职责**：生成和维护 roadmap 主文档 + items.yaml；把 `planned` 改 `dropped`（用户放弃时）；不改 `in-progress` / `done`（feature 技能负责）。
+**bt-roadmap 的职责**：生成和维护 roadmap 主文档 + items.yaml；把 `pending` 改 `dropped`（用户放弃时）；不改 `in-progress` / `done`（feature 技能负责）。
 
 **bt-feat-design 的职责**（从 roadmap 起头时）：
 
 1. design.md frontmatter 加 `roadmap: {roadmap-slug}` + `roadmap_item: {子 feature slug}`
-2. items.yaml 对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`
+2. items.yaml 对应条目 `status: active` + `feature: YYYY-MM-DD-{slug}`
 3. 校验 yaml
 
 直接起 feature（非 roadmap 来）两字段留空，不触发 roadmap 写。
@@ -187,11 +189,11 @@ planned  → dropped      （bt-roadmap update 模式，用户决定不做时改
 
 **roadmap** 收尾按顺序判断：
 
-1. `bt-tracker`：同步 / 绑定 roadmap PRD 和本次变更涉及的 syncable roadmap items（planned / in-progress / done；dropped 仅更新已绑定外部 issue）
+1. `bt-tracker`：同步 / 绑定 roadmap PRD 和本次变更涉及的 syncable roadmap items（pending / active / done；dropped 仅更新已绑定外部 issue）
 
 **feature-design** 收尾按顺序判断：
 
-1. `bt-tracker`：同步 / 绑定 approved feature design；roadmap 起头时同时更新 / 绑定对应 roadmap item
+1. `bt-tracker`：同步 / 绑定 `status: done` 且 `review_result: approved` 的 feature design；roadmap 起头时同时更新 / 绑定对应 roadmap item
 
 **feature-acceptance** 收尾按顺序判断：
 
@@ -205,7 +207,7 @@ planned  → dropped      （bt-roadmap update 模式，用户决定不做时改
 
 **issue-report** 收尾按顺序判断：
 
-1. `bt-tracker`：同步 / 绑定 confirmed bug issue
+1. `bt-tracker`：同步 / 绑定 `status: done` 的 bug issue
 
 **issue-fix** 收尾按顺序判断：
 
