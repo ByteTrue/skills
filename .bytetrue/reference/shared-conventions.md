@@ -185,7 +185,7 @@ pending → dropped  （bt-roadmap update 模式，用户决定不做时改）
 
 ## 3. 阶段收尾推荐
 
-带 `bt-tracker` 的条目统一遵守 `.bytetrue/reference/project-management.md` 的 `sync_policy`：只预览并询问，用户确认前不创建 / 更新 / 关闭外部 issue；provider 是 `local` 时只说明未配置外部 tracker。
+带 `bt-tracker` 的条目必须从 `.bytetrue/config.yaml` 读取当前 provider 和 sync 值：`tracker.sync_policy: ask` 时只预览并询问；`tracker.provider: local` 或 `tracker.sync_policy: never` 时跳过外部 tracker 提示；用户确认前不创建 / 更新 / 关闭外部 issue。`.bytetrue/reference/project-management.md` 只定义语义、labels、syncable sources 和 managed-block 规则，不拥有当前配置值。
 
 **roadmap** 收尾按顺序判断：
 

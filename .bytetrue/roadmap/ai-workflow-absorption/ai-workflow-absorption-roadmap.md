@@ -103,7 +103,6 @@ The executable contracts are defined in `ai-workflow-absorption-contracts.md`. T
 | Context Manifest Files | Execution Context | implement/check roles | Make required `.bytetrue` docs and evidence explicit for implementation and verification. |
 | Subagent Handoff Protocol | Execution Context | Pi/Claude/other subagent-capable tools | Provide active work, role, design/checklist, and manifest context to child agents. |
 | Research-first Integration | Execution Context | `bt-brainstorm`, `bt-grill`, `bt-roadmap`, `bt-feat-design`, `bt-explore` | Route technical choices through evidence-backed explore artifacts. |
-| Optional Workflow-state Breadcrumb | Optional Runtime | Claude plugin, Pi package, future supported tools | Inject derived current state and guardrails without becoming source of truth. |
 | Worklog / Report-feed Record | Work Record | closeout workflows and humans | Record concise cross-session work summaries for reports, handoff, and recovery. |
 
 Hard rule: if a future feature-design needs one of these contracts, it must read `ai-workflow-absorption-contracts.md` together with this roadmap. If the contract proves wrong, update this roadmap first rather than routing around it inside one feature.

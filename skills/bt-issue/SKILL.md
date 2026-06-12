@@ -39,7 +39,7 @@ The date is fixed to the **day the problem was discovered or reported** and neve
 
 `{slug}-fix-note.md` is a **mandatory artifact** for stage 3, no matter whether the fix is simple or complex. It is not ceremony; it is traceability evidence. Without it, next time a similar issue appears you can only reconstruct it from `git log`.
 
-All issue documents carry YAML frontmatter with `doc_type` values `issue-report`, `issue-analysis`, and `issue-fix` so that `search-yaml.py` can search them by `severity`, `tags`, and `status`. The finished state across all three issue stages is uniformly `status: done`; `draft` only means that this stage has not completed review or verification yet.
+All issue documents carry YAML frontmatter with `doc_type` values `issue-report`, `issue-analysis`, and `issue-fix` so that `search-yaml.py` can search them by `severity`, `tags`, and `status`. The finished state across all three issue stages is uniformly `status: done`; `active` means that this stage has not completed review or verification yet.
 
 ---
 

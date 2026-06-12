@@ -185,7 +185,7 @@ This write-back is an **actual file-writing action**, and the acceptance report 
 
 ## 3. Stage close-out recommendations
 
-Any item involving `bt-tracker` must follow the `sync_policy` in `.bytetrue/reference/project-management.md`: preview and ask only, never create, update, or close an external issue before explicit confirmation; when the provider is `local`, only explain that no external tracker is configured.
+Any item involving `bt-tracker` must read current provider and sync values from `.bytetrue/config.yaml`: preview and ask only when `tracker.sync_policy: ask`, skip external-tracker prompts when `tracker.provider: local` or `tracker.sync_policy: never`, and never create, update, or close an external issue before explicit confirmation. `.bytetrue/reference/project-management.md` defines semantics, labels, syncable sources, and managed-block rules; it does not own current config values.
 
 **roadmap** close-out should ask in this order:
 

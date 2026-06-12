@@ -120,7 +120,8 @@ Final path: `.bytetrue/features/YYYY-MM-DD-{slug}/{slug}-ff-note.md`, with today
 ```markdown
 ---
 doc_type: feature-ff-note
-feature: {slug}
+feature: YYYY-MM-DD-{slug}
+status: done
 date: YYYY-MM-DD
 requirement: {req-slug or empty}
 tags: [...]
@@ -170,7 +171,7 @@ To switch back, trigger `bt-feat-design`. Code already written can simply be mar
 ## Exit Conditions
 
 - [ ] the code is written and the user confirms the effect is OK
-- [ ] `{slug}-ff-note.md` has been written and all four sections are filled, with "while here I noticed" optional
+- [ ] `{slug}-ff-note.md` has been written with `status: done`, and all four sections are filled, with "while here I noticed" optional
 - [ ] there are no unresolved "while here I noticed" items, meaning they are all recorded in the last section of the ff note for later follow-up
 
 ---

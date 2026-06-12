@@ -118,7 +118,7 @@ Constraints for logs and instrumentation:
 
 After verification passes, create `{slug}-fix-note.md` in the issue directory, location defined in the "where the files go" section of `bt-issue`, and record the full closure. Both the standard-path template and fast-path template are in `reference.md` in the same directory.
 
-The completed state of the fix note is always `status: done`. Do not leave it at `draft`. `active` means the fix record has not completed review or verification, which will make later `bt-issue` runs think the workflow is still open.
+The completed state of the fix note is always `status: done`. Do not leave it at `active`; `active` means the fix record has not completed review or verification, which will make later `bt-issue` runs think the workflow is still open.
 
 The fix note must additionally record:
 
