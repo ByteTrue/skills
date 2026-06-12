@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: worklog-report-feed
 pitch: ByteTrue 提供轻量 worklog/report-feed，用一条条简短工作记录串联 feature、issue、roadmap、refactor、explore、decision 等正式产物，支持周报、handoff、恢复背景和 AI 工作审计。
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-11
 implemented_by: [2026-06-11-worklog-report-feed]
 tags: [workflow, worklog, report-feed, handoff]

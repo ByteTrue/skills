@@ -154,14 +154,14 @@ The granularity of `steps` is the **slice strategy along the orchestration-vs-co
 **State machine of `items.yaml`**:
 
 ```text
-planned      → in-progress   (`bt-feat-design` changes it when the feature starts)
-in-progress  → done          (`bt-feat-accept` changes it when acceptance completes)
-planned      → dropped       (`bt-roadmap update` changes it when the user decides not to do it)
+pending → active   (`bt-feat-design` changes it when the feature starts)
+active  → done     (`bt-feat-accept` changes it when acceptance completes)
+pending → dropped  (`bt-roadmap update` changes it when the user decides not to do it)
 ```
 
-`done` and `dropped` are terminal states. When an item must be revisited later, add a new slug variant rather than changing a terminal state back.
+`done`, `dropped`, and `archived` are terminal states. When an item must be revisited later, add a new slug variant rather than changing a terminal state back.
 
-**`bt-roadmap` is responsible for**: generating and maintaining the roadmap main doc plus `items.yaml`; changing `planned` → `dropped` when the user abandons it; and never writing `in-progress` or `done`, because feature skills own those transitions.
+**`bt-roadmap` is responsible for**: generating and maintaining the roadmap main doc plus `items.yaml`; changing `pending` → `dropped` when the user abandons it; and never writing `active` or `done`, because feature skills own those transitions.
 
 **`bt-feat-design` is responsible for**, when starting from roadmap:
 
@@ -189,7 +189,7 @@ Any item involving `bt-tracker` must follow the `sync_policy` in `.bytetrue/refe
 
 **roadmap** close-out should ask in this order:
 
-1. `bt-tracker`: sync or bind the roadmap PRD and all syncable roadmap items touched this time, planned, in-progress, or done; dropped items only update already bound external issues
+1. `bt-tracker`: sync or bind the roadmap PRD and all syncable roadmap items touched this time, pending, active, or done; dropped items only update already bound external issues
 
 **feature-design** close-out should ask in this order:
 
@@ -257,13 +257,13 @@ Each sub-skill only adds its stage-specific query commands. Full search syntax l
 
 The following rules are shared by `bt-learn`, `bt-trick`, `bt-decide`, and `bt-explore`. Their own skill bodies should mention only stage-specific anti-patterns; the shared rules are here:
 
-1. **Append, do not delete** — once archived, a document is never deleted unless it is explicitly superseded with `status=superseded`; losing rationale is extremely expensive
+1. **Append, do not delete** — once archived, a document is never deleted unless it is explicitly superseded with `status: archived` and `superseded_by`; losing rationale is extremely expensive
 2. **Better absent than low-quality** — if the user cannot explain a section, omit it rather than having the AI fabricate it
 3. **Do not write substantive content on the user's behalf** — the AI is responsible for structure and connective wording; the substantive conclusion must come from the user or from traceable code evidence
 4. **Check attention.md** — after writing, if the archive reveals one or two hard constraints that every startup should know, prompt the user to append them into `.bytetrue/attention.md` through `bt-note`
 5. **Check for overlap before drafting** — before writing, use `search-yaml.py --query` to search for semantically similar older docs. If there is a hit, list the candidates and let the user choose one of three paths:
    - **update existing**, the default priority — reuse the original filename and original creation date, **do not create a new file**; add `updated: YYYY-MM-DD` to frontmatter; for anything beyond a minor revision, add a one-line update note at the end
-   - **supersede** — keep the old doc, set `status: superseded` plus `superseded-by: {new filename}`, add `**[Superseded]** see {new slug}` at the top of the old body, and put `supersedes: {old filename}` into the new frontmatter
+   - **supersede** — keep the old doc, set `status: archived` plus `superseded_by: {new filename}`, add `**[Superseded]** see {new slug}` at the top of the old body, and put `supersedes: {old filename}` into the new frontmatter
    - **truly a different topic** — create a new file and list the old one under "related documents" at the end to explain the difference
 6. **Recognize whether the user wants to update an existing thing or record a new one** — if the user says "change / update / revise / supplement {some item}", explicitly points to an existing file, or the topic is highly overlapping, default to updating the existing one. If you cannot tell, ask.
 

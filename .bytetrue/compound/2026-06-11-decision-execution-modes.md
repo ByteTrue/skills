@@ -1,7 +1,8 @@
 ---
 doc_type: decision
 category: architecture
-status: accepted
+status: active
+decision_result: accepted
 date: 2026-06-11
 tags: [execution-mode, workflow-discipline, tdd, debugging, superpowers]
 related_feature: 2026-06-11-risk-mode-discipline

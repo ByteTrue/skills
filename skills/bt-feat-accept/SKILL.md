@@ -33,9 +33,9 @@ The entire comparison table of this skill is hardcoded against the current secti
 **Snapshot of standard design sections**:
 
 - section 0: terminology
-- section 1: decisions and constraints, requirement summary, complexity dimensions, key decisions, prerequisites
-- section 2: terms and orchestration, 2.1 term layer, 2.2 orchestration layer, 2.3 mount points, 2.4 rollout strategy
-- section 3: acceptance contract, key scenario list plus reverse-check items
+- section 1: decisions and constraints, requirement summary, complexity dimensions, execution mode, key decisions, prerequisites
+- section 2: terms and orchestration, 2.1 term layer, 2.2 orchestration layer, 2.3 mount points, 2.4 rollout strategy, 2.5 structural health and micro-refactor
+- section 3: acceptance contract, 3.1 test seam / TDD plan, 3.2 Behavior Delta
 - section 4: relationship with project-level architecture docs
 
 **Fastforward design**: section 0 requirement summary, section 1 design plan, section 2 acceptance criteria, section 3 rollout steps
@@ -70,6 +70,13 @@ The entire comparison table of this skill is hardcoded against the current secti
 Fill it **section by section, do not skip sections**. The report path lives inside the feature directory, location defined in section 0 of `.bytetrue/reference/shared-conventions.md`.
 
 ```markdown
+---
+doc_type: feature-acceptance
+feature: YYYY-MM-DD-{slug}
+status: active
+summary: {one-line summary of what was accepted}
+---
+
 # {Feature Name} Acceptance Report
 
 > Stage: stage 3, acceptance closure
@@ -224,9 +231,10 @@ If a check-context manifest exists, verify required rows before section 1. A mis
 - [ ] every scenario in section 3 is checked off, and frontend changes have browser verification
 - [ ] section 4 terminology consistency has no gaps
 - [ ] section 5 architecture merge has a clear conclusion for every item, and every needed doc update has actually been written
-- [ ] section 6 req write-back has a conclusion, skipped / unchanged / backfilled / draft→current / updated
+- [ ] section 6 req write-back has a conclusion, skipped / unchanged / backfilled / active→done with `current: true` / updated
 - [ ] section 7 roadmap write-back has a conclusion, skipped because not from roadmap, or updated with `items.yaml` plus main doc sync and YAML validation passed
 - [ ] every checklist check is `passed`
+- [ ] acceptance report frontmatter has been changed to `status: done` before exit
 - [ ] the user has done final review confirmation
 
 ---

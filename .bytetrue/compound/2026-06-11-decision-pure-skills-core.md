@@ -1,7 +1,8 @@
 ---
 doc_type: decision
 slug: pure-skills-core
-status: accepted
+status: active
+decision_result: accepted
 decision_type: architecture
 tags: [bytetrue, skills, runtime, subagent]
 ---

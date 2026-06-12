@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: execution-modes
 pitch: ByteTrue 可以按任务风险选择轻量、标准、严格证据或破循环工作流。
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-11
 implemented_by: [ARCHITECTURE]
 tags: [workflow, execution-mode, risk, evidence]

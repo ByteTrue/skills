@@ -14,8 +14,8 @@ topic: {one-line description of the problem this trick solves}
 language: {optional}
 framework: {optional}
 tags: []
-status: active | superseded
-superseded-by: {optional}
+status: active | archived
+superseded_by: {optional}  # archived tricks only
 ---
 ```
 
@@ -54,7 +54,6 @@ language: typescript
 tags: [repository, orm, testability, architecture]
 status: active
 ---
-
 ## Applicable Scenarios
 
 Business-layer code calls the ORM directly, which makes unit tests hard to write and increases the cost of switching ORMs.

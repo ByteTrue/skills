@@ -1,3 +1,10 @@
+---
+doc_type: feature-acceptance
+feature: 2026-06-11-subagent-handoff-roles
+status: done
+summary: Accepted implement/check/research handoff role contract.
+---
+
 # Subagent Handoff Roles Acceptance Report
 
 > Stage: stage 3, acceptance closure
@@ -101,7 +108,7 @@ A reader of architecture now sees context manifests and subagent handoff as conn
 
 ## 7. Roadmap write-back
 
-- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `subagent-handoff-roles.status` changed from `in-progress` to `done`; `feature` remains `2026-06-11-subagent-handoff-roles`.
+- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `subagent-handoff-roles.status` changed from `active` to `done`; `feature` remains `2026-06-11-subagent-handoff-roles`.
 - [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md`: sub-feature list synchronized to `status: done` and corresponding feature path.
 - [x] YAML validation passed for roadmap items.
 

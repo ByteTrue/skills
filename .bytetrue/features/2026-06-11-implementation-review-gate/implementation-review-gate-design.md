@@ -4,7 +4,8 @@ feature: 2026-06-11-implementation-review-gate
 requirement: implementation-review-gate
 roadmap: ai-workflow-absorption
 roadmap_item: implementation-review-gate
-status: approved
+status: done
+review_result: approved
 summary: Add an inline implementation review gate that separates spec compliance from code quality before feature acceptance
 tags: [implementation-review, spec-compliance, code-quality, workflow-semantics]
 ---

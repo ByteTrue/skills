@@ -11,7 +11,21 @@ workflow:
   ask_before: [git_commit, git_push, external_tracker_write, destructive_command, scope_change]
 tracker:
   provider: local # local | github | gitlab
+  provider_status: unknown # unknown | configured | unavailable
   sync_policy: ask # ask | never | auto_preview
+  sync_direction: outbound_only
+  external_import: manual_only
+  update_policy: update_managed_block
+  repository:
+    remote_url: null
+    tracker_url: null
+  cli:
+    gh:
+      installed: false
+      auth: unknown # ok | missing | unknown
+    glab:
+      installed: false
+      auth: unknown # ok | missing | unknown
 dispatch:
   preferred: auto # auto | native_subagent | non_interactive_child | inline
   allow_non_interactive_child: true
@@ -33,6 +47,15 @@ docs:
 ## Tracker
 
 Tracker values moved here from `project-management.md`. `project-management.md` defines provider semantics, syncable sources, labels, and managed-block rules.
+
+- `provider`: configured collaboration backend, or `local` when no external tracker is used.
+- `provider_status`: onboard detection result for the chosen provider.
+- `sync_policy`: whether ByteTrue should ask, never suggest sync, or only prepare previews automatically.
+- `sync_direction`: currently `outbound_only`; ByteTrue sources project to tracker, not the other way around.
+- `external_import`: currently `manual_only`; external issues are triaged for human routing, not auto-imported.
+- `update_policy`: currently `update_managed_block`; only ByteTrue-managed issue body blocks are rewritten.
+- `repository.remote_url` / `repository.tracker_url`: detected repository and tracker URLs, if available.
+- `cli.gh` / `cli.glab`: local CLI installation and auth detection results used by `bt-tracker`.
 
 ## Dispatch
 

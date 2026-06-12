@@ -1,3 +1,10 @@
+---
+doc_type: feature-acceptance
+feature: 2026-06-11-onboard-template-rollout
+status: done
+summary: Accepted onboard template rollout for AI workflow absorption references and install projections.
+---
+
 # Onboard Template Rollout Acceptance Report
 
 > Stage: stage 3, acceptance closure
@@ -20,7 +27,7 @@
 
 **Flow diagram landing**
 
-- [x] All prior items done → audit templates/current refs → categorize diffs → sync missing template/index/doc updates → verify package/plugin/README projections → acceptance writes roadmap done/completed. The flow landed through implementation checks and this acceptance writeback.
+- [x] All prior items done → audit templates/current refs → categorize diffs → sync missing template/index/doc updates → verify package/plugin/README projections → acceptance writes roadmap done. The flow landed through implementation checks and this acceptance writeback.
 
 ## 2. Behavior and decision check
 
@@ -99,9 +106,9 @@ This is a stable architecture fact because future onboard/template maintenance d
 
 ## 7. Roadmap write-back
 
-- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `onboard-template-rollout.status` changed from `in-progress` to `done`; `feature` remains `2026-06-11-onboard-template-rollout`.
+- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `onboard-template-rollout.status` changed from `active` to `done`; `feature` remains `2026-06-11-onboard-template-rollout`.
 - [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md`: sub-feature list synchronized to `status: done` and corresponding feature path.
-- [x] Roadmap frontmatter `status` changed from `active` to `completed` because every roadmap item is now done.
+- [x] Roadmap frontmatter `status` changed from `active` to `done` because every roadmap item is now done.
 - [x] YAML validation passed for roadmap items.
 
 ## 8. attention.md candidate review

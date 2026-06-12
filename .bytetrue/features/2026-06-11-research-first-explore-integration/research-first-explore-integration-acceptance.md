@@ -1,3 +1,10 @@
+---
+doc_type: feature-acceptance
+feature: 2026-06-11-research-first-explore-integration
+status: done
+summary: Accepted research-first integration through bt-explore spike evidence.
+---
+
 # Research-first Explore Integration Acceptance Report
 
 > Stage: stage 3, acceptance closure
@@ -100,7 +107,7 @@ No frontend changes; browser verification is not applicable.
 
 ## 7. Roadmap write-back
 
-- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `research-first-explore-integration.status` changed from `in-progress` to `done`; `feature` remains `2026-06-11-research-first-explore-integration`.
+- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `research-first-explore-integration.status` changed from `active` to `done`; `feature` remains `2026-06-11-research-first-explore-integration`.
 - [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md`: sub-feature list synchronized to `status: done` and corresponding feature path.
 - [x] YAML validation passed for roadmap items.
 

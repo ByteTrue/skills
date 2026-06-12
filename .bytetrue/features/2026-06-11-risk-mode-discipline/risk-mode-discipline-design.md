@@ -4,7 +4,8 @@ feature: 2026-06-11-risk-mode-discipline
 requirement:
 roadmap: ai-workflow-absorption
 roadmap_item: risk-mode-discipline
-status: approved
+status: done
+review_result: approved
 summary: Define ByteTrue execution modes so light work stays light and high-risk work gets strict evidence discipline
 tags: [execution-mode, risk-mode, tdd, debugging, superpowers]
 ---

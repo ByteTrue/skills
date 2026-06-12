@@ -4,7 +4,8 @@ feature: 2026-06-11-subagent-handoff-roles
 requirement: subagent-handoff-roles
 roadmap: ai-workflow-absorption
 roadmap_item: subagent-handoff-roles
-status: approved
+status: done
+review_result: approved
 summary: Define ByteTrue implement, check, and research handoff roles using active work paths and context manifests
 tags: [subagent, handoff, execution-context, workflow-infrastructure]
 ---

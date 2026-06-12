@@ -78,10 +78,11 @@ When entering this skill, `Glob .bytetrue/features/` first and inspect the exist
 | The user says "fast mode / fastforward" | `bt-feat-ff` |
 | `{slug}-brainstorm.md` exists and it is time to move into design | `bt-feat-design` |
 | No design exists, or design exists with `status: active` | `bt-feat-design` |
+| Acceptance exists with `status: done` | feature is already complete; do not continue unless the user asks for a new change, bug fix, or follow-up feature |
+| Legacy acceptance exists without frontmatter but has substantive section-by-section acceptance content | `bt-feat-accept` in legacy reconstruction mode; do not route back to implementation solely because `{slug}-implementation-report.md` is missing |
 | Design exists with `status: done` and `review_result: approved`, but checklist steps are missing, pending, or failed | `bt-feat-impl` |
 | Checklist steps are all `done`, but `{slug}-implementation-report.md` is missing or not `status: done` | `bt-feat-impl` |
 | Implementation report is `status: done`, but checklist checks are `pending` or `failed`, or acceptance is missing | `bt-feat-accept` |
-| Acceptance exists with `status: done` | feature is already complete; do not continue unless the user asks for a new change, bug fix, or follow-up feature |
 | Fastforward note exists with `status: done` | fastforward feature is already complete; route new behavior changes to a new feature or issue |
 | The user says "I want an X system" and it is a large demand | route to `bt-brainstorm` for triage, most likely case 3 → `bt-roadmap` |
 | A sub-feature in roadmap is ready to start | `bt-feat-design` via the "starting from a roadmap item" entry |

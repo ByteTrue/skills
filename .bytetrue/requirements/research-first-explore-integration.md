@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: research-first-explore-integration
 pitch: ByteTrue 在技术选择、外部库/API 行为、平台能力或可比较工作流会影响设计方向时，先通过 bt-explore spike 留下证据，再进入设计、roadmap 或 grill 决策。
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-11
 implemented_by: [2026-06-11-research-first-explore-integration]
 tags: [workflow, research-first, explore, evidence]

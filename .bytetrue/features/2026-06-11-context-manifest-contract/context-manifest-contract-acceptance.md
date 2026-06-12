@@ -1,3 +1,10 @@
+---
+doc_type: feature-acceptance
+feature: 2026-06-11-context-manifest-contract
+status: done
+summary: Accepted feature-local implement/check context manifest contract.
+---
+
 # Context Manifest Contract Acceptance Report
 
 > Stage: stage 3, acceptance closure
@@ -98,7 +105,7 @@ A reader of architecture now sees behavior delta, execution modes, implementatio
 
 ## 7. Roadmap write-back
 
-- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `context-manifest-contract.status` changed from `in-progress` to `done`; `feature` remains `2026-06-11-context-manifest-contract`.
+- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `context-manifest-contract.status` changed from `active` to `done`; `feature` remains `2026-06-11-context-manifest-contract`.
 - [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md`: sub-feature list synchronized to `status: done` and corresponding feature path.
 - [x] YAML validation passed for roadmap items.
 

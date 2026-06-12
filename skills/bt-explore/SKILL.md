@@ -48,7 +48,7 @@ For frontmatter, body structure, section-writing instructions, and examples, see
 - **Short answer must appear before evidence** — the reader should see the conclusion first and then decide whether to continue into the evidence
 - every conclusion must be traceable back to evidence; pure guessing is not allowed
 - when evidence is insufficient, `confidence` must be lowered to `medium` or `low`
-- when old exploration is outdated, mark the old document `outdated` and create a new current version
+- when old exploration is outdated, mark the old document `status: archived` plus `validity: outdated`, and create a new `status: active` version
 
 ---
 
@@ -67,7 +67,7 @@ If the user's description is already clear, go directly to Phase 1.5.
 
 Follow items 5 and 6 in `.bytetrue/reference/shared-conventions.md` §6:
 
-- If the request includes "update / revisit / a previous explore / we explored this module before" or points to an old explore document, go to **update or supersede**. Characteristic of explore: when code has changed and the old conclusion is no longer valid, the old document gets `status: archived` + `validity: outdated` and a new one is created as the superseding current version. If only evidence is being supplemented or the short answer is being tightened while the core conclusion remains the same, then update the existing document.
+- If the request includes "update / revisit / a previous explore / we explored this module before" or points to an old explore document, go to **update or supersede**. Characteristic of explore: when code has changed and the old conclusion is no longer valid, the old document gets `status: archived` + `validity: outdated` and a new one is created as the superseding `status: active` version. If only evidence is being supplemented or the short answer is being tightened while the core conclusion remains the same, then update the existing document.
 - Otherwise, use the search tool to search once by keywords or module. If you hit a similar old explore, read it first. If it already answers the question directly, tell the user "there is already one at {path}; reuse it or re-explore from scratch?"
 
 **Update path**: read the old document → supplement evidence according to Phase 2 → rewrite the short answer section → write back and add `updated: YYYY-MM-DD`.

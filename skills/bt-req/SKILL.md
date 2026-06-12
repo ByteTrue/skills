@@ -11,15 +11,15 @@ Before making any judgment or taking any action, read `.bytetrue/attention.md` f
 
 `.bytetrue/requirements/` is the project's "capability catalog". Each document describes **what problem created one capability, how the capability solves it, and where its boundaries are**, written in plain language that non-technical readers can also understand. Architecture docs explain "how it is built". Requirement docs explain "why it should exist".
 
-**A req is the system's capability-vision layer**. It describes "what the user needs" and "what capability the system provides to satisfy that need". Three levels of time depth are represented by a single `status` field:
+**A req is the system's capability-vision layer**. It describes "what the user needs" and "what capability the system provides to satisfy that need". Time-depth is represented by the canonical `status` field plus explicit semantic fields:
 
-- `draft`: the user needs this capability, but the system has not implemented it yet, future vision
-- `current`: the system is currently satisfying it, present capability
-- `outdated`: the system once satisfied it, but it has since been removed or is no longer maintained, past trace
+- future vision, not implemented yet: `status: active`
+- currently satisfied capability: `status: done` plus `current: true`
+- removed or no longer maintained capability: `status: archived` plus `validity: outdated`
 
 **A draft req can exist independently from implementation**. If the user says "I want capability X" but has not decided when it will be built, a `status: active` req can still be written first to lock down the vision. Then roadmap scheduling and design alignment both have a stable reference. **Not doing roadmap planning does not mean a vision doc should not exist.**
 
-**The main path from draft to current is feature-acceptance**. After the capability is implemented and accepted, acceptance triggers `bt-req update` to change `status` from `draft` to `current`, and at the same time refreshes the user stories and boundaries according to the real implementation, while keeping the original vision intact and only adding a change log at the end.
+**The main path from future vision to current capability is feature-acceptance**. After the capability is implemented and accepted, acceptance triggers `bt-req update` to change `status` from `active` to `done`, add `current: true`, and refresh the user stories and boundaries according to the real implementation, while keeping the original vision intact and only adding a change log at the end.
 
 **The backfill path remains valid**: for capabilities that are already running but never got a req, backfill writes them directly as `status: done` and `current: true`.
 
@@ -40,7 +40,7 @@ The value of a requirement doc is that **the point is clear at a glance**. User 
 
 - triggered during brainstorm: after discussion, the vision becomes clear → use `draft` to write the vision and land it as `status: active`, so design and roadmap later have a stable alignment baseline
 - triggered during feature-design: a new capability is being designed for the first time → use `draft` to write the vision, user stories, pain point, solution, and boundaries, as `status: active`
-- triggered from section 6 of feature-acceptance: the capability corresponding to a draft req is now implemented → use `update` to upgrade it to `current`, keep the original vision and append a change log; for an existing capability that never had a req, use `backfill` and write it directly as `current`; if a capability that already has a current req changes its boundary, user story, or pitch, use `update` to refresh it
+- triggered from section 6 of feature-acceptance: the capability corresponding to an active future-vision req is now implemented → use `update` to upgrade it to `status: done` plus `current: true`, keep the original vision and append a change log; for an existing capability that never had a req, use `backfill` and write it directly as `status: done` plus `current: true`; if a capability that already has a current req changes its boundary, user story, or pitch, use `update` to refresh it
 - proactive user inventory: a capability is already running but never had a req, use `backfill`
 - proactive user revision: the capability evolved and needs refreshing, use `update`
 - proactive user vision drafting: a future need has not even been scheduled yet, but a `draft` req can still be written to lock the positioning first
@@ -111,8 +111,8 @@ Show the complete first draft to the user. Keep iterating until the user explici
 
 - draft: write to `requirements/{slug}.md`, with `status: active` and `last_reviewed` set to today
 - backfill: write to `requirements/{slug}.md`, with `status: done` and `current: true` and `last_reviewed` set to today
-- update: overwrite the existing doc and set `last_reviewed` to today; if the structural change is large, add one line to the `Change Log` section at the end; draft → current is a structural state change and **must** have a change-log entry
-- **index update**: update `requirements/VISION.md`, grouping all reqs by status and listing each one with its one-line pitch plus status marker
+- update: overwrite the existing doc and set `last_reviewed` to today; if the structural change is large, add one line to the `Change Log` section at the end; `active` future vision → `done` current capability is a structural state change and **must** have a change-log entry
+- **index update**: update `requirements/VISION.md`, grouping all reqs by lifecycle semantics, not by inventing new status words
 
 ---
 
@@ -125,7 +125,9 @@ Show the complete first draft to the user. Keep iterating until the user explici
 doc_type: requirement
 slug: {english-hyphenated; must match filename}
 pitch: {one non-technical sentence that makes the capability clear and could be used as promotional copy}
-status: done | pending | archived
+status: active | done | archived
+current: true        # only when status: done represents the currently valid capability; omit for active future vision
+validity: outdated  # only when status: archived because the capability is no longer maintained
 last_reviewed: YYYY-MM-DD
 implemented_by: []   # list of architecture doc slugs that carry it, may be empty
 tags: []
@@ -187,8 +189,8 @@ One short paragraph describing roughly how the capability works. **Do not write 
 - [ ] each user story suggests a concrete scene, with no useless lines like "I hope the system is easy to use"
 - [ ] no implementation detail was stuffed into the doc
 - [ ] the `pitch` reads like a direct promotional line, and in draft mode it still reads like a direct promotional line, because a vision must also be sellable
-- [ ] in draft mode, status is `draft`, implementation detail has not been invented, and the boundaries are clearly drawn
-- [ ] in update mode, structural changes have a `Change Log`, including draft → current transitions
+- [ ] in draft mode, status is `active`, implementation detail has not been invented, and the boundaries are clearly drawn
+- [ ] in update mode, structural changes have a `Change Log`, including `active` → `done` plus `current: true` transitions
 - [ ] the user review passed
 - [ ] no code, architecture, or other spec was edited on the side
 - [ ] there were no out-of-scope document edits
@@ -202,7 +204,7 @@ One short paragraph describing roughly how the capability works. **Do not write 
 | works with `bt-arch` | req writes "why this should exist", architecture writes "how it is built"; architecture frontmatter uses `implements: [req-slug]` as the back-link |
 | may be triggered by `bt-brainstorm` | once the vision becomes clear after discussion, `draft` mode can be used to write the req vision |
 | may be written during `bt-feat-design` | design reads existing reqs to align user stories and boundaries; when a new capability is being designed for the first time, it triggers `draft` mode to write the req vision |
-| main path is `bt-feat-accept` | acceptance handles req archival in a unified way: when the capability behind a draft req is implemented, it triggers `update`, draft → current, keeping the original vision and appending a change log; when an existing capability never had a req, it triggers `backfill`, directly as current; when an existing current req changes, it triggers `update` to refresh it |
+| main path is `bt-feat-accept` | acceptance handles req archival in a unified way: when the capability behind an active future-vision req is implemented, it triggers `update`, `active` → `done` plus `current: true`, keeping the original vision and appending a change log; when an existing capability never had a req, it triggers `backfill`, directly as current; when an existing current req changes, it triggers `update` to refresh it |
 | works with `bt-roadmap` | req records "what is wanted and why", roadmap records "how to implement it step by step". Roadmap items may reference req slugs, but req is not bound to a specific roadmap. A draft req does not pressure the roadmap; the vision may exist before scheduling |
 | created by `bt-onboard` | onboard creates the empty `requirements/` directory and the empty `VISION.md` skeleton |
 
@@ -210,8 +212,7 @@ One short paragraph describing roughly how the capability works. **Do not write 
 
 ## Common Mistakes
 
-- treating a draft req like a backfill — the capability is not implemented yet, but the doc is marked `status: done
-current: true`, or implementation details are invented as if it already exists
+- treating a draft req like a backfill — the capability is not implemented yet, but the doc is marked `status: done` plus `current: true`, or implementation details are invented as if it already exists
 - during backfill, not confirming that the capability is really running in code — writing a "sounds plausible" req from one user sentence
 - stuffing implementation detail into a draft req — deciding how to implement it before the design phase
 - drawing draft boundaries too wide — the value of vision is to draw the line; wanting everything means saying nothing

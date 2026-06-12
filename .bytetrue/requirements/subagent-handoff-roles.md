@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: subagent-handoff-roles
 pitch: ByteTrue 用统一 handoff 协议把 implement / check / research 工作交给子代理或内联角色，确保子代理拿到 active work、design、checklist 和 context manifest，而不是依赖父会话记忆。
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-11
 implemented_by: [2026-06-11-subagent-handoff-roles]
 tags: [workflow, subagent, handoff, execution-context]

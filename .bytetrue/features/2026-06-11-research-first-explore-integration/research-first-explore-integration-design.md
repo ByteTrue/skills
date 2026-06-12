@@ -4,7 +4,8 @@ feature: 2026-06-11-research-first-explore-integration
 requirement: research-first-explore-integration
 roadmap: ai-workflow-absorption
 roadmap_item: research-first-explore-integration
-status: approved
+status: done
+review_result: approved
 summary: Route technical-choice and comparable-workflow questions through bt-explore spike evidence before design or roadmap decisions
 tags: [research-first, explore, evidence, workflow-infrastructure]
 ---

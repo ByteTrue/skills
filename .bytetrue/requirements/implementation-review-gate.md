@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: implementation-review-gate
 pitch: ByteTrue 在进入验收前先分开检查规格符合度和代码质量，避免把实现漂移或低质量改动推给 acceptance 才发现。
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-11
 implemented_by: [2026-06-11-implementation-review-gate]
 tags: [workflow, implementation-review, spec-compliance, code-quality]

@@ -55,7 +55,7 @@ Rejected. ByteTrue core remains skills-only; install docs should not imply runti
 - Future maintainers have a clear rule for distinguishing true drift from intentional reference differences.
 - Package/plugin metadata and README install docs are consistent with current repository state.
 - No new workflow behavior, CLI, release, tag, push, marketplace command, or external sync is introduced by rollout.
-- The `ai-workflow-absorption` roadmap can be marked completed once this feature is accepted.
+- The `ai-workflow-absorption` roadmap can be marked done once this feature is accepted.
 
 ## Related Documents
 

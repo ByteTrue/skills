@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: onboard-template-rollout
 pitch: ByteTrue 在完成 AI workflow absorption 后，需要一次最终模板发布和安装投影同步，确保新项目 onboard 能拿到完整 reference、worklog、README 安装说明和一致的 skill-package-managed 文件清单。
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-11
 implemented_by: [2026-06-11-onboard-template-rollout]
 tags: [onboard, templates, rollout, install]

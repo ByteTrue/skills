@@ -1,7 +1,7 @@
 ---
 doc_type: roadmap
 slug: ai-workflow-absorption
-status: completed
+status: done
 created: 2026-06-11
 last_reviewed: 2026-06-11
 tags: [bytetrue, openspec, superpowers, trellis, workflow-integration, execution-infrastructure]

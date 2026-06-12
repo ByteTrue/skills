@@ -163,7 +163,7 @@ Directory conventions:
 - slug: invent an English lowercase hyphenated slug based on the direction, and tell the user what it is. If design later renames it, only rename the slug part, not the date
 - if the directory does not exist, create it; if it already exists, follow the continuation logic from the pre-discussion check
 
-Write to disk only when the user confirms it is ready to move into design. Do not write files during the discussion itself. `status` is always `confirmed`, never `draft`.
+Write to disk only when the user confirms it is ready to move into design. Do not write files during the discussion itself. `status` is always `done`, with any discussion confidence expressed in body fields such as `confirmed`, `leaning`, or `to be verified`, never as status values.
 
 See the "feature brainstorm template" in `reference.md` in the same directory for the template. The frontmatter conventions are shared with design and acceptance; see section 1 of `.bytetrue/reference/shared-conventions.md`.
 

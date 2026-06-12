@@ -4,7 +4,8 @@ feature: 2026-06-11-onboard-template-rollout
 requirement: onboard-template-rollout
 roadmap: ai-workflow-absorption
 roadmap_item: onboard-template-rollout
-status: approved
+status: done
+review_result: approved
 summary: Synchronize ByteTrue onboard templates, shared references, README/install projections, and final roadmap state after AI workflow absorption
 tags: [onboard, templates, rollout, install-projection]
 ---
@@ -137,7 +138,7 @@ The previous eight features have individually updated their current and onboard 
 - Update README Pi install text to mention runtime adapters are deferred.
 - If plugin metadata remains valid and unchanged, record that no plugin metadata edit is needed.
 - If package metadata registers runtime extensions, remove them unless a separate runtime-adapter feature explicitly owns them.
-- Acceptance later should mark the roadmap item done; if all roadmap items are done, note that roadmap can be completed.
+- Acceptance later should mark the roadmap item done; if all roadmap items are done, note that roadmap can be marked done.
 
 Flow-level constraints:
 

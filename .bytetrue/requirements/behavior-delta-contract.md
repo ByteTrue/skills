@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: behavior-delta-contract
 pitch: ByteTrue 用户可以在功能设计中明确行为变化，并在验收时把它们写回正确的事实层。
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-11
 implemented_by: [ARCHITECTURE]
 tags: [feature-workflow, behavior-delta, acceptance, openspec]

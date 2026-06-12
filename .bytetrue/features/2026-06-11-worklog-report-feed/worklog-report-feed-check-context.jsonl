@@ -1,7 +1,7 @@
 {"file":".bytetrue/features/2026-06-11-worklog-report-feed/worklog-report-feed-design.md","reason":"Acceptance checks scenarios, behavior delta, non-goals, and section 4 architecture writeback.","required":true,"role":"check"}
 {"file":".bytetrue/features/2026-06-11-worklog-report-feed/worklog-report-feed-checklist.yaml","reason":"Acceptance must confirm all steps are done and checks are passed.","required":true,"role":"check"}
 {"file":".bytetrue/requirements/worklog-report-feed.md","reason":"Requirement should be upgraded to current if the feature is accepted.","required":true,"role":"check"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml","reason":"Roadmap item must be moved from in-progress to done during acceptance.","required":true,"role":"check"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml","reason":"Roadmap item must be moved from active to done during acceptance.","required":true,"role":"check"}
 {"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap main document must synchronize the done sub-feature state.","required":true,"role":"check"}
 {"file":".bytetrue/architecture/ARCHITECTURE.md","reason":"Architecture must record worklog/report-feed as secondary work-record layer, not source of truth.","required":true,"role":"check"}
 {"file":".bytetrue/compound/2026-06-11-explore-trellis-journal-role.md","reason":"Acceptance verifies Trellis journal was absorbed as lightweight report feed, not copied directly.","required":true,"role":"check"}

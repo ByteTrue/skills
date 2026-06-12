@@ -67,7 +67,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter tags~=ll
 # Sort by time
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --sort-by date --order desc                     # most recently archived first
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/library-docs --sort-by last_reviewed --order asc         # least recently reviewed first, useful for stale docs
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=current --sort-by last_reviewed --order asc
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=done --filter current=true --sort-by last_reviewed --order asc
 ```
 
 ### Typical usage scenarios
@@ -79,7 +79,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=cur
 | Check for overlap after archiving | Search `.bytetrue/compound --query "{keyword}" --json` and inspect whether there is semantic overlap |
 | Help a newcomer understand project conventions | `--dir .bytetrue/compound --filter doc_type=decision --filter status=active` |
 | Browse techniques by stack | `--dir .bytetrue/compound --filter doc_type=trick --filter language={language} --filter status=active` |
-| Find library docs or guides that have gone the longest without review | `--dir {directory} --filter status=current --sort-by last_reviewed --order asc` |
+| Find library docs or guides that have gone the longest without review | `--dir {directory} --filter status=done --filter current=true --sort-by last_reviewed --order asc` |
 | See which learnings were most recently captured | `--dir .bytetrue/compound --filter doc_type=learning --sort-by date --order desc` |
 
 ---

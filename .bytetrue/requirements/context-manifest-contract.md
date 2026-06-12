@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: context-manifest-contract
 pitch: ByteTrue 用显式 context manifest 告诉 implement 和 check 阶段必须读取哪些项目事实、设计约束和探索证据，减少后续阶段漏读上下文。
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-11
 implemented_by: [2026-06-11-context-manifest-contract]
 tags: [workflow, context-manifest, implementation-context, check-context]

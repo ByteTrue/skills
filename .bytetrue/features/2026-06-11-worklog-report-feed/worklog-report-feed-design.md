@@ -4,7 +4,8 @@ feature: 2026-06-11-worklog-report-feed
 requirement: worklog-report-feed
 roadmap: ai-workflow-absorption
 roadmap_item: worklog-report-feed
-status: approved
+status: done
+review_result: approved
 summary: Add a lightweight ByteTrue worklog/report-feed for session summaries, reporting, handoff, and recovery background
 tags: [worklog, report-feed, handoff, workflow-infrastructure]
 ---

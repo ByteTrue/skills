@@ -39,12 +39,12 @@ summary: Accepted workflow control-plane contract for config, canonical status, 
 ## 3. Acceptance-scenario check
 
 - [x] S1 machine-readable config: `.bytetrue/config.yaml` parses with `validate-yaml.py`.
-- [x] S2 canonical status vocabulary: grep found no legacy status-field values in shipped skills/references/current feature, except this report's explanatory prose was kept status-neutral.
+- [x] S2 canonical status vocabulary: static audit covers shipped skills, current/onboard references, current PR requirements, PR feature/compound/roadmap artifacts, and the AI workflow absorption roadmap; legacy status-field values were removed or expressed through fields such as `current`, `validity`, `paused`, `review_result`, and `superseded_by`.
 - [x] S3 continuation routing: `bt` and `bt-feat` contain explicit routing for named continuation requests and half-implemented features.
 - [x] S4 open brainstorm path: `.bytetrue/brainstorms/` exists and `bt-brainstorm` uses plural `brainstorms/` for open records.
 - [x] S5 behavior writeback: `bt-feat-accept` mentions `Current Behavior` and `Observable Contract`.
 - [x] S6 line-limit policy: no hard-coded worklog 300-line artifact rule remains in shipped skills/references.
-- [x] S7 onboard sync: current/onboard managed reference parity passes with 15 files.
+- [x] S7 onboard sync: exact current/onboard parity passes for 7 package-managed contract reference files; the remaining 8 shared reference files are project-owned/localized or intentionally divergent, with the roadmap item state machine semantically aligned in both copies.
 
 No frontend/browser verification is applicable.
 

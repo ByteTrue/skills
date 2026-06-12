@@ -11,10 +11,10 @@ source_root: {source root path}
 last_scanned: YYYY-MM-DD
 
 entries:
-  - {entry: button, category: base component, source_files: [src/components/Button.vue], doc_path: docs/api/button.md, status: pending, note: ""}
+  - {entry: button, category: base component, source_files: [src/components/Button.vue], doc_path: docs/api/button.md, status: pending, note: ""} # status: pending | active | done | dropped | archived
 ```
 
-`status` semantics: `pending` / `draft` / `current` / `outdated` / `skipped`.
+`status` semantics: `pending` waits to be documented, `active` is generated but still under review, `done` is generated and reviewed, `dropped` is intentionally not documented, and `archived` is stale or retained historical reference. Use `note` to explain `dropped` or `archived`.
 
 ## 2. Entry Document Frontmatter
 
@@ -23,7 +23,9 @@ entries:
 doc_type: lib-api-ref
 entry: {entry}
 category: {category}
-status: pending | done | archived
+status: active | done | archived
+current: true        # only when status: done and the entry is currently valid
+validity: outdated  # only when status: archived because source code changed
 source_files: [{source_files}]
 summary: {summary}
 tags: []

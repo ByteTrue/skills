@@ -1,3 +1,10 @@
+---
+doc_type: feature-acceptance
+feature: 2026-06-11-risk-mode-discipline
+status: done
+summary: Accepted execution mode discipline for light, standard, strict-evidence, and break-loop flows.
+---
+
 # risk-mode-discipline Acceptance Report
 
 > Stage: stage 3, acceptance closure
@@ -145,7 +152,7 @@ This satisfies design section 4: a reader who opens architecture can now see the
 
 Design frontmatter had an empty `requirement`, but this feature added a user-perceivable ByteTrue workflow capability. Requirement backfill was therefore needed.
 
-- [x] Created `.bytetrue/requirements/execution-modes.md` as `status: current`.
+- [x] Created `.bytetrue/requirements/execution-modes.md` as `status: done` with `current: true`.
 - [x] Updated `.bytetrue/requirements/VISION.md` under Current.
 - [x] Requirement stays at capability-vision level and does not describe implementation details.
 
@@ -160,7 +167,7 @@ roadmap_item: risk-mode-discipline
 
 Write-back actions:
 
-- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `risk-mode-discipline.status` changed from `in-progress` to `done`; `feature` remains `2026-06-11-risk-mode-discipline`.
+- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `risk-mode-discipline.status` changed from `active` to `done`; `feature` remains `2026-06-11-risk-mode-discipline`.
 - [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md`: section 5 sub-feature list synchronized to `status: done` and `corresponding feature: 2026-06-11-risk-mode-discipline`.
 - [x] `validate-yaml.py` passed for roadmap items.
 

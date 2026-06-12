@@ -1,3 +1,10 @@
+---
+doc_type: feature-acceptance
+feature: 2026-06-11-implementation-review-gate
+status: done
+summary: Accepted durable implementation review gate before feature acceptance.
+---
+
 # Implementation Review Gate Acceptance Report
 
 > Stage: stage 3, acceptance closure
@@ -99,7 +106,7 @@ A reader of architecture now sees that ByteTrue has behavior delta, execution mo
 
 ## 7. Roadmap write-back
 
-- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `implementation-review-gate.status` changed from `in-progress` to `done`; `feature` remains `2026-06-11-implementation-review-gate`.
+- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: `implementation-review-gate.status` changed from `active` to `done`; `feature` remains `2026-06-11-implementation-review-gate`.
 - [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md`: sub-feature list synchronized to `status: done` and corresponding feature path.
 - [x] YAML validation passed for roadmap items.
 

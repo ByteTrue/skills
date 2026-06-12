@@ -4,7 +4,8 @@ feature: 2026-06-11-behavior-delta-contract
 requirement:
 roadmap: ai-workflow-absorption
 roadmap_item: behavior-delta-contract
-status: approved
+status: done
+review_result: approved
 summary: Add OpenSpec-style behavior delta contract to ByteTrue feature design and acceptance
 tags: [behavior-delta, openspec, feature-design, acceptance]
 ---
@@ -143,7 +144,7 @@ Flow-level constraints:
 3. **Acceptance materialization**: update `bt-feat-accept/SKILL.md` section 2 template and startup/exit checks.
    - exit signal: acceptance report template contains `Behavior Delta Materialization` without changing 9 top-level sections.
 4. **Smoke validation**: grep and line-limit validation.
-   - exit signal: behavior delta terms appear only in intended files, all edited md files stay under 300 lines, and roadmap item state is in-progress after approval.
+   - exit signal: behavior delta terms appear only in intended files, all edited md files stay under 300 lines, and roadmap item state is active after approval.
 
 ### 2.5 Structural Health and Micro-refactor
 

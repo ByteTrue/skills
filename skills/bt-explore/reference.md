@@ -13,7 +13,8 @@ slug: {English description, hyphen-separated}
 topic: {one-line description of the exploration question}
 scope: {exploration scope}
 keywords: []
-status: active | outdated
+status: active | archived
+validity: outdated  # only when status: archived because the evidence or conclusion is stale
 confidence: high | medium | low
 ---
 ```

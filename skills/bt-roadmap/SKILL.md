@@ -115,7 +115,7 @@ Run this once yourself and report the handling before review:
 7. Are the explicit non-goals written down? If not, write "no explicit non-goals"
 8. Does it conflict with existing req or architecture? If yes, write "conflicts with req-X, user must decide", and do not quietly choose a side
 9. **Update-specific**: does every new or changed item have source material behind it? Adding one "to make it look more complete" is drift
-10. **Update-specific**: if the interface contracts changed, do already in-progress or done sub-features get affected? List them under observations so the user can see the impact
+10. **Update-specific**: if the interface contracts changed, do already active or done sub-features get affected? List them under observations so the user can see the impact
 
 ### Phase 5: User review
 
@@ -155,8 +155,8 @@ At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept`
 
 ### lifecycle of roadmap itself
 
-- when all items are `done`, `dropped`, or `archived`, the main doc `status` becomes `completed`, and the directory stays as historical archive
-- if there is no progress for a long time, set `status: paused` and add the reason in the main doc
+- when all items are `done`, `dropped`, or `archived`, the main doc `status` becomes `done`, and the directory stays as historical archive
+- if there is no progress for a long time, keep `status: active` and add `paused: true` plus the reason in the main doc
 
 ---
 
@@ -194,7 +194,7 @@ Tell the user: "The roadmap is ready. Each sub-feature later goes through `bt-fe
 
 Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
 
-1. a roadmap PRD or any syncable roadmap items touched in this change, planned, in-progress, or done; dropped items only update already-bound external issues, may need collaboration projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit confirmation
+1. a roadmap PRD or any syncable roadmap items touched in this change, pending, active, or done; dropped items only update already-bound external issues, may need collaboration projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit confirmation
 2. if the roadmap session should be visible in reports or handoff context → "Do you want to add a concise worklog/report-feed entry for this roadmap update?" (`.bytetrue/reference/worklog-report-feed.md`)
 
 ---
@@ -225,4 +225,4 @@ Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, gi
 - modifying req or arch on the side
 - deleting dropped items outright, losing history
 - letting roadmap drift into a detailed design for one sub-feature
-- changing interface contracts in update mode without assessing existing impact, so already in-progress or done features never see the contract change
+- changing interface contracts in update mode without assessing existing impact, so already active or done features never see the contract change
