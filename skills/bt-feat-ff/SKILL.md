@@ -90,7 +90,7 @@ If you are about to write `if (special case) { special handling }`, **stop**. A 
 
 ### Stop when reflection signals fire
 
-- appending to a file over 300 lines, or adding another method to a class with more than 10 methods
+- appending to an already oversized file, or adding yet another method to a class that is already responsibility-heavy
 - a function growing until it no longer fits on one screen
 - writing a second block that is "basically the same as the one above except for two variables"
 - adding a fourth function parameter

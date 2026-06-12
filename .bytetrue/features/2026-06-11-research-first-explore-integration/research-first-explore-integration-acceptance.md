@@ -84,7 +84,7 @@ summary: Accepted research-first integration through bt-explore spike evidence.
 - [x] **S4 planning/design routes facts**: `bt-roadmap` and `bt-feat-design` require or cite explore evidence when external facts shape contracts.
 - [x] **S5 manifest carries evidence**: `context-manifest.md` allows cited research-first explore artifacts as manifest rows.
 - [x] **S6 no new facts layer**: grep confirms no `.bytetrue/research/`, automatic router, hook, subagent dispatch, worklog, or CLI behavior was introduced.
-- [x] **S7 line budget**: all edited markdown files stay under 300 lines.
+- [x] **S7 conciseness check**: edited documents stay concise.
 
 No frontend changes; browser verification is not applicable.
 

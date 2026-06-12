@@ -25,7 +25,7 @@ Before making any judgment or taking any action, read `.bytetrue/attention.md` f
 Do this every time before replying; a few tool calls are enough:
 
 1. **Check whether the repo has been onboarded to ByteTrue** — `Glob .bytetrue/` and look at the top-level directories
-2. **If it exists** — you must `Read .bytetrue/attention.md` first (if it is missing, say the skeleton is incomplete and ask the user to fill it in or rerun `bt-onboard`); then `Read .bytetrue/reference/system-overview.md` and `.bytetrue/config.yaml` if present; `Glob` `features/`, `issues/`, and `roadmap/` once. For a named continuation request, read only the minimal frontmatter/status/checklist rows needed to classify the current stage; do not read full bodies.
+2. **If it exists** — you must `Read .bytetrue/attention.md` first (if it is missing, say the skeleton is incomplete and ask the user to fill it in or rerun `bt-onboard`); then `Read .bytetrue/reference/system-overview.md`, `.bytetrue/config.yaml` if present, and the stage close-out rules in `.bytetrue/reference/shared-conventions.md`; `Glob` `features/`, `issues/`, and `roadmap/` once. For a named continuation request, read only the minimal frontmatter/status/checklist rows needed to classify the current stage; do not read full bodies. If `workflow.mode: auto`, include whether the routed next stage is allowed to continue automatically or must stop at an `ask_before` / review boundary.
 3. **If it does not exist** — later tell the user to go through `bt-onboard` first
 4. **Look at the user's exact wording** — is it open-ended or already a concrete request? If concrete, match the routing table; if not, give the system introduction
 

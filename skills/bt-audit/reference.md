@@ -115,7 +115,7 @@ Check against these items one by one while scanning. Not every item must produce
 - [ ] Main-thread blocking: synchronous reading of large files, CPU-heavy work without a Web Worker
 
 ### maintainability
-- [ ] Very long functions, more than 80 lines
+- [ ] Very long functions
 - [ ] High cyclomatic complexity, above 15
 - [ ] Repeated logic blocks, same or highly similar code appearing 3 or more times
 - [ ] Mysterious constants, magic numbers without names

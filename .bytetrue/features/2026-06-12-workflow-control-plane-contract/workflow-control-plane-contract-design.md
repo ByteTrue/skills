@@ -2,8 +2,8 @@
 doc_type: feature-design
 feature: 2026-06-12-workflow-control-plane-contract
 requirement: workflow-control-plane-contract
-roadmap: null
-roadmap_item: null
+roadmap: ai-workflow-absorption
+roadmap_item: workflow-control-plane-contract
 status: done
 review_result: approved
 summary: Define ByteTrue's skills-first control plane for config, unified status vocabulary, continuation routing, brainstorm paths, behavior writeback, and auto mode.
@@ -26,14 +26,14 @@ tags: [workflow, config, status, auto, brainstorm]
 
 ### 1.1 Requirement summary
 
-This feature updates ByteTrue workflow skills and shared references so configuration is machine-readable, status words are uniform, continuation routing is reliable, open brainstorms have one path, accepted behavior changes land back in existing fact layers, and auto mode has a clear boundary.
+This feature updates ByteTrue workflow skills and shared references so configuration is machine-readable, status words are uniform, continuation routing is reliable, open brainstorms have one path, accepted behavior changes land back in existing fact layers, and auto mode is consumed by stage close-out / tracker rules rather than remaining a passive config field.
 
 ### 1.2 Explicit non-goals
 
 - Do not add `.bytetrue/specs/`.
 - Do not implement CLI, hook, daemon, runtime state, background agent, or custom dispatcher in this feature.
 - Do not physically archive or move old feature/issue/refactor directories.
-- Do not treat this repository's 300-line markdown maintenance rule as a universal ByteTrue artifact rule.
+- Do not treat this repository's maintainer-only Markdown maintenance rule as a universal ByteTrue artifact rule.
 - Do not preserve scattered config values after `.bytetrue/config.yaml` is introduced.
 - Do not let auto mode bypass `ask_before` boundaries.
 
@@ -65,7 +65,7 @@ TDD is not applicable.
 6. Standardize `.bytetrue/brainstorms/` for open large discussion records.
 7. Strengthen Behavior Delta materialization into requirement `Current Behavior` and architecture `Observable Contract` sections when stable.
 8. Keep only two workflow modes: `manual` and `auto`.
-9. Make line-limit policy configurable/project-scoped, with this repo defaulting to stricter skill/reference docs but not universal design/acceptance limits.
+9. Make volume-control policy configurable/project-scoped, with this repo defaulting to stricter skill/reference docs but not universal design/acceptance limits.
 
 ## 2. Terms and orchestration
 
@@ -74,22 +74,19 @@ TDD is not applicable.
 - **Project Config**
   - Current state: current tracker and sync values live inside `project-management.md` prose/YAML.
   - Change: add `.bytetrue/config.yaml`; reference docs explain the fields, but config owns current values.
-  - Example:
-    ```yaml
+  - Shape example, not current values:
+    ```text
     version: 1
     workflow:
-      mode: manual # manual | auto
-      ask_before: [git_commit, git_push, external_tracker_write, destructive_command, scope_change]
+      mode: manual | auto
+      ask_before: [operation_key, ...]
     tracker:
-      provider: local # local | github | gitlab
-      sync_policy: ask # ask | never | auto_preview
+      provider: local | github | gitlab
+      sync_policy: ask | never | auto_preview
     dispatch:
-      preferred: auto # auto | native_subagent | non_interactive_child | inline
-      allow_non_interactive_child: true
-      allow_background_agents: false
-    docs:
-      line_limit_scope: skill-docs-only # none | skill-docs-only | all-markdown
-      max_skill_doc_lines: 300
+      preferred: auto | native_subagent | non_interactive_child | inline
+      allow_non_interactive_child: true | false
+      allow_background_agents: true | false
     ```
   - Source location: `.bytetrue/reference/project-management.md`, `.bytetrue/reference/subagent-handoff.md`, `AGENTS.md`.
 
@@ -156,8 +153,8 @@ Flow constraints:
 
 - `.bytetrue/config.yaml`: new config values.
 - `.bytetrue/reference/config.md` and onboard copy: config field reference.
-- `.bytetrue/reference/shared-conventions.md` and onboard copy: canonical status, brainstorms path, config path, line-limit policy.
-- `AGENTS.md` / `CLAUDE.md`: clarify 300-line rule as this repo's skill/reference maintenance rule.
+- `.bytetrue/reference/shared-conventions.md` and onboard copy: canonical status, brainstorms path, config path, volume-control policy.
+- `AGENTS.md` / `CLAUDE.md`: clarify maintainer-only documentation guidance as this repo's skill/reference maintenance rule.
 - `skills/bt/SKILL.md`: status-aware continuation routing.
 - `skills/bt-feat/SKILL.md`: deterministic feature resume table.
 - `skills/bt-brainstorm/SKILL.md`: open brainstorm path.
@@ -191,7 +188,7 @@ No runtime TDD. Static verification:
 - grep confirms `bt` and `bt-feat` can route “continue feature” by artifact state.
 - grep confirms `.bytetrue/brainstorms/` is canonical open discussion path.
 - grep confirms Behavior Delta writeback mentions `Current Behavior` and `Observable Contract`.
-- grep confirms no hard-coded 300-line markdown artifact limit remains in `skills/` or `.bytetrue/reference/`; code-size heuristics such as “component over 300 lines” may remain because they are refactor signals, not document policy.
+- grep confirms no hard-coded maintainer-only documentation guidance remains in `skills/` or `.bytetrue/reference/`; code-size heuristics such as “component oversized” may remain because they are refactor signals, not document policy.
 - frontmatter and skill listing still parse.
 
 ### 3.2 Behavior Delta
@@ -222,9 +219,9 @@ No runtime TDD. Static verification:
 - **Before**: materialization can stay mostly in acceptance report.
 - **After**: stable behavior writes into requirement `Current Behavior` or architecture `Observable Contract`.
 
-- **Source**: line-limit policy and existing worklog/shared-conventions wording that hard-codes 300-line markdown artifact limits.
-- **Before**: project rules or worklog/reference text can imply ByteTrue artifacts universally need a 300-line split.
-- **After**: shipped skills and references do not hard-code a universal 300-line artifact limit; line limits belong to project config or repo-local maintainer policy.
+- **Source**: volume-control policy and existing worklog/shared-conventions wording that hard-codes maintainer-only documentation guidances.
+- **Before**: project rules or worklog/reference text can imply ByteTrue artifacts universally need a split.
+- **After**: shipped skills and references do not hard-code a universal artifact volume rule; volume controls belong to project config or repo-local maintainer policy.
 
 #### REMOVED
 

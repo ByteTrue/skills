@@ -55,7 +55,7 @@ Why keep refactor in its own directory rather than mixing into features: refacto
 | 2 design | `refactor-design.md` + `checklist.yaml` | AI drafts, user reviews as a whole |
 | 3 apply | code changes + `apply-notes.md` | AI executes, each step requires human approval |
 
-There is a checkpoint between stages: no design until scan has been selected; no code until design is approved; and inside apply, any HUMAN verification item must explicitly pass before the next step starts.
+There is a checkpoint between stages by default: no design until scan has been selected; no code until design is approved; and inside apply, any HUMAN verification item must explicitly pass before the next step starts. If `.bytetrue/config.yaml` has `workflow.mode: auto`, the workflow may continue only through AI-self-proved, already-approved steps; it still stops at scan selection, design approval, HUMAN verification, and any operation listed in current `workflow.ask_before`.
 
 ---
 
@@ -74,7 +74,7 @@ Before scanning, confirm: **which files are in scope this time**. Default behavi
 - if the user named specific files or components, scan only those
 - if the user says "this page", scan the entry component plus the directly imported internal modules, but do not chase shared dependencies
 - if the user says "this module", scan the files under that module directory, but do not cross the module boundary
-- if the scope exceeds 15 files or 3000 lines, trigger the sixth pre-check and ask the user to narrow it first
+- if the scope is too large to review confidently, trigger the sixth pre-check and ask the user to narrow it first
 
 The scope must include test files as well, because they are needed for the second pre-check on test coverage.
 
@@ -83,8 +83,8 @@ The scope must include test files as well, because they are needed for the secon
 Use the four levels of the method library as the template:
 
 - **L1 behavior-equivalent migration**: when a function is widely called but its interface or implementation has to change → Parallel Change; when a whole old block of logic should be replaced by a new implementation → Strangler Fig
-- **L2 code-level refactor**: very long functions, over 50 lines or cyclomatic complexity over 10, repeated conditional fragments, mysterious temporary variables, or deeply nested if-else
-- **L3 structural split**: frontend components over 300 lines, files carrying multiple concerns, containers mixed with presentation, same logic reimplemented in multiple components; backend controllers directly calling DB, missing service layers, or repositories being bypassed
+- **L2 code-level refactor**: very long functions, high cyclomatic complexity, repeated conditional fragments, mysterious temporary variables, or deeply nested if-else
+- **L3 structural split**: frontend components that are visibly oversized, files carrying multiple concerns, containers mixed with presentation, same logic reimplemented in multiple components; backend controllers directly calling DB, missing service layers, or repositories being bypassed
 - **L4 performance**: repeated computations that should be memoized, N+1 queries, lists without virtualization or pagination, event listeners without cleanup, or large objects held in deep reactivity
 
 Use the Matt `improve-codebase-architecture` vocabulary for architecture-improvement candidates, but only as refactor candidates, never as a pretext to enlarge the scope:
@@ -177,10 +177,10 @@ One block per step:
 
 ### Advancement rules
 
-1. **One step at a time, never batch** — follow the checklist order strictly; do not open the next step before the current one is complete
+1. **One step at a time, never batch** — follow the checklist order strictly; do not open the next step before the current one is complete. In `workflow.mode: auto`, this still means one verified step at a time, not batching.
 2. **Verify after each step**:
-   - AI self-proof: run the designated tests, typecheck, lint, or grep that old references are gone. If it passes, record it in apply-notes and continue
-   - HUMAN verification: **stop and report** "step N is complete; please visually confirm at {specific page or operation}; I will continue after your confirmation". If the user does not explicitly say "continue", do not proceed
+   - AI self-proof: run the designated tests, typecheck, lint, or grep that old references are gone. If it passes, record it in apply-notes; in auto mode, you may continue to the next AI-self-proof step unless another boundary is reached.
+   - HUMAN verification: **stop and report** "step N is complete; please visually confirm at {specific page or operation}; I will continue after your confirmation". If the user does not explicitly say "continue", do not proceed, including in auto mode.
 3. **Record drift immediately** — if execution discovers something the plan did not consider, such as a caller hidden behind a dynamic import, **stop and report it rather than freelancing**. Align with the user, record it in apply-notes, and if necessary return to stage 2 to update design
 4. **Behavior-equivalence self-check** — after each step, ask "could this step have changed externally observable behavior?" If there is any suspicion, return to that step immediately
 
@@ -237,7 +237,7 @@ refactor: {YYYY-MM-DD}-{slug}
 - **smuggling in behavior changes** — "while here I also fixed a bug" or "while here I improved the copy" — split that into an issue or feature instead
 - **merging multiple steps into one action** — a single commit doing 2-3 steps loses the ability to roll back one clean step
 - **putting preference items into the list** — naming taste, quotes, arrow function vs function — those belong in decisions
-- **starting a scan on a large module and moving straight into work** — if it is over 15 files or 3000 lines and not narrowed, the output becomes an undecidable wall of text
+- **starting a scan on a large module and moving straight into work** — if the scope is too large and not narrowed, the output becomes an undecidable wall of text
 - **skipping HUMAN verification yourself** — the AI cannot see frontend effects; typecheck is not a substitute for human eyes
 - **forcing through despite lack of coverage** — changing an untested module while claiming behavior equivalence only as a verbal promise
 

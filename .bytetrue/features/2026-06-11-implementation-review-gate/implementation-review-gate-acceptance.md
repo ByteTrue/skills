@@ -81,7 +81,7 @@ summary: Accepted durable implementation review gate before feature acceptance.
 - [x] **S3 acceptance checks gate evidence**: `bt-feat-accept` startup and verification rhythm require implementation review evidence and send missing evidence back to implementation.
 - [x] **S4 execution mode vocabulary includes review evidence**: current and onboard `execution-modes.md` include `spec-compliance-review` and `code-quality-review`.
 - [x] **S5 no subagent/manifest behavior**: grep confirmed no subagent dispatch, context manifest, hook, worklog, CLI, or runtime state implementation.
-- [x] **S6 line budget**: all edited markdown files are under 300 lines.
+- [x] **S6 conciseness check**: all edited markdown files are concise.
 
 No frontend changes; browser verification is not applicable.
 

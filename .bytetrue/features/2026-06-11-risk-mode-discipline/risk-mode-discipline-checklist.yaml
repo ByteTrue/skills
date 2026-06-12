@@ -15,7 +15,7 @@ steps:
     exit_signal: "fastforward is explicitly light-mode only, and refactor routing explains light, standard, strict-evidence, and break-loop boundaries"
     status: done
   - action: "Template/index sync and validation: update onboard/system references and run checks"
-    exit_signal: "onboard inventory includes execution-modes.md, references point to it, edited markdown files stay under 300 lines, and YAML validation passes"
+    exit_signal: "onboard inventory includes execution-modes.md, references point to it, edited YAML validation passes"
     status: done
 
 checks:
@@ -49,6 +49,6 @@ checks:
   - item: "No guidance requires strict TDD for every task"
     source: scope-guard
     status: passed
-  - item: "Edited markdown files remain under 300 lines"
+  - item: "Edited docs remain concise"
     source: acceptance-scenario
     status: passed

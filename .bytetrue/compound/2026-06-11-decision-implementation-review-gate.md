@@ -40,7 +40,7 @@ The shared contract lives in:
 
 ### Put the full review checklist directly into `bt-feat-impl` and `bt-feat-accept`
 
-Rejected. Both skill files are already close to the repository's 300-line markdown limit. A focused shared reference keeps the workflow reusable and keeps skill files readable.
+Rejected. Both skill files are already close to the maintainer-only documentation guidance. A focused shared reference keeps the workflow reusable and keeps skill files readable.
 
 ### Wait until subagent review exists
 

@@ -51,7 +51,7 @@ summary: Accepted lightweight worklog/report-feed contract.
 **Landing of key decisions**
 
 - [x] Use `.bytetrue/worklog/`, not compound.
-- [x] Use monthly files with split suffixes before line limit.
+- [x] Use monthly files with split suffixes before volume control.
 - [x] Worklog is optional closeout.
 - [x] No raw transcript.
 - [x] `pending same close-out` is allowed when the commit hash is not known yet.
@@ -79,7 +79,7 @@ summary: Accepted lightweight worklog/report-feed contract.
 - [x] **S2 worklog directory exists**: `.bytetrue/worklog/.gitkeep` exists and onboard skeleton includes worklog.
 - [x] **S3 feature closeout prompt exists**: `bt-feat-accept` offers optional worklog before scoped commit.
 - [x] **S4 issue/refactor/roadmap prompts exist**: `bt-issue-fix`, `bt-refactor`, and `bt-roadmap` include optional worklog prompts.
-- [x] **S5 line-limit guard exists**: reference requires split files before any worklog markdown exceeds 300 lines.
+- [x] **S5 volume-control guard exists**: reference requires split files before any worklog markdown is oversized.
 - [x] **S6 no transcript or automation**: grep confirms no raw transcript storage, auto session scraping, CLI, watcher, or per-developer journal behavior.
 - [x] **S7 secondary layer**: reference states worklog links formal artifacts and is not source of truth.
 

@@ -3,17 +3,17 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Start the next roadmap-backed feature from ai-workflow-absorption and design it.",
-      "expected_output": "The workflow should route through bt-feat-design, read roadmap hard constraints, create approved design artifacts, checklist, and context manifests only after review.",
+      "prompt": "Review the current ai-workflow-absorption roadmap status and decide whether any roadmap-backed feature can be started now.",
+      "expected_output": "The workflow should inspect ai-workflow-absorption items, report that no pending roadmap item is startable when all items are done or dropped, and avoid entering bt-feat-design without a pending fixture.",
       "files": [
         ".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md",
         ".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml"
       ],
       "expectations": [
-        "References roadmap contracts as hard constraints",
-        "Writes execution mode and behavior delta sections when relevant",
-        "Generates impl/check context manifests for standard approved designs",
-        "Does not skip user review before implementation"
+        "Reads roadmap items before routing",
+        "Reports that no pending item is currently startable",
+        "Does not fabricate a new roadmap-backed feature",
+        "Suggests a dedicated fixture if live feature-design eval coverage is needed"
       ]
     },
     {

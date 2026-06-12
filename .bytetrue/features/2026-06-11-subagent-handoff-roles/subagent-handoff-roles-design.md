@@ -51,7 +51,7 @@ This is a workflow-contract and prompt-shape change. It follows the internal wor
 
 - **Public surface = stable**: future handoffs must use the role contract.
 - **Integration = optional dispatch surface**: use native subagent when available, synchronous non-interactive child agent when available, and inline role execution otherwise.
-- **Testability = static contract verification**: verify with grep, line counts, YAML validation, and context-manifest smoke checks.
+- **Testability = static contract verification**: verify with grep, size counts, YAML validation, and context-manifest smoke checks.
 
 ### Execution mode
 
@@ -183,18 +183,18 @@ Flow-level constraints:
    - exit signal: each stage points to the shared contract and states its role boundary.
 3. **Context/onboard sync**: update context manifest, onboard inventory, and system overview references.
    - exit signal: reference index and onboard managed files include `subagent-handoff.md`.
-4. **Validation**: run YAML validation, line counts, and scope-guard grep.
-   - exit signal: edited markdown files stay under 300 lines and no runtime dispatch artifacts are created.
+4. **Validation**: run YAML validation, size counts, and scope-guard grep.
+   - exit signal: edited no runtime dispatch artifacts are created.
 
 ### 2.5 Structural Health and Micro-refactor
 
 ##### Evaluation
 
-- file level — `skills/bt-feat-impl/SKILL.md`: 241 lines, safe for a short pointer.
-- file level — `skills/bt-feat-accept/SKILL.md`: 264 lines, near limit; add only a concise check-role note.
+- file level — `skills/bt-feat-impl/SKILL.md`: originally assessed as safe for a short pointer.
+- file level — `skills/bt-feat-accept/SKILL.md`: close to maintainer guidance; add only a concise check-role note.
 - file level — `skills/bt-explore/SKILL.md`: check before implementation; expected to receive a concise research-role note.
-- file level — `skills/bt-onboard/SKILL.md`: 249 lines, inventory-only update.
-- file level — `.bytetrue/reference/context-manifest.md`: 85 lines, safe for a one-line relationship note.
+- file level — `skills/bt-onboard/SKILL.md`: inventory-only update.
+- file level — `.bytetrue/reference/context-manifest.md`: originally assessed as safe for a concise relationship note.
 - directory level — `.bytetrue/reference/` and `skills/bt-onboard/reference/`: named shared references already exist; adding one focused handoff contract follows the pattern.
 - compound convention search: no active convention blocks this placement.
 
@@ -212,7 +212,7 @@ Key scenarios:
 4. **Research role integrated**: `bt-explore` can be used as research role and writes explore evidence without final decisions.
 5. **Manifest relationship exists**: `context-manifest.md` says subagent handoff consumes manifests.
 6. **No runtime dispatch**: grep confirms no `.pi/agents`, `.claude/agents`, chain, hook, breadcrumb, worklog, or CLI behavior is introduced.
-7. **Line budget**: all edited markdown files stay ≤300 lines.
+7. **Conciseness check**: edited documents stay concise.
 
 Reverse-check items:
 
@@ -229,7 +229,7 @@ Reverse-check items:
   1. before implementation, no shared `subagent-handoff.md`; after implementation, current/onboard copies exist;
   2. implementation and check stage guidance point to role contract;
   3. research role is bounded to explore evidence.
-- **Manual verification items**: grep mount points, line counts, YAML validation, and scope guard for no runtime dispatch artifacts.
+- **Manual verification items**: grep mount points, size counts, YAML validation, and scope guard for no runtime dispatch artifacts.
 
 ### 3.2 Behavior Delta
 

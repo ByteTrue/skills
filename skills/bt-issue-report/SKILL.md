@@ -142,11 +142,11 @@ Reproduction frequency: {stable / probabilistic, about X% / currently cannot be 
 
 Tell the user: "The issue report is ready. Stage 2 is root-cause analysis. Trigger `bt-issue-analyze` next."
 
-Following section 3 `issue-report` in `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+Following section 3 `issue-report` in `.bytetrue/reference/shared-conventions.md`, apply `.bytetrue/config.yaml` close-out behavior: in `manual`, give the tracker prompt and stop; in `auto`, skip tracker when local/never, prepare only a preview for `auto_preview`, and continue to `bt-issue-analyze` only if no tracker/write/ambiguity boundary is reached.
 
-1. a reviewed bug issue (`status: done`) may need collaboration projection → "Do you want to sync or bind it to an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit user confirmation
+1. a reviewed bug issue (`status: done`) may need collaboration projection → "Do you want to sync or bind it to an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit user confirmation.
 
-Do not start root-cause analysis on your own. The human checkpoint between stages is a hard workflow constraint.
+Do not start root-cause analysis on your own in `manual` mode. In `auto` mode, analysis may continue only after the report is complete and the next step has no `ask_before` boundary.
 
 ---
 

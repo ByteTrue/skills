@@ -21,11 +21,11 @@ tags: [workflow, config, status, auto, brainstorm]
 
 ## 为什么需要
 
-AI workflow absorption 已经增加了 behavior delta、execution modes、implementation report、context manifest、subagent handoff、research-first 和 worklog。下一步需要控制面口径，让配置、状态、续接和行为沉淀更稳定。
+AI workflow absorption 已经增加了 behavior delta、execution modes、implementation report、context manifest、subagent handoff、research-first 和 worklog。下一步需要控制面口径，让配置、状态、续接和行为沉淀更稳定，并让 auto / auto-preview 字段被 workflow skills 实际消费。
 
 ## 边界
 
 - 不新增 `.bytetrue/specs/`。
 - 不实现 hidden runtime、hook、daemon、background agent 或 custom dispatcher。
 - 不做物理 archive 迁移。
-- 不实现完整 CLI，只定义未来 skills+CLI 能共用的配置和状态形状。
+- 不实现完整 CLI；auto mode 只作为 pure-skills 续跑语义，不新增 daemon / hook / background executor。

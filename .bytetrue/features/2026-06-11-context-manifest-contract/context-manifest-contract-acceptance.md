@@ -80,7 +80,7 @@ summary: Accepted feature-local implement/check context manifest contract.
 - [x] **S4 acceptance reads manifest**: `bt-feat-accept` reads `check-context` and blocks missing required rows.
 - [x] **S5 onboard releases reference**: `bt-onboard` inventory and system overview include `context-manifest.md`.
 - [x] **S6 no future features early**: subagent, hook, research-first, worklog, and CLI behavior remain out of scope.
-- [x] **S7 validity**: YAML validation and JSONL smoke parse passed; edited markdown files stay under 300 lines.
+- [x] **S7 validity**: YAML validation and JSONL smoke parse passed; edited markdown files stay concise.
 
 No frontend changes; browser verification is not applicable.
 

@@ -90,3 +90,12 @@ items:
     feature: 2026-06-11-onboard-template-rollout
     minimal_loop: false
     notes: Final distribution pass after semantics and infrastructure contracts stabilize.
+
+  - slug: workflow-control-plane-contract
+    description: Define ByteTrue's skills-first control plane for config, canonical statuses, continuation routing, brainstorm paths, behavior writeback, and auto-mode consumption.
+    depends_on:
+      - onboard-template-rollout
+    status: done
+    feature: 2026-06-12-workflow-control-plane-contract
+    minimal_loop: false
+    notes: PR review remediation after initial roadmap close-out; keeps config/auto behavior traceable to the AI workflow absorption PR.

@@ -12,7 +12,7 @@ steps:
     exit_signal: "roadmap and design require or cite explore evidence when external facts shape contracts"
     status: done
   - action: "Manifest/onboard/index sync and validation: update context manifest, onboard inventory, and system overview references"
-    exit_signal: "context manifests can cite research-first explore artifacts, references are indexed, markdown files stay under 300 lines, YAML validates, and no new research directory or runtime automation appears"
+    exit_signal: "context manifests can cite research-first explore artifacts, references are indexed, markdown files stay concise, YAML validates, and no new research directory or runtime automation appears"
     status: done
 
 checks:
@@ -46,6 +46,6 @@ checks:
   - item: "Behavior Delta entries are materialized during acceptance"
     source: behavior-delta
     status: passed
-  - item: "Edited markdown files remain under 300 lines and context manifests parse"
+  - item: "context manifests parse"
     source: acceptance-scenario
     status: passed

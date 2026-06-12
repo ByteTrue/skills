@@ -156,14 +156,14 @@ Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-con
 
 Tell the user: "The issue fix is complete and the workflow is closed. Report, analysis, and fix-note have all been archived."
 
-Following section 3 `issue-fix` of `.bytetrue/reference/shared-conventions.md`, ask one sentence for each close-out suggestion, and skip immediately if the user says "no need":
+Following section 3 `issue-fix` of `.bytetrue/reference/shared-conventions.md`, apply `.bytetrue/config.yaml` close-out behavior: in `manual`, ask one sentence for each suggestion below; in `auto`, continue only through deterministic non-boundary suggestions that do not match any current `workflow.ask_before` operation key and do not require user choice.
 
 1. if this exposed a reusable pitfall → "Do you want to capture it as learning? (`bt-learn`)"
 2. if this surfaced a long-term constraint, convention, or technical decision → "Do you want to archive the decision? (`bt-decide`)"
-3. if this fixed bug issue needs collaboration-state projection → "Do you want to update, bind, or request closure on the external tracker? (`bt-tracker`)" If it was never bound before, sync can still be added. Before closing an external issue, confirm again.
+3. if this fixed bug issue needs collaboration-state projection → "Do you want to update, bind, or request closure on the external tracker? (`bt-tracker`)" If it was never bound before, sync can still be added. With `auto_preview`, the preview may be prepared automatically; external writes still follow current `workflow.ask_before` and `bt-tracker` confirmation rules.
 4. if this bug exposed a project-wide hard constraint, command pitfall, or environment setup that can be explained in one or two lines and should be known at every ByteTrue startup → "Do you want to record it in attention.md? (`bt-note`)"
 5. if a concise work record would help reporting, handoff, or recovery → "Do you want to add a concise worklog/report-feed entry for this fix?" (`.bytetrue/reference/worklog-report-feed.md`)
-6. finally ask whether they want you to commit it. If they agree, execute according to the close-out commit rules
+6. finally ask whether they want you to commit it. If they agree, execute according to the close-out commit rules and current `workflow.ask_before`
 
 Recommendation: put the issue-directory files and code changes in the same commit for traceability. Handle "while here I noticed" items through a separate `bt-issue-report`, not inside this PR.
 

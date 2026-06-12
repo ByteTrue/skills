@@ -14,7 +14,7 @@ For standard feature designs, approved close-out also creates two feature-local 
 
 > For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`. In most cases the feature directory has already been created by brainstorm. If not, create it in this step.
 
-> **After reading this section, jump to "After Exit" first and read the close-out checklist before coming back to write the design** — the first close-out item is tracker sync, and you are required to ask it in one pass.
+> **After reading this section, jump to "After Exit" first and read the close-out checklist before coming back to write the design** — close-out behavior depends on `.bytetrue/config.yaml` (`workflow.mode` and `tracker.sync_policy`), and you are required to apply it in one pass.
 
 This stage has three entry points:
 
@@ -250,9 +250,9 @@ The user has passed overall review, and:
 
 Tell the user: "feature design is approved and the checklist is ready. The next stage is implementation. Trigger `bt-feat-impl`."
 
-Following section 3 `feature-design` of `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in order, and skip immediately if the user says "no need":
+Following section 3 `feature-design` of `.bytetrue/reference/shared-conventions.md`, apply close-out behavior from `.bytetrue/config.yaml`: in `manual`, ask the one-sentence tracker prompt below and stop; in `auto`, skip tracker if local/never, prepare only a preview for `auto_preview`, and continue to `bt-feat-impl` startup only when no tracker/write/review boundary is reached.
 
-1. a reviewed feature design (`status: done`, `review_result: approved`) may need collaboration-state projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" When the feature starts from roadmap, also mention that the corresponding roadmap item can be updated or bound. Do not create or update any external issue before explicit user confirmation
+1. a reviewed feature design (`status: done`, `review_result: approved`) may need collaboration-state projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" When the feature starts from roadmap, also mention that the corresponding roadmap item can be updated or bound. Do not create or update any external issue before explicit user confirmation.
 
 ---
 

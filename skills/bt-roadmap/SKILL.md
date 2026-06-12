@@ -192,7 +192,7 @@ At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept`
 
 Tell the user: "The roadmap is ready. Each sub-feature later goes through `bt-feat-design`, and the interface contracts inside the roadmap are hard-constraint input."
 
-Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, apply `.bytetrue/config.yaml` close-out behavior: in `manual`, ask the prompts below and stop; in `auto`, skip tracker when local/never, prepare only a preview for `auto_preview`, and continue to the next deterministic workflow only when no tracker/write/scope boundary is reached.
 
 1. a roadmap PRD or any syncable roadmap items touched in this change, pending, active, or done; dropped items only update already-bound external issues, may need collaboration projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit confirmation
 2. if the roadmap session should be visible in reports or handoff context → "Do you want to add a concise worklog/report-feed entry for this roadmap update?" (`.bytetrue/reference/worklog-report-feed.md`)

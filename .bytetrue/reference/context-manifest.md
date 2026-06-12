@@ -17,7 +17,7 @@ For a standard reviewed feature design:
 - `impl-context` is consumed by `bt-feat-impl`.
 - `check-context` is consumed by `bt-feat-accept` and future check roles; it should include the planned implementation report path.
 - `subagent-handoff` roles consume these files as their explicit read-set; see `.bytetrue/reference/subagent-handoff.md`.
-- Legacy feature directories without manifests remain readable; new reviewed designs should create both files.
+- Legacy feature directories without manifests remain readable only when they were created before the 2026-06-11 context-manifest contract, are fastforward features, or their approved design explicitly says manifests are not applicable; new reviewed standard designs must create both files.
 - `{slug}-implementation-report.md` is not created by design; implementation writes it as durable review-gate evidence before acceptance.
 
 ## Row Shape
@@ -67,7 +67,8 @@ Rows normally reference `.bytetrue` docs or explore/decision evidence, not raw s
 
 ## Blocking Semantics
 
-- Missing required files block the stage until fixed or explicitly downgraded by the user.
+- For new reviewed standard features, a missing `{slug}-impl-context.jsonl` or `{slug}-check-context.jsonl` is itself a startup blocker in `bt-feat-impl` / `bt-feat-accept`, unless the feature is legacy, fastforward, or explicitly exempt in the approved design.
+- Missing required files inside an existing manifest block the stage until fixed or explicitly downgraded by the user.
 - Missing optional files may be skipped, but the stage report should mention the skip when relevant.
 - Legacy feature directories that predate implementation reports may reconstruct the report once during acceptance only when no required manifest row points to the missing report.
 - Paths outside the repository are invalid unless the user explicitly approved them for that run.

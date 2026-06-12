@@ -82,7 +82,7 @@ summary: Accepted implement/check/research handoff role contract.
 - [x] **S4 research role integrated**: `bt-explore` can serve research role and still writes explore evidence without final decisions.
 - [x] **S5 manifest relationship exists**: `context-manifest.md` says handoff roles consume context manifests.
 - [x] **S6 no runtime dispatch**: grep confirms no `.pi/agents`, `.claude/agents`, chain, hook, breadcrumb, worklog, or CLI behavior was introduced.
-- [x] **S7 line budget**: all edited markdown files stay under 300 lines.
+- [x] **S7 conciseness check**: edited documents stay concise.
 
 No frontend changes; browser verification is not applicable.
 

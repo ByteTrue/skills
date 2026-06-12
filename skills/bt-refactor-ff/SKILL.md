@@ -20,7 +20,7 @@ Very light: no scan checklist, no design doc, no checklist. A one-line report af
 If any one fails, fall back to the full `bt-refactor` flow:
 
 1. **Is behavior really unchanged?** If the user's request sneaks in "also support X" or "change it to Y", that is a behavior change rather than a refactor. Ask the user to split it out into feature or issue work.
-2. **Is the scope really small?** If it touches more than 1 file, exceeds 100 lines of changes in a single file, or is expected to require more than 3 change points, fall back to the full flow.
+2. **Is the scope really small?** If it touches multiple files, involves a large diff, or is expected to require several independent change points, fall back to the full flow.
 3. **Are there tests that can prove it?** The target code must already have coverage, such as unit tests, integration tests, or a type check that can catch it. Without tests, fall back to the full flow, or write one characterization test first and return here later.
 
 The full scan phase has 7 entry checks. Here they are compressed to the 3 most critical ones. The remaining 4, such as cross-module, all-flavor, generated code, or unscannable surface, are already implicitly excluded inside "is the scope really small?"
@@ -33,7 +33,7 @@ Fastforward does not read the full method library, but it must still hold the ru
 
 Common methods, covering about 80% of fastforward cases:
 
-- **Extract Function**: a cohesive fragment longer than 5 lines that can be named → extract it into its own function
+- **Extract Function**: a cohesive fragment that can be named → extract it into its own function
 - **Extract Variable**: complex expression → name it as a variable or query
 - **Guard Clauses**: deeply nested `if` checks at the top → flatten by returning early
 - **Decompose Conditional**: complex `if` condition → name it as a boolean function

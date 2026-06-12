@@ -21,7 +21,7 @@ The concrete rules are all expressions of these three stances. Understanding the
 
 ### 1. By default, write the least code possible
 
-Write only what the current step explicitly needs. Do not casually add configuration hooks, abstraction layers, parameter switches, or defensive fallbacks "for what we may need later". Decision rule: if after writing a block you think "should I also add X?", ask whether X is something the current user can perceive. If not, do not add it. If, after the whole change, 200 lines of code could really say the same thing in 50, rewrite it. Extra code is not neutral; it becomes maintenance burden.
+Write only what the current step explicitly needs. Do not casually add configuration hooks, abstraction layers, parameter switches, or defensive fallbacks "for what we may need later". Decision rule: if after writing a block you think "should I also add X?", ask whether X is something the current user can perceive. If not, do not add it. If, after the whole change, the same behavior could be expressed much more simply, rewrite it. Extra code is not neutral; it becomes maintenance burden.
 
 ### 2. Touch only what should be touched, and do not improve neighbors casually
 
@@ -65,8 +65,8 @@ If any of the above fails, return to `bt-feat-design` to complete it. Reason: ev
 ### 3. Read the full context
 
 - the full design doc; in standard design focus especially on section 1, sections 2.1, 2.2, 2.3, 2.4, and section 3
-- `{slug}-checklist.yaml`, `{slug}-impl-context.jsonl` when present, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, `.bytetrue/reference/execution-modes.md`, `.bytetrue/reference/implementation-review.md`, and `.bytetrue/reference/context-manifest.md`
-- for new standard features with `{slug}-impl-context.jsonl`, read every required row before coding; if a required file is missing, stop and return to design or ask the user to downgrade that row
+- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, `.bytetrue/config.yaml`, `.bytetrue/reference/execution-modes.md`, `.bytetrue/reference/implementation-review.md`, and `.bytetrue/reference/context-manifest.md`
+- for a new standard feature, `{slug}-impl-context.jsonl` is mandatory. If it is missing, stop and return to `bt-feat-design`, unless this is a legacy feature created before the 2026-06-11 context-manifest contract, a fastforward feature, or the approved design explicitly explains why manifests are not applicable. When the manifest exists, read every required row before coding; if a required file is missing, stop and return to design or ask the user to downgrade that row.
 - if the parent session delegates implementation to a subagent or performs it as an inline role, use the `implement` role in `.bytetrue/reference/subagent-handoff.md`; the parent still owns scope changes and lifecycle transitions
 - the source locations of interface examples in section 2.1, or the code files named by the change points in section 1 of fastforward design; reading the relevant functions is enough
 
@@ -234,9 +234,9 @@ When the type system itself guarantees something, for example a TypeScript signa
 
 ## After Exit
 
-Tell the user: "All steps are complete, the implementation report is written, and the design doc is synchronized. The next stage is acceptance closure. Trigger `bt-feat-accept`."
+Tell the user: "All steps are complete, the implementation report is written, and the design doc is synchronized. The next stage is acceptance closure." Then apply `.bytetrue/config.yaml` close-out behavior from shared conventions: in `manual`, tell them to trigger `bt-feat-accept`; in `auto`, continue to `bt-feat-accept` startup only after the completion report review has passed and no `ask_before` or HUMAN verification boundary is pending.
 
-Do not casually start writing the acceptance report yourself. Acceptance needs its own checklist rhythm, and entering it early weakens the gate.
+Do not casually start writing the acceptance report before those gates are satisfied. Acceptance needs its own checklist rhythm, and entering it early weakens the gate.
 
 **If implementation encountered a project-wide hard constraint, command pitfall, or environment setup** — a one- or two-line fact like "ah, this project requires X before Y", something the AI for the next feature would likely hit again — then before telling the user to move to acceptance, **also mention it in one sentence**: "This run revealed {that specific thing}; should we `bt-note` it into attention.md so the next session does not step on it again?" One item only, not several. If the user says "let's handle it during acceptance", skip it; section 8 of acceptance will review candidates again.
 

@@ -185,7 +185,7 @@ This write-back is an **actual file-writing action**, and the acceptance report 
 
 ## 3. Stage close-out recommendations
 
-Any item involving `bt-tracker` must read current provider and sync values from `.bytetrue/config.yaml`: preview and ask only when `tracker.sync_policy: ask`, skip external-tracker prompts when `tracker.provider: local` or `tracker.sync_policy: never`, and never create, update, or close an external issue before explicit confirmation. `.bytetrue/reference/project-management.md` defines semantics, labels, syncable sources, and managed-block rules; it does not own current config values.
+Every stage close-out first reads `workflow.mode`, `workflow.ask_before`, `tracker.provider`, and `tracker.sync_policy` from `.bytetrue/config.yaml`: in `manual`, only prompt the next step and wait; in `auto`, continue directly into the next stage startup checks only when the next step is determined by current artifacts, stays inside confirmed scope, and does not trigger any operation key currently listed in `workflow.ask_before`. Stop and name the boundary for any configured ask-before operation, semantic approval, repair-option choice, or HUMAN verification. Skip tracker prompts when `tracker.provider: local` or `tracker.sync_policy: never`; with `sync_policy: ask`, only ask whether to enter `bt-tracker`; with `sync_policy: auto_preview`, prepare the tracker preview automatically, but whether to perform external writes is governed by current `workflow.ask_before` plus `bt-tracker` confirmation rules.
 
 **roadmap** close-out should ask in this order:
 

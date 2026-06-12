@@ -21,17 +21,13 @@ tracker:
     tracker_url: https://github.com/ByteTrue/skills/issues
   cli:
     gh:
-      installed: true
-      auth: ok
+      installed: null
+      auth: unknown
     glab:
-      installed: false
+      installed: null
       auth: unknown
 
 dispatch:
   preferred: auto # auto | native_subagent | non_interactive_child | inline
   allow_non_interactive_child: true
   allow_background_agents: false
-
-docs:
-  line_limit_scope: skill-docs-only # none | skill-docs-only | all-markdown
-  max_skill_doc_lines: 300

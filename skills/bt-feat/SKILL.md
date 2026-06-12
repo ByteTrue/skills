@@ -52,7 +52,7 @@ If you discover a bug while implementing a feature, record it as a new issue. **
 | 2 stepwise implementation | `bt-feat-impl` | code + stage report | AI executes against the plan |
 | 3 acceptance closure | `bt-feat-accept` | `acceptance.md` | AI checks layer by layer, user does final review |
 
-There is a human checkpoint between stages. If the previous stage has not received explicit user approval, do not start the next stage. This prevents the AI from running straight from requirement to code and only discovering the drift after the fact.
+There is a human checkpoint between stages by default. If `.bytetrue/config.yaml` has `workflow.mode: manual`, do not start the next stage without explicit user approval. If it has `workflow.mode: auto`, the next stage may continue after the current stage's own exit/review conditions are satisfied, but it must still stop at any `ask_before` boundary, missing artifact, ambiguity, semantic approval, or HUMAN verification gate defined in `.bytetrue/reference/shared-conventions.md`.
 
 Stage 0 is optional and is an **external entry** to the feature flow. `bt-brainstorm` serves both feature and roadmap. Case 3, the large-demand discussion path, is handed off to `bt-roadmap` and does not return to the feature flow. After roadmap later splits out sub-features, they re-enter through the `bt-feat-design` entry "starting from a roadmap item".
 
@@ -87,6 +87,10 @@ When entering this skill, `Glob .bytetrue/features/` first and inspect the exist
 | The user says "I want an X system" and it is a large demand | route to `bt-brainstorm` for triage, most likely case 3 → `bt-roadmap` |
 | A sub-feature in roadmap is ready to start | `bt-feat-design` via the "starting from a roadmap item" entry |
 | Not sure whether the design is complete | read it yourself and match it against the table above |
+
+### Auto-mode routing note
+
+When the routing table points to the next deterministic stage and config says `workflow.mode: auto`, say that the workflow may continue into that stage if the previous stage's artifact is already reviewed and no current `workflow.ask_before` operation or review/user-choice boundary is reached. Do not use auto mode to skip design review, implementation report review, acceptance final review, configured ask-before operations, or tracker confirmation rules.
 
 ### How to Decide Whether Stage 0 Is Needed
 

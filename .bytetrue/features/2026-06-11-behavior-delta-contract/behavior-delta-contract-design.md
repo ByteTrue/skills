@@ -45,7 +45,7 @@ Explicit non-goals:
 This is a workflow-contract and skill-documentation change. It follows the default documentation/workflow bundle except:
 
 - **Public surface = stable**: the changed templates shape future feature designs and acceptance reports.
-- **Testing = validation/manual**: no runtime code is added; verification relies on grep, file review, markdown line limits, and YAML validation if generated files change.
+- **Testing = validation/manual**: no runtime code is added; verification relies on grep, file review, markdown volume controls, and YAML validation if generated files change.
 
 ### Key decisions
 
@@ -143,24 +143,24 @@ Flow-level constraints:
    - exit signal: checklist source vocabulary includes behavior-delta in both copies.
 3. **Acceptance materialization**: update `bt-feat-accept/SKILL.md` section 2 template and startup/exit checks.
    - exit signal: acceptance report template contains `Behavior Delta Materialization` without changing 9 top-level sections.
-4. **Smoke validation**: grep and line-limit validation.
-   - exit signal: behavior delta terms appear only in intended files, all edited md files stay under 300 lines, and roadmap item state is active after approval.
+4. **Smoke validation**: grep and volume-control validation.
+   - exit signal: behavior delta terms appear only in intended files, all edited md files stay concise, and roadmap item state is active after approval.
 
 ### 2.5 Structural Health and Micro-refactor
 
 ##### Evaluation
 
-- file level — `skills/bt-feat-design/SKILL.md`: 261 lines; single-purpose workflow guide; small additive reminders only.
-- file level — `skills/bt-feat-design/reference.md`: 256 lines; near the 300-line project limit, so implementation must keep additions concise.
-- file level — `skills/bt-feat-accept/SKILL.md`: 255 lines; acceptance template is dense but still single-purpose.
-- file level — `.bytetrue/reference/shared-conventions.md`: 275 lines; near limit, only concise checklist vocabulary update is allowed.
-- file level — `skills/bt-onboard/reference/shared-conventions.md`: 275 lines; must mirror the concise current-project update.
+- file level — `skills/bt-feat-design/SKILL.md`:; single-purpose workflow guide; small additive reminders only.
+- file level — `skills/bt-feat-design/reference.md`: large; close to maintainer-only guidance, so implementation must keep additions concise.
+- file level — `skills/bt-feat-accept/SKILL.md`:; acceptance template is dense but still single-purpose.
+- file level — `.bytetrue/reference/shared-conventions.md`:; near limit, only concise checklist vocabulary update is allowed.
+- file level — `skills/bt-onboard/reference/shared-conventions.md`:; must mirror the concise current-project update.
 - directory level — `skills/bt-feat-design/` and `skills/bt-feat-accept/`: small directories, not flattened.
 - directory level — `.bytetrue/reference/` and `skills/bt-onboard/reference/`: reference directories contain multiple files but this feature modifies existing files only.
 
 ##### Conclusion: do not refactor
 
-No micro-refactor is needed. The touched files are already the owning artifacts for the contract. The implementation constraint is line budget: if a file would exceed 300 lines, compress wording rather than splitting in this feature. A broader reference-doc split is out of scope.
+No micro-refactor is needed. The touched files are already the owning artifacts for the contract. The implementation constraint is conciseness check: if a file would exceed the maintainer-only documentation guidance, compress wording rather than splitting in this feature. A broader reference-doc split is out of scope.
 
 ## 3. Acceptance Contract
 
@@ -171,7 +171,7 @@ Key scenarios:
 3. **Checklist extraction**: reading both shared-conventions copies → expected result: `behavior-delta` is a valid checklist source and extraction target.
 4. **Acceptance template**: reading `skills/bt-feat-accept/SKILL.md` → expected result: section 2 includes Behavior Delta Materialization with Delta/Evidence/Writeback target/Status.
 5. **No source-of-truth drift**: grep for `.bytetrue/specs` in changed guidance → expected result: no instruction creates or targets that directory.
-6. **Line budget**: `wc -l` on edited markdown files → expected result: each remains ≤300 lines.
+6. **Conciseness check**: `wc -l` on edited markdown files → expected result: each remains concise.
 
 Reverse-check items for explicit non-goals:
 
@@ -187,7 +187,7 @@ Reverse-check items for explicit non-goals:
 - **Priority red/green behaviors**:
   1. grep before implementation should show no Behavior Delta contract in feature-design/acceptance guidance; after implementation it should appear in intended files;
   2. checklist source vocabulary should gain `behavior-delta`;
-  3. edited markdown files should stay under 300 lines.
+  3. edited markdown files should stay concise.
 - **Manual verification items**: review the template wording against roadmap contract and confirm no `.bytetrue/specs` source-of-truth is introduced.
 
 ## 4. Relationship with Project-Level Architecture Docs

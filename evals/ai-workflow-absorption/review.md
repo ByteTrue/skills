@@ -2,7 +2,7 @@
 
 ## Method
 
-A lightweight static benchmark compared `origin/main` against PR branch `feat/onboard-template-rollout` using five realistic ByteTrue workflow prompts.
+A lightweight static benchmark compared `origin/main` against PR branch `feat/onboard-template-rollout` using five realistic ByteTrue workflow prompt categories. The first live prompt now checks the completed-roadmap state instead of asking for a non-existent next pending item.
 
 For each prompt, expectations were graded against the available workflow artifacts, skill instructions, references, roadmap state, and onboard templates. The benchmark is intentionally scoped to workflow-contract behavior rather than model prose quality.
 
@@ -15,7 +15,7 @@ Live agent transcript benchmarking would be useful as a future stronger signal, 
 ## Findings
 
 - Baseline lacks most of the new cross-stage contracts, so it passes only existing human-review and roadmap basics.
-- PR branch satisfies all benchmark expectations in the five prompt categories.
+- PR branch satisfies the historical static benchmark expectations in the five prompt categories; this is artifact-review evidence, not a claim that a completed roadmap still has a startable pending feature.
 - No expectation relies on `.bytetrue/specs/`, automatic subagent dispatch, runtime hooks, or worklog-as-source-of-truth behavior.
 
 ## Artifacts

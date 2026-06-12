@@ -1,6 +1,6 @@
 # AI Workflow Absorption Contracts
 
-This companion document is part of `ai-workflow-absorption-roadmap.md`. It is split out only to keep each markdown file under the repository 300-line limit.
+This companion document is part of `ai-workflow-absorption-roadmap.md`. It is split out only to keep each markdown file under the repository 300-volume control.
 
 Feature-design must treat these contracts as hard constraints. If a contract needs to change, update the roadmap first.
 
@@ -253,3 +253,14 @@ Constraints:
 - Completed feature/issue/refactor closeout should offer a worklog entry.
 - Partial sessions may record a worklog entry when useful for continuation.
 - Raw chat transcripts are not stored by default.
+
+## 8. Workflow Control Plane
+
+**Direction**: Project Config → Workflow Routing / Stage Close-out / Tracker Bridge
+**Form**: `.bytetrue/config.yaml` plus shared close-out rules
+
+Rules:
+- `workflow.mode: manual` waits at stage boundaries; `auto` may continue only deterministic, low-risk next steps after current-stage exit conditions pass.
+- `workflow.ask_before` is read from `.bytetrue/config.yaml`; any operation key listed there blocks automatic continuation. This contract may seed conventional examples, but it does not own the current list.
+- `tracker.sync_policy: auto_preview` prepares tracker previews automatically but never performs external writes unless allowed by current `workflow.ask_before` and explicit tracker confirmation rules.
+- CLI/auth values in config are advisory cache; `bt-tracker` revalidates runtime state every startup.

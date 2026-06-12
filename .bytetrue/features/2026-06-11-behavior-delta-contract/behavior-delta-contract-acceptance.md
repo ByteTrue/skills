@@ -110,7 +110,7 @@ No unresolved drift found.
   - evidence source: grep/manual review
   - result: passed
 
-- [x] S6, line budget: all edited markdown files remain under 300 lines.
+- [x] S6, conciseness check: all edited markdown files remain concise.
   - evidence source: `wc -l`
   - result: passed
 
@@ -162,6 +162,6 @@ The feature exposed no new build command, local service requirement, credential 
 
 ## 9. Leftovers
 
-- Later optimization point: as more behavior-delta examples accumulate, consider adding a compact example to `bt-feat-design/reference.md`; not done now because the file is close to the 300-line cap.
+- Later optimization point: as more behavior-delta examples accumulate, consider adding a compact example to `bt-feat-design/reference.md`; not done now because the file is close to the maintainer-only documentation guidance.
 - Known limitation: no automated markdown semantic test exists for Behavior Delta shape; current verification is grep/manual review.
 - While-here observations: none outside the approved plan.

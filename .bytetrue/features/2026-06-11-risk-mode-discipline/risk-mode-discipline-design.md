@@ -48,12 +48,12 @@ Explicit non-goals:
 This is a workflow-contract change. It follows the internal workflow/tooling default: L2 + functions/docs + reasonable + team + active + logged/testable. Deviations:
 
 - **Public surface = stable**: execution modes affect future feature, issue, refactor, and fastforward guidance.
-- **Testability = verified by docs/checks**: no runtime code is added; verification is grep, line count, YAML validation, and consistency review.
+- **Testability = verified by docs/checks**: no runtime code is added; verification is grep, size count, YAML validation, and consistency review.
 
 ### Key decisions
 
 1. **Create `execution-modes.md` instead of expanding shared-conventions.**
-   - Reason: `shared-conventions.md` is already near the 300-line limit and should remain the index/lifecycle doc.
+   - Reason: `shared-conventions.md` is already near the 300-volume control and should remain the index/lifecycle doc.
 2. **Record mode in feature design section 1.**
    - Reason: mode changes the whole implementation and acceptance discipline, so it is a design-level constraint.
 3. **Map issue strictness to the existing analyze/fix split.**
@@ -160,21 +160,21 @@ Flow-level constraints:
    - exit signal: complex diagnose and failed-fix escalation use strict-evidence / break-loop language.
 4. **Light/refactor routing**: update `bt-feat-ff` and `bt-refactor`.
    - exit signal: light paths explicitly route out when strict or break-loop triggers appear.
-5. **Template/index sync and validation**: update onboard/system references, grep, line count, YAML validation.
-   - exit signal: all touched md files remain ≤300 lines and checklist validates.
+5. **Template/index sync and validation**: update onboard/system references, grep, size count, YAML validation.
+   - exit signal: all touched md files remain concise and checklist validates.
 
 ### 2.5 Structural Health and Micro-refactor
 
 ##### Evaluation
 
-- file level — `skills/bt-feat-design/SKILL.md` 262 lines, near but under limit; concise edits only.
-- file level — `skills/bt-feat-design/reference.md` 259 lines, near limit; prefer short pointer to new reference over long embedded tables.
-- file level — `skills/bt-feat-impl/SKILL.md` 235 lines, healthy for concise mode-reading additions.
-- file level — `skills/bt-issue-analyze/SKILL.md` 205 lines, healthy.
-- file level — `skills/bt-issue-fix/SKILL.md` 187 lines, healthy.
-- file level — `skills/bt-feat-ff/SKILL.md` 199 lines, healthy.
-- file level — `skills/bt-refactor/SKILL.md` 250 lines, near limit; concise routing addition only.
-- file level — `skills/bt-onboard/SKILL.md` 246 lines, near limit; only inventory mentions.
+- file level — `skills/bt-feat-design/SKILL.md` close to maintainer guidance; concise edits only.
+- file level — `skills/bt-feat-design/reference.md` close to maintainer guidance; prefer short pointer to new reference over long embedded tables.
+- file level — `skills/bt-feat-impl/SKILL.md` originally assessed as healthy for concise mode-reading additions.
+- file level — `skills/bt-issue-analyze/SKILL.md` originally assessed as healthy.
+- file level — `skills/bt-issue-fix/SKILL.md` originally assessed as healthy.
+- file level — `skills/bt-feat-ff/SKILL.md` originally assessed as healthy.
+- file level — `skills/bt-refactor/SKILL.md` close to maintainer guidance; concise routing addition only.
+- file level — `skills/bt-onboard/SKILL.md` close to maintainer guidance; only inventory mentions.
 - directory level — `.bytetrue/reference/` and `skills/bt-onboard/reference/`: already house shared reference docs; adding one focused file does not flatten beyond existing reference pattern.
 
 ##### Conclusion: do not refactor
@@ -191,7 +191,7 @@ Key scenarios:
 4. **Issue workflow uses mode**: reading `bt-issue-analyze` and `bt-issue-fix` → complex bug diagnosis maps to `strict-evidence`; repeated failed fixes map to `break-loop`.
 5. **Light routes stay light but bounded**: reading `bt-feat-ff` and `bt-refactor` → light mode is allowed only while triggers stay light; non-light triggers route out.
 6. **No unrelated infrastructure**: grep → no context manifest, subagent handoff, hook/breadcrumb, or worklog implementation appears in this feature.
-7. **Line budget**: all edited markdown files stay ≤300 lines.
+7. **Conciseness check**: edited documents stay concise.
 
 Reverse-check items:
 

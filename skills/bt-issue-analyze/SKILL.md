@@ -164,11 +164,12 @@ tags: []
 
 ## Checkpoint, Align with the User
 
-After writing, **do not start fixing immediately**:
+After writing, **apply the close-out mode from `.bytetrue/config.yaml`**:
 
 1. summarize the "root cause" and the "recommended option" orally to the user, without making them read the whole file, because what they are waiting for is the conclusion
-2. ask: "Is the root-cause judgment accurate? Do you agree with the recommended option, or do you want a different one?"
-3. only after the user explicitly confirms the option may stage 3 be triggered
+2. in `manual`, ask: "Is the root-cause judgment accurate? Do you agree with the recommended option, or do you want a different one?"
+3. in `auto`, continue to `bt-issue-fix` only if the user has already authorized the recommended fix path for this issue and the recommended option is a pinpoint change inside the reported scope; otherwise stop at the repair-option choice boundary
+4. only after the option is explicitly confirmed or pre-authorized may stage 3 be triggered
 
 ---
 
@@ -188,9 +189,9 @@ After writing, **do not start fixing immediately**:
 
 ## After Exit
 
-Tell the user: "The root-cause analysis is ready, and the option is confirmed. Stage 3 is fix verification. Trigger `bt-issue-fix` next."
+Tell the user: "The root-cause analysis is ready, and the option is confirmed. Stage 3 is fix verification." In `manual`, tell them to trigger `bt-issue-fix` next. In `auto`, continue to `bt-issue-fix` only when the repair option is confirmed/pre-authorized and no `ask_before` boundary is pending.
 
-Do not casually start changing code yourself. If there is no pause between stages, the user loses the chance to review.
+Do not casually start changing code after analysis when the repair option has tradeoffs or still needs user choice. If there is no pause at that boundary, the user loses the chance to review.
 
 ---
 

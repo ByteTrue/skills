@@ -42,7 +42,7 @@ The user marks each item by adding `✓` or `✗` at the end of the item title l
 
 - **Location**: `src/xxx.vue:120-180`, clickable
 - **Category**: structure / performance / readability, exactly one, not multiple
-- **Current state**: one-sentence plain description of how it is written now; if needed, include at most 5 lines of original code
+- **Current state**: one-sentence plain description of how it is written now; if needed, include only a small excerpt of original code
 - **Problem**: why it is worth changing — this must be measurable, cyclomatic complexity, repetition count, render count, line count, dependency direction
 - **Suggestion**: starts with a verb, and says clearly what shape it should be changed into
 - **Suggested mapped method**: M-Ln-NN, citing the method ID from methods.md
@@ -122,7 +122,7 @@ This section exists so the AI can compare itself against obvious failures.
 - Suggested mapped method: none
 - Risk: low
 - Verification: AI self-proof
-- Scope: about 50 lines
+- Scope: small local block
 ```
 
 What is wrong: the title never says what changes; the problem field is only adjectives; the suggestion field is open-ended; and there is no method ID.
@@ -139,7 +139,7 @@ What is wrong: the title never says what changes; the problem field is only adje
 - Suggested mapped method: M-L2-03, extract / merge traversal
 - Risk: low, pure local change, covered by 5 unit tests for input and output
 - Verification: AI self-proof, run data.test.ts and benchmark before and after
-- Scope: about 35 lines / 1 file
+- Scope: small local block / 1 file
 ```
 
 ### ❌ Anti-pattern 2: stuffing multiple actions into one item

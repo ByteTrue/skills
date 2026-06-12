@@ -41,7 +41,7 @@ It does not replace the archival skills. It fills a missing entry point.
 - how to use a certain library → `bt-trick library`
 - an architecture explanation → `.bytetrue/architecture/`
 - short-term state like "this week we are working on X" → do not record it; it will expire
-- anything requiring more than 3 lines to explain clearly → `bt-learn knowledge`
+- anything too large to explain clearly → `bt-learn knowledge`
 
 If unsure, ask the user: "Will the AI need to know this in almost every future session?" If the answer is "not necessarily", then it is not for `bt-note`.
 
@@ -88,7 +88,7 @@ To keep the file from growing into another bloated document, the set of sections
 - if no suitable section exists, put it under `Other`. If `Other` exceeds 5 items, stop and discuss with the user whether a new fixed section should be added; do not silently add one
 - keep the section blocks even when empty; do not delete them, because their presence is meaningful for the AI
 - the comment line `<!-- bt-note managed -->` is the anchor this skill uses to recognize the block. If it is missing, insert the whole structure at the end of the file
-- **soft limit of about 150 lines for the whole block**. When it goes over, tell the user: "There is too much fragment knowledge here. Which items should be moved into `bt-learn` or `bt-decide`?"
+- **soft size limit for the whole block**. When it goes over, tell the user: "There is too much fragment knowledge here. Which items should be moved into `bt-learn` or `bt-decide`?"
 
 ---
 
@@ -131,7 +131,7 @@ After writing, do one sentence of user review confirmation and exit. **Do not pr
 
 After writing, glance at the total line count of the "Project Fragment Knowledge" block:
 
-- if it is 150 lines or more, tell the user to move some items into `bt-learn` or `bt-decide`
+- if it becomes too large, tell the user to move some items into `bt-learn` or `bt-decide`
 - if `Other` has 5 items or more, tell the user to discuss whether a new fixed section should be added
 
 These are only **prompts**. Do not decide for the user.

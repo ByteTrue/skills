@@ -4,13 +4,13 @@
 
 This is a lightweight skill-creator-style benchmark for PR #2. It evaluates whether the ByteTrue workflow skills and onboard templates now support the intended `ai-workflow-absorption` behavior compared with the old `origin/main` baseline.
 
-This is a static artifact review benchmark, not a live multi-agent transcript benchmark. It is appropriate here because the PR mainly changes workflow contracts, skill instructions, shared references, and templates rather than deterministic runtime code. The benchmark evidence cites the changed artifacts and expected routing / closeout behavior.
+This is a static artifact review benchmark, not a live multi-agent transcript benchmark. It is appropriate here because the PR mainly changes workflow contracts, skill instructions, shared references, and templates rather than deterministic runtime code. The benchmark evidence cites the changed artifacts and expected routing / closeout behavior; it should not be read as claiming that every prompt remains directly executable against the current project state after the roadmap has been completed.
 
 ## Evaluated prompts
 
 See `../evals.json` for the five realistic prompts:
 
-1. roadmap-backed feature design
+1. current roadmap status review / no pending item guard
 2. feature implementation readiness
 3. feature acceptance writeback
 4. issue strict-evidence routing
@@ -22,6 +22,8 @@ See `../evals.json` for the five realistic prompts:
 |---|---:|---:|---:|---:|
 | old_skill_baseline (`origin/main`) | 7 | 16 | 23 | 30% |
 | pr_branch (`feat/onboard-template-rollout`) | 23 | 0 | 23 | 100% |
+
+Note: the table is historical static-review evidence for the PR branch. The live prompt in `evals/evals.json` now guards the completed-roadmap state instead of trying to start a non-existent pending item; future live feature-design evals should use an isolated fixture with a pending roadmap item.
 
 ## Key improvements observed
 

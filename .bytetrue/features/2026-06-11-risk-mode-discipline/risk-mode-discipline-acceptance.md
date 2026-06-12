@@ -120,7 +120,7 @@ No unresolved drift found.
   - evidence source: grep/manual review
   - result: passed
 
-- [x] S7 Line budget: all edited markdown files remain under 300 lines.
+- [x] S7 Conciseness check: all edited markdown files remain concise.
   - evidence source: `wc -l`
   - result: passed
 
@@ -175,10 +175,10 @@ Write-back actions:
 
 No attention.md candidate from this implementation.
 
-This feature adds workflow concepts that belong in `execution-modes.md`, architecture, and requirements, but it does not expose a one-line startup pitfall or local environment constraint that every future session must read in `attention.md`.
+This feature adds workflow concepts that belong in `execution-modes.md`, architecture, and requirements, but it does not expose a concise startup pitfall or local environment constraint that every future session must read in `attention.md`.
 
 ## 9. Leftovers
 
-- Later optimization point: if future features make `bt-feat-design/SKILL.md` or `bt-feat-design/reference.md` approach 300 lines, split detailed examples into a separate reference file rather than continuing to append.
+- Later optimization point: if future features make `bt-feat-design/SKILL.md` or `bt-feat-design/reference.md` approach the maintainer-only documentation guidance, split detailed examples into a separate reference file rather than continuing to append.
 - Known limitation: execution mode is currently documented/enforced by skill text, not by hook/breadcrumb runtime enforcement; that is intentionally deferred to later roadmap items.
 - While-here observations: none outside the approved plan.

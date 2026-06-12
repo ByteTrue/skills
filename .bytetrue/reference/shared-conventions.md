@@ -185,7 +185,7 @@ pending → dropped  （bt-roadmap update 模式，用户决定不做时改）
 
 ## 3. 阶段收尾推荐
 
-带 `bt-tracker` 的条目必须从 `.bytetrue/config.yaml` 读取当前 provider 和 sync 值：`tracker.sync_policy: ask` 时只预览并询问；`tracker.provider: local` 或 `tracker.sync_policy: never` 时跳过外部 tracker 提示；用户确认前不创建 / 更新 / 关闭外部 issue。`.bytetrue/reference/project-management.md` 只定义语义、labels、syncable sources 和 managed-block 规则，不拥有当前配置值。
+所有阶段收尾先读 `.bytetrue/config.yaml` 的 `workflow.mode`、`workflow.ask_before`、`tracker.provider`、`tracker.sync_policy`：`manual` 时只给下一步提示并等待用户；`auto` 时，只要下一步已由当前产物确定、仍在已确认范围内、且不会触发当前 `workflow.ask_before` 列出的 operation key，可直接继续到下一阶段 startup checks；遇到配置列出的 ask-before operation、语义审批、repair option 选择或 HUMAN 验证时必须停下并说明边界。`tracker.provider: local` 或 `tracker.sync_policy: never` 时跳过 tracker 提示；`sync_policy: ask` 时只提示是否进入 `bt-tracker`；`sync_policy: auto_preview` 时可自动准备 tracker preview，但是否执行外部写入按当前 `workflow.ask_before` 和 `bt-tracker` 的确认规则处理。
 
 **roadmap** 收尾按顺序判断：
 

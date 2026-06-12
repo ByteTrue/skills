@@ -28,7 +28,7 @@ The current project and new onboarded projects use:
 
 - `.bytetrue/worklog/`
 - `.bytetrue/worklog/YYYY-MM.md`
-- split files such as `.bytetrue/worklog/YYYY-MM-02.md` before any markdown file exceeds the repository line limit
+- split files such as `.bytetrue/worklog/YYYY-MM-02.md` before any markdown file exceeds the repository volume control
 
 A worklog entry records concise work context:
 
@@ -70,7 +70,7 @@ Rejected. Mandatory worklog would add process tax and duplicate formal artifacts
 - Worklog can support weekly reports, handoff, recovery background, and AI work audit.
 - Formal artifacts remain the source of truth.
 - Closeout flows can offer optional worklog entries before scoped commits.
-- Monthly files must split before hitting the repository 300-line markdown limit.
+- Monthly files must split before hitting the repository maintainer-only documentation guidance.
 - No raw transcript storage, per-developer workspace clone, session scraper, watcher, or CLI is introduced.
 
 ## Related Documents

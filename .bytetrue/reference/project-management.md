@@ -31,7 +31,7 @@ sync_policy: ask | never | auto_preview
 
 ## Current Project Configuration
 
-Current provider, sync policy, repository, and CLI detection values live in `.bytetrue/config.yaml`. This document defines provider semantics, syncable sources, labels, and writeback rules.
+Current provider, sync policy, repository, and advisory CLI detection cache live in `.bytetrue/config.yaml`. This document defines provider semantics, syncable sources, labels, and writeback rules; `bt-tracker` still revalidates CLI/auth/remote state at runtime.
 
 ---
 
@@ -113,14 +113,12 @@ actions:
 
 ## Sync Policy
 
-默认策略：只同步 `syncable_sources` 中且符合可同步状态映射的 ByteTrue 产物，并在外部副作用前询问用户。
+当前 sync 值只从 `.bytetrue/config.yaml` 读取；本节不设置当前值。`bt-tracker` 只处理符合 `syncable_sources` 和可同步状态映射的 ByteTrue 产物：
 
-```yaml
-sync_policy: ask
-sync_direction: outbound_only
-external_import: manual_only
-update_policy: update_managed_block
-```
+- `sync_policy: ask`：进入 tracker / preview 前询问。
+- `sync_policy: never`：跳过 tracker preview 和外部同步建议。
+- `sync_policy: auto_preview`：可自动准备 preview；外部 issue 创建 / 更新 / 绑定 / 关闭或 external metadata 写回仍按当前 `workflow.ask_before` 和 `bt-tracker` 确认规则处理。
+- `sync_direction` 第一版支持 `outbound_only`；`external_import` 第一版支持 `manual_only`；`update_policy` 第一版支持 `update_managed_block`。如果 config 出现未支持值，`bt-tracker` 应停下说明并要求用户确认配置。
 
 外部 issue body 推荐使用 ByteTrue managed block：
 

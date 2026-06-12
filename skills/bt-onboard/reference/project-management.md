@@ -31,7 +31,7 @@ This layer does not design any API, token, or SDK adapter.
 
 ## Current Project Configuration
 
-Current provider, sync policy, repository, and CLI detection values live in `.bytetrue/config.yaml`. This document defines provider semantics, syncable sources, labels, and writeback rules.
+Current provider, sync policy, repository, and advisory CLI detection cache live in `.bytetrue/config.yaml`. This document defines provider semantics, syncable sources, labels, and writeback rules; `bt-tracker` still revalidates CLI/auth/remote state at runtime.
 
 ---
 
@@ -113,14 +113,12 @@ actions:
 
 ## Sync Policy
 
-Default policy: only sync ByteTrue artifacts listed in `syncable_sources` and satisfying the syncable-status mapping, and always ask before performing any external side effect.
+Current sync values are read only from `.bytetrue/config.yaml`; this section does not set current values. `bt-tracker` handles only ByteTrue artifacts that satisfy `syncable_sources` and the syncable-status mapping:
 
-```yaml
-sync_policy: ask
-sync_direction: outbound_only
-external_import: manual_only
-update_policy: update_managed_block
-```
+- `sync_policy: ask`: ask before entering tracker / preview.
+- `sync_policy: never`: skip tracker preview and external sync suggestions.
+- `sync_policy: auto_preview`: prepare the preview automatically; external issue create/update/link/close actions or external metadata writeback still follow current `workflow.ask_before` and `bt-tracker` confirmation rules.
+- First version supported values are `sync_direction: outbound_only`, `external_import: manual_only`, and `update_policy: update_managed_block`. If config contains an unsupported value, `bt-tracker` should stop, explain it, and ask the user to confirm configuration.
 
 Recommended external issue bodies use a ByteTrue managed block:
 

@@ -3,7 +3,7 @@ doc_type: roadmap
 slug: ai-workflow-absorption
 status: done
 created: 2026-06-11
-last_reviewed: 2026-06-11
+last_reviewed: 2026-06-12
 tags: [bytetrue, openspec, superpowers, trellis, workflow-integration, execution-infrastructure]
 related_requirements: []
 related_architecture: [ARCHITECTURE]
@@ -11,7 +11,7 @@ related_architecture: [ARCHITECTURE]
 
 # AI Workflow Absorption Roadmap
 
-> Detailed executable interface contracts are split into `ai-workflow-absorption-contracts.md` to keep each markdown file under the repository 300-line limit. Feature-design must treat that companion file as part of this roadmap's hard constraints.
+> Detailed executable interface contracts are split into `ai-workflow-absorption-contracts.md` to keep each markdown file under the repository 300-volume control. Feature-design must treat that companion file as part of this roadmap's hard constraints.
 
 ## 1. Background
 
@@ -39,6 +39,7 @@ ByteTrue 的硬约束保持不变：`.bytetrue/` 是 canonical source of truth�
 - 将 hook / workflow-state breadcrumb 从 core scope 中移出；runtime adapter 只作为未来可选方向，不进入本次 pure-skills core。
 - 设计轻量 worklog / report-feed，用于周报、handoff、跨 session 恢复和 AI 工作审计。
 - 更新 `bt-onboard` 共享模板，让新项目获得新的 shared conventions / reference / optional infrastructure 入口。
+- 补入 workflow control-plane remediation：让 `.bytetrue/config.yaml` 的 auto / tracker preview 语义被 workflow skills 明确消费，而不是只存在于配置说明里。
 
 ### Explicitly not covered
 
@@ -64,7 +65,7 @@ AI Workflow Absorption
 ### Workflow Semantics Module
 
 - **Responsibility**: 定义 ByteTrue 在“想法 → design → implement → acceptance”中的新语义规则：behavior delta 怎么写、风险等级怎么判、什么时候启用严格 TDD/debug、review gate 如何判断完成。它只定义流程和文档契约，不负责具体平台 hook 或 subagent 运行。
-- **Sub-features carried**: `behavior-delta-contract`, `risk-mode-discipline`, `implementation-review-gate`
+- **Sub-features carried**: `behavior-delta-contract`, `risk-mode-discipline`, `implementation-review-gate`, `workflow-control-plane-contract`
 - **Existing code or modules touched**: `skills/bt-feat-design/`, `skills/bt-feat-impl/`, `skills/bt-feat-accept/`, `skills/bt-issue-analyze/`, `skills/bt-issue-fix/`, `skills/bt-refactor*`, `skills/bt-audit/`, `skills/bt-grill/`, `.bytetrue/reference/shared-conventions.md`, `bt-onboard/reference/shared-conventions.md`
 
 ### Execution Context Module
@@ -104,6 +105,7 @@ The executable contracts are defined in `ai-workflow-absorption-contracts.md`. T
 | Subagent Handoff Protocol | Execution Context | Pi/Claude/other subagent-capable tools | Provide active work, role, design/checklist, and manifest context to child agents. |
 | Research-first Integration | Execution Context | `bt-brainstorm`, `bt-grill`, `bt-roadmap`, `bt-feat-design`, `bt-explore` | Route technical choices through evidence-backed explore artifacts. |
 | Worklog / Report-feed Record | Work Record | closeout workflows and humans | Record concise cross-session work summaries for reports, handoff, and recovery. |
+| Workflow Control Plane | Workflow Semantics | `bt`, feature / issue / refactor close-out, `bt-tracker` | Consume `.bytetrue/config.yaml` for manual/auto continuation, ask-before boundaries, and auto-preview tracker behavior. |
 
 Hard rule: if a future feature-design needs one of these contracts, it must read `ai-workflow-absorption-contracts.md` together with this roadmap. If the contract proves wrong, update this roadmap first rather than routing around it inside one feature.
 
@@ -172,11 +174,18 @@ Hard rule: if a future feature-design needs one of these contracts, it must read
    - corresponding feature: 2026-06-11-onboard-template-rollout
    - notes: final integration and distribution pass
 
+10. **workflow-control-plane-contract** — Add the skills-first control plane for project config, canonical statuses, continuation routing, brainstorm paths, behavior writeback, and auto-mode consumption.
+   - module: Workflow Semantics Module
+   - dependencies: onboard-template-rollout
+   - status: done
+   - corresponding feature: 2026-06-12-workflow-control-plane-contract
+   - notes: PR review remediation after the initial roadmap close-out; included here so config/auto behavior is traceable to the AI workflow absorption PR rather than appearing as an orphan feature.
+
 **Minimal loop**: after item 1 `behavior-delta-contract` is done, a ByteTrue feature design can declare explicit behavior deltas and acceptance can materialize them back into existing ByteTrue layers, demonstrating the core OpenSpec absorption without introducing a new facts directory.
 
 ## 6. Scheduling Rationale
 
-The first item is `behavior-delta-contract` because it delivers the smallest externally visible improvement: OpenSpec's most valuable mechanism becomes usable in the existing feature lifecycle without waiting for subagents or hooks. `risk-mode-discipline` and `implementation-review-gate` then define when Superpowers-style heaviness applies and how completion is checked. Only after those semantics are clear should `context-manifest-contract` and `subagent-handoff-roles` formalize execution infrastructure; otherwise manifests and subagents would optimize an unstable workflow. `optional-runtime-breadcrumb` was dropped before merge because hooks/runtime adapters should not enter the pure-skills core. `worklog-report-feed` comes late because it records workflow outcomes; its shape should reflect the preceding execution model. `onboard-template-rollout` is last so templates distribute the final integrated model, not intermediate drafts.
+The first item is `behavior-delta-contract` because it delivers the smallest externally visible improvement: OpenSpec's most valuable mechanism becomes usable in the existing feature lifecycle without waiting for subagents or hooks. `risk-mode-discipline` and `implementation-review-gate` then define when Superpowers-style heaviness applies and how completion is checked. Only after those semantics are clear should `context-manifest-contract` and `subagent-handoff-roles` formalize execution infrastructure; otherwise manifests and subagents would optimize an unstable workflow. `optional-runtime-breadcrumb` was dropped before merge because hooks/runtime adapters should not enter the pure-skills core. `worklog-report-feed` comes late because it records workflow outcomes; its shape should reflect the preceding execution model. `onboard-template-rollout` distributes the integrated model, and `workflow-control-plane-contract` was added as PR review remediation to make config/auto/continuation semantics actually consumable before merge.
 
 ## 7. Observations
 

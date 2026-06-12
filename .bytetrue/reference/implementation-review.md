@@ -31,7 +31,7 @@ Required frontmatter:
 doc_type: feature-implementation-report
 feature: YYYY-MM-DD-{slug}
 status: done
-summary: {one-line implementation summary}
+summary: {concise implementation summary}
 ```
 
 This file stores the approved implementation completion report, including the Implementation Review Gate and TDD/red-green evidence. `bt-feat-accept` reads it as startup evidence; chat-only reports are not sufficient.

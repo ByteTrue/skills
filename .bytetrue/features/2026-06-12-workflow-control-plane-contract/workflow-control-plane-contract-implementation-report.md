@@ -2,7 +2,7 @@
 doc_type: feature-implementation-report
 feature: 2026-06-12-workflow-control-plane-contract
 status: done
-summary: Implemented ByteTrue control-plane contract for config, canonical status, continuation routing, brainstorm paths, behavior writeback, and line-limit policy.
+summary: Implemented ByteTrue control-plane contract for config, canonical status, continuation routing, brainstorm paths, behavior writeback, and volume-control policy.
 ---
 
 # workflow-control-plane-contract implementation report
@@ -63,8 +63,8 @@ This feature is a workflow-contract / documentation implementation; no runtime f
 **Step 3: Behavior writeback and project line-policy**
 
 - Updated `bt-feat-accept` to name `Current Behavior` and `Observable Contract` as stable Behavior Delta writeback targets.
-- Clarified `AGENTS.md` and `CLAUDE.md`: the 300-line rule is a repository skill/reference maintenance heuristic, not a universal ByteTrue artifact rule.
-- Removed the hard-coded worklog 300-line artifact rule from current/onboard worklog references.
+- Clarified `AGENTS.md` and `CLAUDE.md`: the maintainer-only documentation guidance is a repository skill/reference maintenance heuristic, not a universal ByteTrue artifact rule.
+- Removed the hard-coded worklog maintainer-only artifact guidance from current/onboard worklog references.
 
 **Step 4: Onboard/index sync and validation**
 
@@ -97,18 +97,18 @@ No. All introduced concepts were in the approved design:
 - `ADDED`: `bt` / `bt-feat` can route continuation requests by artifact state.
 - `ADDED`: `.bytetrue/brainstorms/` is now the canonical open discussion path.
 - `MODIFIED`: Behavior Delta writeback now names `Current Behavior` and `Observable Contract`.
-- `MODIFIED`: line-limit policy is project-scoped, not a ByteTrue universal artifact rule.
+- `MODIFIED`: volume-control policy is project-scoped, not a ByteTrue universal artifact rule.
 
 **Code quality**: passed
 
 - No runtime code or hidden state was added.
-- Validation passed: YAML, JSON, JSONL, Ruby frontmatter parse, skill listing, managed reference parity, skill/reference line counts, and `git diff --check`.
+- Validation passed: YAML, JSON, JSONL, Ruby frontmatter parse, skill listing, managed reference parity, skill/reference size counts, and `git diff --check`.
 - No background process, hook, daemon, runtime adapter, or custom dispatcher was introduced.
 
 ### Reflection-check self-audit
 
 - **Scope-growth signal**: status canonicalization touched many skill/reference files. Handled by limiting changes to status field examples and routing rules, without adding runtime behavior.
-- **Line-limit signal**: `bt-tracker/SKILL.md` remains close to this repo's skill-doc maintenance threshold. Future tracker changes should move details into a reference file rather than expanding the skill.
+- **Volume-control signal**: `bt-tracker/SKILL.md` remains close to this repo's skill-doc maintenance threshold. Future tracker changes should move details into a reference file rather than expanding the skill.
 - **Artifact vs product signal**: `.bytetrue` historical artifacts are development records, not the product itself. Historical feature artifacts were not broadly rewritten; current implementation updated only current feature artifacts and shared/runtime-facing templates.
 
 ### Exit-signal verification for rollout order
@@ -134,7 +134,7 @@ Ruby frontmatter parse: 28 skills passed
 npx skills add . --list: found 28 skills
 reference parity: ok, 15 files
 JSONL smoke parse: ok
-skill/reference docs over 300: none
+skill/reference docs volume check: not applicable to ByteTrue workflow config
 git diff --check: passed
 ```
 
@@ -145,7 +145,7 @@ git diff --check: passed
 3. **Continuation routing**: satisfied by `bt` and `bt-feat` continuation/resume routing rules.
 4. **Open brainstorm path**: satisfied by `.bytetrue/brainstorms/.gitkeep`, `bt-brainstorm`, and shared conventions.
 5. **Behavior writeback**: satisfied by `bt-feat-accept` mentioning `Current Behavior` and `Observable Contract`.
-6. **No universal 300-line artifact rule**: satisfied by AGENTS/CLAUDE clarification and worklog reference update.
+6. **No universal maintainer-only artifact guidance**: satisfied by AGENTS/CLAUDE clarification and worklog reference update.
 7. **Onboard sync**: satisfied by `bt-onboard` and current/onboard reference parity.
 
 ### TDD / red-green evidence

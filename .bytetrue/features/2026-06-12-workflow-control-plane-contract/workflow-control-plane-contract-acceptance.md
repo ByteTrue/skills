@@ -21,10 +21,10 @@ summary: Accepted workflow control-plane contract for config, canonical status, 
 
 ## 2. Behavior and decision check
 
-- [x] Requirement summary satisfied: config, status, continuation routing, brainstorm path, Behavior Delta writeback, and auto mode boundary are all reflected in skills/references.
+- [x] Requirement summary satisfied: config, status, continuation routing, brainstorm path, Behavior Delta writeback, and auto mode consumption are all reflected in skills/references.
 - [x] Non-goal guarded: no `.bytetrue/specs/`, CLI, hook, daemon, hidden runtime, background agent, custom dispatcher, or physical archive migration was added.
-- [x] Line-limit policy guarded: shipped skills/references no longer hard-code a universal 300-line markdown artifact limit. Code/refactor heuristics about 300-line components remain unrelated and valid.
-- [x] Auto mode boundary: `.bytetrue/config.yaml` defines `workflow.mode: manual | auto` and `ask_before`; no auto executor is implemented.
+- [x] Volume-control policy guarded: shipped skills/references no longer hard-code a universal maintainer-only documentation guidance. Code/refactor heuristics about oversized components remain unrelated and valid.
+- [x] Auto mode boundary and consumption: `.bytetrue/config.yaml` defines `workflow.mode: manual | auto` and `ask_before`; shared close-out rules and workflow skills now consume it for deterministic continuation while still stopping at ask-before / review boundaries. No daemon, hook, background executor, or CLI auto-runner is implemented.
 - [x] Behavior Delta Materialization:
 
 | Delta | Evidence | Writeback target | Status |
@@ -34,7 +34,7 @@ summary: Accepted workflow control-plane contract for config, canonical status, 
 | ADDED: deterministic continuation routing | `skills/bt/SKILL.md`, `skills/bt-feat/SKILL.md` | architecture + acceptance | applied |
 | ADDED: open brainstorm path | `.bytetrue/brainstorms/.gitkeep`, `bt-brainstorm`, shared conventions | architecture + shared conventions | applied |
 | MODIFIED: Behavior Delta writeback target | `bt-feat-accept` mentions Current Behavior / Observable Contract | acceptance + architecture | applied |
-| MODIFIED: line-limit policy | AGENTS/CLAUDE/worklog reference wording | acceptance-only + maintainer guidance | applied |
+| MODIFIED: volume-control policy | AGENTS/CLAUDE/worklog reference wording | acceptance-only + maintainer guidance | applied |
 
 ## 3. Acceptance-scenario check
 
@@ -43,7 +43,7 @@ summary: Accepted workflow control-plane contract for config, canonical status, 
 - [x] S3 continuation routing: `bt` and `bt-feat` contain explicit routing for named continuation requests and half-implemented features.
 - [x] S4 open brainstorm path: `.bytetrue/brainstorms/` exists and `bt-brainstorm` uses plural `brainstorms/` for open records.
 - [x] S5 behavior writeback: `bt-feat-accept` mentions `Current Behavior` and `Observable Contract`.
-- [x] S6 line-limit policy: no hard-coded worklog 300-line artifact rule remains in shipped skills/references.
+- [x] S6 volume-control policy: no hard-coded worklog maintainer-only artifact guidance remains in shipped skills/references.
 - [x] S7 onboard sync: exact current/onboard parity passes for 7 package-managed contract reference files; the remaining 8 shared reference files are project-owned/localized or intentionally divergent, with the roadmap item state machine semantically aligned in both copies.
 
 No frontend/browser verification is applicable.
@@ -67,7 +67,7 @@ No frontend/browser verification is applicable.
 
 ## 7. Roadmap write-back
 
-- [x] Not started from roadmap. Design frontmatter has `roadmap: null` and `roadmap_item: null`; no roadmap writeback is required.
+- [x] `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-items.yaml`: added `workflow-control-plane-contract` as a done PR-review-remediation item linked to this feature; `.bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md` now lists the item and control-plane contract.
 
 ## 8. attention.md candidate review
 
@@ -76,5 +76,5 @@ No frontend/browser verification is applicable.
 ## 9. Leftovers
 
 - Later optimization: `bt-tracker/SKILL.md` is close to this repository's skill/reference maintenance line threshold; future tracker changes should move detailed tables to a reference file.
-- Known limitation: auto mode is defined as config and boundary only; no auto executor or CLI is implemented in this feature.
+- Known limitation: auto mode is implemented as pure skill continuation semantics only; no daemon, hook, background executor, or CLI auto-runner is implemented in this feature.
 - While-here items: none.

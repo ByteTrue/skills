@@ -16,7 +16,7 @@ tags: [worklog, report-feed, handoff, workflow-infrastructure]
 
 - **Worklog Entry**: a concise record of one work interval or closeout, with artifacts, summary, verification, status, and next steps. Anti-conflict: it is not a full transcript.
 - **Report Feed**: chronological collection of worklog entries used for weekly reports, handoff, recovery background, and audit. Anti-conflict: it is not a source of truth for requirements or architecture.
-- **Worklog File**: markdown file under `.bytetrue/worklog/` that stores entries for a time period. Anti-conflict: if it grows near the repo line limit, split it.
+- **Worklog File**: markdown file under `.bytetrue/worklog/` that stores entries for a time period. Anti-conflict: if it grows near the repo volume control, split it.
 - **Formal Artifact Link**: path to feature, issue, roadmap, refactor, requirement, architecture, or compound docs. Anti-conflict: worklog points to these, it does not duplicate them.
 - **Closeout Worklog Prompt**: optional prompt offered by workflows after formal artifacts are complete. Anti-conflict: it is not mandatory and must be skipped immediately when the user says no.
 
@@ -28,7 +28,7 @@ This feature adds a lightweight project-level worklog/report-feed. It records wh
 
 Success means:
 
-- `.bytetrue/reference/worklog-report-feed.md` and the onboard copy define path, entry shape, line-limit split rule, and non-goals;
+- `.bytetrue/reference/worklog-report-feed.md` and the onboard copy define path, entry shape, volume-control split rule, and non-goals;
 - `.bytetrue/worklog/` exists for current projects and onboard creates it for new projects;
 - completed feature acceptance, issue fix, refactor, and roadmap closeout can offer a one-sentence optional worklog prompt;
 - worklog entries point to formal artifacts and verification commands rather than copying chat transcripts;
@@ -48,7 +48,7 @@ Explicit non-goals:
 This follows default workflow-document infrastructure. Deviations:
 
 - **Persistence = append-only report feed**: markdown entries are appended under `.bytetrue/worklog/`.
-- **Volume control = line-limit split**: worklog files must stay under 300 lines; split monthly files when needed.
+- **Volume control = volume-control split**: worklog files must stay concise; split monthly files when needed.
 - **Automation = none**: first version is user-confirmed manual write by the active workflow, not a watcher or session scraper.
 
 ### Execution mode
@@ -67,7 +67,7 @@ TDD is not suitable; this is workflow contract and documentation behavior.
 1. **Use `.bytetrue/worklog/`, not compound.**
    - Reason: worklog entries are chronological work records, not durable decisions/learnings/explores/tricks.
 2. **Default file is `.bytetrue/worklog/YYYY-MM.md`, with split files when needed.**
-   - Reason: roadmap contract names the monthly file; split suffixes keep the repo md ≤300-line constraint.
+   - Reason: roadmap contract names the monthly file; split suffixes keep the repo md within maintainer-only documentation guidance.
 3. **Worklog is optional closeout, not mandatory.**
    - Reason: mandatory logging would add process tax and duplicate formal artifacts.
 4. **No raw transcript.**
@@ -105,7 +105,7 @@ Worklog file convention:
 
 ```text
 .bytetrue/worklog/YYYY-MM.md
-.bytetrue/worklog/YYYY-MM-02.md   # only when the first file would exceed the line limit
+.bytetrue/worklog/YYYY-MM-02.md   # only when the first file would exceed the volume control
 ```
 
 Entry shape:
@@ -154,7 +154,7 @@ Workflows close out by writing formal artifacts and asking about downstream arch
 Flow-level constraints:
 
 - Worklog entries must link formal artifacts; do not duplicate their content.
-- Worklog files must stay under 300 lines; if the current month file is near the limit, continue in the next split file.
+- Worklog files must stay concise; if the current month file is near the limit, continue in the next split file.
 - Worklog is append-only; corrections are new entries unless the current closeout is still being edited.
 - Worklog does not replace learning / decision / note; it may point to those artifacts.
 - Worklog can record partial sessions only when the user explicitly asks or the workflow leaves useful continuation context.
@@ -179,18 +179,18 @@ Flow-level constraints:
    - exit signal: each prompt is one sentence, optional, and before commit when applicable.
 3. **Onboard/index sync**: update onboard skeleton and system overview references.
    - exit signal: new projects get `.bytetrue/worklog/` and the shared reference.
-4. **Validation**: run grep, YAML/JSONL, line counts, and scope guards.
+4. **Validation**: run grep, YAML/JSONL, size counts, and scope guards.
    - exit signal: no raw transcript, no auto session scraping, no CLI, no per-developer journal clone.
 
 ### 2.5 Structural Health and Micro-refactor
 
 ##### Evaluation
 
-- file level — `bt-feat-accept/SKILL.md`: 265 lines, safe for one concise closeout line.
-- file level — `bt-issue-fix/SKILL.md`: under 200 lines, safe for one concise closeout line.
-- file level — `bt-refactor/SKILL.md`: around 250 lines, safe for one concise closeout line.
-- file level — `bt-roadmap/SKILL.md`: around 227 lines, safe for one concise closeout line.
-- file level — `bt-onboard/SKILL.md`: around 252 lines, safe for inventory-only update.
+- file level — `bt-feat-accept/SKILL.md`: originally assessed as safe for one concise closeout note.
+- file level — `bt-issue-fix/SKILL.md`: originally assessed as safe for one concise closeout note.
+- file level — `bt-refactor/SKILL.md`: originally assessed as safe for one concise closeout note.
+- file level — `bt-roadmap/SKILL.md`: originally assessed as safe for one concise closeout note.
+- file level — `bt-onboard/SKILL.md`: originally assessed as safe for inventory-only update.
 - directory level — `.bytetrue/worklog/`: new directory with `.gitkeep`; not flattened.
 - compound convention search: no existing convention blocks this path.
 
@@ -206,7 +206,7 @@ Key scenarios:
 2. **Worklog directory exists**: current project has `.bytetrue/worklog/.gitkeep`, and onboard skeleton includes worklog.
 3. **Feature closeout prompt exists**: `bt-feat-accept` offers optional worklog before scoped commit.
 4. **Issue/refactor/roadmap prompts exist**: `bt-issue-fix`, `bt-refactor`, and `bt-roadmap` can offer worklog entries at closeout.
-5. **Line-limit guard exists**: contract requires split files before any worklog markdown exceeds 300 lines.
+5. **Volume-control guard exists**: contract requires split files before any worklog markdown is oversized.
 6. **No transcript or automation behavior**: grep confirms no raw transcript storage, auto session scraping, CLI, watcher, or per-developer journal clone.
 7. **Worklog remains secondary**: wording states it links formal artifacts and does not replace them.
 
@@ -221,7 +221,7 @@ Reverse-check items:
 
 - **TDD applicability**: not applicable; this is a workflow contract and closeout prompt feature.
 - **Highest behavior seam**: grep-based evidence plus manual review of prompt order and reference content.
-- **Manual verification items**: line counts, YAML/JSONL validation, grep scope guard, and closeout prompt presence.
+- **Manual verification items**: size counts, YAML/JSONL validation, grep scope guard, and closeout prompt presence.
 
 ### 3.2 Behavior Delta
 

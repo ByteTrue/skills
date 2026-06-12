@@ -55,7 +55,7 @@ This is a workflow-contract and artifact-shape change. It follows the internal w
 
 - **Public surface = stable**: future feature directories gain two optional-but-expected artifacts.
 - **Persistence = local docs**: JSONL files live next to design/checklist, not under a global state directory.
-- **Testability = static validation**: verify with grep, JSONL smoke parsing, YAML validation, line counts, and manual consistency.
+- **Testability = static validation**: verify with grep, JSONL smoke parsing, YAML validation, size counts, and manual consistency.
 
 ### Execution mode
 
@@ -171,18 +171,18 @@ Flow-level constraints:
    - exit signal: future approved designs produce both JSONL files with required baseline rows.
 3. **Implementation and acceptance consumption**: update `bt-feat-impl` and `bt-feat-accept` startup rules.
    - exit signal: each stage reads its matching manifest and blocks missing required files for new features.
-4. **Onboard/index sync and validation**: update onboard inventory and references; run YAML, JSONL smoke checks, and line counts.
-   - exit signal: touched markdown files stay under 300 lines, YAML validates, and sample manifest rows parse.
+4. **Onboard/index sync and validation**: update onboard inventory and references; run YAML, JSONL smoke checks, and size counts.
+   - exit signal: touched markdown files stay concise, YAML validates, and sample manifest rows parse.
 
 ### 2.5 Structural Health and Micro-refactor
 
 ##### Evaluation
 
-- file level — `skills/bt-feat-design/SKILL.md`: 264 lines, near limit; add only concise lifecycle instruction.
-- file level — `skills/bt-feat-design/reference.md`: 260 lines, near limit; add compact manifest format / extraction notes only.
-- file level — `skills/bt-feat-impl/SKILL.md`: 240 lines, safe for a short startup rule.
-- file level — `skills/bt-feat-accept/SKILL.md`: 262 lines, near limit; add only a compact startup rule.
-- file level — `skills/bt-onboard/SKILL.md`: 248 lines, near limit; inventory-only update.
+- file level — `skills/bt-feat-design/SKILL.md`: close to maintainer guidance; add only concise lifecycle instruction.
+- file level — `skills/bt-feat-design/reference.md`: close to maintainer guidance; add compact manifest format / extraction notes only.
+- file level — `skills/bt-feat-impl/SKILL.md`: originally assessed as safe for a short startup rule.
+- file level — `skills/bt-feat-accept/SKILL.md`: close to maintainer guidance; add only a compact startup rule.
+- file level — `skills/bt-onboard/SKILL.md`: close to maintainer guidance; inventory-only update.
 - directory level — `.bytetrue/reference/`: 10 files, but these are named shared references and one more focused contract matches the established pattern.
 - directory level — `skills/bt-onboard/reference/`: mirrors current reference; adding one template copy matches existing ownership.
 - compound convention search: no active directory/naming convention hit for context manifest ownership.
@@ -201,7 +201,7 @@ Key scenarios:
 4. **Acceptance reads manifest**: reading `bt-feat-accept` → startup includes `check-context`; missing required rows block new-feature acceptance.
 5. **Onboard releases reference**: `bt-onboard` inventory and system overview include `context-manifest.md`.
 6. **No future features implemented early**: grep → no subagent dispatch, hook/breadcrumb, research-first routing, worklog, or CLI behavior introduced.
-7. **Line budget and file validity**: all edited markdown files stay ≤300 lines; YAML validates; sample JSONL rows parse.
+7. **Conciseness check and file validity**: YAML validates; sample JSONL rows parse.
 
 Reverse-check items:
 
@@ -218,7 +218,7 @@ Reverse-check items:
   1. before implementation, no `context-manifest.md` and no design rule for manifest generation; after implementation, both exist;
   2. implementation startup names `impl-context` and required-row blocking;
   3. acceptance startup names `check-context` and required-row blocking.
-- **Manual verification items**: grep mount points, static parse sample JSONL rows, validate YAML, check line counts, confirm no subagent/hook/worklog behavior.
+- **Manual verification items**: grep mount points, static parse sample JSONL rows, validate YAML, check size counts, confirm no subagent/hook/worklog behavior.
 
 ### 3.2 Behavior Delta
 

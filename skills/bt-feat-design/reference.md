@@ -136,7 +136,7 @@ Architecture doc updates are not mount points. Those belong to section 4.
 
 #### 2.4 Rollout strategy
 
-Slice by paradigm dimension, 4-8 lines explaining the order and the exit signal of each slice. The detailed list lands in `steps` inside `{slug}-checklist.yaml`. **Write only at the paradigm dimension, not file:line.**
+Slice by paradigm dimension, a concise explanation of the order and the exit signal of each slice. The detailed list lands in `steps` inside `{slug}-checklist.yaml`. **Write only at the paradigm dimension, not file:line.**
 
 Backend example:
 
@@ -181,7 +181,7 @@ If an existing convention is hit, for example "composables always go under `src/
 
 **Evaluation dimensions**, if any one is significant, it counts as something that needs handling:
 
-- file length: over 500 lines in one file, stricter for TS/JS/Vue, slightly looser for Python
+- file length: visibly oversized for its language and responsibility
 - file responsibility: one file mixes 2 or more unrelated concepts, such as orchestration plus computation, or UI plus data fetching plus business logic
 - file change density: this feature will touch or add 3 or more separate places inside the same file, and those places are logically independent
 - **directory flattening**: the target directory already has 8 or more files at the same level and this feature will add 2 or more more; or the directory already shows obvious filename grouping patterns, such as many `XxxModal.vue` and `XxxForm.vue` files all mixed into one generic folder, and this feature would continue that flattening

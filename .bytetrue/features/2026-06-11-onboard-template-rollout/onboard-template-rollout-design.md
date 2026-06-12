@@ -49,7 +49,7 @@ This is documentation / template integration. Deviations:
 
 - **Impact surface = repository distribution layer**: touches README, package/plugin metadata if needed, `bt-onboard`, template references, and current reference indexes.
 - **Risk = consistency drift**: main risk is forgetting a reference or incorrectly treating project-owned config as managed.
-- **Verification = static audit**: validate JSON/YAML, file set parity, line counts, grep for expected references, and README install text.
+- **Verification = static audit**: validate JSON/YAML, file set parity, size counts, grep for expected references, and README install text.
 
 ### Execution mode
 
@@ -146,7 +146,7 @@ Flow-level constraints:
 - Do not force byte equality on localized/current-specific docs such as Chinese current `system-overview.md` vs English onboard template.
 - Do not add new runtime behavior.
 - Do not publish, push, or tag.
-- Keep markdown files under 300 lines.
+- Keep markdown files concise.
 
 ### 2.3 Mount-Point Inventory
 
@@ -167,15 +167,15 @@ Flow-level constraints:
 3. **Onboard maintenance note**: update maintainer notes or onboard reference guidance for future parity checks.
    - exit signal: maintainers can tell managed vs project-owned reference differences.
 4. **Validation**: run YAML/JSON/line-count/grep checks and no-release scope guard.
-   - exit signal: no publish/push/tag/CLI/runtime behavior added, and all files stay under 300 lines.
+   - exit signal: no publish/push/tag/CLI/runtime behavior added, and all files stay concise.
 
 ### 2.5 Structural Health and Micro-refactor
 
 ##### Evaluation
 
-- file level — `README.md`: 181 lines, safe for a small install wording update.
-- file level — `skills/bt-onboard/SKILL.md`: 254 lines, close to limit; only audit-driven minimal edits allowed.
-- file level — `maintainer-notes.md`: 50 lines, safe for one short section.
+- file level — `README.md`: originally assessed as safe for a small install wording update.
+- file level — `skills/bt-onboard/SKILL.md`: close to maintainer guidance; only audit-driven minimal edits allowed.
+- file level — `maintainer-notes.md`: originally assessed as safe for one short section.
 - file level — `package.json` and plugin JSON files: small; safe to validate or minimally edit.
 - directory level — no new directories planned; only feature artifacts are new.
 - compound convention search: no relevant convention blocks this final rollout.
@@ -207,7 +207,7 @@ Reverse-check items:
 
 - **TDD applicability**: not applicable; static documentation/template rollout.
 - **Highest behavior seam**: static audit commands and grep evidence.
-- **Manual verification items**: file-set parity, JSON parse, README skill count, line counts, no-release scope guard.
+- **Manual verification items**: file-set parity, JSON parse, README skill count, size counts, no-release scope guard.
 
 ### 3.2 Behavior Delta
 

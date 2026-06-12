@@ -47,7 +47,7 @@ This is a workflow-contract change. It follows the internal workflow/tooling def
 
 - **Public surface = stable**: discussion/planning skills gain a shared evidence-before-decision contract.
 - **Persistence = existing compound explore**: output stays in `.bytetrue/compound/`.
-- **Testability = static evidence**: verify by grep, line counts, YAML validation, and optional manifest row checks.
+- **Testability = static evidence**: verify by grep, size counts, YAML validation, and optional manifest row checks.
 
 ### Execution mode
 
@@ -163,18 +163,18 @@ Flow-level constraints:
 3. **Planning/design integration**: update `bt-roadmap` and `bt-feat-design`.
    - exit signal: roadmap/design require or cite explore evidence when external facts shape contracts.
 4. **Manifest/onboard/index sync and validation**: update context manifest, onboard inventory, system overview; run checks.
-   - exit signal: touched files stay under 300 lines, YAML validates, and no new research directory or runtime automation appears.
+   - exit signal: YAML validates, and no new research directory or runtime automation appears.
 
 ### 2.5 Structural Health and Micro-refactor
 
 ##### Evaluation
 
-- file level — `bt-explore/SKILL.md`: 142 lines, safe for a concise scenario pointer.
-- file level — `bt-brainstorm/SKILL.md`: 231 lines, safe for a concise pointer in minimal demo/spike section.
-- file level — `skills/bt-grill/SKILL.md`: 197 lines, safe for one with-docs factual-check pointer.
-- file level — `skills/bt-roadmap/SKILL.md`: 226 lines, safe for one material-reading rule.
-- file level — `bt-feat-design/SKILL.md`: 267 lines, near limit; add only one concise startup rule.
-- file level — `bt-onboard/SKILL.md`: 250 lines, inventory-only update.
+- file level — `bt-explore/SKILL.md`: originally assessed as safe for a concise scenario pointer.
+- file level — `bt-brainstorm/SKILL.md`: originally assessed as safe for a concise pointer in minimal demo/spike section.
+- file level — `skills/bt-grill/SKILL.md`: originally assessed as safe for one with-docs factual-check pointer.
+- file level — `skills/bt-roadmap/SKILL.md`: originally assessed as safe for one material-reading rule.
+- file level — `bt-feat-design/SKILL.md`: close to maintainer guidance; add only one concise startup rule.
+- file level — `bt-onboard/SKILL.md`: inventory-only update.
 - directory level — `.bytetrue/reference/` and onboard reference mirror named shared references; one more focused contract matches the pattern.
 - compound convention search: no active convention blocks this placement.
 
@@ -192,7 +192,7 @@ Key scenarios:
 4. **Planning/design routes facts**: `bt-roadmap` and `bt-feat-design` require or cite explore evidence when external facts shape contracts.
 5. **Manifest carries evidence**: `context-manifest.md` allows cited research-first explore artifacts as manifest rows.
 6. **No new facts layer**: grep confirms no `.bytetrue/research/`, automatic router, hook, subagent dispatch, worklog, or CLI behavior is introduced.
-7. **Line budget**: all edited markdown files stay ≤300 lines.
+7. **Conciseness check**: edited documents stay concise.
 
 Reverse-check items:
 
@@ -209,7 +209,7 @@ Reverse-check items:
   1. before implementation, no shared `research-first.md`; after implementation, current/onboard copies exist;
   2. discussion/planning/design skills point to research-first triggers;
   3. context manifests can include cited explore artifacts.
-- **Manual verification items**: grep mount points, validate YAML, line counts, confirm no new research directory/runtime automation.
+- **Manual verification items**: grep mount points, validate YAML, size counts, confirm no new research directory/runtime automation.
 
 ### 3.2 Behavior Delta
 

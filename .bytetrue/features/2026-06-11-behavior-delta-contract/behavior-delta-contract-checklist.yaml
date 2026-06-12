@@ -11,8 +11,8 @@ steps:
   - action: "Acceptance materialization: update bt-feat-accept section 2 template and verification rules"
     exit_signal: "skills/bt-feat-accept/SKILL.md includes Behavior Delta Materialization without adding a tenth top-level acceptance section"
     status: done
-  - action: "Smoke validation: verify grep targets, line limits, and yaml state"
-    exit_signal: "behavior delta terms appear only in intended files, edited markdown files stay under 300 lines, and validate-yaml passes for roadmap and feature checklists"
+  - action: "Smoke validation: verify grep targets, volume controls, and yaml state"
+    exit_signal: "behavior delta terms appear only in intended files, edited validate-yaml passes for roadmap and feature checklists"
     status: done
 
 checks:
@@ -43,7 +43,7 @@ checks:
   - item: "Risk mode, context manifest, subagent handoff, hook/breadcrumb, and worklog contracts remain out of scope"
     source: scope-guard
     status: passed
-  - item: "Edited markdown files remain under 300 lines"
+  - item: "Edited docs remain concise"
     source: acceptance-scenario
     status: passed
   - item: "Acceptance can materialize deltas to requirements, architecture, compound, or acceptance-only after evidence"

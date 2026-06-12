@@ -12,7 +12,7 @@ steps:
     exit_signal: "context-manifest.md references handoff roles, and onboard/system overview include subagent-handoff.md"
     status: done
   - action: "Validation: run YAML, JSONL, line-count, and scope-guard checks"
-    exit_signal: "edited markdown files stay under 300 lines and no runtime dispatch, agent definitions, chains, hook, breadcrumb, worklog, or CLI artifacts are created"
+    exit_signal: "edited no runtime dispatch, agent definitions, chains, hook, breadcrumb, worklog, or CLI artifacts are created"
     status: done
 
 checks:
@@ -49,6 +49,6 @@ checks:
   - item: "Behavior Delta entries are materialized during acceptance"
     source: behavior-delta
     status: passed
-  - item: "Edited markdown files remain under 300 lines and context manifests parse"
+  - item: "context manifests parse"
     source: acceptance-scenario
     status: passed

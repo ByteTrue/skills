@@ -19,13 +19,15 @@ For research tasks that do not belong to one feature yet, replace design/checkli
 
 ## Dispatch Mode Selection
 
-Use the lightest available execution surface, in this order:
+Read `.bytetrue/config.yaml` before choosing an execution surface. The current `dispatch` values are the source of truth:
 
-1. **Native subagent** — if the harness provides a built-in subagent, fork, task, or agent tool, dispatch the role there with the Active Work Block.
-2. **Non-interactive child agent** — if no native subagent exists but the harness can run a synchronous non-interactive child agent, such as a `-p` / `--print` / `--mode text` command, pass the same Active Work Block and wait for its report.
-3. **Inline role execution** — if neither option exists, the parent session performs the role inline while following the same read/write boundaries.
+- `preferred: auto` uses the fallback ladder: native subagent when available, then synchronous non-interactive child agent when allowed and available, then inline role execution.
+- `preferred: native_subagent` tries a native subagent first; if unavailable, stop and report the unavailable preferred surface unless the user allows fallback.
+- `preferred: non_interactive_child` may be used only when `allow_non_interactive_child: true`; if it is false, stop and ask or fall back only with user confirmation.
+- `preferred: inline` keeps the role inside the parent session.
+- `allow_background_agents: false` means do not run background child agents for ByteTrue lifecycle work. If set true, the parent still owns user alignment, scope changes, lifecycle transitions, and final synthesis.
 
-The parent must not implement a custom runtime dispatcher just to satisfy this contract. The child report is evidence only; the parent still owns user alignment, scope changes, lifecycle transitions, and final synthesis. Do not run background child agents for ByteTrue lifecycle work.
+The parent must not implement a custom runtime dispatcher just to satisfy this contract. The child report is evidence only; the parent still owns user alignment, scope changes, lifecycle transitions, and final synthesis.
 
 ## Roles
 

@@ -2,7 +2,7 @@
 
 本文件由 `bt-onboard` 复制到项目的 `.bytetrue/reference/tools.md`，所有 ByteTrue 子技能用项目相对路径 `.bytetrue/reference/tools.md` 引用。
 
-`.bytetrue/tools/` 下共享脚本的完整用法参考。子技能里只写本技能特有的 1-2 行典型查询；完整语法和示例看这里。
+`.bytetrue/tools/` 下共享脚本的完整用法参考。子技能里只写本技能特有的简短典型查询；完整语法和示例看这里。
 
 ---
 

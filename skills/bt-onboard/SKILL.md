@@ -88,17 +88,18 @@ Execute the following in order, **without waiting for step-by-step user confirma
 - `.bytetrue/tools/`, copied by shell using `cp -rf` or `Copy-Item -Recurse -Force` from `bt-onboard/tools/` in the skill package, **not Read then Write**
 - `.bytetrue/reference/`, initialized from `bt-onboard/reference/` in the skill package; for new projects, copying the whole directory is fine
 
-> **Use shell copy for writing to disk**, not Read then Write — these are shared assets and templates, and Read+Write truncates large files, changes indentation, eats blank lines, and wastes tokens. On migration or rerunning onboard, `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md` are project-owned configuration and must never be overwritten without confirmation. See step 4 of the migration path for concrete commands.
+> **Use shell copy for writing to disk**, not Read then Write — these are shared assets and templates, and Read+Write truncates large files, changes indentation, alters spacing, and wastes tokens. On migration or rerunning onboard, `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md` are project-owned configuration and must never be overwritten without confirmation. See step 4 of the migration path for concrete commands.
 
-**Step 3: project-management setup**
+**Step 3: project config setup**
 
-Ask the user for the external tracker provider:
+Before writing `.bytetrue/config.yaml`, guide the user through every current config group, then write the selected values once:
 
-1. `local`: use only `.bytetrue/`, create no external issues
-2. `github`: use the local `gh` CLI
-3. `gitlab`: use the local `glab` CLI
+1. **Workflow** — choose `workflow.mode` (`manual` default, or `auto`) and review the `workflow.ask_before` operation-key list that auto mode must stop on. The list is project-owned; seed a conservative default but let the user add or remove keys before writing.
+2. **Tracker** — choose `tracker.provider` (`local | github | gitlab`), `tracker.sync_policy` (`ask | never | auto_preview`), and keep first-version supported values for `sync_direction`, `external_import`, and `update_policy` unless the user explicitly asks for an unsupported value, in which case stop and explain it is not supported yet.
+3. **Repository / CLI cache** — detect provider CLI and auth as advisory cache only; write `repository.remote_url`, `repository.tracker_url`, `provider_status`, and last-detected `cli` values into config, but tell the user `bt-tracker` revalidates them at runtime.
+4. **Dispatch** — choose `dispatch.preferred` (`auto | native_subagent | non_interactive_child | inline`) and set `allow_non_interactive_child` / `allow_background_agents`. If unsure, use `preferred: auto`, allow synchronous non-interactive child agents, and keep background agents disabled.
 
-If the user chooses `github`, check:
+If the chosen provider is `github`, check:
 
 ```bash
 command -v gh
@@ -106,7 +107,7 @@ gh auth status
 git remote -v
 ```
 
-If the user chooses `gitlab`, check:
+If the chosen provider is `gitlab`, check:
 
 ```bash
 command -v glab
@@ -114,7 +115,7 @@ glab auth status
 git remote -v
 ```
 
-Write the provider, detection result, repository URL, and sync policy into `.bytetrue/config.yaml`; keep label meanings and sync semantics in `.bytetrue/reference/project-management.md`. If the CLI is not installed or not logged in, do not stop onboarding. Write `provider_status: unavailable` in `.bytetrue/config.yaml` and tell the user they can rerun `bt-onboard` later or update `.bytetrue/config.yaml` manually.
+Keep label meanings and sync semantics in `.bytetrue/reference/project-management.md`; do not duplicate current config values there. If the CLI is not installed or not logged in, do not stop onboarding. Write `provider_status: unavailable` and tell the user they can rerun `bt-onboard` later or edit `.bytetrue/config.yaml`.
 
 **Step 4: remind about attention.md**
 
@@ -199,11 +200,9 @@ The skill-package path is usually the installed skill directory, such as `~/.cla
 
 For files the user chooses to skip: **do not move them, do not delete them, and do not rename them**. In the report, mark them as "kept in place, not brought into ByteTrue". **Never move anything without confirmation** — onboard is allowed to organize, but not to make deletion decisions for the user.
 
-**Step 6: project-management setup**
+**Step 6: project config setup**
 
-Same as in the empty-repo path. Ask for `local | github | gitlab`, detect `gh` / `glab`, auth status, and `git remote -v`, then write or merge current values into `.bytetrue/config.yaml` while preserving project-management semantics in `.bytetrue/reference/project-management.md`.
-
-If `.bytetrue/config.yaml` already exists, do not overwrite provider or sync values without confirmation. If `.bytetrue/reference/project-management.md` exists, preserve label and sync semantics unless the user confirms an update.
+Same as in the empty-repo path. Reconfirm every current config group before writing or merging `.bytetrue/config.yaml`: workflow mode and ask-before list, tracker provider/sync policy/repository/CLI cache, dispatch preference and allow flags. Preserve existing provider, sync, and dispatch values unless the user confirms a change. If `.bytetrue/reference/project-management.md` exists, preserve label and sync semantics unless the user confirms an update.
 
 **Step 7: attention.md reminder**, same as step 4 in the empty-repo path
 
@@ -226,7 +225,7 @@ The placeholder template for `ARCHITECTURE.md` and the minimal template for `att
 - [ ] `.bytetrue/tools/` has been copied from the skill package
 - [ ] the skill-package-managed files under `.bytetrue/reference/` have been synchronized
 - [ ] `.bytetrue/reference/domain-context.md` exists, and any pre-existing content was not overwritten without confirmation
-- [ ] `.bytetrue/config.yaml` exists, and provider, CLI, auth, remote status, and sync policy have been recorded
+- [ ] `.bytetrue/config.yaml` exists, and workflow, tracker, repository/CLI cache, and dispatch values have all been reviewed with the user and recorded
 - [ ] `.bytetrue/architecture/ARCHITECTURE.md` has been created
 - [ ] on the migration path, every mapping item has an explicit result, migrated or kept in place
 - [ ] on the migration path, no file was moved without confirmation

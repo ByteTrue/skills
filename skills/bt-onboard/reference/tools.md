@@ -2,7 +2,7 @@
 
 This file is copied by `bt-onboard` into the project as `.bytetrue/reference/tools.md`. Every ByteTrue sub-skill references it through the project-relative path `.bytetrue/reference/tools.md`.
 
-It is the complete usage reference for the shared scripts under `.bytetrue/tools/`. Sub-skills should write only the 1-2 lines of typical queries specific to themselves; the full syntax and examples live here.
+It is the complete usage reference for the shared scripts under `.bytetrue/tools/`. Sub-skills should write only brief typical queries specific to themselves; the full syntax and examples live here.
 
 ---
 

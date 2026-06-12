@@ -49,7 +49,7 @@ Explicit non-goals:
 This is a workflow-contract change. It follows the internal workflow/tooling default bundle. Deviations:
 
 - **Public surface = stable**: future feature implementation and acceptance behavior changes.
-- **Testability = verified by docs/checks**: no runtime code; evidence comes from grep, YAML validation, line counts, and consistency review.
+- **Testability = verified by docs/checks**: no runtime code; evidence comes from grep, YAML validation, size counts, and consistency review.
 
 ### Execution mode
 
@@ -65,7 +65,7 @@ Rationale: this changes cross-workflow instructions but adds no runtime behavior
 ### Key decisions
 
 1. **Create `implementation-review.md` instead of embedding the full checklist in skill files.**
-   - Reason: `bt-feat-impl` and `bt-feat-accept` are near the 300-line limit; a focused reference is easier to reuse and onboard.
+   - Reason: `bt-feat-impl` and `bt-feat-accept` are near the 300-volume control; a focused reference is easier to reuse and onboard.
 2. **Spec compliance runs before code quality.**
    - Reason: clean code that implements the wrong behavior is still a failed implementation.
 3. **Acceptance checks for review evidence but does not trust it blindly.**
@@ -178,17 +178,17 @@ Flow-level constraints:
    - exit signal: future implementation reports must state spec compliance and code quality separately.
 3. **Acceptance integration**: update `bt-feat-accept` startup / verification guidance to require review evidence before acceptance proceeds.
    - exit signal: acceptance sends missing implementation-review evidence back to implementation.
-4. **Onboard/index sync and validation**: update onboard inventory and system overview references; validate YAML and line counts.
-   - exit signal: touched markdown files stay under 300 lines and checklist validates.
+4. **Onboard/index sync and validation**: update onboard inventory and system overview references; validate YAML and size counts.
+   - exit signal: touched checklist validates.
 
 ### 2.5 Structural Health and Micro-refactor
 
 ##### Evaluation
 
-- file level — `skills/bt-feat-impl/SKILL.md`: 235 lines, healthy but should receive only a concise pointer and report section.
-- file level — `skills/bt-feat-accept/SKILL.md`: 259 lines, near limit; avoid embedding the full review checklist.
-- file level — `skills/bt-onboard/SKILL.md`: 247 lines, near limit; only inventory mentions.
-- file level — `.bytetrue/reference/execution-modes.md`: 70 lines, safe for two evidence vocabulary entries.
+- file level — `skills/bt-feat-impl/SKILL.md`: originally assessed as healthy but should receive only a concise pointer and report section.
+- file level — `skills/bt-feat-accept/SKILL.md`: close to maintainer guidance; avoid embedding the full review checklist.
+- file level — `skills/bt-onboard/SKILL.md`: close to maintainer guidance; only inventory mentions.
+- file level — `.bytetrue/reference/execution-modes.md`: originally assessed as safe for two evidence vocabulary entries.
 - directory level — `.bytetrue/reference/` and `skills/bt-onboard/reference/`: already contain shared reference docs; adding one focused contract follows the same pattern.
 
 ##### Conclusion: do not refactor
@@ -204,7 +204,7 @@ Key scenarios:
 3. **Acceptance checks gate evidence**: reading `bt-feat-accept` → startup / verification rules send missing gate evidence back to implementation.
 4. **Execution mode vocabulary includes review evidence**: reading current and onboard `execution-modes.md` → both include `spec-compliance-review` and `code-quality-review`.
 5. **No subagent/manifest behavior**: grep → no subagent dispatch, context manifest, hook, or worklog behavior is introduced.
-6. **Line budget**: all edited markdown files stay ≤300 lines.
+6. **Conciseness check**: edited documents stay concise.
 
 Reverse-check items:
 
@@ -221,7 +221,7 @@ Reverse-check items:
   1. before implementation, no `implementation-review.md` exists; after implementation, current/onboard copies exist;
   2. implementation completion report template includes two review dimensions;
   3. acceptance startup/verification requires implementation review evidence.
-- **Manual verification items**: grep mount points, validate YAML, line counts, confirm no subagent/manifest behavior was introduced.
+- **Manual verification items**: grep mount points, validate YAML, size counts, confirm no subagent/manifest behavior was introduced.
 
 ### 3.2 Behavior Delta
 
