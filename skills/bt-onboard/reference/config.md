@@ -6,6 +6,8 @@
 
 Machine-readable shape, required fields, allowed values, and onboarding defaults live in `.bytetrue/reference/config.schema.yaml`. This Markdown file explains field semantics and consumption rules only; it does not own current values or the schema.
 
+If a workflow skill needs config values and `.bytetrue/config.yaml` is missing, it must stop and tell the user to rerun `bt-onboard` or repair the skeleton. Do not infer current workflow/tracker/dispatch values from this reference or from `project-management.md`.
+
 ## Minimal Config Shape
 
 Onboard writes the selected values in nested YAML form. Use the schema for required fields and allowed values; this example shows the expected shape only:

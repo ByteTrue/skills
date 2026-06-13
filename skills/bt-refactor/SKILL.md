@@ -55,7 +55,7 @@ Why keep refactor in its own directory rather than mixing into features: refacto
 | 2 design | `refactor-design.md` + `checklist.yaml` | AI drafts, user reviews as a whole |
 | 3 apply | code changes + `apply-notes.md` | AI executes, each step requires human approval |
 
-There is a checkpoint between stages by default: no design until scan has been selected; no code until design is approved; and inside apply, any HUMAN verification item must explicitly pass before the next step starts. If `.bytetrue/config.yaml` has `workflow.mode: auto`, the workflow may continue only through AI-self-proved, already-approved steps; it still stops at scan selection, design approval, HUMAN verification, and any operation listed in current `workflow.ask_before`.
+There is a checkpoint between stages by default: no design until scan has been selected; no code until design is approved; and inside apply, any HUMAN verification item must explicitly pass before the next step starts. If `.bytetrue/config.yaml` is missing, treat auto-mode continuation as unavailable and tell the user to rerun `bt-onboard` or repair the skeleton before relying on config-driven behavior. If `.bytetrue/config.yaml` has `workflow.mode: auto`, the workflow may continue only through AI-self-proved, already-approved steps; it still stops at scan selection, design approval, HUMAN verification, and any operation listed in current `workflow.ask_before`.
 
 ---
 

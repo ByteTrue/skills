@@ -65,7 +65,7 @@ If any of the above fails, return to `bt-feat-design` to complete it. Reason: ev
 ### 3. Read the full context
 
 - the full design doc; in standard design focus especially on section 1, sections 2.1, 2.2, 2.3, 2.4, and section 3
-- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, `.bytetrue/config.yaml`, `.bytetrue/reference/execution-modes.md`, `.bytetrue/reference/implementation-review.md`, and `.bytetrue/reference/context-manifest.md`
+- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, `.bytetrue/config.yaml`, `.bytetrue/reference/execution-modes.md`, `.bytetrue/reference/implementation-review.md`, and `.bytetrue/reference/context-manifest.md`. If `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; do not infer defaults from prose references
 - for a new standard feature, `{slug}-impl-context.jsonl` is mandatory. If it is missing, stop and return to `bt-feat-design`, unless this is a legacy feature created before the 2026-06-11 context-manifest contract, a fastforward feature, or the approved design explicitly explains why manifests are not applicable. When the manifest exists, read every required row before coding; if a required file is missing, stop and return to design or ask the user to downgrade that row.
 - if the parent session delegates implementation to a subagent or performs it as an inline role, use the `implement` role in `.bytetrue/reference/subagent-handoff.md`; the parent still owns scope changes and lifecycle transitions
 - the source locations of interface examples in section 2.1, or the code files named by the change points in section 1 of fastforward design; reading the relevant functions is enough
@@ -234,7 +234,7 @@ When the type system itself guarantees something, for example a TypeScript signa
 
 ## After Exit
 
-Tell the user: "All steps are complete, the implementation report is written, and the design doc is synchronized. The next stage is acceptance closure." Then apply `.bytetrue/config.yaml` close-out behavior from shared conventions: in `manual`, tell them to trigger `bt-feat-accept`; in `auto`, continue to `bt-feat-accept` startup only after the completion report review has passed and no `ask_before` or HUMAN verification boundary is pending.
+Tell the user: "All steps are complete, the implementation report is written, and the design doc is synchronized. The next stage is acceptance closure." Then apply `.bytetrue/config.yaml` close-out behavior from shared conventions: if `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; in `manual`, tell them to trigger `bt-feat-accept`; in `auto`, continue to `bt-feat-accept` startup only after the completion report review has passed and no `ask_before` or HUMAN verification boundary is pending.
 
 Do not casually start writing the acceptance report before those gates are satisfied. Acceptance needs its own checklist rhythm, and entering it early weakens the gate.
 

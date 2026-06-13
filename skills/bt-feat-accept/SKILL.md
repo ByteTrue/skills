@@ -170,11 +170,11 @@ If section 4 of the design is empty or too thin, supplement the evaluation here:
 
 ## 6. Requirement write-back
 
-Req is the capability-vision layer. This section is where draft → current upgrades and backfill are triggered. Compare the `requirement` field in design frontmatter with the requirement summary in section 1:
+Req is the capability-vision layer. This section is where pending future-vision or active work-in-progress reqs are upgraded to done current-capability records, or where missing current records are backfilled. Compare the `requirement` field in design frontmatter with the requirement summary in section 1:
 
 - [ ] `requirement` is empty and the design explicitly says "no new capability", pure refactor or technical debt → skip, and write "no requirement write-back"
 - [ ] `requirement` is empty but a new user-perceivable capability was added → trigger `bt-req` in **backfill** mode and land it directly as `status: done` with `current: true`
-- [ ] `requirement` points to an active/pending req → trigger `bt-req` in **update** mode, `status: active|pending` → `status: done` with `current: true`, refreshing user stories and boundaries according to the real implementation, while **preserving the original vision**, meaning the original vision is not overwritten and this run is recorded only in a change log at the end
+- [ ] `requirement` points to a pending/active req → trigger `bt-req` in **update** mode, `status: pending|active` → `status: done` with `current: true`, refreshing user stories and boundaries according to the real implementation, while **preserving the original vision**, meaning the original vision is not overwritten and this run is recorded only in a change log at the end
 - [ ] `requirement` points to a current req (`status: done`, `current: true`) and this run changed its boundary, user stories, or pitch → trigger `bt-req` in **update** mode to refresh it
 - [ ] `requirement` points to a current req (`status: done`, `current: true`) but this run did not change the user-facing view → write "req-{slug} unchanged, no update needed"
 
@@ -231,7 +231,7 @@ If a check-context manifest exists, verify required rows before section 1. For n
 - [ ] every scenario in section 3 is checked off, and frontend changes have browser verification
 - [ ] section 4 terminology consistency has no gaps
 - [ ] section 5 architecture merge has a clear conclusion for every item, and every needed doc update has actually been written
-- [ ] section 6 req write-back has a conclusion, skipped / unchanged / backfilled / active→done with `current: true` / updated
+- [ ] section 6 req write-back has a conclusion, skipped / unchanged / backfilled / pending|active→done with `current: true` / updated
 - [ ] section 7 roadmap write-back has a conclusion, skipped because not from roadmap, or updated with `items.yaml` plus main doc sync and YAML validation passed
 - [ ] every checklist check is `passed`
 - [ ] acceptance report frontmatter has been changed to `status: done` before exit
@@ -243,7 +243,7 @@ If a check-context manifest exists, verify required rows before section 1. For n
 
 Tell the user: "The acceptance report is ready, the architecture docs have been merged, and the bt-feat workflow is complete. Future bugs go through the issue workflow."
 
-Following section 3 of `.bytetrue/reference/shared-conventions.md`, first read `workflow.mode`, `workflow.ask_before`, `tracker.provider`, and `tracker.sync_policy` from `.bytetrue/config.yaml`. Skip the tracker prompt when `tracker.provider: local` or `tracker.sync_policy: never`. In `manual`, ask one sentence for each applicable suggestion below and stop; the tracker prompt is applicable only when it was not skipped. In `auto`, prepare a tracker preview only when tracker is not skipped and `sync_policy: auto_preview`, and continue through deterministic non-boundary suggestions only when they do not match any current `workflow.ask_before` operation key and do not require user choice. Skip immediately if the user says "no need":
+Following section 3 of `.bytetrue/reference/shared-conventions.md`, first read `workflow.mode`, `workflow.ask_before`, `tracker.provider`, and `tracker.sync_policy` from `.bytetrue/config.yaml`. If `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; do not infer defaults from prose references. Skip the tracker prompt when `tracker.provider: local` or `tracker.sync_policy: never`. In `manual`, ask one sentence for each applicable suggestion below and stop; the tracker prompt is applicable only when it was not skipped. In `auto`, prepare a tracker preview only when tracker is not skipped and `sync_policy: auto_preview`, and continue through deterministic non-boundary suggestions only when they do not match any current `workflow.ask_before` operation key and do not require user choice. Skip immediately if the user says "no need":
 
 1. reusable-value pitfalls or experience → "Do you want to capture it as learning? (`bt-learn`)"
 2. long-term constraints or technology choices → "Do you want to archive the decision? (`bt-decide`)"

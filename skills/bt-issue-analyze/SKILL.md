@@ -174,7 +174,7 @@ execution_mode:
 
 ## Checkpoint, Align with the User
 
-After writing, **apply the close-out mode from `.bytetrue/config.yaml`**:
+After writing, **apply the close-out mode from `.bytetrue/config.yaml`**. If `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; do not infer defaults from prose references:
 
 1. summarize the "root cause" and the "recommended option" orally to the user, without making them read the whole file, because what they are waiting for is the conclusion
 2. in `manual`, ask: "Is the root-cause judgment accurate? Do you agree with the recommended option, or do you want a different one?"

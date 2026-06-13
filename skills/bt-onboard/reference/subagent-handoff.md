@@ -19,7 +19,7 @@ For research tasks that do not belong to one feature yet, replace design/checkli
 
 ## Dispatch Mode Selection
 
-Read `.bytetrue/config.yaml` before choosing an execution surface. The current `dispatch` values are the source of truth:
+Read `.bytetrue/config.yaml` before choosing an execution surface. If it is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; do not infer dispatch defaults from this reference. The current `dispatch` values are the source of truth:
 
 - `preferred: auto` uses the fallback ladder: native subagent when available, then synchronous non-interactive child agent when allowed and available, then inline role execution.
 - `preferred: native_subagent` tries a native subagent first; if unavailable, stop and report the unavailable preferred surface unless the user allows fallback.

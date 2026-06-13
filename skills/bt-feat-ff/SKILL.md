@@ -183,7 +183,7 @@ Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-con
 - **commit scope**: this code change plus `{slug}-ff-note.md`
 - after the ff note is written, tell the user "it is ready; do you want me to commit it?" and only execute after explicit approval
 
-Following section 3 `feature-ff` of `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+Following section 3 `feature-ff` of `.bytetrue/reference/shared-conventions.md`, first read `.bytetrue/config.yaml` before close-out. If it is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton before config-driven close-out; do not infer defaults from prose references. Then give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
 
 1. if it exposed a pitfall → "Capture it as learning? (`bt-learn`)"
 2. if it finalized a long-term constraint → "Archive the decision? (`bt-decide`)"
