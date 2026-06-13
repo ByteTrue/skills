@@ -22,7 +22,7 @@ This stage does two things: turn the problem in the user's head into a structure
 1. **Confirm this is a bug, not a new feature request** — if the description is really "I want to add capability X", tell the user to use `bt-feat`
 2. **Check for related issue directories** — `Glob .bytetrue/issues/`; if a similar problem already exists, confirm with the user whether this is a new issue or an update
 3. **Fast-path decision, the only formal decision point** — based on the user's clues, **read the related code briefly** with Grep and Read:
-   - **If the root cause is obvious at a glance**, meaning you can point to `{file}:{line}`, the fix is only 1-2 small changes, and there is no cross-module impact risk → tell the user: "I can already see where the problem is. We can use the fast path: I will tell you the root cause and fix plan directly, you confirm, I fix it immediately, you verify it afterward, and we write only one `{slug}-fix-note.md`." If they agree, trigger `bt-issue-fix` in fast-track mode
+   - **If the root cause is obvious at a glance**, meaning you can point to `{file}:{line}`, the fix is only 1-2 small changes, there is no cross-module impact risk, and none of the complex diagnose triggers from `bt-issue-analyze` apply → tell the user: "I can already see where the problem is. We can use the fast path: I will tell you the root cause and fix plan directly, you confirm, I fix it immediately, you verify it afterward, and we write only one `{slug}-fix-note.md`." If they agree, trigger `bt-issue-fix` in fast-track mode
    - **If not**, because there are multiple root-cause candidates, uncertainty remains, or more reproduction information is needed → use the standard path and write the full issue report. Once the standard path has started, do not re-decide the route later
 4. **Determine the issue directory name** — agree on the slug with the user. Use today's date from `currentDate` as the date prefix. Create the directory if it does not exist. Even the fast path must have an issue directory, because `{slug}-fix-note.md` still lives there
 
@@ -142,9 +142,9 @@ Reproduction frequency: {stable / probabilistic, about X% / currently cannot be 
 
 Tell the user: "The issue report is ready. Stage 2 is root-cause analysis. Trigger `bt-issue-analyze` next."
 
-Following section 3 `issue-report` in `.bytetrue/reference/shared-conventions.md`, apply `.bytetrue/config.yaml` close-out behavior: in `manual`, give the tracker prompt and stop; in `auto`, skip tracker when local/never, prepare only a preview for `auto_preview`, and continue to `bt-issue-analyze` only if no tracker/write/ambiguity boundary is reached.
+Following section 3 `issue-report` in `.bytetrue/reference/shared-conventions.md`, first read `workflow.mode`, `workflow.ask_before`, `tracker.provider`, and `tracker.sync_policy` from `.bytetrue/config.yaml`. Skip the tracker prompt when `tracker.provider: local` or `tracker.sync_policy: never`. In `manual`, ask the applicable prompt below and stop; the tracker prompt is applicable only when it was not skipped. In `auto`, prepare a tracker preview only when tracker is not skipped and `sync_policy: auto_preview`, and continue to `bt-issue-analyze` only if no tracker/write/ambiguity boundary is reached.
 
-1. a reviewed bug issue (`status: done`) may need collaboration projection → "Do you want to sync or bind it to an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit user confirmation.
+1. a reviewed bug issue (`status: done`) may need collaboration projection and tracker is not skipped → "Do you want to sync or bind it to an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit user confirmation.
 
 Do not start root-cause analysis on your own in `manual` mode. In `auto` mode, analysis may continue only after the report is complete and the next step has no `ask_before` boundary.
 

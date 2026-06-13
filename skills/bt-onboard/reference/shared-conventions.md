@@ -55,7 +55,7 @@ The skeleton after onboarding, built by `bt-onboard`:
 │   └── {slug}/            one subdirectory per open discussion; `brainstorm.md` records conclusions, spike files may sit next to it
 │                          feature-local brainstorm notes still live under `features/{feature}/{slug}-brainstorm.md`
 ├── worklog/               lightweight report-feed / handoff / recovery records
-│   └── YYYY-MM.md         split as YYYY-MM-02.md only when project doc policy requires it
+│   └── YYYY-MM.md         split as YYYY-MM-02.md when the monthly file becomes too long
 ├── tools/                 shared scripts across workflows, released from the skill package by onboard
 └── reference/             shared reference docs, released from the skill package by onboard
     ├── shared-conventions.md   directory structure / frontmatter / stage handoff rules

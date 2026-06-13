@@ -44,7 +44,7 @@ Trigger the enhanced `diagnose` discipline from Matt in any of the following cas
 - a first fix attempt has already failed to solve it
 - logs, debugger, profiler, or query plan are needed to decide
 
-When this discipline triggers, record `execution_mode.level: strict-evidence` unless the analysis is already about repeated failed fixes or architecture friction; in that case record `break-loop` and route back to plan or architecture discussion before another fix attempt. See `.bytetrue/reference/execution-modes.md`.
+When this discipline triggers, record the result in analysis frontmatter under `execution_mode`: use `level: strict-evidence` unless the analysis is already about repeated failed fixes or architecture friction; in that case use `level: break-loop` and route back to plan or architecture discussion before another fix attempt. When it does not trigger, record `level: standard` with empty `triggers` and `required_evidence`. See `.bytetrue/reference/execution-modes.md`.
 
 When triggered, additionally record the following in the analysis:
 
@@ -102,9 +102,19 @@ status: active
 root_cause_type: logic | state-pollution | data-format | concurrency | config | missing-guard
 related: [{relative path to slug-report.md}]
 tags: []
+execution_mode:
+  level: standard | strict-evidence | break-loop
+  triggers: []
+  required_evidence: []
 ---
 
 # {Short Problem Description} Root-Cause Analysis
+
+## Execution Mode
+
+- **level**: {standard | strict-evidence | break-loop}
+- **triggers**: {list the complex diagnose triggers that applied, or []}
+- **required evidence**: {feedback loop / regression seam / instrumentation / verification evidence required downstream, or []}
 
 ## 1. Problem Location
 
@@ -168,7 +178,7 @@ After writing, **apply the close-out mode from `.bytetrue/config.yaml`**:
 
 1. summarize the "root cause" and the "recommended option" orally to the user, without making them read the whole file, because what they are waiting for is the conclusion
 2. in `manual`, ask: "Is the root-cause judgment accurate? Do you agree with the recommended option, or do you want a different one?"
-3. in `auto`, continue to `bt-issue-fix` only if the user has already authorized the recommended fix path for this issue and the recommended option is a pinpoint change inside the reported scope; otherwise stop at the repair-option choice boundary
+3. in `auto`, continue to `bt-issue-fix` only if `execution_mode.level` is not `break-loop`, the user has already authorized the recommended fix path for this issue, and the recommended option is a pinpoint change inside the reported scope; otherwise stop at the repair-option or break-loop boundary
 4. only after the option is explicitly confirmed or pre-authorized may stage 3 be triggered
 
 ---
@@ -176,12 +186,14 @@ After writing, **apply the close-out mode from `.bytetrue/config.yaml`**:
 ## Exit Conditions
 
 - [ ] frontmatter exists, including matching `doc_type=issue-analysis` and `issue`
-- [ ] all 5 sections are filled
+- [ ] `execution_mode` frontmatter and section are recorded; complex diagnose triggers map to `strict-evidence` or `break-loop`, while simple issues record `standard`
+- [ ] all 5 analysis sections are filled
 - [ ] a concrete code location was identified, `file:line`
 - [ ] the failure path is reconstructed clearly
 - [ ] the impact-surface assessment is complete
 - [ ] at least 2 repair options plus a recommendation are present
 - [ ] for complex bugs, feedback loop, hypotheses, instrumentation, and regression seam were recorded, or the reason it was not triggered is explicit
+- [ ] if `execution_mode.level` is `break-loop`, the analysis stops before another patch attempt and routes to issue analysis revision, grill, refactor, roadmap, or architecture discussion
 - [ ] the user explicitly confirmed "the analysis is accurate; fix it using option X"
 - [ ] frontmatter is `status: done`
 
@@ -189,7 +201,7 @@ After writing, **apply the close-out mode from `.bytetrue/config.yaml`**:
 
 ## After Exit
 
-Tell the user: "The root-cause analysis is ready, and the option is confirmed. Stage 3 is fix verification." In `manual`, tell them to trigger `bt-issue-fix` next. In `auto`, continue to `bt-issue-fix` only when the repair option is confirmed/pre-authorized and no `ask_before` boundary is pending.
+Tell the user: "The root-cause analysis is ready, and the option is confirmed. Stage 3 is fix verification." In `manual`, tell them to trigger `bt-issue-fix` next only when `execution_mode.level` is not `break-loop`; for `break-loop`, route to issue analysis revision, grill, refactor, roadmap, or architecture discussion. In `auto`, continue to `bt-issue-fix` only when the repair option is confirmed/pre-authorized, `execution_mode.level` is not `break-loop`, and no `ask_before` boundary is pending.
 
 Do not casually start changing code after analysis when the repair option has tradeoffs or still needs user choice. If there is no pause at that boundary, the user loses the chance to review.
 

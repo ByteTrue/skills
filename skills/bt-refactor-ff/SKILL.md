@@ -117,6 +117,6 @@ To switch back, trigger `bt-refactor` and start from scan. Already changed parts
 
 ## Related
 
-- `bt-refactor/SKILL.md` — the full refactor workflow
-- `../bt-refactor/reference/methods.md` — the full method library
+- `bt-refactor` — the full refactor workflow when fastforward entry checks fail
+- Full method library: do not read sibling skill files from fastforward; if the common-method list above is not enough, route to `bt-refactor` instead
 - `.bytetrue/reference/system-overview.md` — overview of the ByteTrue system

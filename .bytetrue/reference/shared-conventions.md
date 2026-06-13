@@ -55,7 +55,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 │   └── {slug}/            一次开放讨论一个子目录，`brainstorm.md` 记录结论，spike 文件可并列存放
 │                          feature-local brainstorm 仍放在 `features/{feature}/{slug}-brainstorm.md`
 ├── worklog/               轻量工作记录 / 报告 feed / handoff / recovery 记录
-│   └── YYYY-MM.md         项目文档策略需要时再拆成 YYYY-MM-02.md 等分片
+│   └── YYYY-MM.md         月度文件太长时再拆成 YYYY-MM-02.md 等分片
 ├── tools/                 跨工作流共享脚本（onboard 从技能包释放）
 └── reference/             共享参考文档（onboard 从技能包释放）
     ├── shared-conventions.md   目录结构 / frontmatter / 阶段衔接口径

@@ -21,7 +21,7 @@ The easiest way for the fix stage to go wrong is not the code change itself, but
 
 ### Standard Path, with analysis
 
-1. **The plan is confirmed** — read the analysis, confirm `doc_type=issue-analysis` and `status=done`, and identify which plan the user selected in section 5
+1. **The plan is confirmed** — read the analysis, confirm `doc_type=issue-analysis`, `status=done`, and frontmatter `execution_mode.level`, then identify which plan the user selected in section 5
 2. **Read the full context**: the full analysis, the full report, all code locations identified in section 1 of the analysis, `.bytetrue/attention.md`, and search the archival directory:
    - `python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter status=active --query "{keyword}"` — confirm the fix approach does not violate existing library usage or established patterns
    - the same command with `--filter doc_type=explore` — confirm the fix point does not conflict with existing evidence
@@ -29,7 +29,7 @@ The easiest way for the fix stage to go wrong is not the code change itself, but
 
 ### Fast Path, no analysis, triggered directly from report
 
-When entering through this path, the AI already read the code during report and is confident about the root cause.
+When entering through this path, the AI already read the code during report and is confident about the root cause. Fast path is only for simple, obvious fixes; if the issue matches strict-evidence or break-loop triggers, stop and return to the standard path through `bt-issue-analyze` so the execution mode is durably recorded.
 
 1. **State the root cause explicitly**: "`{file}:{line}` contains {specific code}, which has {problem description}", and let the user confirm that the root-cause judgment is accurate
 2. **Give the fix plan** — what will be changed and how, in one or two sentences, without writing a full analysis document
@@ -77,7 +77,7 @@ If analysis or the fast-path judgment says there is a suitable behavior seam, pr
 
 For simple bugs, pure configuration, or pure copy changes, a regression test may be omitted, but the verification result must explain what evidence replaced it.
 
-If the confirmed analysis or fast-path plan records `execution_mode.level: strict-evidence`, the regression seam and fresh verification are mandatory unless the fix note explains why no seam exists. If it records `break-loop`, do not continue normal fixing; stop and return to issue analysis, grill, refactor, or roadmap discussion before another patch attempt.
+If the confirmed analysis records `execution_mode.level: strict-evidence`, the regression seam and fresh verification are mandatory unless the fix note explains why no seam exists. If it records `break-loop`, do not continue normal fixing; stop and return to issue analysis, grill, refactor, roadmap, or architecture discussion before another patch attempt. Fast path must not carry `strict-evidence` or `break-loop`; if those triggers appear, leave fast path and create a standard analysis first.
 
 ### Report after every completed change
 
@@ -156,11 +156,11 @@ Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-con
 
 Tell the user: "The issue fix is complete and the workflow is closed. Report, analysis, and fix-note have all been archived."
 
-Following section 3 `issue-fix` of `.bytetrue/reference/shared-conventions.md`, apply `.bytetrue/config.yaml` close-out behavior: in `manual`, ask one sentence for each suggestion below; in `auto`, continue only through deterministic non-boundary suggestions that do not match any current `workflow.ask_before` operation key and do not require user choice.
+Following section 3 `issue-fix` of `.bytetrue/reference/shared-conventions.md`, first read `workflow.mode`, `workflow.ask_before`, `tracker.provider`, and `tracker.sync_policy` from `.bytetrue/config.yaml`. Skip the tracker prompt when `tracker.provider: local` or `tracker.sync_policy: never`. In `manual`, ask one sentence for each applicable suggestion below and stop; the tracker prompt is applicable only when it was not skipped. In `auto`, prepare a tracker preview only when tracker is not skipped and `sync_policy: auto_preview`, and continue only through deterministic non-boundary suggestions that do not match any current `workflow.ask_before` operation key and do not require user choice.
 
 1. if this exposed a reusable pitfall → "Do you want to capture it as learning? (`bt-learn`)"
 2. if this surfaced a long-term constraint, convention, or technical decision → "Do you want to archive the decision? (`bt-decide`)"
-3. if this fixed bug issue needs collaboration-state projection → "Do you want to update, bind, or request closure on the external tracker? (`bt-tracker`)" If it was never bound before, sync can still be added. With `auto_preview`, the preview may be prepared automatically; external writes still follow current `workflow.ask_before` and `bt-tracker` confirmation rules.
+3. if this fixed bug issue needs collaboration-state projection and tracker is not skipped → "Do you want to update, bind, or request closure on the external tracker? (`bt-tracker`)" If it was never bound before, sync can still be added. With `auto_preview`, the preview may be prepared automatically; external writes still follow current `workflow.ask_before` and `bt-tracker` confirmation rules.
 4. if this bug exposed a project-wide hard constraint, command pitfall, or environment setup that can be explained in one or two lines and should be known at every ByteTrue startup → "Do you want to record it in attention.md? (`bt-note`)"
 5. if a concise work record would help reporting, handoff, or recovery → "Do you want to add a concise worklog/report-feed entry for this fix?" (`.bytetrue/reference/worklog-report-feed.md`)
 6. finally ask whether they want you to commit it. If they agree, execute according to the close-out commit rules and current `workflow.ask_before`

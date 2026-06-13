@@ -167,6 +167,7 @@ Against the standard skeleton, fill any directory or file that is still missing 
 **Handle `.bytetrue/reference/` in two categories**:
 
 - project-owned configuration files, namely `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md`, should only be created from template when missing; if they already exist, they must not be overwritten without explicit confirmation
+- skill-package-managed reference files, namely all other files copied from `bt-onboard/reference/`, may be overwritten from the fresh skill-package version after listing them in the report
 
 Before overwriting, list the skill-package-managed files that will be overwritten in the report; when project-owned configuration already exists, list it as "keep existing".
 

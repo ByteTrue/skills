@@ -250,9 +250,9 @@ The user has passed overall review, and:
 
 Tell the user: "feature design is approved and the checklist is ready. The next stage is implementation. Trigger `bt-feat-impl`."
 
-Following section 3 `feature-design` of `.bytetrue/reference/shared-conventions.md`, apply close-out behavior from `.bytetrue/config.yaml`: in `manual`, ask the one-sentence tracker prompt below and stop; in `auto`, skip tracker if local/never, prepare only a preview for `auto_preview`, and continue to `bt-feat-impl` startup only when no tracker/write/review boundary is reached.
+Following section 3 `feature-design` of `.bytetrue/reference/shared-conventions.md`, first read `workflow.mode`, `workflow.ask_before`, `tracker.provider`, and `tracker.sync_policy` from `.bytetrue/config.yaml`. Skip the tracker prompt when `tracker.provider: local` or `tracker.sync_policy: never`. In `manual`, ask the applicable prompt below and stop; the tracker prompt is applicable only when it was not skipped. In `auto`, prepare a tracker preview only when tracker is not skipped and `sync_policy: auto_preview`, and continue to `bt-feat-impl` startup only when no tracker/write/review boundary is reached.
 
-1. a reviewed feature design (`status: done`, `review_result: approved`) may need collaboration-state projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" When the feature starts from roadmap, also mention that the corresponding roadmap item can be updated or bound. Do not create or update any external issue before explicit user confirmation.
+1. a reviewed feature design (`status: done`, `review_result: approved`) may need collaboration-state projection and tracker is not skipped → "Do you want to sync or bind an external tracker? (`bt-tracker`)" When the feature starts from roadmap, also mention that the corresponding roadmap item can be updated or bound. Do not create or update any external issue before explicit user confirmation.
 
 ---
 
