@@ -175,30 +175,30 @@ Before overwriting, list the skill-package-managed files that will be overwritte
 
 ```bash
 # macOS / Linux
-cp -rf <skill-package-path>/bt-onboard/tools/. .bytetrue/tools/
+cp -rf <bt-onboard-skill-path>/tools/. .bytetrue/tools/
 
 # reference: overwrite skill-package-managed files, but preserve project-owned config
 rsync -a \
   --exclude domain-context.md \
   --exclude project-management.md \
-  <skill-package-path>/bt-onboard/reference/. .bytetrue/reference/
+  <bt-onboard-skill-path>/reference/. .bytetrue/reference/
 
 test -e .bytetrue/reference/domain-context.md || \
-  cp <skill-package-path>/bt-onboard/reference/domain-context.md .bytetrue/reference/domain-context.md
+  cp <bt-onboard-skill-path>/reference/domain-context.md .bytetrue/reference/domain-context.md
 
 test -e .bytetrue/reference/project-management.md || \
-  cp <skill-package-path>/bt-onboard/reference/project-management.md .bytetrue/reference/project-management.md
+  cp <bt-onboard-skill-path>/reference/project-management.md .bytetrue/reference/project-management.md
 
 # Windows PowerShell
-Copy-Item -Recurse -Force <skill-package-path>\bt-onboard\tools\* .bytetrue\tools\
-Get-ChildItem <skill-package-path>\bt-onboard\reference\* | Where-Object { $_.Name -notin @('domain-context.md','project-management.md') } | Copy-Item -Destination .bytetrue\reference\ -Force
-if (!(Test-Path .bytetrue\reference\domain-context.md)) { Copy-Item <skill-package-path>\bt-onboard\reference\domain-context.md .bytetrue\reference\domain-context.md }
-if (!(Test-Path .bytetrue\reference\project-management.md)) { Copy-Item <skill-package-path>\bt-onboard\reference\project-management.md .bytetrue\reference\project-management.md }
+Copy-Item -Recurse -Force <bt-onboard-skill-path>\tools\* .bytetrue\tools\
+Get-ChildItem <bt-onboard-skill-path>\reference\* | Where-Object { $_.Name -notin @('domain-context.md','project-management.md') } | Copy-Item -Destination .bytetrue\reference\ -Force
+if (!(Test-Path .bytetrue\reference\domain-context.md)) { Copy-Item <bt-onboard-skill-path>\reference\domain-context.md .bytetrue\reference\domain-context.md }
+if (!(Test-Path .bytetrue\reference\project-management.md)) { Copy-Item <bt-onboard-skill-path>\reference\project-management.md .bytetrue\reference\project-management.md }
 ```
 
 Do not use Read+Write to move them manually. That truncates and reformats files. Do not overwrite the whole reference directory, because doing so would wipe project terminology and tracker configuration.
 
-The skill-package path is usually the installed skill directory, such as `~/.claude/skills/bt-onboard/`, `~/.agents/skills/bt-onboard/`, or a plugin directory. If uncertain, locate it with `ls` first. After copying, verify with `ls .bytetrue/tools/ .bytetrue/reference/`.
+`<bt-onboard-skill-path>` is the installed `bt-onboard` skill directory itself, such as `~/.claude/skills/bt-onboard/`, `~/.agents/skills/bt-onboard/`, or a plugin skill directory. If you only know the parent skills root, append `/bt-onboard` first. If uncertain, locate it with `ls` first. After copying, verify with `ls .bytetrue/tools/ .bytetrue/reference/`.
 
 **Step 5: handle files that are not being migrated**
 

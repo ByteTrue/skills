@@ -66,8 +66,9 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter tags~=ll
 
 # Sort by time
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --sort-by date --order desc                     # most recently archived first
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/library-docs --sort-by last_reviewed --order asc         # least recently reviewed first, useful for stale docs
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=done --filter current=true --sort-by last_reviewed --order asc
+python .bytetrue/tools/search-yaml.py --dir docs/api --sort-by last_reviewed --order asc                    # least recently reviewed API refs
+python .bytetrue/tools/search-yaml.py --dir docs/dev --filter status=done --filter current=true --sort-by last_reviewed --order asc
+python .bytetrue/tools/search-yaml.py --dir docs/user --filter status=done --filter current=true --sort-by last_reviewed --order asc
 ```
 
 ### Typical usage scenarios

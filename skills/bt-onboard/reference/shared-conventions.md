@@ -297,6 +297,4 @@ Shared by `bt-feat-impl` and `bt-issue-fix`. The AI naturally drifts toward larg
 | about to add a fourth or later parameter to a function | is the function doing too many things? Parameter-list growth is an early signal of API decay |
 | about to write a "universal tool class / helper" | does it really have no home, or are you only piling it into util because you cannot think of the right location? |
 
-**After stopping**: the reflection check only surfaces the problem; the user decides the conclusion. Once the action needed after stopping, split, create a new file, rename, extract a shared layer, would exceed the current step scope, align with the user and then decide whether to include it now or record it as a while-here observation for later.
-
-It is not allowed to silently split and continue, and it is not allowed to ignore the signal and brute-force through. The default action is stop, ask, then continue.
+**After stopping**: the reflection check only surfaces the problem; the user decides the conclusion. Once the needed split, new file, rename, or shared extraction would exceed the current step scope, align with the user and decide whether to include it now or record it as a while-here observation. Do not silently split or brute-force through; default to stop, ask, then continue.

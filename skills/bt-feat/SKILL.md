@@ -83,7 +83,7 @@ When entering this skill, `Glob .bytetrue/features/` first and inspect the exist
 | Legacy acceptance exists without frontmatter but has substantive section-by-section acceptance content | `bt-feat-accept` in legacy reconstruction mode; do not route back to implementation solely because `{slug}-implementation-report.md` is missing |
 | Design exists with `status: done` and `review_result: approved`, but checklist steps are missing, pending, or failed | `bt-feat-impl` |
 | Checklist steps are all `done`, but `{slug}-implementation-report.md` is missing or not `status: done` | `bt-feat-impl` |
-| Implementation report is `status: done`, but checklist checks are `pending` or `failed`, or acceptance is missing | `bt-feat-accept` |
+| Implementation report is `status: done`, but checklist checks are `pending` or `failed`, or acceptance is missing or partial | `bt-feat-accept` |
 | Fastforward note exists with `status: done` | fastforward feature is already complete; route new behavior changes to a new feature or issue |
 | The user says "I want an X system" and it is a large demand | route to `bt-brainstorm` for triage, most likely case 3 → `bt-roadmap` |
 | A sub-feature in roadmap is ready to start | `bt-feat-design` via the "starting from a roadmap item" entry |
