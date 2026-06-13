@@ -32,7 +32,8 @@ This skill writes neither code nor documents. It does only one thing: look at wh
 ├── {slug}-impl-context.jsonl  ← implementation read-set
 ├── {slug}-check-context.jsonl ← acceptance/check read-set
 ├── {slug}-implementation-report.md ← stage 2 durable completion + review evidence
-└── {slug}-acceptance.md       ← stage 3 acceptance report
+├── {slug}-acceptance.md       ← stage 3 acceptance report
+└── {slug}-ff-note.md          ← fastforward-only trace, mutually exclusive with standard-flow artifacts
 ```
 
 The directory name is `YYYY-MM-DD-{english-slug}`. The date is fixed to the day of first creation and never changes. The slug uses lowercase letters, digits, and hyphens.

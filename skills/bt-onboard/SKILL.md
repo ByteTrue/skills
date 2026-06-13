@@ -98,9 +98,9 @@ Execute the following in order, **without waiting for step-by-step user confirma
 Before writing `.bytetrue/config.yaml`, read `.bytetrue/reference/config.schema.yaml`, guide the user through every required config group, then write the selected values once:
 
 1. **Workflow** — choose `workflow.mode` (`manual` default, or `auto`) and review the `workflow.ask_before` operation-key list that auto mode must stop on. The list is project-owned; seed a conservative default but let the user add or remove keys before writing.
-2. **Tracker** — choose `tracker.provider` (`local | github | gitlab`), `tracker.sync_policy` (`ask | never | auto_preview`), and keep first-version supported values for `sync_direction`, `external_import`, and `update_policy` unless the user explicitly asks for an unsupported value, in which case stop and explain it is not supported yet.
-3. **Repository / CLI cache** — detect provider CLI and auth as advisory cache only; write `repository.remote_url`, `repository.tracker_url`, `provider_status`, and last-detected `cli` values into config, but tell the user `bt-tracker` revalidates them at runtime.
-4. **Dispatch** — choose `dispatch.preferred` (`auto | native_subagent | non_interactive_child | inline`) and set `allow_non_interactive_child` / `allow_background_agents`. If unsure, use `preferred: auto`, allow synchronous non-interactive child agents, and keep background agents disabled.
+2. **Tracker** — choose `tracker.provider` (`local | github | gitlab`), `tracker.sync_policy` (`ask | never | auto_preview`), and keep first-version supported values for `tracker.sync_direction`, `tracker.external_import`, and `tracker.update_policy` unless the user explicitly asks for an unsupported value, in which case stop and explain it is not supported yet.
+3. **Repository / CLI cache** — detect provider CLI and auth as advisory cache only; write `tracker.repository.remote_url`, `tracker.repository.tracker_url`, `tracker.provider_status`, and last-detected `tracker.cli.gh.*` / `tracker.cli.glab.*` values into config, but tell the user `bt-tracker` revalidates them at runtime.
+4. **Dispatch** — choose `dispatch.preferred` (`auto | native_subagent | non_interactive_child | inline`) and set `dispatch.allow_non_interactive_child` / `dispatch.allow_background_agents`. If unsure, use `preferred: auto`, allow synchronous non-interactive child agents, and keep background agents disabled.
 
 If the chosen provider is `github`, check:
 
@@ -118,7 +118,7 @@ glab auth status
 git remote -v
 ```
 
-Keep label meanings and sync semantics in `.bytetrue/reference/project-management.md`; do not duplicate current config values there. If the CLI is not installed or not logged in, do not stop onboarding. Write `provider_status: unavailable` and tell the user they can rerun `bt-onboard` later or edit `.bytetrue/config.yaml`.
+Keep label meanings and sync semantics in `.bytetrue/reference/project-management.md`; do not duplicate current config values there. If the CLI is not installed or not logged in, do not stop onboarding. Write `tracker.provider_status: unavailable` and tell the user they can rerun `bt-onboard` later or edit `.bytetrue/config.yaml`.
 
 **Step 4: remind about attention.md**
 

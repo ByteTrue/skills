@@ -8,11 +8,12 @@ Core principle: `.bytetrue/` is the canonical source of truth; the external trac
 
 ## Provider
 
-Chosen by the user during onboarding:
+Chosen by the user during onboarding and stored under `tracker.*` in `.bytetrue/config.yaml`:
 
 ```yaml
-provider: local | github | gitlab
-sync_policy: ask | never | auto_preview
+tracker:
+  provider: local | github | gitlab
+  sync_policy: ask | never | auto_preview
 ```
 
 - `local`: use only `.bytetrue/`, create no external issues
