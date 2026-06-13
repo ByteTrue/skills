@@ -44,6 +44,10 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 │       ├── {slug}-refactor-design.md
 │       ├── {slug}-checklist.yaml
 │       └── {slug}-apply-notes.md
+├── audits/                audit 聚合根
+│   └── YYYY-MM-DD-{slug}/
+│       ├── index.md
+│       └── finding-01.md
 ├── compound/              沉淀类文档统一目录
 │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │                          doc_type ∈ {learning, trick, decision, explore}
@@ -76,7 +80,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 
 - 需求文档：`requirements/{slug}.md`（能力愿景，不带日期前缀，扁平不分组）；中心索引 `requirements/VISION.md`
 - roadmap：`roadmap/{slug}/`（不带日期前缀，平铺不嵌套）
-- feature / issue / refactor 目录：带日期前缀 `YYYY-MM-DD-{slug}`
+- feature / issue / refactor / audit 目录：带日期前缀 `YYYY-MM-DD-{slug}`
 - 沉淀类：`compound/YYYY-MM-DD-{doc_type}-{slug}.md`，日期用**归档当天**
 - 架构 doc：`architecture/{type}-{slug}.md`（长效，不带日期前缀）；总入口固定 `ARCHITECTURE.md`
 - 项目注意事项入口固定为 `.bytetrue/attention.md`，所有 ByteTrue 子技能启动前必须读取；不再兼容 `AGENTS.md` / `CLAUDE.md` 等外部入口
@@ -114,7 +118,7 @@ onboard 完成后骨架（`bt-onboard` 负责搭建）：
 - 文件名 `YYYY-MM-DD-{doc_type}-{slug}.md`——日期打头便于 `ls` 排序，type 段在中间便于 grep
 - 各子技能在 `doc_type` 之外保留专属 frontmatter（learning 的 `track` / trick 的 `type` / decision 的 `category` / explore 的 `type`）
 - 各子技能只认自己的 `doc_type` 不读写别家
-- `status` 等通用字段语义和本文件保持一致
+- `status` 等通用字段语义和本文件保持一致；对长期有效的沉淀知识，`status: active` 表示当前有效且可检索，`status: archived` 表示已被取代或过期
 
 **外部读者文档**（guidedoc / libdoc）：frontmatter 由各自子技能定义。无特殊说明：`status: active` = 待 review，`status: done` + `current: true` = 当前有效，`status: archived` + `validity: outdated` = 代码已变化、文档待同步或已保留为旧版。
 

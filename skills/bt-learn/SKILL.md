@@ -87,7 +87,7 @@ The AI drafts the full document in one pass, including YAML frontmatter and all 
 
 ### Phase 4: Archive
 
-- New document: write to `compound/YYYY-MM-DD-learning-{slug}.md` using the **archive date of the current day**, with frontmatter `doc_type: learning`
+- New document: write to `compound/YYYY-MM-DD-learning-{slug}.md` using the **archive date of the current day**, with frontmatter `doc_type: learning` and `status: active`
 - Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
 - Supersede: handle it according to item 5 of `.bytetrue/reference/shared-conventions.md` §6
 

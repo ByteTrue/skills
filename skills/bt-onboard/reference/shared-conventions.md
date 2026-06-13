@@ -44,6 +44,10 @@ The skeleton after onboarding, built by `bt-onboard`:
 │       ├── {slug}-refactor-design.md
 │       ├── {slug}-checklist.yaml
 │       └── {slug}-apply-notes.md
+├── audits/                audit aggregate root
+│   └── YYYY-MM-DD-{slug}/
+│       ├── index.md
+│       └── finding-01.md
 ├── compound/              unified directory for archival document types
 │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │                          where doc_type ∈ {learning, trick, decision, explore}
@@ -76,7 +80,7 @@ The skeleton after onboarding, built by `bt-onboard`:
 
 - requirement docs: `requirements/{slug}.md`, capability vision, no date prefix, flat with no grouping; central index is `requirements/VISION.md`
 - roadmap: `roadmap/{slug}/`, no date prefix, flat, no nested epics
-- feature / issue / refactor directories: all carry a date prefix, `YYYY-MM-DD-{slug}`
+- feature / issue / refactor / audit directories: all carry a date prefix, `YYYY-MM-DD-{slug}`
 - archival docs: `compound/YYYY-MM-DD-{doc_type}-{slug}.md`, with the date being the **archival day**
 - architecture docs: `architecture/{type}-{slug}.md`, long-lived and without date prefix; the root entry is always `ARCHITECTURE.md`
 - the project-notes entry is fixed at `.bytetrue/attention.md`; every ByteTrue sub-skill must read it before startup
@@ -114,7 +118,7 @@ Change the template at `bt-onboard/reference/shared-conventions.md` so that new 
 - filenames are `YYYY-MM-DD-{doc_type}-{slug}.md`, date first for `ls` sorting, type segment in the middle for grep
 - each sub-skill keeps its own extra frontmatter beyond `doc_type`, such as learning's `track`, trick's `type`, decision's `category`, or explore's `type`
 - each sub-skill recognizes only its own `doc_type` and never reads or writes another
-- common fields such as `status` follow the semantics in this file
+- common fields such as `status` follow the semantics in this file; for standing captured knowledge, `status: active` means currently valid and discoverable, while `status: archived` means superseded or outdated
 
 **External-reader docs**, guidedoc and libdoc, have frontmatter defined by their own skills. Unless otherwise specified, `active` means pending review, `done` + `current: true` means currently valid, and `archived` + `validity: outdated` means code has changed and the doc now needs synchronization.
 

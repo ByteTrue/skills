@@ -52,7 +52,7 @@
 - 当前项目副本 `.bytetrue/reference/**` 的独立历史内容（除非正在与 `skills/bt-onboard/reference/**` 做模板同步）
 - README、评测、历史 asset、项目产物文档
 
-对不适用范围，按 `.bytetrue/config.yaml` 的 `docs` policy 和可读性决定是否拆分。skill 源码文件接近 300 行时，优先压缩入口指令，或移入同一 skill 的 `reference.md` / 同目录参考文件。
+对不适用范围，按该类文档自身约定和可读性决定是否拆分。skill 源码文件接近 300 行时，优先压缩入口指令，或移入同一 skill 的 `reference.md` / 同目录参考文件。
 
 ## 开发与校验命令
 

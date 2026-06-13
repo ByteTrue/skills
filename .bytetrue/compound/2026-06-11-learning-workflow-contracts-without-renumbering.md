@@ -1,6 +1,7 @@
 ---
 doc_type: learning
 track: knowledge
+status: active
 date: 2026-06-11
 slug: workflow-contracts-without-renumbering
 component: bytetrue-feature-workflow

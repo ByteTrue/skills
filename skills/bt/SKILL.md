@@ -141,7 +141,7 @@ Use this when the user only wants to understand the system or does not know what
 Explain it in this order, **without dumping everything at once**:
 
 1. One sentence: ByteTrue is an AI coding workflow for serious engineering. It orchestrates the software lifecycle, not the Agent.
-2. The quick-read map of 7 entities + 3 workflows
+2. The quick-read map of 8 entities + 3 workflows
 3. Ask the user "Where do you want to start right now?", and offer four prompts:
    - "I have a new feature I want to build" → `bt-feat`
    - "I want to pressure-test a proposal" → `bt-grill`

@@ -34,6 +34,9 @@ After startup, **do one scan first and choose the path automatically**. Do not a
 ├── roadmap/                    planning-layer aggregate root
 ├── features/                   feature aggregate root
 ├── issues/                     issue aggregate root
+├── refactors/                  refactor aggregate root
+├── audits/                     audit aggregate root
+├── brainstorms/                open discussions / grill outputs not ready for roadmap
 ├── compound/                   unified directory for captured learning / trick / decision / explore
 ├── worklog/                    lightweight report-feed / handoff / recovery records
 ├── tools/                      shared scripts across workflows, released by onboard
@@ -82,9 +85,8 @@ After startup, **do one scan first and choose the path automatically**. Do not a
 
 Execute the following in order, **without waiting for step-by-step user confirmation** — the skeleton is one whole unit:
 
-- `.bytetrue/{requirements,roadmap,features,issues,compound,brainstorms,worklog}/.gitkeep`
+- `.bytetrue/{requirements,roadmap,features,issues,refactors,audits,compound,brainstorms,worklog}/.gitkeep`
 - `.bytetrue/attention.md`, using the minimal template in `reference.md` in the same directory
-- `.bytetrue/config.yaml`, initialized from user-selected values guided by `.bytetrue/reference/config.schema.yaml`
 - `.bytetrue/architecture/ARCHITECTURE.md`, using the placeholder template in `reference.md` in the same directory
 - `.bytetrue/tools/`, copied by shell using `cp -rf` or `Copy-Item -Recurse -Force` from `bt-onboard/tools/` in the skill package, **not Read then Write**
 - `.bytetrue/reference/`, initialized from `bt-onboard/reference/` in the skill package; for new projects, copying the whole directory is fine
