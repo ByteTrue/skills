@@ -30,9 +30,11 @@ The skeleton after onboarding, built by `bt-onboard`:
 │       ├── {slug}-brainstorm.md        optional, produced only in case 2
 │       ├── {slug}-design.md            standard flow
 │       ├── {slug}-checklist.yaml       standard flow
+│       ├── {slug}-impl-context.jsonl   standard flow, implementation read-set
+│       ├── {slug}-check-context.jsonl  standard flow, acceptance/check read-set
 │       ├── {slug}-implementation-report.md  standard flow, written by `bt-feat-impl`
 │       ├── {slug}-acceptance.md        standard flow
-│       └── {slug}-ff-note.md           the only artifact in the fastforward path, mutually exclusive with the five files above
+│       └── {slug}-ff-note.md           the only artifact in the fastforward path, mutually exclusive with the standard-flow files above
 ├── issues/                issue-spec aggregate root
 │   └── YYYY-MM-DD-{slug}/
 │       ├── {slug}-report.md
@@ -195,6 +197,7 @@ Every stage close-out first reads `workflow.mode`, `workflow.ask_before`, `track
 **roadmap** close-out should ask in this order:
 
 1. `bt-tracker`: sync or bind the roadmap PRD and all syncable roadmap items touched this time, pending, active, or done; dropped items only update already bound external issues
+2. `worklog`: optional concise report-feed entry for the roadmap session
 
 **feature-design** close-out should ask in this order:
 
@@ -208,7 +211,8 @@ Every stage close-out first reads `workflow.mode`, `workflow.ask_before`, `track
 4. `bt-guide`: developer or user guide
 5. `bt-libdoc`: public API reference
 6. `bt-note`: attention.md candidates
-7. `scoped-commit`
+7. `worklog`: optional concise report-feed entry for the feature acceptance session
+8. `scoped-commit`
 
 **issue-report** close-out should ask in this order:
 
@@ -220,7 +224,8 @@ Every stage close-out first reads `workflow.mode`, `workflow.ask_before`, `track
 2. `bt-decide`: archive exposed long-term constraints
 3. `bt-tracker`: update, bind, or request closure of the external bug issue; if it was never bound before, sync can still be added
 4. `bt-note`: attention.md candidate
-5. `scoped-commit`
+5. `worklog`: optional concise report-feed entry for the issue fix session
+6. `scoped-commit`
 
 **feature-ff** close-out should ask in this order, and by default it does not trigger tracker because it has no syncable source:
 
@@ -236,7 +241,7 @@ Every stage close-out first reads `workflow.mode`, `workflow.ask_before`, `track
 
 After acceptance or issue-fix completes, commit the artifacts of this run as one commit:
 
-- **scope**: the code touched in this run + the related spec docs + the architecture docs actually updated this run + the roadmap `items.yaml` or main doc actually updated this run
+- **scope**: the code touched in this run + the related spec docs + the architecture docs actually updated this run + the roadmap `items.yaml` or main doc actually updated this run + any optional worklog entry written for this close-out
 - **must not include**: incidental changes unrelated to this run; expansions that belong in a later, separate feature or issue
 - **confirm before commit**: if the user has not explicitly agreed, do not run `git commit`
 - **commit message**: one sentence saying what was done, without pasting spec directory paths

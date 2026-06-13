@@ -16,7 +16,7 @@ Before making any judgment or taking any action, read `.bytetrue/attention.md` f
 1. The user has a concrete request → match it against the scenario routing table, tell the user which `bt-*` to trigger, and briefly explain why
 2. The user wants to understand the system or cannot clearly say what they want to do → give a concise system quick-read and let the user choose or describe a more specific request
 
-**This skill does not do the work**: it does not write specs and does not run a sub-skill's workflow. It may read minimal frontmatter / status / checklist rows from matching `.bytetrue` artifacts only to route continuation requests such as "continue feature X". The only output is "which sub-skill should be triggered".
+**This skill does not do the work**: it does not write specs, does not read or write content artifacts under `.bytetrue/`, and does not run a sub-skill's workflow for it. The only output is "which sub-skill should be triggered".
 
 ---
 
@@ -25,7 +25,7 @@ Before making any judgment or taking any action, read `.bytetrue/attention.md` f
 Do this every time before replying; a few tool calls are enough:
 
 1. **Check whether the repo has been onboarded to ByteTrue** — `Glob .bytetrue/` and look at the top-level directories
-2. **If it exists** — you must `Read .bytetrue/attention.md` first (if it is missing, say the skeleton is incomplete and ask the user to fill it in or rerun `bt-onboard`); then `Read .bytetrue/reference/system-overview.md`, `.bytetrue/config.yaml` if present, and the stage close-out rules in `.bytetrue/reference/shared-conventions.md`; `Glob` `features/`, `issues/`, and `roadmap/` once. For a named continuation request, read only the minimal frontmatter/status/checklist rows needed to classify the current stage; do not read full bodies. If `workflow.mode: auto`, include whether the routed next stage is allowed to continue automatically or must stop at an `ask_before` / review boundary.
+2. **If it exists** — you must `Read .bytetrue/attention.md` first (if it is missing, say the skeleton is incomplete and ask the user to fill it in or rerun `bt-onboard`); then `Read .bytetrue/reference/system-overview.md` if present; `Glob` `features/`, `issues/`, and `roadmap/` once to see ongoing work (directory names are enough; do not read every file)
 3. **If it does not exist** — later tell the user to go through `bt-onboard` first
 4. **Look at the user's exact wording** — is it open-ended or already a concrete request? If concrete, match the routing table; if not, give the system introduction
 
@@ -90,7 +90,6 @@ Match the user's words to one row in the table, then tell them: "Your request sh
 | Library API reference | `bt-libdoc` |
 | External tracker / GitHub Issues / GitLab Issues / PRD sync / issue sync / triage incoming issues | `bt-tracker` (external tracker bridge; publish/link/update/triage, not a replacement for `bt-roadmap`, `bt-feat`, or `bt-issue`) |
 | The user asks "what's next" in the middle of a feature / issue workflow | Route to the corresponding entry (`bt-feat` / `bt-issue`) and let that entry decide the current phase |
-| The user says "continue / resume / 继续" plus a feature slug or directory | Read minimal status from the matching feature artifacts and route to `bt-feat` with the inferred phase; if acceptance is already `status: done`, say it is historical completion rather than active work |
 
 **Cannot tell / too abstract**: "It sounds like {guess}, but your description is missing {what is missing}. Is it {option A} or {option B}?" Make the user choose; do not guess hard.
 
@@ -115,10 +114,7 @@ Ask first whether this is a **bug fix** (X behaves incorrectly now) or a **requi
 
 ### Work Already In Progress
 
-If the scan sees related directories under `features/` or `issues/`, do not assume they are active just because directories exist. Check minimal status first:
-- terminal statuses `done`, `dropped`, and `archived` are historical, not active continuation;
-- `pending` or `active`, missing acceptance, pending checklist steps/checks, or missing implementation report can be active;
-- when the user names a feature, route to the precise next `bt-feat-*` stage instead of asking vaguely whether to continue.
+If the scan sees related directories under `features/` or `issues/`, say something like "I can see `features/2026-04-22-xxx/` already exists. Are we continuing that one?" Let the user confirm whether this is continuation work or a new one.
 
 ### How to Distinguish Accumulation Skills
 

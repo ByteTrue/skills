@@ -148,7 +148,7 @@ The fix note must additionally record:
 Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-conventions.md`. At this stage:
 
 - **commit scope**: the fix code, `{slug}-fix-note.md`, and any report or analysis files updated together this time
-- after the fix closes the loop, tell the user "fix verification is complete and `{slug}-fix-note.md` has been written", then immediately ask whether they want a commit
+- after the fix closes the loop, tell the user "fix verification is complete and `{slug}-fix-note.md` has been written", then continue through the After Exit close-out suggestions before the final commit prompt
 
 ---
 
