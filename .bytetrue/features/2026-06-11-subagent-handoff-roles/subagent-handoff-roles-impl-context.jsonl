@@ -1,8 +1,0 @@
-{"file":".bytetrue/features/2026-06-11-subagent-handoff-roles/subagent-handoff-roles-design.md","reason":"Approved design defines the subagent handoff scope, terminology, and non-goals.","required":true,"role":"implement"}
-{"file":".bytetrue/features/2026-06-11-subagent-handoff-roles/subagent-handoff-roles-checklist.yaml","reason":"Implementation must execute rollout steps in order and update status.","required":true,"role":"implement"}
-{"file":".bytetrue/requirements/subagent-handoff-roles.md","reason":"Requirement explains user-visible workflow capability and boundaries.","required":true,"role":"implement"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap module split and sequencing are hard constraints.","required":true,"role":"both"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-contracts.md","reason":"Subagent Handoff Protocol contract is a hard roadmap companion constraint.","required":true,"section":"5. Subagent Handoff Protocol","role":"both"}
-{"file":".bytetrue/reference/context-manifest.md","reason":"Handoff roles consume context manifests and must not duplicate facts.","required":true,"role":"implement"}
-{"file":".bytetrue/reference/implementation-review.md","reason":"Check role must preserve implementation review and independent acceptance boundaries.","required":true,"role":"implement"}
-{"file":".bytetrue/compound/2026-06-11-explore-ai-workflow-comparison.md","reason":"Exploration evidence identifies Trellis context/subagents and Superpowers reviewer discipline as absorption sources.","required":true,"role":"both"}

@@ -1,8 +1,0 @@
-{"file":".bytetrue/features/2026-06-11-research-first-explore-integration/research-first-explore-integration-design.md","reason":"Approved design defines research-first scope, terminology, and non-goals.","required":true,"role":"implement"}
-{"file":".bytetrue/features/2026-06-11-research-first-explore-integration/research-first-explore-integration-checklist.yaml","reason":"Implementation must execute rollout steps in order and update status.","required":true,"role":"implement"}
-{"file":".bytetrue/requirements/research-first-explore-integration.md","reason":"Requirement explains user-visible workflow capability and boundaries.","required":true,"role":"implement"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap module split and sequencing are hard constraints.","required":true,"role":"both"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-contracts.md","reason":"Research-first Integration contract is a hard roadmap companion constraint.","required":true,"section":"6. Research-first Integration","role":"both"}
-{"file":".bytetrue/reference/context-manifest.md","reason":"Context manifests can carry cited research-first explore artifacts.","required":true,"role":"implement"}
-{"file":".bytetrue/reference/subagent-handoff.md","reason":"Research role remains bounded to explore evidence and no final decisions.","required":true,"role":"implement"}
-{"file":".bytetrue/compound/2026-06-11-explore-ai-workflow-comparison.md","reason":"Exploration evidence identifies Trellis research-first/context behavior as an absorption source.","required":true,"role":"both"}

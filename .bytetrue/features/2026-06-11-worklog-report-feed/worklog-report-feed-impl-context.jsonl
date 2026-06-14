@@ -1,8 +1,0 @@
-{"file":".bytetrue/features/2026-06-11-worklog-report-feed/worklog-report-feed-design.md","reason":"Approved design defines worklog scope, entry shape, closeout prompt behavior, and non-goals.","required":true,"role":"implement"}
-{"file":".bytetrue/features/2026-06-11-worklog-report-feed/worklog-report-feed-checklist.yaml","reason":"Implementation must execute rollout steps in order and update step status.","required":true,"role":"implement"}
-{"file":".bytetrue/requirements/worklog-report-feed.md","reason":"Requirement explains user-visible worklog/report-feed capability and boundaries.","required":true,"role":"implement"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap defines Work Record Module and item sequencing.","required":true,"role":"both"}
-{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-contracts.md","reason":"Worklog / Report-feed Record contract is a hard roadmap companion constraint.","required":true,"section":"8. Worklog / Report-feed Record","role":"both"}
-{"file":".bytetrue/compound/2026-06-11-explore-trellis-journal-role.md","reason":"Explore evidence maps Trellis journal to ByteTrue worklog/report-feed rather than raw transcript journal.","required":true,"role":"both"}
-{"file":".bytetrue/reference/shared-conventions.md","reason":"Closeout prompts and scoped commit ordering must follow shared convention rules.","required":true,"section":"3/4 closeout and scoped commit","role":"implement"}
-{"file":".bytetrue/reference/implementation-review.md","reason":"Implementation completion report must include review gate evidence before acceptance.","required":true,"role":"implement"}
