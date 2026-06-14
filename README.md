@@ -42,6 +42,8 @@ claude plugin install bytetrue@bytetrue-skills
 pi install git:github.com/ByteTrue/skills
 ```
 
+Pi package 会加载 ByteTrue 的全部 skills；只支持标准 Agent Skills 的工具也可继续使用下面的 `npx skills add` 路径。
+
 临时试用 package（`-e` / `--extension` 会把 git package 加载到临时目录，仅当前这次 pi 进程生效，不写入 settings）：
 
 ```bash

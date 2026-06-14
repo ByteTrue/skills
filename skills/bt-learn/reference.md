@@ -10,6 +10,7 @@ This file provides the templates and examples for the two `bt-learn` tracks. Out
 ---
 doc_type: learning
 track: pitfall
+status: active
 date: YYYY-MM-DD
 slug: {English description, hyphen-separated}
 component: {affected module/layer}
@@ -35,6 +36,7 @@ tags: []
 ---
 doc_type: learning
 track: knowledge
+status: active
 date: YYYY-MM-DD
 slug: {English description, hyphen-separated}
 component: {applicable module/domain}

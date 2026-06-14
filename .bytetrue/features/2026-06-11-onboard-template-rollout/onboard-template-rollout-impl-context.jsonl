@@ -1,0 +1,10 @@
+{"file":".bytetrue/features/2026-06-11-onboard-template-rollout/onboard-template-rollout-design.md","reason":"Approved design defines rollout scope, parity audit, install projection, and non-goals.","required":true,"role":"implement"}
+{"file":".bytetrue/features/2026-06-11-onboard-template-rollout/onboard-template-rollout-checklist.yaml","reason":"Implementation must execute rollout steps in order and update step status.","required":true,"role":"implement"}
+{"file":".bytetrue/requirements/onboard-template-rollout.md","reason":"Requirement explains user-visible template rollout and installation projection capability.","required":true,"role":"implement"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-roadmap.md","reason":"Roadmap defines Template Rollout Module and final item sequencing.","required":true,"role":"both"}
+{"file":".bytetrue/roadmap/ai-workflow-absorption/ai-workflow-absorption-contracts.md","reason":"All executable workflow contracts are hard constraints for final rollout verification.","required":true,"role":"both"}
+{"file":"skills/bt-onboard/SKILL.md","reason":"Onboard skeleton and managed-reference list are core rollout targets.","required":true,"role":"implement"}
+{"file":"README.md","reason":"Install projection text must describe the pure-skills Pi package accurately.","required":true,"role":"implement"}
+{"file":"package.json","reason":"Pi package manifest must expose skills only; runtime adapters are deferred outside core.","required":true,"role":"implement"}
+{"file":".claude-plugin/plugin.json","reason":"Claude plugin metadata must remain valid and must not falsely claim hook support.","required":true,"role":"implement"}
+{"file":"skills/bt-onboard/reference/maintainer-notes.md","reason":"Rollout maintenance rules should live in onboard reference template.","required":true,"role":"implement"}

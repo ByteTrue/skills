@@ -112,7 +112,7 @@ If the input comes from `bt-explore module-overview` or `zoom-out`, reuse its mo
 
 **backfill**:
 
-- write to `architecture/{type}-{slug}.md`, following the naming rules in section 0 of `.bytetrue/reference/shared-conventions.md`, with frontmatter `status: current` and `last_reviewed` set to today
+- write to `architecture/{type}-{slug}.md`, following the naming rules in section 0 of `.bytetrue/reference/shared-conventions.md`, with frontmatter `status: done` and `last_reviewed` set to today
 - **same-type grouping check**, mandatory before writing: according to the "architecture doc grouping rules", if after writing there would be 6 or more docs of the same type in the root directory, move the entire type into `architecture/{type}/`, remove the type prefix from filenames, and update the links in `ARCHITECTURE.md`; include the migration list in the Phase 5 review
 - **index update**: add the new doc to `ARCHITECTURE.md`. Backfill **must** add this. Otherwise the doc exists but nobody will find it. This change is reviewed together, not changed silently
 

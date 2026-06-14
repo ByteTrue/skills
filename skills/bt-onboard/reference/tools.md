@@ -2,7 +2,7 @@
 
 This file is copied by `bt-onboard` into the project as `.bytetrue/reference/tools.md`. Every ByteTrue sub-skill references it through the project-relative path `.bytetrue/reference/tools.md`.
 
-It is the complete usage reference for the shared scripts under `.bytetrue/tools/`. Sub-skills should write only the 1-2 lines of typical queries specific to themselves; the full syntax and examples live here.
+It is the complete usage reference for the shared scripts under `.bytetrue/tools/`. Sub-skills should write only brief typical queries specific to themselves; the full syntax and examples live here.
 
 ---
 
@@ -58,7 +58,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter language=typescript
 
 # Search feature design docs
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/features --filter doc_type=feature-design --filter status=approved
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/features --filter doc_type=feature-design --filter status=done --filter review_result=approved
 
 # Output control
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=decision --filter status=active --full
@@ -66,8 +66,9 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter tags~=ll
 
 # Sort by time
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --sort-by date --order desc                     # most recently archived first
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/library-docs --sort-by last_reviewed --order asc         # least recently reviewed first, useful for stale docs
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=current --sort-by last_reviewed --order asc
+python .bytetrue/tools/search-yaml.py --dir docs/api --sort-by last_reviewed --order asc                    # least recently reviewed API refs
+python .bytetrue/tools/search-yaml.py --dir docs/dev --filter status=done --filter current=true --sort-by last_reviewed --order asc
+python .bytetrue/tools/search-yaml.py --dir docs/user --filter status=done --filter current=true --sort-by last_reviewed --order asc
 ```
 
 ### Typical usage scenarios
@@ -79,7 +80,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=cur
 | Check for overlap after archiving | Search `.bytetrue/compound --query "{keyword}" --json` and inspect whether there is semantic overlap |
 | Help a newcomer understand project conventions | `--dir .bytetrue/compound --filter doc_type=decision --filter status=active` |
 | Browse techniques by stack | `--dir .bytetrue/compound --filter doc_type=trick --filter language={language} --filter status=active` |
-| Find library docs or guides that have gone the longest without review | `--dir {directory} --filter status=current --sort-by last_reviewed --order asc` |
+| Find library docs or guides that have gone the longest without review | `--dir {directory} --filter status=done --filter current=true --sort-by last_reviewed --order asc` |
 | See which learnings were most recently captured | `--dir .bytetrue/compound --filter doc_type=learning --sort-by date --order desc` |
 
 ---

@@ -16,7 +16,7 @@
 - **with-docs grill**：`bt-grill` 默认模式；读取 `.bytetrue/` 文档和代码上下文，并把形成的共识写入合适 ByteTrue 文档。
 - **lite grill / grill-me**：`bt-grill --lite` / `--no-docs`；纯对话拷问，不读写 `.bytetrue` 文档，但可按需读代码回答事实问题。
 - **external tracker**：GitHub / GitLab / local tracker 等团队协作界面，不是 ByteTrue 的主状态源。
-- **projection**：从 `.bytetrue` confirmed 产物同步到 external tracker 的展示/协作副本。
+- **projection**：从 `.bytetrue` reviewed 产物同步到 external tracker 的展示/协作副本。
 
 ---
 
@@ -44,7 +44,7 @@ External tracker 的 issue 是更宽的协作载体，可表示：
 
 ### Sync vs Triage
 
-- **publish / sync**：`.bytetrue` confirmed 产物 → external tracker。
+- **publish / sync**：`.bytetrue` reviewed 产物 → external tracker。
 - **triage**：external tracker incoming issue → 人工分类和路由建议。
 
 二者统一由 `bt-tracker` 承载，但方向和副作用不同。

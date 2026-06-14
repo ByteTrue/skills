@@ -19,9 +19,9 @@ After analyzing, do not go straight into the fix. Show the user 2-3 repair optio
 
 ## Startup Checks
 
-1. **The issue report exists and has been confirmed** — read `{slug}-report.md`, confirm `doc_type=issue-report` and `status=confirmed`, and confirm all five sections are filled. If incomplete or the status is wrong, return to `bt-issue-report`. If `bt-issue-report` has already classified this as the standard path, stay on the standard path and do not reclassify
+1. **The issue report exists and has been confirmed** — read `{slug}-report.md`, confirm `doc_type=issue-report` and `status=done`, and confirm all five sections are filled. If incomplete or the status is wrong, return to `bt-issue-report`. If `bt-issue-report` has already classified this as the standard path, stay on the standard path and do not reclassify
 2. **Resume support** — if `{slug}-analysis.md` already exists, inspect which of the 5 sections are already filled:
-   - if all are filled but `status=draft`, jump to checkpoint
+   - if all are filled but `status=active`, jump to checkpoint
    - if only some are filled, report "last time we got to step X, resuming from step Y"
 3. **Read the full context**:
    - the full issue report and `.bytetrue/attention.md`
@@ -43,6 +43,8 @@ Trigger the enhanced `diagnose` discipline from Matt in any of the following cas
 - the issue is a performance regression or a resource leak
 - a first fix attempt has already failed to solve it
 - logs, debugger, profiler, or query plan are needed to decide
+
+When this discipline triggers, record the result in analysis frontmatter under `execution_mode`: use `level: strict-evidence` unless the analysis is already about repeated failed fixes or architecture friction; in that case use `level: break-loop` and route back to plan or architecture discussion before another fix attempt. When it does not trigger, record `level: standard` with empty `triggers` and `required_evidence`. See `.bytetrue/reference/execution-modes.md`.
 
 When triggered, additionally record the following in the analysis:
 
@@ -96,13 +98,23 @@ List 2-3 directions. For each one, explain: what it does, where it changes, and 
 ---
 doc_type: issue-analysis
 issue: {issue directory name}
-status: draft
+status: active
 root_cause_type: logic | state-pollution | data-format | concurrency | config | missing-guard
 related: [{relative path to slug-report.md}]
 tags: []
+execution_mode:
+  level: standard | strict-evidence | break-loop
+  triggers: []
+  required_evidence: []
 ---
 
 # {Short Problem Description} Root-Cause Analysis
+
+## Execution Mode
+
+- **level**: {standard | strict-evidence | break-loop}
+- **triggers**: {list the complex diagnose triggers that applied, or []}
+- **required evidence**: {feedback loop / regression seam / instrumentation / verification evidence required downstream, or []}
 
 ## 1. Problem Location
 
@@ -162,33 +174,36 @@ tags: []
 
 ## Checkpoint, Align with the User
 
-After writing, **do not start fixing immediately**:
+After writing, **apply the close-out mode from `.bytetrue/config.yaml`**. If `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; do not infer defaults from prose references:
 
 1. summarize the "root cause" and the "recommended option" orally to the user, without making them read the whole file, because what they are waiting for is the conclusion
-2. ask: "Is the root-cause judgment accurate? Do you agree with the recommended option, or do you want a different one?"
-3. only after the user explicitly confirms the option may stage 3 be triggered
+2. in `manual`, ask: "Is the root-cause judgment accurate? Do you agree with the recommended option, or do you want a different one?"
+3. in `auto`, continue to `bt-issue-fix` only if `execution_mode.level` is not `break-loop`, the user has already authorized the recommended fix path for this issue, and the recommended option is a pinpoint change inside the reported scope; otherwise stop at the repair-option or break-loop boundary
+4. only after the option is explicitly confirmed or pre-authorized may stage 3 be triggered
 
 ---
 
 ## Exit Conditions
 
 - [ ] frontmatter exists, including matching `doc_type=issue-analysis` and `issue`
-- [ ] all 5 sections are filled
+- [ ] `execution_mode` frontmatter and section are recorded; complex diagnose triggers map to `strict-evidence` or `break-loop`, while simple issues record `standard`
+- [ ] all 5 analysis sections are filled
 - [ ] a concrete code location was identified, `file:line`
 - [ ] the failure path is reconstructed clearly
 - [ ] the impact-surface assessment is complete
 - [ ] at least 2 repair options plus a recommendation are present
 - [ ] for complex bugs, feedback loop, hypotheses, instrumentation, and regression seam were recorded, or the reason it was not triggered is explicit
+- [ ] if `execution_mode.level` is `break-loop`, the analysis stops before another patch attempt and routes to issue analysis revision, grill, refactor, roadmap, or architecture discussion
 - [ ] the user explicitly confirmed "the analysis is accurate; fix it using option X"
-- [ ] frontmatter is `status: confirmed`
+- [ ] frontmatter is `status: done`
 
 ---
 
 ## After Exit
 
-Tell the user: "The root-cause analysis is ready, and the option is confirmed. Stage 3 is fix verification. Trigger `bt-issue-fix` next."
+Tell the user: "The root-cause analysis is ready, and the option is confirmed. Stage 3 is fix verification." In `manual`, tell them to trigger `bt-issue-fix` next only when `execution_mode.level` is not `break-loop`; for `break-loop`, route to issue analysis revision, grill, refactor, roadmap, or architecture discussion. In `auto`, continue to `bt-issue-fix` only when the repair option is confirmed/pre-authorized, `execution_mode.level` is not `break-loop`, and no `ask_before` boundary is pending.
 
-Do not casually start changing code yourself. If there is no pause between stages, the user loses the chance to review.
+Do not casually start changing code after analysis when the repair option has tradeoffs or still needs user choice. If there is no pause at that boundary, the user loses the chance to review.
 
 ---
 

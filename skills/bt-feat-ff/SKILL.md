@@ -47,6 +47,8 @@ If there is a hit, fold the conclusion into the implementation, **write accordin
 
 These are the compressed versions of the hard constraints from design and implement. No design doc does not mean no discipline. These rules exist to stop the default AI failure modes while "just start coding" is in effect.
 
+This path is `execution_mode.level: light` only. If strict-evidence or break-loop triggers appear, such as regression-sensitive behavior, complex business logic, cross-boundary contracts, or repeated failed fixes, stop and route back to the standard feature or issue workflow. See `.bytetrue/reference/execution-modes.md`.
+
 ### Think "where should this live?" before you write
 
 Spend 30 seconds answering: **where in the project structure does this new thing belong?**
@@ -88,7 +90,7 @@ If you are about to write `if (special case) { special handling }`, **stop**. A 
 
 ### Stop when reflection signals fire
 
-- appending to a file over 300 lines, or adding another method to a class with more than 10 methods
+- appending to an already oversized file, or adding yet another method to a class that is already responsibility-heavy
 - a function growing until it no longer fits on one screen
 - writing a second block that is "basically the same as the one above except for two variables"
 - adding a fourth function parameter
@@ -118,7 +120,8 @@ Final path: `.bytetrue/features/YYYY-MM-DD-{slug}/{slug}-ff-note.md`, with today
 ```markdown
 ---
 doc_type: feature-ff-note
-feature: {slug}
+feature: YYYY-MM-DD-{slug}
+status: done
 date: YYYY-MM-DD
 requirement: {req-slug or empty}
 tags: [...]
@@ -168,7 +171,7 @@ To switch back, trigger `bt-feat-design`. Code already written can simply be mar
 ## Exit Conditions
 
 - [ ] the code is written and the user confirms the effect is OK
-- [ ] `{slug}-ff-note.md` has been written and all four sections are filled, with "while here I noticed" optional
+- [ ] `{slug}-ff-note.md` has been written with `status: done`, and all four sections are filled, with "while here I noticed" optional
 - [ ] there are no unresolved "while here I noticed" items, meaning they are all recorded in the last section of the ff note for later follow-up
 
 ---
@@ -180,7 +183,7 @@ Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-con
 - **commit scope**: this code change plus `{slug}-ff-note.md`
 - after the ff note is written, tell the user "it is ready; do you want me to commit it?" and only execute after explicit approval
 
-Following section 3 `feature-ff` of `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+Following section 3 `feature-ff` of `.bytetrue/reference/shared-conventions.md`, first read `.bytetrue/config.yaml` before close-out. If it is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton before config-driven close-out; do not infer defaults from prose references. Then give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
 
 1. if it exposed a pitfall → "Capture it as learning? (`bt-learn`)"
 2. if it finalized a long-term constraint → "Archive the decision? (`bt-decide`)"

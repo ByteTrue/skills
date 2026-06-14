@@ -2,7 +2,8 @@
 doc_type: feature-design
 feature: 2026-06-09-pi-package-install
 requirement:
-status: approved
+status: done
+review_result: approved
 summary: 为 ByteTrue skills 仓库增加 pi package 安装方式
 tags: [pi-package, install, skills]
 ---

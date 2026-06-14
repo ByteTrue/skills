@@ -41,7 +41,7 @@ Each category serves a different lookup purpose: "what tool do we use?" → `tec
 For frontmatter, body templates, and examples, see `reference.md` in the same directory. Workflow constraints for this skill:
 
 - `category` only allows `tech-stack`, `architecture`, `constraint`, or `convention`
-- `status` only allows `active`, `superseded`, or `deprecated`
+- `status` follows the canonical vocabulary: current decisions use `status: active`; replaced decisions use `status: archived` plus `superseded_by`; deprecated constraints use `status: archived` plus `validity: deprecated`
 - "Alternatives Considered" and "Related Documents" are optional sections; if the user says "nothing there", omit them
 
 ---
@@ -83,7 +83,7 @@ The AI drafts the complete document from the conversation, including YAML frontm
 
 - New document: write to `.bytetrue/compound/YYYY-MM-DD-decision-{slug}.md` with frontmatter `doc_type: decision`
 - Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
-- Supersede: handle it according to item 5 of `.bytetrue/reference/shared-conventions.md` §6; old document gets `status: superseded` plus `superseded-by`
+- Supersede: handle it according to item 5 of `.bytetrue/reference/shared-conventions.md` §6; old document gets `status: archived` plus `superseded_by`
 
 ### Phase 5: Related Workflow Update Prompts
 
@@ -119,7 +119,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type
 > For shared guard rules across archival workflows, such as append-only, better absent than low-quality, do not write in place for the user, discoverability, and post-archive overlap checks, see section 6 of `.bytetrue/reference/shared-conventions.md`. Rules specific to this skill:
 
 1. **Archive only finalized decisions** — proposals still under discussion are not archived
-2. **`status=superseded` does not mean deletion** — keep the original text, add `superseded-by`, and add `**[Superseded]** see {new document slug}` at the top of the body
+2. **Superseding does not mean deletion** — keep the original text, add `status: archived` plus `superseded_by`, and add `**[Superseded]** see {new document slug}` at the top of the body
 3. **Do not invent rationale for the user** — if the user cannot explain it, write "no systematic evaluation was performed" instead of making one up; fabricated rationale becomes misleading historical fact
 4. **Do not proactively modify `attention.md` or `ARCHITECTURE.md`** — Phase 5 only prompts; the user decides. If something should be added to `attention.md`, hand it to `bt-note`
 5. **Cross-skill consistency** — when the decision document and `attention.md` describe the same thing, the decision doc is the detailed version and `attention.md` is the summary version. They should link to each other and must not contradict each other

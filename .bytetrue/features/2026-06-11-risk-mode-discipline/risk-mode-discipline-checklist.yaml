@@ -1,0 +1,54 @@
+feature: 2026-06-11-risk-mode-discipline
+created: 2026-06-11
+
+steps:
+  - action: "Shared contract: add execution-modes.md to current project and onboard template"
+    exit_signal: "both .bytetrue/reference/execution-modes.md and skills/bt-onboard/reference/execution-modes.md define light, standard, strict-evidence, and break-loop with triggers and evidence"
+    status: done
+  - action: "Feature workflow integration: update bt-feat-design and bt-feat-impl"
+    exit_signal: "feature design requires execution_mode in section 1, and feature implementation reads and obeys the mode before starting"
+    status: done
+  - action: "Issue workflow integration: update bt-issue-analyze and bt-issue-fix"
+    exit_signal: "complex diagnosis maps to strict-evidence, and repeated failed fixes map to break-loop escalation"
+    status: done
+  - action: "Light/refactor routing: update bt-feat-ff and bt-refactor"
+    exit_signal: "fastforward is explicitly light-mode only, and refactor routing explains light, standard, strict-evidence, and break-loop boundaries"
+    status: done
+  - action: "Template/index sync and validation: update onboard/system references and run checks"
+    exit_signal: "onboard inventory includes execution-modes.md, references point to it, edited YAML validation passes"
+    status: done
+
+checks:
+  - item: "Execution Mode term distinguishes workflow heaviness from code-dimension levels"
+    source: term-contract
+    status: passed
+  - item: "Light, standard, strict-evidence, and break-loop are defined with triggers and required evidence"
+    source: term-contract
+    status: passed
+  - item: "bt-feat-design requires execution_mode in section 1 and points to execution-modes.md"
+    source: orchestration-skeleton
+    status: passed
+  - item: "bt-feat-impl reads execution_mode during startup and applies strict-evidence obligations when selected"
+    source: orchestration-skeleton
+    status: passed
+  - item: "bt-issue-analyze maps enhanced diagnose triggers to strict-evidence or break-loop"
+    source: flow-level-constraint
+    status: passed
+  - item: "bt-issue-fix applies strict evidence and break-loop escalation without broadening fix scope"
+    source: flow-level-constraint
+    status: passed
+  - item: "bt-feat-ff states fastforward is light-mode only and routes out on non-light triggers"
+    source: scope-guard
+    status: passed
+  - item: "bt-refactor aligns quick refactor, standard refactor, and architecture-friction stop conditions with execution modes"
+    source: scope-guard
+    status: passed
+  - item: "Risk mode does not implement subagent review, context manifests, hook/breadcrumb, worklog, or CLI state"
+    source: scope-guard
+    status: passed
+  - item: "No guidance requires strict TDD for every task"
+    source: scope-guard
+    status: passed
+  - item: "Edited docs remain concise"
+    source: acceptance-scenario
+    status: passed

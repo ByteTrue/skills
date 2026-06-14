@@ -11,9 +11,9 @@ It absorbs ideas from Matt `to-prd`, `to-issues`, and `triage`, but it does not 
 
 - the canonical source for requirements, planning, features, and bugs remains `.bytetrue/`
 - GitHub, GitLab, or a local tracker are only team-visible projections and incoming queues
-- every external side effect must be previewed first, then explicitly confirmed by the user
+- every external side effect must be previewed first, then explicitly confirmed by the user; `tracker.sync_policy: auto_preview` automates only the preview, never the write
 
-> Project-management configuration lives in `.bytetrue/reference/project-management.md`; terminology comes from `.bytetrue/reference/domain-context.md`.
+> Current tracker configuration lives in `.bytetrue/config.yaml`; project-management semantics live in `.bytetrue/reference/project-management.md`; terminology comes from `.bytetrue/reference/domain-context.md`.
 
 ---
 
@@ -22,13 +22,13 @@ It absorbs ideas from Matt `to-prd`, `to-issues`, and `triage`, but it does not 
 Do this every time first:
 
 1. read `.bytetrue/attention.md`; if missing, tell the user to run `bt-onboard` first
-2. read `.bytetrue/reference/project-management.md`; if missing, tell the user to rerun `bt-onboard` and fill it
+2. read `.bytetrue/config.yaml` for provider/sync values and `.bytetrue/reference/project-management.md` for semantics; if either is missing, tell the user to rerun `bt-onboard` or repair the skeleton
 3. read `.bytetrue/reference/domain-context.md`, if it exists; titles and bodies of external issues must use the project's canonical terms
-4. determine the provider: `local`, `github`, or `gitlab`
-5. if the provider is `github`, check `gh`, `gh auth status`, and `git remote -v`
-6. if the provider is `gitlab`, check `glab`, `glab auth status`, and `git remote -v`
+4. determine the provider and sync policy: `local | github | gitlab`, and `ask | never | auto_preview`
+5. revalidate runtime state every time, even if `.bytetrue/config.yaml` has cached CLI values: if the provider is `github`, check `gh`, `gh auth status`, and `git remote -v`; if `gitlab`, check `glab`, `glab auth status`, and `git remote -v`
+6. if `sync_policy: never`, stop before preview and explain that tracker sync is disabled by project config
 
-If the provider is `local`, do not create any external issue. Simply explain that no external tracker is configured yet, and offer to help update `.bytetrue/reference/project-management.md` or recommend rerunning `bt-onboard`.
+If the provider is `local`, do not create any external issue. Simply explain that no external tracker is configured yet, and offer to help update `.bytetrue/config.yaml` or recommend rerunning `bt-onboard`. If config contains CLI installed/auth values, treat them as last-detected advisory cache only, not proof for this clone.
 
 ---
 
@@ -65,16 +65,16 @@ syncable_sources:
     external_kind: task
 
   bug_issue:
-    source: .bytetrue/issues/{issue}/{slug}-report.md
+    source: [".bytetrue/issues/{issue}/{slug}-report.md", ".bytetrue/issues/{issue}/{slug}-fix-note.md"]
     external_kind: bug
 ```
 
 Syncable-status mapping:
 
-- `roadmap_prd`: `status: active | completed | paused` counts as reviewed planning content and may be published or updated; `draft` does not sync
-- `roadmap_item`: `status: planned | in-progress | done` may be published or updated; `dropped` only updates the state of an already bound external issue and does not create one by default
-- `feature_design`: `status: approved` may be published or updated
-- `bug_issue`: `status: confirmed` may be published or updated
+- `roadmap_prd`: `status: active | done` counts as reviewed planning content and may be published or updated; `pending` does not sync
+- `roadmap_item`: `status: pending | active | done` may be published or updated; `dropped` only updates the state of an already bound external issue and does not create one by default
+- `feature_design`: `status: done` with `review_result: approved` may be published or updated
+- `bug_issue`: `status: done` may be published or updated; standard path uses the report as source, fast path uses the fix-note as source
 
 Do not sync standalone requirements by default. Requirement is only a vision input to PRD or feature issues.
 
@@ -89,13 +89,15 @@ Based on the path, slug, or roadmap name provided by the user, read the source a
 - roadmap PRD: read `roadmap.md`, `items.yaml`, and related requirements if they are referenced in frontmatter
 - roadmap item: read the item plus its parent roadmap
 - feature design: read the design plus checklist; if `{slug}-acceptance.md` already exists, also read the acceptance report as input for task completion status or acceptance-result updates
-- bug issue: read the report, analysis, and fix note, if present
+- bug issue: use the report as source when it exists; for fast-track issues without a report, use `{slug}-fix-note.md` with `path: fast-track` as the source; read analysis and fix note when present
 
 If the source artifact does not satisfy the syncable-source rule and syncable-status mapping, stop and ask the user whether they want to go back through the corresponding bt workflow and confirm it first.
 
 ### 2. Generate an external-issue preview
 
 Before publishing, show the user a preview containing:
+
+If `tracker.sync_policy: auto_preview`, generate this preview without first asking whether a preview is desired. If `sync_policy: ask`, ask before entering this skill or at the upstream close-out as usual. If `sync_policy: never`, do not generate the preview.
 
 - external kind: `prd`, `task`, or `bug`
 - title
@@ -145,7 +147,7 @@ Offer the user three choices:
 2. bind an existing issue URL or ID
 3. do not sync for now
 
-Before the user confirms, do not call `gh issue create`, `glab issue create`, or any edit command.
+Before the user confirms, do not call `gh issue create`, `glab issue create`, `gh issue edit`, `glab issue update`, post comments/labels, close an issue, or write external metadata back into `.bytetrue`. Treat these as external-write side effects; whether auto mode must stop is determined by the current `workflow.ask_before` list plus this skill's explicit confirmation rule.
 
 ### 4. Create or update
 
@@ -179,7 +181,7 @@ external:
   synced_at: 2026-06-07T10:00:00Z
 ```
 
-For roadmap items, write metadata into the matching item in `items.yaml`. For feature, issue, or roadmap PRD, write it into frontmatter.
+For roadmap items, write metadata into the matching item in `items.yaml`. For feature, issue, or roadmap PRD, write it into frontmatter; for fast-track bug issues, write metadata into `{slug}-fix-note.md`.
 
 ---
 
@@ -199,7 +201,7 @@ During updates, only replace the content inside that block. Keep all team-writte
 
 ## Statuses and labels
 
-ByteTrue uses canonical keys; external label names come from `.bytetrue/reference/project-management.md`:
+ByteTrue uses canonical keys; external label names and sync semantics come from `.bytetrue/reference/project-management.md`:
 
 - `prd`
 - `task`
@@ -270,18 +272,18 @@ Once the following stage outputs satisfy the syncable-source and syncable-status
 
 | Upstream stage | Trigger content |
 |---|---|
-| after `bt-roadmap` | roadmap PRD plus any syncable roadmap items touched in this change, planned / in-progress / done, with dropped items only updating already bound external issues |
-| after `bt-feat-design` | approved feature design; if started from roadmap, also the corresponding roadmap item |
+| after `bt-roadmap` | roadmap PRD plus any syncable roadmap items touched in this change, pending / active / done, with dropped items only updating already bound external issues |
+| after `bt-feat-design` | feature design with `status: done` and `review_result: approved`; if started from roadmap, also the corresponding roadmap item |
 | after `bt-feat-accept` | task completion-state updates for the feature design plus acceptance report or checklist; if started from roadmap, also the done roadmap item |
-| after `bt-issue-report` | confirmed bug issue |
-| after `bt-issue-fix` | updates to managed block, labels, or close-on-done for an already bound bug issue; if it was never bound before, publish or link may still be added |
+| after `bt-issue-report` | bug issue with `status: done` |
+| after `bt-issue-fix` | updates to managed block, labels, or close-on-done for an already bound bug issue; if it was never bound before, publish or link may still be added, using the fix-note as source when the issue took the fast path |
 
 ---
 
 ## Exit Conditions
 
-- [ ] `.bytetrue/reference/project-management.md` has been read and the provider has been confirmed
-- [ ] before any external side effect, a preview was shown and user confirmation was obtained
+- [ ] `.bytetrue/config.yaml` and `.bytetrue/reference/project-management.md` have been read, provider/sync policy have been confirmed, and runtime CLI/auth/remote state has been revalidated instead of trusted from committed cache
+- [ ] before any external side effect or external metadata writeback, a preview was shown and user confirmation was obtained
 - [ ] after publish, link, or update succeeded, external metadata was written back
 - [ ] triage mode did not automatically modify `.bytetrue`
 - [ ] every external comment contains the AI triage disclaimer

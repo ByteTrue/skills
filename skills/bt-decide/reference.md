@@ -10,8 +10,9 @@ doc_type: decision
 category: tech-stack | architecture | constraint | convention
 date: YYYY-MM-DD
 slug: {English description, hyphen-separated}
-status: active | superseded | deprecated
-superseded-by: {optional}
+status: active | archived
+validity: deprecated       # archived decisions only, when not superseded
+superseded_by: {optional}  # archived decisions only
 area: {affected area}
 tags: []
 ---

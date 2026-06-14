@@ -46,7 +46,7 @@
 ### M-L1-04 Characterization Test
 
 - **Use when**: legacy code has no tests and its behavior is not fully clear, but it must be changed now; this is a mandatory prerequisite before refactor
-- **Do not use when**: the code is extremely simple, under 10 lines and branch-free, or already has sufficient tests
+- **Do not use when**: the code is extremely simple, obviously tiny and branch-free, or already has sufficient tests
 - **Steps**:
   1. feed a batch of real inputs into the target function, using sampled production logs if needed
   2. record the current outputs as test assertions — do not judge whether the behavior is "correct", only capture the current state
@@ -63,7 +63,7 @@
 
 ### M-L2-01 Extract Function
 
-- **Use when**: there is a cohesive block inside a function that can be named, usually longer than 5 lines and with an independent responsibility
+- **Use when**: there is a cohesive block inside a function that can be named, with an independent responsibility
 - **Do not use when**: the block is short, hard to name, or tightly coupled to the surrounding logic
 - **Steps**:
   1. identify the block to extract and give it a name that clearly states what it does

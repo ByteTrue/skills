@@ -20,8 +20,10 @@ If the first time a question is asked it takes two hours to inspect the code, th
 - the user asks a concrete question but does not yet want a direct plan or fix
 - a round of evidence-backed exploration is needed before `feature-design`, `issue-analyze`, or `issue-fix`
 - the technical direction is still being discussed and only a lightweight spike is needed, exploration without final decision
+- research-first spike: when external tool behavior, library/API capability, platform hooks, comparable workflows, industry conventions, or performance/cost claims can materially change design, roadmap, or grill direction; see `.bytetrue/reference/research-first.md`
 
 This skill is responsible only for evidence-backed recording of "what was observed". If the user's intent is something else, such as making a decision, writing a prescription, or fixing a bug, route them to the appropriate skill.
+When called as the `research` role from `.bytetrue/reference/subagent-handoff.md`, this skill still only writes evidence-backed explore records and must not make final product, roadmap, or architecture decisions.
 
 > For shared paths and naming conventions, see `.bytetrue/reference/shared-conventions.md`. Artifacts are written to `.bytetrue/compound/` using the name `YYYY-MM-DD-explore-{slug}.md` and frontmatter `doc_type: explore`.
 
@@ -46,7 +48,7 @@ For frontmatter, body structure, section-writing instructions, and examples, see
 - **Short answer must appear before evidence** — the reader should see the conclusion first and then decide whether to continue into the evidence
 - every conclusion must be traceable back to evidence; pure guessing is not allowed
 - when evidence is insufficient, `confidence` must be lowered to `medium` or `low`
-- when old exploration is outdated, mark the old document `outdated` and create a new current version
+- when old exploration is outdated, mark the old document `status: archived` plus `validity: outdated`, and create a new `status: active` version
 
 ---
 
@@ -65,7 +67,7 @@ If the user's description is already clear, go directly to Phase 1.5.
 
 Follow items 5 and 6 in `.bytetrue/reference/shared-conventions.md` §6:
 
-- If the request includes "update / revisit / a previous explore / we explored this module before" or points to an old explore document, go to **update or supersede**. Characteristic of explore: when code has changed and the old conclusion is no longer valid, the old document gets `status: outdated` and a new one is created as the superseding current version. If only evidence is being supplemented or the short answer is being tightened while the core conclusion remains the same, then update the existing document.
+- If the request includes "update / revisit / a previous explore / we explored this module before" or points to an old explore document, go to **update or supersede**. Characteristic of explore: when code has changed and the old conclusion is no longer valid, the old document gets `status: archived` + `validity: outdated` and a new one is created as the superseding `status: active` version. If only evidence is being supplemented or the short answer is being tightened while the core conclusion remains the same, then update the existing document.
 - Otherwise, use the search tool to search once by keywords or module. If you hit a similar old explore, read it first. If it already answers the question directly, tell the user "there is already one at {path}; reuse it or re-explore from scratch?"
 
 **Update path**: read the old document → supplement evidence according to Phase 2 → rewrite the short answer section → write back and add `updated: YYYY-MM-DD`.
@@ -91,7 +93,7 @@ Why "stop when enough": exploration is not exhaustive enumeration. It is buildin
 
 - New document: write to `.bytetrue/compound/YYYY-MM-DD-explore-{slug}.md` with frontmatter `doc_type: explore`
 - Update: write back to the original file identified in Phase 1.5 and add `updated: YYYY-MM-DD`
-- Supersede: follow item 5 of `.bytetrue/reference/shared-conventions.md` §6; the old document gets `status: outdated` plus `superseded-by`
+- Supersede: follow item 5 of `.bytetrue/reference/shared-conventions.md` §6; the old document gets `status: archived` + `validity: outdated` plus `superseded_by`
 
 ### Phase 5: Provide a Suggested Next Step
 

@@ -1,0 +1,48 @@
+feature: 2026-06-11-worklog-report-feed
+created: 2026-06-11
+
+steps:
+  - action: "Shared contract: add worklog-report-feed.md and current worklog directory"
+    exit_signal: "current/onboard references define path, entry shape, split rule, non-goals, and .bytetrue/worklog/.gitkeep exists"
+    status: done
+  - action: "Closeout prompts: add optional worklog prompt to feature, issue, refactor, and roadmap closeout"
+    exit_signal: "each closeout prompt is one sentence, optional, and appears before scoped commit when applicable"
+    status: done
+  - action: "Onboard/index sync: update skeleton and system overview references"
+    exit_signal: "new projects get .bytetrue/worklog/ and the shared worklog reference is indexed"
+    status: done
+  - action: "Validation: run grep, YAML/JSONL, line-count, and scope checks"
+    exit_signal: "no raw transcript, auto session scraping, CLI, or per-developer journal clone is introduced"
+    status: done
+
+checks:
+  - item: "Worklog Entry is concise and not a full transcript"
+    source: term-contract
+    status: passed
+  - item: "Report Feed is chronological background and not a source of truth"
+    source: term-contract
+    status: passed
+  - item: "Worklog File uses .bytetrue/worklog/YYYY-MM.md with split files before 300-volume control"
+    source: term-contract
+    status: passed
+  - item: "Worklog directory exists in current project and onboard skeleton"
+    source: mount-point
+    status: passed
+  - item: "bt-feat-accept offers optional worklog before scoped commit"
+    source: orchestration-skeleton
+    status: passed
+  - item: "bt-issue-fix, bt-refactor, and bt-roadmap offer optional worklog entries at closeout"
+    source: orchestration-skeleton
+    status: passed
+  - item: "Worklog entry shape links formal artifacts, commits, verification, status, and next steps"
+    source: flow-level-constraint
+    status: passed
+  - item: "No Trellis workspace clone, raw transcript, Magic Context export, session scraper, watcher, or CLI is introduced"
+    source: scope-guard
+    status: passed
+  - item: "Behavior Delta entries are materialized during acceptance"
+    source: behavior-delta
+    status: passed
+  - item: "YAML/JSONL validation passes"
+    source: acceptance-scenario
+    status: passed

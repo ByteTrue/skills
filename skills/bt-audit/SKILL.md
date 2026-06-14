@@ -140,7 +140,7 @@ Next-step suggestions for architecture findings:
 - **Maximum 5 findings per dimension** — this forces the AI to choose the most valuable ones instead of dumping everything
 - **Only find, do not decide the fix** — `bt-audit` does not produce code changes. If it "fixed something while here", that is out of bounds
 - **Architecture drift must cite current docs** — do not judge architecture from memory. Read `.bytetrue/architecture/` and compare against it
-- **Mark old audits as superseded** — when a new audit covers the same module, the old index must get `status: superseded` plus `superseded-by: {new directory}`
+- **Mark old audits as superseded** — when a new audit covers the same module, the old index must get `status: archived` plus `superseded_by: {new directory}`
 
 ---
 

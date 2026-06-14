@@ -83,6 +83,7 @@ Lock mode, target, and scope. In `new` mode, first settle on an English slug, fo
 **Read as needed**:
 - related compound artifacts: `python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --query "{larger-demand keyword}"`
 - related existing feature designs
+- if roadmap decomposition, interface contracts, or sequencing depend on external tool behavior, library/API capability, platform hooks, comparable workflows, industry convention, or performance/cost claims, require or create a `bt-explore` spike first and cite it; see `.bytetrue/reference/research-first.md`
 
 **Update-specific**: the full current main doc, the current state of `items.yaml`, and the design and acceptance of sub-features that have already started or completed.
 
@@ -114,7 +115,7 @@ Run this once yourself and report the handling before review:
 7. Are the explicit non-goals written down? If not, write "no explicit non-goals"
 8. Does it conflict with existing req or architecture? If yes, write "conflicts with req-X, user must decide", and do not quietly choose a side
 9. **Update-specific**: does every new or changed item have source material behind it? Adding one "to make it look more complete" is drift
-10. **Update-specific**: if the interface contracts changed, do already in-progress or done sub-features get affected? List them under observations so the user can see the impact
+10. **Update-specific**: if the interface contracts changed, do already active or done sub-features get affected? List them under observations so the user can see the impact
 
 ### Phase 5: User review
 
@@ -122,9 +123,9 @@ Show the main doc and `items.yaml` to the user in full. Keep iterating until the
 
 ### Phase 6: Write to disk
 
-**new**: create `.bytetrue/roadmap/{slug}/`; write the main doc with `status: active`, `created`, and `last_reviewed` set to today; write `items.yaml` with every entry `status: planned` and `feature: null`; validate with `validate-yaml.py`.
+**new**: create `.bytetrue/roadmap/{slug}/`; write the main doc with `status: active`, `created`, and `last_reviewed` set to today; write `items.yaml` with every entry `status: pending` and `feature: null`; validate with `validate-yaml.py`.
 
-**update**: modify the main doc with `last_reviewed` set to today, and add a change-log line at the end when the structural change is large; modify the corresponding items in `items.yaml`, and for dropped items do not delete them, set `status: dropped` and leave the reason; then validate yaml again.
+**update**: modify the main doc with `last_reviewed` set to today, and add a change-log line at the end when the structural change is large; modify the corresponding items in `items.yaml`, and for dropped items do not delete them, set `status: dropped` and leave the reason; after item changes, set the main doc `status: done` if every item is `done`, `dropped`, or `archived`, otherwise keep it `active` / `paused`; then validate yaml again.
 
 **Do not modify requirements or architecture** — roadmap is the planning layer, and those two layers describe current state. If req or architecture is outdated, write one sentence under observations in the main doc and let the user decide, rather than changing them on the side.
 
@@ -138,7 +139,7 @@ When the user says "start working on sub-feature {X} in the roadmap":
 
 1. `bt-feat-design`, or ff or brainstorm if appropriate, creates the feature directory
 2. the design frontmatter carries `roadmap: {slug}` and `roadmap_item: {sub-slug}`
-3. the corresponding item in `items.yaml` is updated to `status: in-progress` and `feature: YYYY-MM-DD-{slug}`
+3. the corresponding item in `items.yaml` is updated to `status: active` and `feature: YYYY-MM-DD-{slug}`
 
 This responsibility belongs to `bt-feat-design`, not this skill.
 
@@ -150,12 +151,12 @@ If feature-design discovers that an interface contract is unreasonable, missing,
 
 ### acceptance writes back automatically
 
-At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept` will update the corresponding `roadmap_item` to `status: done`, and will also synchronize the checkmark state in the sub-feature list of the main doc. That responsibility belongs to `bt-feat-accept`, not this skill.
+At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept` will update the corresponding `roadmap_item` to `status: done`, synchronize the checkmark state in the sub-feature list of the main doc, and set the main roadmap frontmatter to `status: done` when all items are terminal. That responsibility belongs to `bt-feat-accept`, not this skill.
 
 ### lifecycle of roadmap itself
 
-- when all items are `done` or `dropped`, the main doc `status` becomes `completed`, and the directory stays as historical archive
-- if there is no progress for a long time, set `status: paused` and add the reason in the main doc
+- when all items are `done`, `dropped`, or `archived`, the main doc `status` becomes `done`, and the directory stays as historical archive
+- if there is no progress for a long time, keep `status: active` and add `paused: true` plus the reason in the main doc
 
 ---
 
@@ -191,9 +192,10 @@ At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept`
 
 Tell the user: "The roadmap is ready. Each sub-feature later goes through `bt-feat-design`, and the interface contracts inside the roadmap are hard-constraint input."
 
-Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, give one-sentence close-out prompts in this order, and skip immediately if the user says "no need":
+Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, first read `workflow.mode`, `workflow.ask_before`, `tracker.provider`, and `tracker.sync_policy` from `.bytetrue/config.yaml`. If `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; do not infer defaults from prose references. Skip the tracker prompt when `tracker.provider: local` or `tracker.sync_policy: never`. In `manual`, ask the applicable prompts below and stop; the tracker prompt is applicable only when it was not skipped. In `auto`, prepare a tracker preview only when tracker is not skipped and `sync_policy: auto_preview`, and continue to the next deterministic workflow only when no tracker/write/scope boundary is reached.
 
-1. a roadmap PRD or any syncable roadmap items touched in this change, planned, in-progress, or done; dropped items only update already-bound external issues, may need collaboration projection → "Do you want to sync or bind an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit confirmation
+1. a roadmap PRD or any syncable roadmap items touched in this change, pending, active, or done; dropped items only update already-bound external issues, may need collaboration projection and tracker is not skipped → "Do you want to sync or bind an external tracker? (`bt-tracker`)" Do not create or update an external issue before explicit confirmation
+2. if the roadmap session should be visible in reports or handoff context → "Do you want to add a concise worklog/report-feed entry for this roadmap update?" (`.bytetrue/reference/worklog-report-feed.md`)
 
 ---
 
@@ -223,4 +225,4 @@ Following section 3 `roadmap` in `.bytetrue/reference/shared-conventions.md`, gi
 - modifying req or arch on the side
 - deleting dropped items outright, losing history
 - letting roadmap drift into a detailed design for one sub-feature
-- changing interface contracts in update mode without assessing existing impact, so already in-progress or done features never see the contract change
+- changing interface contracts in update mode without assessing existing impact, so already active or done features never see the contract change

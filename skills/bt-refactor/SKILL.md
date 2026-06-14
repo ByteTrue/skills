@@ -27,6 +27,8 @@ Trigger phrases: "small refactor", "quick refactor", "just optimize function XX 
 
 **Do not use** ff when the change spans more than 1 file, is expected to touch more than 3 places, needs visual verification, changes a public interface, which requires Parallel Change, has no test coverage, or crosses modules. In those cases, recommend the standard flow. If ff starts and the work turns out more complex than expected, switch back to the full flow starting from scan.
 
+Execution-mode mapping: `bt-refactor-ff` is `light`; the normal scan → design → apply flow is `standard`; if the scan reveals regression-sensitive behavior, missing characterization evidence, or architecture friction, upgrade to `strict-evidence` or `break-loop` and stop to choose the correct workflow rather than forcing a refactor. See `.bytetrue/reference/execution-modes.md`.
+
 ---
 
 ## Where the files go
@@ -53,7 +55,7 @@ Why keep refactor in its own directory rather than mixing into features: refacto
 | 2 design | `refactor-design.md` + `checklist.yaml` | AI drafts, user reviews as a whole |
 | 3 apply | code changes + `apply-notes.md` | AI executes, each step requires human approval |
 
-There is a checkpoint between stages: no design until scan has been selected; no code until design is approved; and inside apply, any HUMAN verification item must explicitly pass before the next step starts.
+There is a checkpoint between stages by default: no design until scan has been selected; no code until design is approved; and inside apply, any HUMAN verification item must explicitly pass before the next step starts. If `.bytetrue/config.yaml` is missing, treat auto-mode continuation as unavailable and tell the user to rerun `bt-onboard` or repair the skeleton before relying on config-driven behavior. If `.bytetrue/config.yaml` has `workflow.mode: auto`, the workflow may continue only through AI-self-proved, already-approved steps; it still stops at scan selection, design approval, HUMAN verification, and any operation listed in current `workflow.ask_before`.
 
 ---
 
@@ -72,7 +74,7 @@ Before scanning, confirm: **which files are in scope this time**. Default behavi
 - if the user named specific files or components, scan only those
 - if the user says "this page", scan the entry component plus the directly imported internal modules, but do not chase shared dependencies
 - if the user says "this module", scan the files under that module directory, but do not cross the module boundary
-- if the scope exceeds 15 files or 3000 lines, trigger the sixth pre-check and ask the user to narrow it first
+- if the scope is too large to review confidently, trigger the sixth pre-check and ask the user to narrow it first
 
 The scope must include test files as well, because they are needed for the second pre-check on test coverage.
 
@@ -81,8 +83,8 @@ The scope must include test files as well, because they are needed for the secon
 Use the four levels of the method library as the template:
 
 - **L1 behavior-equivalent migration**: when a function is widely called but its interface or implementation has to change → Parallel Change; when a whole old block of logic should be replaced by a new implementation → Strangler Fig
-- **L2 code-level refactor**: very long functions, over 50 lines or cyclomatic complexity over 10, repeated conditional fragments, mysterious temporary variables, or deeply nested if-else
-- **L3 structural split**: frontend components over 300 lines, files carrying multiple concerns, containers mixed with presentation, same logic reimplemented in multiple components; backend controllers directly calling DB, missing service layers, or repositories being bypassed
+- **L2 code-level refactor**: very long functions, high cyclomatic complexity, repeated conditional fragments, mysterious temporary variables, or deeply nested if-else
+- **L3 structural split**: frontend components that are visibly oversized, files carrying multiple concerns, containers mixed with presentation, same logic reimplemented in multiple components; backend controllers directly calling DB, missing service layers, or repositories being bypassed
 - **L4 performance**: repeated computations that should be memoized, N+1 queries, lists without virtualization or pagination, event listeners without cleanup, or large objects held in deep reactivity
 
 Use the Matt `improve-codebase-architecture` vocabulary for architecture-improvement candidates, but only as refactor candidates, never as a pretext to enlarge the scope:
@@ -117,7 +119,11 @@ Give the whole scan to the user, and let the **user mark ✓ or ✗**, with reas
 1. **Order the work** — if selected items have dependencies, put the prerequisites first. L1 items like Parallel Change usually come first, and L2 extractions often follow. Independent items should prioritize low risk plus things the AI can self-prove. HUMAN-verification items should be batched later
 2. **Add execution detail to each item**: method ID, steps, prerequisites, exit signal, verification owner, AI or HUMAN, and rollback strategy
 3. **Identify prerequisites** — items with inadequate test coverage get a prerequisite of "add characterization coverage"; items that change public interfaces get a prerequisite of "search callers"
-4. **Overall review** — present the whole design to the user, and once approved, set `status: approved`
+4. **Overall review** — present the whole design to the user, and once approved, set:
+   ```yaml
+   status: done
+   review_result: approved
+   ```
 5. **Extract the checklist** — steps mirror execution order, checks mirror step exit signals
 
 For architecture-oriented items, the design must additionally make these explicit:
@@ -133,7 +139,8 @@ For architecture-oriented items, the design must additionally make these explici
 ---
 doc_type: refactor-design
 refactor: {YYYY-MM-DD}-{slug}
-status: draft | approved
+status: active | done
+review_result: pending | approved
 scope: {one-line scan scope}
 summary: {one-line summary of which items will be done this time}
 ---
@@ -170,10 +177,10 @@ One block per step:
 
 ### Advancement rules
 
-1. **One step at a time, never batch** — follow the checklist order strictly; do not open the next step before the current one is complete
+1. **One step at a time, never batch** — follow the checklist order strictly; do not open the next step before the current one is complete. In `workflow.mode: auto`, this still means one verified step at a time, not batching.
 2. **Verify after each step**:
-   - AI self-proof: run the designated tests, typecheck, lint, or grep that old references are gone. If it passes, record it in apply-notes and continue
-   - HUMAN verification: **stop and report** "step N is complete; please visually confirm at {specific page or operation}; I will continue after your confirmation". If the user does not explicitly say "continue", do not proceed
+   - AI self-proof: run the designated tests, typecheck, lint, or grep that old references are gone. If it passes, record it in apply-notes; in auto mode, you may continue to the next AI-self-proof step unless another boundary is reached.
+   - HUMAN verification: **stop and report** "step N is complete; please visually confirm at {specific page or operation}; I will continue after your confirmation". If the user does not explicitly say "continue", do not proceed, including in auto mode.
 3. **Record drift immediately** — if execution discovers something the plan did not consider, such as a caller hidden behind a dynamic import, **stop and report it rather than freelancing**. Align with the user, record it in apply-notes, and if necessary return to stage 2 to update design
 4. **Behavior-equivalence self-check** — after each step, ask "could this step have changed externally observable behavior?" If there is any suspicion, return to that step immediately
 
@@ -202,6 +209,7 @@ refactor: {YYYY-MM-DD}-{slug}
 
 - run the full test suite + typecheck + lint
 - ask the user for one final end-to-end visual confirmation, frontend means open the main page and click through the path once
+- optionally ask "Do you want to add a concise worklog/report-feed entry for this refactor?" (`.bytetrue/reference/worklog-report-feed.md`)
 - after confirmation passes, do the close-out commit, with the message referencing the refactor directory
 
 ---
@@ -211,7 +219,11 @@ refactor: {YYYY-MM-DD}-{slug}
 - [ ] the scan pre-checks were run, anything that hit got routed away, and only the non-hit path continued into scan
 - [ ] the user has marked `{slug}-scan.md` with ✓ and ✗
 - [ ] every selected item in design maps to a method ID
-- [ ] design passed whole-document user review and is `status: approved`
+- [ ] design passed whole-document user review and frontmatter is:
+  ```yaml
+  status: done
+  review_result: approved
+  ```
 - [ ] `checklist.yaml` has been generated and passes `validate-yaml.py`
 - [ ] every apply step has a verification record, AI self-proof includes logs, HUMAN proof includes the user's confirmation wording
 - [ ] full test suite, typecheck, and lint all pass
@@ -225,7 +237,7 @@ refactor: {YYYY-MM-DD}-{slug}
 - **smuggling in behavior changes** — "while here I also fixed a bug" or "while here I improved the copy" — split that into an issue or feature instead
 - **merging multiple steps into one action** — a single commit doing 2-3 steps loses the ability to roll back one clean step
 - **putting preference items into the list** — naming taste, quotes, arrow function vs function — those belong in decisions
-- **starting a scan on a large module and moving straight into work** — if it is over 15 files or 3000 lines and not narrowed, the output becomes an undecidable wall of text
+- **starting a scan on a large module and moving straight into work** — if the scope is too large and not narrowed, the output becomes an undecidable wall of text
 - **skipping HUMAN verification yourself** — the AI cannot see frontend effects; typecheck is not a substitute for human eyes
 - **forcing through despite lack of coverage** — changing an untested module while claiming behavior equivalence only as a verbal promise
 

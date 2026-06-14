@@ -20,7 +20,7 @@ This file provides the fix report template, log-debugging scaffolding, and `{slu
 {yes / no}
 
 ### Re-run the Reproduction Steps Once
-{walk through the reproduction steps from section 2 of {slug}-report.md; does the result now match the expected behavior?}
+{standard path: walk through section 2 of {slug}-report.md; fast path: walk through the problem description and reproduction clue that will be captured in {slug}-fix-note.md; does the result now match the expected behavior?}
 ```
 
 ## 2. Log-Debugging Escalation
@@ -52,7 +52,7 @@ Please reproduce the issue using these steps and paste the logs:
 ---
 doc_type: issue-fix
 issue: {issue directory name}
-status: confirmed
+status: done
 path: standard
 fix_date: YYYY-MM-DD
 related: [{relative path to slug-analysis.md}]
@@ -92,7 +92,7 @@ What would prevent this kind of bug in the future: {tests / types / constraints 
 ---
 doc_type: issue-fix
 issue: {issue directory name}
-status: confirmed
+status: done
 path: fast-track
 fix_date: YYYY-MM-DD
 tags: []

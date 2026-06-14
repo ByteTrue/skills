@@ -26,14 +26,20 @@ After startup, **do one scan first and choose the path automatically**. Do not a
 
 ```text
 .bytetrue/
-├── attention.md                project notes that every ByteTrue skill must read at startup
-├── requirements/               requirement aggregate root, empty directory with .gitkeep
+├── attention.md                 project notes that every ByteTrue skill must read at startup
+├── config.yaml                  machine-readable project config
+├── requirements/               requirement aggregate root
+│   └── VISION.md              central requirement index, initially created as a placeholder template
 ├── architecture/
 │   └── ARCHITECTURE.md         architecture entry point, initially created as a placeholder template
 ├── roadmap/                    planning-layer aggregate root
 ├── features/                   feature aggregate root
 ├── issues/                     issue aggregate root
+├── refactors/                  refactor aggregate root
+├── audits/                     audit aggregate root
+├── brainstorms/                open discussions / grill outputs not ready for roadmap
 ├── compound/                   unified directory for captured learning / trick / decision / explore
+├── worklog/                    lightweight report-feed / handoff / recovery records
 ├── tools/                      shared scripts across workflows, released by onboard
 │   ├── search-yaml.py
 │   └── validate-yaml.py
@@ -43,6 +49,16 @@ After startup, **do one scan first and choose the path automatically**. Do not a
     ├── domain-context.md       terminology / domain glossary / grill-with-docs consensus
     ├── project-management.md   external tracker / labels / sync policy
     ├── tools.md
+    ├── config.md                project config field semantics
+    ├── config.schema.yaml        machine-readable config schema and onboarding defaults
+    ├── code-dimensions.md      implementation complexity dimensions
+    ├── execution-modes.md      workflow heaviness / evidence discipline
+    ├── implementation-review.md implementation review gate / readiness discipline
+    ├── context-manifest.md     feature-local implement/check read-set contract
+    ├── subagent-handoff.md     implement/check/research handoff role contract
+    ├── research-first.md       evidence-before-decision trigger and citation rule
+    ├── worklog-report-feed.md lightweight worklog / report-feed contract
+    ├── requirement-example.md  requirement writing example
     └── maintainer-notes.md
 ```
 
@@ -70,23 +86,25 @@ After startup, **do one scan first and choose the path automatically**. Do not a
 
 Execute the following in order, **without waiting for step-by-step user confirmation** — the skeleton is one whole unit:
 
-- `.bytetrue/{requirements,roadmap,features,issues,compound}/.gitkeep`
+- `.bytetrue/{requirements,roadmap,features,issues,refactors,audits,compound,brainstorms,worklog}/.gitkeep`
+- `.bytetrue/requirements/VISION.md`, using the minimal template in `reference.md` in the same directory
 - `.bytetrue/attention.md`, using the minimal template in `reference.md` in the same directory
 - `.bytetrue/architecture/ARCHITECTURE.md`, using the placeholder template in `reference.md` in the same directory
 - `.bytetrue/tools/`, copied by shell using `cp -rf` or `Copy-Item -Recurse -Force` from `bt-onboard/tools/` in the skill package, **not Read then Write**
 - `.bytetrue/reference/`, initialized from `bt-onboard/reference/` in the skill package; for new projects, copying the whole directory is fine
 
-> **Use shell copy for writing to disk**, not Read then Write — these are shared assets and templates, and Read+Write truncates large files, changes indentation, eats blank lines, and wastes tokens. On migration or rerunning onboard, `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md` are project-owned configuration and must never be overwritten without confirmation. See step 4 of the migration path for concrete commands.
+> **Use shell copy for writing to disk**, not Read then Write — these are shared assets and templates, and Read+Write truncates large files, changes indentation, alters spacing, and wastes tokens. On migration or rerunning onboard, `.bytetrue/reference/domain-context.md` is project-owned and must never be overwritten without confirmation. `.bytetrue/reference/project-management.md` is refreshed from the skill package so syncable-source/status semantics stay current; preserve or reapply only project-specific label mappings after confirmation. See step 4 of the migration path for concrete commands.
 
-**Step 3: project-management setup**
+**Step 3: project config setup**
 
-Ask the user for the external tracker provider:
+Before writing `.bytetrue/config.yaml`, read `.bytetrue/reference/config.schema.yaml`, guide the user through every required config group, then write the selected values once:
 
-1. `local`: use only `.bytetrue/`, create no external issues
-2. `github`: use the local `gh` CLI
-3. `gitlab`: use the local `glab` CLI
+1. **Workflow** — choose `workflow.mode` (`manual` default, or `auto`) and review the `workflow.ask_before` operation-key list that auto mode must stop on. The list is project-owned; seed a conservative default but let the user add or remove keys before writing.
+2. **Tracker** — choose `tracker.provider` (`local | github | gitlab`), `tracker.sync_policy` (`ask | never | auto_preview`), and keep first-version supported values for `tracker.sync_direction`, `tracker.external_import`, and `tracker.update_policy` unless the user explicitly asks for an unsupported value, in which case stop and explain it is not supported yet.
+3. **Repository / CLI cache** — detect provider CLI and auth as advisory cache only; write `tracker.repository.remote_url`, `tracker.repository.tracker_url`, `tracker.provider_status`, and last-detected `tracker.cli.gh.*` / `tracker.cli.glab.*` values into config, but tell the user `bt-tracker` revalidates them at runtime.
+4. **Dispatch** — choose `dispatch.preferred` (`auto | native_subagent | non_interactive_child | inline`) and set `dispatch.allow_non_interactive_child` / `dispatch.allow_background_agents`. If unsure, use `preferred: auto`, allow synchronous non-interactive child agents, and keep background agents disabled.
 
-If the user chooses `github`, check:
+If the chosen provider is `github`, check:
 
 ```bash
 command -v gh
@@ -94,7 +112,7 @@ gh auth status
 git remote -v
 ```
 
-If the user chooses `gitlab`, check:
+If the chosen provider is `gitlab`, check:
 
 ```bash
 command -v glab
@@ -102,7 +120,7 @@ glab auth status
 git remote -v
 ```
 
-Write the provider, detection result, and the user's chosen label mapping into `.bytetrue/reference/project-management.md`. If the CLI is not installed or not logged in, do not stop onboarding. Write the state as `not_configured` and tell the user they can rerun `bt-onboard` later or update `.bytetrue/reference/project-management.md` manually.
+Keep label meanings and sync semantics in `.bytetrue/reference/project-management.md`; do not duplicate current config values there. If the CLI is not installed or not logged in, do not stop onboarding. Write `tracker.provider_status: unavailable` and tell the user they can rerun `bt-onboard` later or edit `.bytetrue/config.yaml`.
 
 **Step 4: remind about attention.md**
 
@@ -144,78 +162,73 @@ Do not ask every high-confidence item one by one, but do list them in the report
 
 **Step 4: fill the missing skeleton**
 
-Against the standard skeleton, fill any directory or file that is still missing **after user-confirmed migration decisions**. Do not overwrite existing content.
+Against the standard skeleton, fill any directory or file that is still missing **after user-confirmed migration decisions**. Do not overwrite existing content. At minimum, missing skeleton files include `.bytetrue/requirements/VISION.md`, `.bytetrue/attention.md`, `.bytetrue/architecture/ARCHITECTURE.md`, `.bytetrue/tools/`, and `.bytetrue/reference/`.
 
 **Always overwrite `.bytetrue/tools/` with the fresh skill-package version** — these are shared scripts maintained by the skill package, and the authoritative source is `bt-onboard/tools/`.
 
-**Handle `.bytetrue/reference/` in two categories**:
+**Handle `.bytetrue/reference/` in three categories**:
 
-- skill-package-managed reference files, such as `.bytetrue/reference/shared-conventions.md`, `.bytetrue/reference/system-overview.md`, `.bytetrue/reference/tools.md`, `.bytetrue/reference/maintainer-notes.md`, `.bytetrue/reference/code-dimensions.md`, and `.bytetrue/reference/requirement-example.md`, may be overwritten by the fresh skill-package version
-- project-owned configuration files, namely `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md`, should only be created from template when missing; if they already exist, they must not be overwritten without explicit confirmation
+- project-owned files, namely `.bytetrue/reference/domain-context.md`, should only be created from template when missing; if it already exists, it must not be overwritten without explicit confirmation
+- hybrid project-management file, `.bytetrue/reference/project-management.md`, should be refreshed from the skill-package template so syncable sources, status mappings, managed-block rules, and tracker semantics stay current; if the existing file has project-specific external label names or `status_sync` choices, preserve or reapply only those project-specific mappings after confirmation
+- all other skill-package-managed reference files may be overwritten from the fresh skill-package version after listing them in the report
 
-Before overwriting, list the skill-package-managed files that will be overwritten in the report; when project-owned configuration already exists, list it as "keep existing".
+Before overwriting, list the skill-package-managed files that will be overwritten in the report; list `domain-context.md` as "keep existing" when present; list any existing project-specific tracker label mappings that will be preserved or need confirmation.
 
 **Write-to-disk commands**:
 
 ```bash
 # macOS / Linux
-cp -rf <skill-package-path>/bt-onboard/tools/. .bytetrue/tools/
+cp -rf <bt-onboard-skill-path>/tools/. .bytetrue/tools/
 
-# reference: overwrite skill-package-managed files, but preserve project-owned config
+# reference: refresh package-managed references and tracker contract, but preserve domain glossary
 rsync -a \
   --exclude domain-context.md \
-  --exclude project-management.md \
-  <skill-package-path>/bt-onboard/reference/. .bytetrue/reference/
+  <bt-onboard-skill-path>/reference/. .bytetrue/reference/
 
 test -e .bytetrue/reference/domain-context.md || \
-  cp <skill-package-path>/bt-onboard/reference/domain-context.md .bytetrue/reference/domain-context.md
-
-test -e .bytetrue/reference/project-management.md || \
-  cp <skill-package-path>/bt-onboard/reference/project-management.md .bytetrue/reference/project-management.md
+  cp <bt-onboard-skill-path>/reference/domain-context.md .bytetrue/reference/domain-context.md
 
 # Windows PowerShell
-Copy-Item -Recurse -Force <skill-package-path>\bt-onboard\tools\* .bytetrue\tools\
-Get-ChildItem <skill-package-path>\bt-onboard\reference\* | Where-Object { $_.Name -notin @('domain-context.md','project-management.md') } | Copy-Item -Destination .bytetrue\reference\ -Force
-if (!(Test-Path .bytetrue\reference\domain-context.md)) { Copy-Item <skill-package-path>\bt-onboard\reference\domain-context.md .bytetrue\reference\domain-context.md }
-if (!(Test-Path .bytetrue\reference\project-management.md)) { Copy-Item <skill-package-path>\bt-onboard\reference\project-management.md .bytetrue\reference\project-management.md }
+Copy-Item -Recurse -Force <bt-onboard-skill-path>\tools\* .bytetrue\tools\
+Get-ChildItem <bt-onboard-skill-path>\reference\* | Where-Object { $_.Name -ne 'domain-context.md' } | Copy-Item -Destination .bytetrue\reference\ -Force
+if (!(Test-Path .bytetrue\reference\domain-context.md)) { Copy-Item <bt-onboard-skill-path>\reference\domain-context.md .bytetrue\reference\domain-context.md }
 ```
 
-Do not use Read+Write to move them manually. That truncates and reformats files. Do not overwrite the whole reference directory, because doing so would wipe project terminology and tracker configuration.
+Do not use Read+Write to move them manually. That truncates and reformats files. Do not overwrite the whole reference directory, because doing so would wipe project terminology; use the filtered copy above so package-managed tracker semantics are refreshed without replacing `domain-context.md`.
 
-The skill-package path is usually the installed skill directory, such as `~/.claude/skills/bt-onboard/`, `~/.agents/skills/bt-onboard/`, or a plugin directory. If uncertain, locate it with `ls` first. After copying, verify with `ls .bytetrue/tools/ .bytetrue/reference/`.
+`<bt-onboard-skill-path>` is the installed `bt-onboard` skill directory itself, such as `~/.claude/skills/bt-onboard/`, `~/.agents/skills/bt-onboard/`, or a plugin skill directory. If you only know the parent skills root, append `/bt-onboard` first. If uncertain, locate it with `ls` first. After copying, verify with `ls .bytetrue/tools/ .bytetrue/reference/`.
 
 **Step 5: handle files that are not being migrated**
 
 For files the user chooses to skip: **do not move them, do not delete them, and do not rename them**. In the report, mark them as "kept in place, not brought into ByteTrue". **Never move anything without confirmation** — onboard is allowed to organize, but not to make deletion decisions for the user.
 
-**Step 6: project-management setup**
+**Step 6: project config setup**
 
-Same as in the empty-repo path. Ask for `local | github | gitlab`, detect `gh` / `glab`, auth status, and `git remote -v`, then write or merge the result into `.bytetrue/reference/project-management.md`.
-
-If `.bytetrue/reference/project-management.md` already exists, do not overwrite provider, labels, or status sync. Only fill in missing fields, or update after user confirmation.
+Same as in the empty-repo path. Reconfirm every current config group before writing or merging `.bytetrue/config.yaml`: workflow mode and ask-before list, tracker provider/sync policy/repository/CLI cache, dispatch preference and allow flags. Preserve existing provider, sync, and dispatch values unless the user confirms a change. Keep current values in config; use `.bytetrue/reference/project-management.md` for refreshed tracker semantics plus project-specific label mappings only.
 
 **Step 7: attention.md reminder**, same as step 4 in the empty-repo path
 
 **Step 8: acceptance-style summary**
 
-List: migration file map, from → to; new skeleton files; project-management provider status; non-migrated files, still kept in place; and recommended next steps.
+List: migration file map, from → to; new skeleton files; project-management contract refresh and any preserved label mappings; provider status from config; non-migrated files, still kept in place; and recommended next steps.
 
 ---
 
 ## Skeleton file templates
 
-The placeholder template for `ARCHITECTURE.md` and the minimal template for `attention.md` are in `reference.md` in the same directory.
+The placeholder template for `ARCHITECTURE.md`, the minimal template for `requirements/VISION.md`, and the minimal template for `attention.md` are in `reference.md` in the same directory.
 
 ---
 
 ## Exit Conditions
 
-- [ ] all eight `.bytetrue/` subdirectories exist
+- [ ] all required `.bytetrue/` subdirectories exist, including `worklog/`, `tools/`, and `reference/`
 - [ ] `.bytetrue/attention.md` has been created
+- [ ] `.bytetrue/requirements/VISION.md` has been created
 - [ ] `.bytetrue/tools/` has been copied from the skill package
 - [ ] the skill-package-managed files under `.bytetrue/reference/` have been synchronized
 - [ ] `.bytetrue/reference/domain-context.md` exists, and any pre-existing content was not overwritten without confirmation
-- [ ] `.bytetrue/reference/project-management.md` exists, and provider, CLI, auth, and remote status have been recorded
+- [ ] `.bytetrue/config.yaml` exists, and workflow, tracker, repository/CLI cache, and dispatch values have all been reviewed with the user and recorded
 - [ ] `.bytetrue/architecture/ARCHITECTURE.md` has been created
 - [ ] on the migration path, every mapping item has an explicit result, migrated or kept in place
 - [ ] on the migration path, no file was moved without confirmation
@@ -230,7 +243,7 @@ The placeholder template for `ARCHITECTURE.md` and the minimal template for `att
 - **starting feature or issue work immediately after creating the skeleton** — onboard is environment setup, not feature execution
 - **executing low-confidence mappings directly** — low confidence always means you must ask
 - **treating `.bytetrue/tools/` conservatively and not overwriting it** — shared scripts must be refreshed from the skill package, otherwise users are left on stale tooling after upgrades
-- **overwriting the whole `.bytetrue/reference/` directory** — that wipes project-owned config such as `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md`
+- **overwriting the whole `.bytetrue/reference/` directory** — that wipes project-owned terminology in `.bytetrue/reference/domain-context.md`; use the filtered copy rule so package-managed tracker semantics still refresh
 - **moving files manually through Read + Write** — the tools directory and skill-package-managed reference files must be copied through shell commands
 - **forgetting to exclude `node_modules/` and `.git/` in the Glob** — the scan gets flooded with noise
 
@@ -241,6 +254,6 @@ The placeholder template for `ARCHITECTURE.md` and the minimal template for `att
 - `.bytetrue/reference/system-overview.md` — overview of the ByteTrue system
 - `.bytetrue/reference/shared-conventions.md` — the authoritative version of directory structure and shared conventions
 - `.bytetrue/reference/domain-context.md` — project terminology, domain glossary, and grill-with-docs consensus
-- `.bytetrue/reference/project-management.md` — external tracker provider, labels, and sync policy
+- `.bytetrue/config.yaml` — current workflow/tracker/dispatch values; `.bytetrue/reference/config.schema.yaml` — machine-readable config schema and onboarding defaults; `.bytetrue/reference/project-management.md` — external tracker labels and sync semantics
 - `.bytetrue/attention.md` — project notes that every ByteTrue skill must read at startup
 - `.bytetrue/architecture/ARCHITECTURE.md` — architecture entry skeleton

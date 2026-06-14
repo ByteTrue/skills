@@ -718,7 +718,7 @@ def get_main_block(driver, extra_js="", text_only=False):
     if text_only:
         page = re.sub(r" {2,}", " ", page)  # collapse repeated spaces into one
         page = re.sub(r"^ +", "", page, flags=re.M)  # strip leading spaces from lines
-        page = re.sub(r"(\n\s*){3,}", "\n\n", page)  # collapse 3+ blank lines into one
+        page = re.sub(r"(\n\s*){3,}", "\n\n", page)  # collapse repeated vertical whitespace
         return page.strip()
     return page
 

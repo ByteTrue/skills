@@ -39,7 +39,7 @@ The date is fixed to the **day the problem was discovered or reported** and neve
 
 `{slug}-fix-note.md` is a **mandatory artifact** for stage 3, no matter whether the fix is simple or complex. It is not ceremony; it is traceability evidence. Without it, next time a similar issue appears you can only reconstruct it from `git log`.
 
-All issue documents carry YAML frontmatter with `doc_type` values `issue-report`, `issue-analysis`, and `issue-fix` so that `search-yaml.py` can search them by `severity`, `tags`, and `status`. The finished state across all three issue stages is uniformly `status: confirmed`; `draft` only means that this stage has not completed review or verification yet.
+All issue documents carry YAML frontmatter with `doc_type` values `issue-report`, `issue-analysis`, and `issue-fix` so that `search-yaml.py` can search them by `severity`, `tags`, and `status`. The finished state across all three issue stages is uniformly `status: done`; `active` means that this stage has not completed review or verification yet.
 
 ---
 
@@ -63,11 +63,11 @@ Use this only when **all** of the following are true:
 2. The fix is very small, 1-2 changes
 3. There is no cross-module impact risk
 
-The flow compresses into: AI reads code → directly tells the user the root cause and fix plan → user confirms → AI fixes → user verifies success → AI writes `{slug}-fix-note.md`. Only one `fix-note.md` is produced, skipping `report` and `analysis`.
+The flow compresses into: AI reads code → directly tells the user the root cause and fix plan → user confirms → AI fixes → user verifies success → AI writes `{slug}-fix-note.md`. Only one `fix-note.md` is produced, skipping `report` and `analysis`; if tracker projection is needed later, the done fast-track fix-note is the syncable bug source.
 
 **Decision rule**: whether to use the fast path is formally decided only once in the startup checks of `bt-issue-report`. Once the standard path has started, do not keep re-deciding the route in later stages. Otherwise the three stages can contradict one another.
 
-**Must not** use the fast path when there are multiple root-cause candidates, the fix spans multiple modules, reproduction is required before diagnosis, or the user explicitly wants a full analysis record.
+**Must not** use the fast path when there are multiple root-cause candidates, the fix spans multiple modules, reproduction is required before diagnosis, complex diagnose triggers would require `strict-evidence` or `break-loop`, or the user explicitly wants a full analysis record.
 
 ---
 
@@ -78,11 +78,14 @@ When entering this skill, `Glob .bytetrue/issues/` first. Read the existing file
 | Current State | Trigger Which Sub-skill |
 |---|---|
 | Problem just discovered, no files yet | `bt-issue-report` (it decides standard vs fast path) |
-| `report.md` exists, but no `analysis.md` | `bt-issue-analyze` |
-| `analysis.md` exists, code not changed yet | `bt-issue-fix` |
+| `report.md` exists with `status: active`, missing/unknown status, missing sections, or incomplete review | `bt-issue-report` resume / complete the report |
+| `report.md` exists with `status: done`, but no `analysis.md` | `bt-issue-analyze` |
+| `analysis.md` exists with `status: active`, missing/unknown status, missing sections, or unconfirmed repair option | `bt-issue-analyze` resume / checkpoint |
+| `analysis.md` exists with `status: done` and `execution_mode.level: break-loop` | do not route to fix; route to analysis revision, `bt-grill`, `bt-refactor`, `bt-roadmap`, or architecture discussion |
+| `analysis.md` exists with `status: done` and code has not changed yet | `bt-issue-fix` |
 | Code is already changed, but no fix verification record yet | `bt-issue-fix` (verification flow) |
-| `fix-note.md` exists and `status: confirmed` | the issue is already closed; do not re-enter fix flow. If collaboration projection is needed, suggest `bt-tracker` |
-| `fix-note.md` exists but `status: draft` | first inspect the verification record in the body, related commits, and worktree. If the evidence is complete, say only that the fix note needs to be changed to `status: confirmed`; do not directly declare the fix incomplete |
+| `fix-note.md` exists and `status: done` | the issue is already closed; do not re-enter fix flow. If collaboration projection is needed, suggest `bt-tracker`; for fast-track issues, the fix-note itself is the syncable bug source |
+| `fix-note.md` exists but `status: active` | first inspect the verification record in the body, related commits, and worktree. If the evidence is complete, say only that the fix note needs to be changed to `status: done`; do not directly declare the fix incomplete |
 | Not sure | read the existing files yourself and match them against the table above |
 
 If the user's description is actually a **new feature request rather than a bug**, tell them to use `bt-feat`.

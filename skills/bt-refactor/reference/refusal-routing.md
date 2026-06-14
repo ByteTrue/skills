@@ -21,9 +21,9 @@ Before scan starts, run the 7 pre-checks once. If any one of them hits, **stop s
 
 **How to check**: scan whether corresponding `.test.*` or `.spec.*` files exist, or run the coverage tool and inspect whether the key path is covered.
 
-**Trigger**: the key path has no test coverage, or line coverage is clearly too low, below 60%, or below the project's own threshold, or tests exist but only cover irrelevant edge noise while the core business path is uncovered.
+**Trigger**: the key path has no test coverage, coverage is clearly too low or below the project's own threshold, or tests exist but only cover irrelevant edge noise while the core business path is uncovered.
 
-**Exception exemptions**: purely declarative content such as style, static config, or type aliases; obviously trivial short functions, less than 10 lines and branch-free; or pure presentation components, props → render with no internal logic.
+**Exception exemptions**: purely declarative content such as style, static config, or type aliases; obviously trivial short functions that are branch-free; or pure presentation components, props → render with no internal logic.
 
 **Why stop**: without tests, "behavior equivalence" is only a verbal promise.
 
@@ -48,7 +48,7 @@ Before scan starts, run the 7 pre-checks once. If any one of them hits, **stop s
 
 ### 4. Are all the candidates just style preferences?
 
-**Trigger**: more than 50% of the scan results land on naming style, quote style, semicolons, arrow function vs function, import order, declaration order, blank lines, or indentation.
+**Trigger**: most scan results land on naming style, quote style, semicolons, arrow function vs function, import order, declaration order, whitespace, or indentation.
 
 **Why stop**: style preference should not be handled through manual refactor. The permanent fix is lint rules plus automatic formatting.
 
@@ -78,7 +78,7 @@ Before scan starts, run the 7 pre-checks once. If any one of them hits, **stop s
 **Trigger**, any one:
 
 - more than 15 files
-- more than 3000 lines of code
+- too much code
 - likely to produce more than 20 candidates after scanning
 
 **Why stop**: when the scope is too large, the AI cannot hold the detail consistently in context and starts contradicting itself; the user also cannot review such a large checklist in one pass.

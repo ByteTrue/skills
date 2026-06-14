@@ -1,3 +1,10 @@
+---
+doc_type: feature-acceptance
+feature: 2026-06-09-pi-package-install
+status: done
+summary: Accepted pi package and Claude plugin installation projections for ByteTrue skills.
+---
+
 # pi package / Claude plugin 安装方式验收报告
 
 > 阶段：阶段 3（验收闭环）

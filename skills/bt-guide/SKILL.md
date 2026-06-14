@@ -50,7 +50,7 @@ File naming is `{slug}.md`, lowercase English with hyphens and **no date prefix*
 Search:
 
 ```
-python .bytetrue/tools/search-yaml.py --dir docs/dev --filter doc_type=dev-guide --filter status=current
+python .bytetrue/tools/search-yaml.py --dir docs/dev --filter doc_type=dev-guide --filter status=done --filter current=true
 python .bytetrue/tools/search-yaml.py --dir docs/user --filter doc_type=user-guide --filter component={feature-slug}
 ```
 
@@ -63,14 +63,16 @@ python .bytetrue/tools/search-yaml.py --dir docs/user --filter doc_type=user-gui
 doc_type: dev-guide | user-guide
 slug: {english-hyphenated}
 component: {related module name or feature slug}
-status: draft | current | outdated
+status: active | done | archived
+current: true        # only when status: done and the guide is currently valid
+validity: outdated  # only when status: archived because code changed and the guide is stale
 summary: {one-line description of what it covers}
 tags: []
 last_reviewed: YYYY-MM-DD
 ---
 ```
 
-`status` is a three-state field: `draft` pending review, `current` currently valid, `outdated` where the code changed but the document did not keep up. Keep the original text, mark it, then push an update.
+`status` uses the canonical vocabulary: `active` means pending review, `done` plus `current: true` means currently valid, and `archived` plus `validity: outdated` means code changed but the document did not keep up. Keep the original text, mark it, then push an update.
 
 ---
 
@@ -129,10 +131,10 @@ Optional. Links or explanations for related features.
 ## Workflow Steps
 
 1. **Clarify scope** — track, dev / user / both, scope, new or update, and information sources. Do design docs already exist? Is there already a guide for the same component? What code needs to be read?
-2. **Collect inputs** — read the design doc, especially section 0 terminology, section 2 interface contract, and section 1 user-visible behavior, then use `search-yaml.py` under `docs/` to confirm whether an existing guide already exists. If an existing guide is found and marked `outdated`, classify the task as an **update**
-3. **Draft** — draft according to the track structure and set frontmatter `status: draft`. Constraint: write only content for the target reader. **Do not move "implementation hints" or internal design straight out of the design doc.** Terminology must match section 0 of the design doc. Code examples must come from real code; do not invent interfaces.
+2. **Collect inputs** — read the design doc, especially section 0 terminology, section 2 interface contract, and section 1 user-visible behavior, then use `search-yaml.py` under `docs/` to confirm whether an existing guide already exists. If an existing guide is found with `status: archived` and `validity: outdated`, classify the task as an **update**
+3. **Draft** — draft according to the track structure and set frontmatter `status: active`. Constraint: write only content for the target reader. **Do not move "implementation hints" or internal design straight out of the design doc.** Terminology must match section 0 of the design doc. Code examples must come from real code; do not invent interfaces.
 4. **User review** — show the draft and confirm section by section whether the scope is covered, whether the descriptions are accurate, and whether any part would be hard for the intended reader to understand
-5. **Write to disk** — after user approval, write to the chosen path, set `status: current`, and set `last_reviewed` to today. For updates, do direct edits for small changes. For major changes such as restructuring or a shift in reader positioning, first mark the old document `status: outdated` and keep it as reference, then write a new one
+5. **Write to disk** — after user approval, write to the chosen path, set `status: done` and `current: true`, and set `last_reviewed` to today. For updates, do direct edits for small changes. For major changes such as restructuring or a shift in reader positioning, first mark the old document `status: archived` + `validity: outdated` and keep it as reference, then write a new one
 
 ---
 
@@ -143,7 +145,7 @@ Optional. Links or explanations for related features.
 | `bt-feat-accept` | after acceptance, proactively suggest: interface changes push dev-guide, user-visible changes push user-guide |
 | `bt-feat-design` | section 2 of the design is the primary information source for dev-guide; section 1 is the primary information source for user-guide |
 | `bt-onboard` | after a new repository is onboarded, this can fill in the base documentation skeleton |
-| `bt-arch` in check mode | if design and code diverge, the corresponding guide should also be marked `outdated` |
+| `bt-arch` in check mode | if design and code diverge, the corresponding guide should be marked `status: archived` + `validity: outdated` |
 | `bt-decide` | technology choices referenced by dev-guide must come from decisions rather than being invented independently |
 | `bt-trick` | if dev-guide usage examples overlap with tricks, cross-reference instead of repeating |
 | `bt-libdoc` | the guide cites libdoc entries for detailed reference; libdoc is part reference, guidedoc is task tutorial |
@@ -154,7 +156,7 @@ Optional. Links or explanations for related features.
 
 - copying "implementation hints" from the design doc verbatim into the dev-guide — that belongs to the internal spec
 - creating a new guide without checking whether an old one already exists — conflicts may result
-- finishing the document while `status` is still `draft` — it must be changed to `current` when written
-- the code changed but the related guide is still marked `current` — it should be marked `outdated` and an update should be pushed
+- finishing the document while `status` is still `active` — it must be changed to `done` plus `current: true` when written
+- the code changed but the related guide is still marked `status: done` and `current: true` — it should be marked `status: archived` plus `validity: outdated` and an update should be pushed
 - dev-guide and user-guide overlap too heavily — one of them is positioned incorrectly
 - using the guide to store spec information such as invariants, test constraints, or root-cause analysis — that content belongs under `.bytetrue/`

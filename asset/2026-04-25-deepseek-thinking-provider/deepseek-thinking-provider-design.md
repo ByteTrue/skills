@@ -2,7 +2,8 @@
 doc_type: feature-design
 feature: 2026-04-25-deepseek-thinking-provider
 requirement:
-status: approved
+status: done
+review_result: approved
 summary: 将 DeepSeek 官方 OpenAI-compatible API 正式接入 March，覆盖普通对话、Thinking Mode 与工具调用中的 reasoning_content 轮内回传
 tags: [provider, deepseek, reasoning, tool-calls]
 ---

@@ -105,11 +105,13 @@ There is no rigid sequence. You may move back to the previous step at any time:
 
 If the discussion reaches "whether this direction is viable depends on whether X is actually Y", do not keep debating it in the abstract. **Stop and spend 5-30 minutes building the smallest possible demo** to verify the fact. That usually saves more time than three additional rounds of discussion.
 
-**Do not do this by default**. Most brainstorms are comparing tradeoffs, and a demo would not help. Only proactively suggest it when all three of the following are true:
+**Do not do this by default**. Most brainstorms are comparing tradeoffs, and a demo would not help. Only proactively suggest a minimal demo when all three of the following are true:
 
 1. **this is a factual question, not a preference question** — for example how an API behaves, whether a library really supports something, or whether a performance characteristic holds, not "which style is nicer"
 2. **the result would change the direction** — whether it succeeds or fails, the discussion will converge afterward
 3. **the cost is controlled** — you judge that a runnable thing can be built in 5-30 minutes. Beyond that, it should either go straight through `bt-feat-ff` or be split into a formal feature
+
+If the factual question also depends on external tool behavior, library/API capability, platform hooks, comparable workflows, industry convention, or performance/cost claims, and the answer would materially change the direction, use `bt-explore spike` first and cite the artifact later; see `.bytetrue/reference/research-first.md`.
 
 Suggested phrasing: **"This one is hard to settle by thinking. I can build a minimal demo to verify {the thing to verify} in 5-10 minutes. OK?"** The user can then instantly approve or reject.
 
@@ -161,7 +163,7 @@ Directory conventions:
 - slug: invent an English lowercase hyphenated slug based on the direction, and tell the user what it is. If design later renames it, only rename the slug part, not the date
 - if the directory does not exist, create it; if it already exists, follow the continuation logic from the pre-discussion check
 
-Write to disk only when the user confirms it is ready to move into design. Do not write files during the discussion itself. `status` is always `confirmed`, never `draft`.
+Write to disk only when the user confirms it is ready to move into design. Do not write files during the discussion itself. `status` is always `done`, with any discussion confidence expressed in body fields such as `confirmed`, `leaning`, or `to be verified`, never as status values.
 
 See the "feature brainstorm template" in `reference.md` in the same directory for the template. The frontmatter conventions are shared with design and acceptance; see section 1 of `.bytetrue/reference/shared-conventions.md`.
 

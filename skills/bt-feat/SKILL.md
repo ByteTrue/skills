@@ -29,7 +29,11 @@ This skill writes neither code nor documents. It does only one thing: look at wh
 ├── {slug}-intent.md           ← optional stage 1 draft pre-input (a partial draft written by the user)
 ├── {slug}-design.md           ← stage 1 design document
 ├── {slug}-checklist.yaml      ← stage 1 generated steps + checks; statuses updated during stages 2 and 3
-└── {slug}-acceptance.md       ← stage 3 acceptance report
+├── {slug}-impl-context.jsonl  ← implementation read-set
+├── {slug}-check-context.jsonl ← acceptance/check read-set
+├── {slug}-implementation-report.md ← stage 2 durable completion + review evidence
+├── {slug}-acceptance.md       ← stage 3 acceptance report
+└── {slug}-ff-note.md          ← fastforward-only trace, mutually exclusive with standard-flow artifacts
 ```
 
 The directory name is `YYYY-MM-DD-{english-slug}`. The date is fixed to the day of first creation and never changes. The slug uses lowercase letters, digits, and hyphens.
@@ -49,7 +53,7 @@ If you discover a bug while implementing a feature, record it as a new issue. **
 | 2 stepwise implementation | `bt-feat-impl` | code + stage report | AI executes against the plan |
 | 3 acceptance closure | `bt-feat-accept` | `acceptance.md` | AI checks layer by layer, user does final review |
 
-There is a human checkpoint between stages. If the previous stage has not received explicit user approval, do not start the next stage. This prevents the AI from running straight from requirement to code and only discovering the drift after the fact.
+There is a human checkpoint between stages by default. If `.bytetrue/config.yaml` is missing, treat auto-mode routing as unavailable and tell the user to rerun `bt-onboard` or repair the skeleton before relying on config-driven continuation. If `.bytetrue/config.yaml` has `workflow.mode: manual`, do not start the next stage without explicit user approval. If it has `workflow.mode: auto`, the next stage may continue after the current stage's own exit/review conditions are satisfied, but it must still stop at any `ask_before` boundary, missing artifact, ambiguity, semantic approval, or HUMAN verification gate defined in `.bytetrue/reference/shared-conventions.md`.
 
 Stage 0 is optional and is an **external entry** to the feature flow. `bt-brainstorm` serves both feature and roadmap. Case 3, the large-demand discussion path, is handed off to `bt-roadmap` and does not return to the feature flow. After roadmap later splits out sub-features, they re-enter through the `bt-feat-design` entry "starting from a roadmap item".
 
@@ -63,7 +67,7 @@ When the requirement is clear and the scope is small, the full four-stage flow i
 
 ## Routing: Which Sub-skill the User Should Use Now
 
-When entering this skill, `Glob .bytetrue/features/` first and inspect the existing artifacts. **Do not rely only on the user's verbal claim**. When the user says "the design is done", that does not mean it is actually complete. Read it yourself.
+When entering this skill, `Glob .bytetrue/features/` first and inspect the existing artifacts. **Do not rely only on the user's verbal claim**. For continuation requests, match the named slug/directory and read minimal frontmatter plus checklist statuses; do not infer activity from directory existence alone.
 
 | Current State | Trigger Which Sub-skill |
 |---|---|
@@ -73,13 +77,21 @@ When entering this skill, `Glob .bytetrue/features/` first and inspect the exist
 | The user explicitly says "let's brainstorm first" or "I have an idea but haven't thought it through" | `bt-brainstorm` |
 | `{slug}-intent.md` is already filled | `bt-feat-design` (read the intent as input) |
 | The user says "fast mode / fastforward" | `bt-feat-ff` |
+| Fastforward note exists with `status: done` | fastforward feature is already complete; route new behavior changes to a new feature or issue |
 | `{slug}-brainstorm.md` exists and it is time to move into design | `bt-feat-design` |
-| `{slug}-design.md` is approved and code has not started yet | `bt-feat-impl` |
-| Fastforward design is already confirmed | `bt-feat-impl` |
-| Code is done and needs acceptance | `bt-feat-accept` |
+| No design exists and no `{slug}-ff-note.md` exists, or design exists with `status: active` | `bt-feat-design` |
+| Acceptance exists with `status: done` | feature is already complete; do not continue unless the user asks for a new change, bug fix, or follow-up feature |
+| Legacy acceptance exists without frontmatter but has substantive section-by-section acceptance content | `bt-feat-accept` in legacy reconstruction mode; do not route back to implementation solely because `{slug}-implementation-report.md` is missing |
+| Design exists with `status: done` and `review_result: approved`, but checklist steps are missing, pending, or failed | `bt-feat-impl` |
+| Checklist steps are all `done`, but `{slug}-implementation-report.md` is missing or not `status: done` | `bt-feat-impl` |
+| Implementation report is `status: done`, but checklist checks are `pending` or `failed`, or acceptance is missing or partial | `bt-feat-accept` |
 | The user says "I want an X system" and it is a large demand | route to `bt-brainstorm` for triage, most likely case 3 → `bt-roadmap` |
 | A sub-feature in roadmap is ready to start | `bt-feat-design` via the "starting from a roadmap item" entry |
 | Not sure whether the design is complete | read it yourself and match it against the table above |
+
+### Auto-mode routing note
+
+When the routing table points to the next deterministic stage and config says `workflow.mode: auto`, say that the workflow may continue into that stage if the previous stage's artifact is already reviewed and no current `workflow.ask_before` operation or review/user-choice boundary is reached. If `.bytetrue/config.yaml` is missing, do not infer auto behavior from references; ask the user to repair the skeleton first. Do not use auto mode to skip design review, implementation report review, acceptance final review, configured ask-before operations, or tracker confirmation rules.
 
 ### How to Decide Whether Stage 0 Is Needed
 

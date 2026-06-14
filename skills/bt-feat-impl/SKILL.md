@@ -21,7 +21,7 @@ The concrete rules are all expressions of these three stances. Understanding the
 
 ### 1. By default, write the least code possible
 
-Write only what the current step explicitly needs. Do not casually add configuration hooks, abstraction layers, parameter switches, or defensive fallbacks "for what we may need later". Decision rule: if after writing a block you think "should I also add X?", ask whether X is something the current user can perceive. If not, do not add it. If, after the whole change, 200 lines of code could really say the same thing in 50, rewrite it. Extra code is not neutral; it becomes maintenance burden.
+Write only what the current step explicitly needs. Do not casually add configuration hooks, abstraction layers, parameter switches, or defensive fallbacks "for what we may need later". Decision rule: if after writing a block you think "should I also add X?", ask whether X is something the current user can perceive. If not, do not add it. If, after the whole change, the same behavior could be expressed much more simply, rewrite it. Extra code is not neutral; it becomes maintenance burden.
 
 ### 2. Touch only what should be touched, and do not improve neighbors casually
 
@@ -39,10 +39,10 @@ If halfway through coding you find a corner the design did not cover, edge behav
 
 ### 1. Is the design document strong enough to support implementation?
 
-Frontmatter must have matching `doc_type=feature-design` and `feature`, `status=approved`, non-empty `summary`, and `tags` length at least 2.
+Frontmatter must have matching `doc_type=feature-design` and `feature`, `status=done`, `review_result=approved`, non-empty `summary`, and `tags` length at least 2.
 
 **Standard design**, sections 0, 1, 2, 3, and 4:
-- section 0 has content; section 1 contains explicit non-goals and complexity dimensions
+- section 0 has content; section 1 contains explicit non-goals, complexity dimensions, and execution mode or a standard-mode statement
 - section 2.1 term layer uses the two-part "current state → change" structure, and every added or changed interface has at least one example plus source location
 - section 2.2 orchestration layer starts with a main flow diagram, fully describes current state → change, and already records flow-level constraints
 - section 2.3 mount points follow the rule "would the feature disappear if this were removed?", and do not mistakenly include internal code edits
@@ -65,7 +65,9 @@ If any of the above fails, return to `bt-feat-design` to complete it. Reason: ev
 ### 3. Read the full context
 
 - the full design doc; in standard design focus especially on section 1, sections 2.1, 2.2, 2.3, 2.4, and section 3
-- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, and `.bytetrue/attention.md`
+- `{slug}-checklist.yaml`, the demand source, user description plus brainstorm note, `.bytetrue/attention.md`, `.bytetrue/config.yaml`, `.bytetrue/reference/execution-modes.md`, `.bytetrue/reference/implementation-review.md`, and `.bytetrue/reference/context-manifest.md`. If `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; do not infer defaults from prose references
+- for a new standard feature, `{slug}-impl-context.jsonl` is mandatory. If it is missing, stop and return to `bt-feat-design`, unless this is a legacy feature created before the 2026-06-11 context-manifest contract, a fastforward feature, or the approved design explicitly explains why manifests are not applicable. When the manifest exists, read every required row before coding; if a required file is missing, stop and return to design or ask the user to downgrade that row.
+- if the parent session delegates implementation to a subagent or performs it as an inline role, use the `implement` role in `.bytetrue/reference/subagent-handoff.md`; the parent still owns scope changes and lifecycle transitions
 - the source locations of interface examples in section 2.1, or the code files named by the change points in section 1 of fastforward design; reading the relevant functions is enough
 
 ### 4. Confirm with the user which step to start from
@@ -96,7 +98,7 @@ The most common violation is "while here I also did the next step". Every step h
 
 ### TDD / vertical-slice discipline, enabled when applicable
 
-Enable TDD discipline when the user explicitly asks for TDD, when design section 3.1 recommends TDD, when the work involves complex business logic, or when the change is regression-sensitive. Simple UI, copy, or config changes do not require it.
+Enable TDD discipline when the user explicitly asks for TDD, when design section 3.1 recommends TDD, when execution mode is `strict-evidence`, when the work involves complex business logic, or when the change is regression-sensitive. Simple UI, copy, or config changes do not require it unless the design explicitly upgrades the mode.
 
 When enabled, follow Matt `tdd` rhythm:
 
@@ -144,7 +146,7 @@ If the reflection check concludes that the code should be split, moved, renamed,
 
 ---
 
-## Fixed-format completion report after everything is done
+## Fixed-format completion report and durable implementation report
 
 Once all steps are complete, use the template below and **stop to wait for user review**.
 
@@ -166,6 +168,10 @@ The point of the fixed template is that vague status reporting pushes verificati
 ### Did this introduce any new concept or abstraction not present in the design doc?
 {yes / no. If yes, explain whether the design doc was backfilled, standard design updates section 0 and 2.1; fastforward updates section 1, and whether grep conflict-check was done}
 
+### Implementation Review Gate
+**Spec compliance**: passed / failed, with evidence for behavior deltas, acceptance scenarios, no extra behavior outside design, and explicit non-goals guarded
+**Code quality**: passed / failed, with evidence for fresh verification, no debug/temp code, no unplanned refactor, reflection checks handled, and naming/module boundaries consistent
+
 ### Reflection-check self-audit
 {against section 7 of shared-conventions, which signals fired and how they were handled; if none fired, write "none"}
 
@@ -175,12 +181,27 @@ The point of the fixed template is that vague status reporting pushes verificati
 ### Acceptance-scenario self-check
 **Standard design**: for each key scenario in section 3, what evidence satisfies it, type system / unit test / integration / manual / assert, and whether reverse-check items are guarded
 **Fastforward design**: check each item against the acceptance criteria in section 2
-```
 
 ### TDD / red-green evidence
 {if not enabled: reason / if enabled: for each item, list red test → minimal code → green evidence; if any refactor happened, list the test command rerun after refactor}
+```
 
-After the report, stop and wait for review.
+After the user review passes, write the approved report to `{slug}-implementation-report.md` in the feature directory. Use frontmatter:
+
+```markdown
+---
+doc_type: feature-implementation-report
+feature: {YYYY-MM-DD}-{slug}
+status: done
+summary: {one-line implementation summary}
+---
+
+# {slug} implementation report
+
+{the approved Implementation Completion Report, including Implementation Review Gate and TDD evidence}
+```
+
+This file is the durable evidence consumed by `bt-feat-accept`; a chat-only completion report is not enough.
 
 ---
 
@@ -201,10 +222,11 @@ When the type system itself guarantees something, for example a TypeScript signa
 ## Exit Conditions
 
 - [ ] all steps have status `done`
-- [ ] the completion report has been output, and the user review passed
+- [ ] the completion report has been output, the user review passed, and `{slug}-implementation-report.md` has been written with `status: done`
 - [ ] there are no unhandled "must stop" signals
 - [ ] every key scenario in section 3 has evidence or test coverage, or in fastforward, every section 2 acceptance criterion has evidence
-- [ ] if TDD was enabled, red/green/refactor evidence is listed in the completion report
+- [ ] implementation review gate has passed spec compliance before code quality, with evidence listed in `{slug}-implementation-report.md`
+- [ ] if TDD was enabled, red/green/refactor evidence is listed in `{slug}-implementation-report.md`
 - [ ] no "while here I noticed" item was secretly fixed; they are all in the issue list
 - [ ] there are no plan-external file changes, or the design doc was updated in sync
 
@@ -212,9 +234,9 @@ When the type system itself guarantees something, for example a TypeScript signa
 
 ## After Exit
 
-Tell the user: "All steps are complete, and the design doc is synchronized. The next stage is acceptance closure. Trigger `bt-feat-accept`."
+Tell the user: "All steps are complete, the implementation report is written, and the design doc is synchronized. The next stage is acceptance closure." Then apply `.bytetrue/config.yaml` close-out behavior from shared conventions: if `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; in `manual`, tell them to trigger `bt-feat-accept`; in `auto`, continue to `bt-feat-accept` startup only after the completion report review has passed and no `ask_before` or HUMAN verification boundary is pending.
 
-Do not casually start writing the acceptance report yourself. Acceptance needs its own checklist rhythm, and entering it early weakens the gate.
+Do not casually start writing the acceptance report before those gates are satisfied. Acceptance needs its own checklist rhythm, and entering it early weakens the gate.
 
 **If implementation encountered a project-wide hard constraint, command pitfall, or environment setup** — a one- or two-line fact like "ah, this project requires X before Y", something the AI for the next feature would likely hit again — then before telling the user to move to acceptance, **also mention it in one sentence**: "This run revealed {that specific thing}; should we `bt-note` it into attention.md so the next session does not step on it again?" One item only, not several. If the user says "let's handle it during acceptance", skip it; section 8 of acceptance will review candidates again.
 
@@ -228,6 +250,7 @@ Do not casually start writing the acceptance report yourself. Acceptance needs i
 - introducing a new type or concept without going back to update the design doc
 - adding a patch branch like `if (user is X) { special handling }` without stopping
 - entering acceptance before the user has approved the implementation review
+- leaving implementation review evidence only in chat instead of writing `{slug}-implementation-report.md`
 - leaving the key scenario list without any evidence
 - reading the paradigm-dimension steps as if they were a file:line checklist — steps are slicing strategy, not a diff list; secretly splitting sub-steps inside a step without alignment is bypassing review
 - when TDD is enabled, writing a pile of tests first and then all the implementation — that degrades into horizontal slicing, not tracer bullet

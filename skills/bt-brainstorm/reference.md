@@ -10,7 +10,7 @@ Used for case 2. The path is `.bytetrue/features/{feature}/{slug}-brainstorm.md`
 ---
 doc_type: feature-brainstorm
 feature: YYYY-MM-DD-{slug}
-status: confirmed
+status: done
 summary: One sentence describing the chosen direction
 tags: [...]
 ---

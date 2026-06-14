@@ -1,0 +1,101 @@
+roadmap: ai-workflow-absorption
+created: 2026-06-11
+
+items:
+  - slug: behavior-delta-contract
+    description: Add OpenSpec-style behavior delta blocks to feature design and acceptance, with acceptance materialization back into existing ByteTrue layers.
+    depends_on: []
+    status: done
+    feature: 2026-06-11-behavior-delta-contract
+    minimal_loop: true
+    notes: Demonstrates OpenSpec delta/archive absorption without adding .bytetrue/specs or a standalone delta file.
+
+  - slug: risk-mode-discipline
+    description: Define four execution modes so light work stays light while high-risk work uses Superpowers-style strict TDD, debugging, and architecture evidence.
+    depends_on: []
+    status: done
+    feature: 2026-06-11-risk-mode-discipline
+    minimal_loop: false
+    notes: Fuses Matt-derived language with Superpowers discipline rather than treating either source as final.
+
+  - slug: implementation-review-gate
+    description: Add separate spec-compliance and code-quality review gates before feature implementation can enter acceptance.
+    depends_on:
+      - behavior-delta-contract
+      - risk-mode-discipline
+    status: done
+    feature: 2026-06-11-implementation-review-gate
+    minimal_loop: false
+    notes: Review can run inline first and later be strengthened through subagents.
+
+  - slug: context-manifest-contract
+    description: Introduce implementation and check context manifests that list required ByteTrue docs and evidence for implement/check agents.
+    depends_on:
+      - behavior-delta-contract
+    status: done
+    feature: 2026-06-11-context-manifest-contract
+    minimal_loop: false
+    notes: First execution-infrastructure item; proposed files are {slug}-impl-context.jsonl and {slug}-check-context.jsonl.
+
+  - slug: subagent-handoff-roles
+    description: Define ByteTrue implement, check, and research subagent handoff protocol using active work path, design, checklist, and context manifests.
+    depends_on:
+      - context-manifest-contract
+      - implementation-review-gate
+    status: done
+    feature: 2026-06-11-subagent-handoff-roles
+    minimal_loop: false
+    notes: Dispatch ladder is native subagent first, then synchronous non-interactive child agent, then inline role execution; ByteTrue core does not implement a custom dispatcher.
+
+  - slug: research-first-explore-integration
+    description: Route technical-choice and comparable-workflow decisions through bt-explore spike artifacts before design or roadmap decisions.
+    depends_on:
+      - context-manifest-contract
+    status: done
+    feature: 2026-06-11-research-first-explore-integration
+    minimal_loop: false
+    notes: Absorbs Trellis research-first while reusing ByteTrue compound explore artifacts.
+
+  - slug: optional-runtime-breadcrumb
+    description: Dropped from the core roadmap: runtime breadcrumb hooks/adapters are outside the pure-skills ByteTrue core.
+    depends_on:
+      - context-manifest-contract
+      - subagent-handoff-roles
+    status: dropped
+    feature: null
+    minimal_loop: false
+    notes: Dropped during PR review; future runtime adapters may be planned separately if they are implemented fully rather than as half-documentation.
+
+  - slug: worklog-report-feed
+    description: Add a lightweight ByteTrue worklog/report-feed for session summaries, weekly reports, handoff, recovery background, and AI work audit.
+    depends_on:
+      - implementation-review-gate
+      - context-manifest-contract
+    status: done
+    feature: 2026-06-11-worklog-report-feed
+    minimal_loop: false
+    notes: Not a full Trellis per-developer journal and not a source-of-truth replacement.
+
+  - slug: onboard-template-rollout
+    description: Update bt-onboard templates, current shared references, and install documentation so new projects receive the integrated workflow rules.
+    depends_on:
+      - behavior-delta-contract
+      - risk-mode-discipline
+      - implementation-review-gate
+      - context-manifest-contract
+      - subagent-handoff-roles
+      - research-first-explore-integration
+      - worklog-report-feed
+    status: done
+    feature: 2026-06-11-onboard-template-rollout
+    minimal_loop: false
+    notes: Final distribution pass after semantics and infrastructure contracts stabilize.
+
+  - slug: workflow-control-plane-contract
+    description: Define ByteTrue's skills-first control plane for config, canonical statuses, continuation routing, brainstorm paths, behavior writeback, and auto-mode consumption.
+    depends_on:
+      - onboard-template-rollout
+    status: done
+    feature: 2026-06-12-workflow-control-plane-contract
+    minimal_loop: false
+    notes: PR review remediation after initial roadmap close-out; keeps config/auto behavior traceable to the AI workflow absorption PR.

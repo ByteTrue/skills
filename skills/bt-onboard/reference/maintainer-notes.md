@@ -48,3 +48,13 @@ At the moment, checking "how many features are currently in progress" or "how ma
 - every extension must update the index in `.bytetrue/reference/system-overview.md` and the related sub-skills in sync
 - it is not allowed to add something only in one sub-skill without registering it in `.bytetrue/reference/system-overview.md`
 - shared explanations should live under `.bytetrue/reference/` first, not be scattered across sub-skills
+
+## 4. Reference Parity Audit
+
+When changing `skills/bt-onboard/reference/`, audit it against the current project `.bytetrue/reference/` before acceptance:
+
+- **managed identical**: shared contract files should match current and onboard copies exactly, for example execution modes, implementation review, context manifest, subagent handoff, research-first, worklog report-feed, and the syncable-source/status contract in `project-management.md`.
+- **managed localized/current-specific**: the same contract may be expressed differently for project readability, for example current Chinese system overview versus onboard English template.
+- **project-owned / hybrid**: `domain-context.md` is project-owned and must not be overwritten without explicit confirmation. `project-management.md` is hybrid: package-managed tracker semantics should refresh from the skill package, while project-specific external label names and status-sync choices should be preserved or reapplied after confirmation.
+
+A filename mismatch is usually drift. A content mismatch is acceptable only when it falls into localized/current-specific, project-owned, or the project-owned portions of a hybrid reference.

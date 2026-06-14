@@ -2,7 +2,8 @@
 doc_type: requirement
 slug: pi-package-install
 pitch: pi 和 Claude Code 用户可以用各自原生安装入口接入 ByteTrue
-status: current
+status: done
+current: true
 last_reviewed: 2026-06-09
 implemented_by: [ARCHITECTURE]
 tags: [install, pi-package, claude-plugin, skills]

@@ -38,6 +38,7 @@ Both categories avoid letting the AI write code directly. They first produce spe
 - `bt-onboard` — bring a new repository into the ByteTrue directory structure
 - `bt-req` — draft or refresh demand docs under `.bytetrue/requirements/`, the system's capability-vision layer, covering past, present, and future
 - `bt-arch` — architecture-related one-stop entry: draft a new architecture doc, refresh an existing one, or do an architecture health check, including design internal consistency, design↔code consistency, and cross-doc consistency inside the architecture folder. Architecture records only the current state
+- `bt-audit` — proactively scan a user-bounded code scope for bug risks, security problems, performance issues, maintainability debt, and architecture drift; it produces findings and does not implement fixes
 - `bt-roadmap` — break a larger demand that does not fit into one feature into a dependency- and status-aware sub-feature list, as the seed and scheduling basis for multiple later feature runs; separate from the demand and architecture archives
 - `bt-guide` — write outward-facing developer guides and user guides
 - `bt-libdoc` — generate reference docs entry by entry for a library's public API
@@ -54,6 +55,7 @@ If the repository does not yet have a `.bytetrue/` directory, use `bt-onboard` f
 | new feature or new capability | `bt-feat` |
 | bug, anomaly, or documentation error | `bt-issue` |
 | code optimization, refactor, rewrite with unchanged behavior | `bt-refactor` |
+| review the system, scan for bugs, audit the code, or ask what problems can be optimized | `bt-audit`, which produces a findings list and routes fixes to issue, refactor, architecture, or grill workflows |
 | read code, investigate a question, zoom out / step up one level, or map the module and its callers | `bt-explore`, especially `module-overview`; if a long-lived architecture map is needed, continue into `bt-arch` |
 | add or update requirement docs | `bt-req` |
 | add, update, or inspect architecture docs | `bt-arch` |
@@ -82,10 +84,10 @@ All four share the `.bytetrue/compound/` directory, and are distinguished by the
 
 These four classes of documents each control a different time scale and must not be mixed:
 
-- **vision archive**, requirements — describes "what users need and what capability the system provides to satisfy it". The single `status` field distinguishes three time depths: `draft`, future vision; `current`, present capability; `outdated`, past trace. A draft req can exist independently from implementation — lock down the vision first, so roadmap scheduling and design implementation have a stable alignment target later
+- **vision archive**, requirements — describes "what users need and what capability the system provides to satisfy it". The `status` field uses the canonical five-state vocabulary: future vision not started uses `pending`, work underway may use `active`, current capability uses `done` plus `current: true`, and outdated capability uses `archived` plus `validity: outdated`. A draft req can exist independently from implementation — lock down the vision first, so roadmap scheduling and design implementation have a stable alignment target later
 - **structure archive**, architecture — describes "what structure the system currently uses to implement it". It records only current state and is updated alongside code during feature-acceptance by default; when necessary, `bt-arch` refreshes it proactively. **It never records "which layer will be added in the future"**
-- **planning archive**, roadmap — describes "how this larger demand will be implemented step by step next". It stays independent from vision and structure archives. Changing the plan should not force edits to requirements or architecture. When all items are `done` or `dropped`, the roadmap enters `completed` status and remains as historical archive
-- **one-off actions**, feature / issue / refactor — the spec for one concrete thing being done right now. Once the action is complete, the stable parts are extracted into the vision archive, structure archive, and capture docs
+- **planning archive**, roadmap — describes "how this larger demand will be implemented step by step next". It stays independent from vision and structure archives. Changing the plan should not force edits to requirements or architecture. When all items are `done`, `dropped`, or `archived`, the roadmap uses `status: done` and remains as historical archive
+- **one-off actions**, feature / issue / refactor / audit — the spec or findings for one concrete thing being done right now. Once the action is complete, the stable parts are extracted into the vision archive, structure archive, follow-up workflows, and capture docs
 
 When the user says something like "I want an X system", which is a large demand, first use roadmap to split it into sub-features, then run the feature workflow one item at a time. Starting directly with one giant feature would produce an oversized design that does not fit, and even if it is split later there is no stable tracking handle.
 
@@ -101,11 +103,19 @@ There are only two exceptions: when an issue's root cause is obvious at a glance
 
 - `.bytetrue/reference/shared-conventions.md` — directory structure, YAML frontmatter conventions, `{slug}-checklist.yaml` lifecycle, close-out commit conventions, and shared rules for archival skills
 - `.bytetrue/reference/domain-context.md` — canonical terms, domain glossary, and terminology consensus formed by `bt-grill` with docs
-- `.bytetrue/reference/project-management.md` — external tracker provider, labels, sync policy, and GitHub / GitLab / local collaboration rules
+- `.bytetrue/reference/project-management.md` — external tracker semantics, syncable-source/status mapping, labels, and GitHub / GitLab / local collaboration rules
 - `.bytetrue/reference/tools.md` — usage of `search-yaml.py` and `validate-yaml.py`
+- `.bytetrue/reference/config.md` — field semantics for `.bytetrue/config.yaml`
+- `.bytetrue/reference/config.schema.yaml` — machine-readable schema and onboarding defaults for `.bytetrue/config.yaml`
+- `.bytetrue/reference/execution-modes.md` — workflow heaviness and evidence discipline for light / standard / strict-evidence / break-loop modes
+- `.bytetrue/reference/implementation-review.md` — implementation review gate between `bt-feat-impl` and `bt-feat-accept`
+- `.bytetrue/reference/context-manifest.md` — feature-local implement/check JSONL read-set contract
+- `.bytetrue/reference/subagent-handoff.md` — handoff prompt contract for implement / check / research roles
+- `.bytetrue/reference/research-first.md` — evidence-before-decision rule for direction-changing technical or external facts
+- `.bytetrue/reference/worklog-report-feed.md` — lightweight worklog/report-feed for reporting, handoff, recovery, and audit
 - `.bytetrue/reference/maintainer-notes.md` — resume support and registration rules when adding new sub-workflows
 
-The authoritative definition of the directory structure, requirements, architecture, roadmap, features, issues, compound, tools, and reference, lives in `.bytetrue/reference/shared-conventions.md`. If the directory structure ever needs to change, change the template at `bt-onboard/reference/shared-conventions.md` first so that new onboarded projects pick up the new version.
+The authoritative definition of the directory structure, config.yaml, requirements, architecture, roadmap, features, issues, refactors, audits, compound, brainstorms, worklog, tools, and reference, lives in `.bytetrue/reference/shared-conventions.md`. If the directory structure ever needs to change, change the template at `bt-onboard/reference/shared-conventions.md` first so that new onboarded projects pick up the new version.
 
 ## Related
 

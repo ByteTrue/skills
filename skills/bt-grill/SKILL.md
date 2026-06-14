@@ -17,6 +17,7 @@ It combines two modes:
 1. **Ask only one question at a time**, then wait for the user's answer before continuing
 2. **Give a recommended answer with every question**. Do not dump blank questions on the user
 3. **If the answer can be obtained from docs or code, do not ask the user** — explore first, then bring the evidence back into the conversation
+   If the fact depends on external tool behavior, library/API capability, platform hooks, comparable workflows, industry convention, or performance/cost claims, and the answer would change the plan, route through `bt-explore spike` and cite the artifact; see `.bytetrue/reference/research-first.md`.
 4. **Advance along the decision tree** — resolve upstream dependency questions first, then downstream implementation details
 5. **Do not keep asking questions for their own sake** — if a round gives no new information, the user says "close enough", or the question can only be answered by implementation, then converge and give the next step
 6. **Do not make the final decision for the user** — you may strongly recommend, but the user must confirm
@@ -133,7 +134,7 @@ In `with-docs` mode, important conclusions must not remain only in the conversat
 Write targets:
 
 - terminology, language consensus, or domain glossary → update `.bytetrue/reference/domain-context.md`. This file is the ByteTrue equivalent of Matt's `CONTEXT.md`: a glossary and language-boundary document only, not a spec, scratch pad, or home for implementation decisions
-- project-management provider, label, sync, or tracker rules → update `.bytetrue/reference/project-management.md`
+- tracker label mappings or sync semantics → update `.bytetrue/reference/project-management.md`; current provider and sync values belong in `.bytetrue/config.yaml`
 - capability vision, user stories, or boundaries became clearer → use `bt-req draft/update` or update the corresponding requirement directly
 - current system state or architecture constraints need updating → use `bt-arch update` or update the relevant architecture doc
 - finalized long-term technical choice, architecture decision, hard constraint, or convention → use `bt-decide` and write into `.bytetrue/compound/` as a decision. Offer this sparingly: it should be a real decision with meaningful future cost, not just an obvious or easy-to-reverse note

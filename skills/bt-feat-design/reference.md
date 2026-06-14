@@ -11,13 +11,14 @@ feature: 2026-04-12-user-auth
 requirement: user-auth-email
 roadmap: permission-system           # optional, fill only when this feature starts from a roadmap item
 roadmap_item: permission-rbac-core   # optional, the slug in the corresponding roadmap items.yaml
-status: draft
+status: active
+review_result: pending
 summary: Support users logging into the admin console via email verification code
 tags: [auth, email, login]
 ---
 ```
 
-Required fields: `doc_type`, `feature`, `status`, `summary`, and `tags`.
+Required fields: `doc_type`, `feature`, `status`, `review_result`, `summary`, and `tags`.
 
 - `requirement`: fill in the corresponding req slug; pure refactor or technical debt may leave it empty
 - `roadmap` and `roadmap_item`: fill them only when starting from a roadmap item; either both filled or both empty
@@ -34,6 +35,7 @@ Required fields: `doc_type`, `feature`, `status`, `summary`, and `tags`.
   - `### 2.5 Structural Health and Micro-refactor` ← fixed section, explicit conclusion plus optional "observations beyond scope"
 - `## 3. Acceptance Contract`
 - `### 3.1 Test Seam / TDD Plan` optional, but the judgment must be explicit
+- `### 3.2 Behavior Delta` optional when there is behavior change; otherwise explicitly write none
 - `## 4. Relationship with Project-Level Architecture Docs`
 
 ## 3. `{slug}-checklist.yaml` format
@@ -49,10 +51,21 @@ steps:
 
 checks:
   - item: "{check item description}"
-    source: term-contract | orchestration-skeleton | flow-level-constraint | mount-point | scope-guard | acceptance-scenario
+    source: term-contract | orchestration-skeleton | flow-level-constraint | mount-point | scope-guard | acceptance-scenario | behavior-delta
     status: pending
 ```
 
+## 3.1 Context manifest JSONL format
+
+Approved standard designs also produce two JSONL read-set files next to the design and checklist, and reserve the implementation report path that implementation will later fill:
+
+```text
+{slug}-impl-context.jsonl
+{slug}-check-context.jsonl
+{slug}-implementation-report.md   # written by bt-feat-impl after user review passes
+```
+
+Each non-empty manifest line is one object with `file` and `reason`; optional fields are `required`, `section`, and `role`. See `.bytetrue/reference/context-manifest.md` for the full contract. Baseline rows come from the design frontmatter, roadmap fields, section 4 architecture targets, execution mode, implementation review, and cited compound evidence. Raw code files are not default rows. `check-context` should include the planned `{slug}-implementation-report.md` row as required evidence for acceptance.
 `steps`, produced during design:
 
 - grain is at the paradigm dimension, **not file:line or function level**; concrete file touchpoints are implement's job
@@ -70,6 +83,7 @@ checks:
 - scope guard ← each non-goal in section 1
 - acceptance scenarios ← each key scenario in section 3
 - test seam / TDD plan ← highest behavior seam, priority red/green behaviors, and manual verification items in section 3.1
+- behavior delta ← each ADDED / MODIFIED / REMOVED / RENAMED behavior in section 3.2, or the explicit statement that there is no behavior-level change
 
 It is not allowed to invent entries that do not exist in the design.
 
@@ -85,6 +99,7 @@ This is the design's "what it is / why" section. Do not write implementation det
 
 - **Requirement summary**: what is being built, for whom, what success looks like, and what is explicitly not being done
 - **Complexity dimension**: record only the dimensions that deviate from the default bundle, with the default bundle defined in the "common default combinations" table at the end of `.bytetrue/reference/code-dimensions.md`. Format: `{dimension name} = {level}, reason for deviating from default {default level}: ...`. If everything stays on default, write one sentence saying it follows the default bundle for that scenario with no deviations
+- **Execution mode**: record `execution_mode.level`, `triggers`, and `required_evidence` when workflow heaviness matters; use `.bytetrue/reference/execution-modes.md`. Keep it separate from code dimensions.
 - **Key decisions**: choices, tradeoffs, hard constraints, or rejected alternatives. Every decision must answer "if we chose a different approach, how would the term layer or orchestration layer differ?" If it cannot answer that, then it is not a design decision, only an implementation detail
 - **Prerequisite dependencies**: fill this only when implementation later finds that the target file has structural problems that need to be resolved first and then comes back to revise the design
 
@@ -121,7 +136,7 @@ Architecture doc updates are not mount points. Those belong to section 4.
 
 #### 2.4 Rollout strategy
 
-Slice by paradigm dimension, 4-8 lines explaining the order and the exit signal of each slice. The detailed list lands in `steps` inside `{slug}-checklist.yaml`. **Write only at the paradigm dimension, not file:line.**
+Slice by paradigm dimension, a concise explanation of the order and the exit signal of each slice. The detailed list lands in `steps` inside `{slug}-checklist.yaml`. **Write only at the paradigm dimension, not file:line.**
 
 Backend example:
 
@@ -166,7 +181,7 @@ If an existing convention is hit, for example "composables always go under `src/
 
 **Evaluation dimensions**, if any one is significant, it counts as something that needs handling:
 
-- file length: over 500 lines in one file, stricter for TS/JS/Vue, slightly looser for Python
+- file length: visibly oversized for its language and responsibility
 - file responsibility: one file mixes 2 or more unrelated concepts, such as orchestration plus computation, or UI plus data fetching plus business logic
 - file change density: this feature will touch or add 3 or more separate places inside the same file, and those places are logically independent
 - **directory flattening**: the target directory already has 8 or more files at the same level and this feature will add 2 or more more; or the directory already shows obvious filename grouping patterns, such as many `XxxModal.vue` and `XxxForm.vue` files all mixed into one generic folder, and this feature would continue that flattening
@@ -215,6 +230,7 @@ This defines what it means for implement to be complete, and what acceptance wil
 
 - **key scenario list**: write each item as "input or trigger → expected observable result", so it can be verified by one test or one manual operation. Cover normal paths, corresponding to the success criteria, plus key edges, such as boundary values, empty input, upper and lower limits, and key error paths, meaning the observable consequences of the flow-level constraints
 - **reverse-check items for explicit non-goals**: every explicit non-goal from section 1 must be rewritten into something grep-able or testable in reverse, such as "the code must not call X API" or "the output JSON must not contain field Y"
+- **behavior delta**, section 3.2: if observable behavior changes, list entries under `ADDED`, `MODIFIED`, `REMOVED`, or `RENAMED`; if the change is implementation-only, explicitly write `Behavior Delta: none`. Design predicts the intended writeback target, but acceptance performs actual materialization.
 
 #### 3.1 Test seam / TDD plan
 

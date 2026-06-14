@@ -12,7 +12,7 @@
 ---
 doc_type: roadmap
 slug: permission-system
-status: active          # active | paused | completed
+status: active          # active | done; use paused: true for a paused active roadmap
 created: YYYY-MM-DD
 last_reviewed: YYYY-MM-DD
 tags: [permission, auth]
@@ -21,7 +21,7 @@ related_architecture: []    # list of related architecture doc slugs, may be emp
 ---
 ```
 
-- `status`: `active` means in progress, `paused` means paused, `completed` means all items are `done` or `dropped`
+- `status`: `active` means the roadmap is still open, `done` means all items are `done`, `dropped`, or `archived`; a paused roadmap stays `status: active` and adds `paused: true` plus a reason
 - `related_requirements`: the req slugs involved in this larger demand, helping readers jump to "why this capability should exist"
 - `related_architecture`: the architecture doc slugs that will be touched, helping readers understand "which parts of current state this will hit"
 
@@ -115,7 +115,7 @@ Order by dependency and rollout sequence. Each item corresponds to one entry in 
 1. **{slug}** — {one-line description}
    - module: {Module A / B / cross-module, explicitly naming which modules are involved}
    - dependencies: {list of prerequisite slugs / none}
-   - status: {planned | in-progress | done | dropped}
+   - status: {pending | active | done | dropped}
    - corresponding feature: {YYYY-MM-DD-{slug} / not started}
    - notes: {optional}
 
@@ -149,7 +149,7 @@ items:
   - slug: permission-rbac-core
     description: Base RBAC model and tables, providing role and permission tables plus the minimal query API
     depends_on: []
-    status: planned             # planned | in-progress | done | dropped
+    status: pending             # pending | active | done | dropped | archived
     feature: null               # fill YYYY-MM-DD-{slug} after the feature starts; null before that
     minimal_loop: true          # exactly one entry should be true
     notes: null                 # optional, remarks / special constraints / reason for drop
@@ -157,7 +157,7 @@ items:
   - slug: permission-admin-ui
     description: The page where admins configure roles and permissions
     depends_on: [permission-rbac-core]
-    status: planned
+    status: pending
     feature: null
     minimal_loop: false
     notes: null
@@ -168,7 +168,7 @@ items:
 - `slug`: the slug of the sub-feature, lowercase letters, digits, and hyphens; the future feature directory will be `YYYY-MM-DD-{slug}`
 - `description`: one sentence that can stand alone and clearly say what it does
 - `depends_on`: the list of prerequisite slugs; empty array means no dependency; every dependency must point to another item in the same roadmap
-- `status`: a four-state machine
+- `status`: the canonical roadmap item state
 - `feature`: after the feature starts, fill the directory name, so acceptance can trace back to it
 - `minimal_loop`: exactly one entry in the whole file should be `true`
 - `notes`: dropped items must state a reason
@@ -176,13 +176,13 @@ items:
 ### State Machine
 
 ```text
-planned      → in-progress   (changed by feature-design when the feature starts)
-in-progress  → done          (changed by feature-acceptance when it completes)
-planned      → dropped       (changed by roadmap update when the user decides not to do it)
-done / dropped are terminal states
+pending → active   (changed by feature-design when the feature starts)
+active  → done     (changed by feature-acceptance when it completes)
+pending → dropped  (changed by roadmap update when the user decides not to do it)
+done / dropped / archived are terminal states
 ```
 
-**Illegal transitions**: `done` back to `in-progress`, because if the demand changes it should go through a new feature instead; `dropped` back to `planned`, because restoring it should add a new slightly modified slug instead.
+**Illegal transitions**: `done` back to `active`, because if the demand changes it should go through a new feature instead; `dropped` back to `pending`, because restoring it should add a new slightly modified slug instead.
 
 ### Validation
 

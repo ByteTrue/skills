@@ -4,7 +4,7 @@
 
 ### M-L3-01 Component Split, container / presentation
 
-- **Use when**: one component exceeds 300 lines, handles data fetching, state management, and rendering at the same time, or props are exploding
+- **Use when**: one component is visibly oversized, handles data fetching, state management, and rendering at the same time, or props are exploding
 - **Do not use when**: the component is already small, or the child components would have no independent meaning after splitting
 - **Steps**:
   1. identify which part of the component is "data orchestration", the container, and which part is "pure rendering", the presentation part

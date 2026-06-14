@@ -61,7 +61,7 @@ nature: bug | security | performance | maintainability | arch-drift
 severity: P0 | P1 | P2
 confidence: high | medium | low
 suggested_action: bt-issue | bt-refactor
-status: open
+status: active
 ---
 
 # Finding {NN}: {one-line title}
@@ -115,7 +115,7 @@ Check against these items one by one while scanning. Not every item must produce
 - [ ] Main-thread blocking: synchronous reading of large files, CPU-heavy work without a Web Worker
 
 ### maintainability
-- [ ] Very long functions, more than 80 lines
+- [ ] Very long functions
 - [ ] High cyclomatic complexity, above 15
 - [ ] Repeated logic blocks, same or highly similar code appearing 3 or more times
 - [ ] Mysterious constants, magic numbers without names

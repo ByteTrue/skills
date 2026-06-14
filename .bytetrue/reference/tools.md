@@ -2,7 +2,7 @@
 
 本文件由 `bt-onboard` 复制到项目的 `.bytetrue/reference/tools.md`，所有 ByteTrue 子技能用项目相对路径 `.bytetrue/reference/tools.md` 引用。
 
-`.bytetrue/tools/` 下共享脚本的完整用法参考。子技能里只写本技能特有的 1-2 行典型查询；完整语法和示例看这里。
+`.bytetrue/tools/` 下共享脚本的完整用法参考。子技能里只写本技能特有的简短典型查询；完整语法和示例看这里。
 
 ---
 
@@ -58,7 +58,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=trick --filter language=typescript
 
 # 搜索 feature 方案 doc
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/features --filter doc_type=feature-design --filter status=approved
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/features --filter doc_type=feature-design --filter status=done --filter review_result=approved
 
 # 输出控制
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter doc_type=decision --filter status=active --full
@@ -67,7 +67,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --filter tags~=ll
 # 按时间排序
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --sort-by date --order desc                     # 最近归档的在前
 python .bytetrue/tools/search-yaml.py --dir .bytetrue/library-docs --sort-by last_reviewed --order asc         # 最久没 review 的在前（找陈旧文档）
-python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=current --sort-by last_reviewed --order asc
+python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=done --filter current=true --sort-by last_reviewed --order asc
 ```
 
 ### 典型使用场景
@@ -79,7 +79,7 @@ python .bytetrue/tools/search-yaml.py --dir .bytetrue/guides --filter status=cur
 | 归档落盘后查重叠 | 搜 `.bytetrue/compound --query "{关键词}" --json`，看有无语义重叠 |
 | 新人了解项目规约 | `--dir .bytetrue/compound --filter doc_type=decision --filter status=active` |
 | 按技术栈浏览技巧 | `--dir .bytetrue/compound --filter doc_type=trick --filter language={语言} --filter status=active` |
-| 找最久没 review 的库文档 / 指南 | `--dir {目录} --filter status=current --sort-by last_reviewed --order asc` |
+| 找最久没 review 的库文档 / 指南 | `--dir {目录} --filter status=done --filter current=true --sort-by last_reviewed --order asc` |
 | 看最近沉淀了哪些经验 | `--dir .bytetrue/compound --filter doc_type=learning --sort-by date --order desc` |
 
 ---
