@@ -34,6 +34,10 @@ This layer does not design any API, token, or SDK adapter.
 
 Current provider, sync policy, repository, and advisory CLI detection cache live in `.bytetrue/config.yaml`. This document defines provider semantics, syncable sources, labels, and writeback rules; `bt-tracker` still revalidates CLI/auth/remote state at runtime.
 
+## Managed vs Project-owned Parts
+
+The syncable-source/status mapping, action semantics, managed-block rules, and external-metadata rules are package-managed tracker contract and should refresh when `bt-onboard` is rerun. Project-specific external label names and `status_sync` choices may be preserved or reapplied after confirmation. Do not preserve this whole file as project-owned, or upgraded projects may keep stale sync status mappings.
+
 ---
 
 ## External Tracker Role
@@ -155,7 +159,7 @@ For roadmap items, external metadata is written onto the item inside `items.yaml
 
 ## Canonical Labels
 
-ByteTrue uses stable canonical keys. During onboarding, they may be mapped onto the team's existing external labels.
+ByteTrue uses stable canonical keys; their meanings are package-managed. During onboarding, only the `external` label names are project-specific mappings and may be preserved or adjusted for the team's tracker.
 
 ```yaml
 labels:
@@ -203,4 +207,4 @@ status_sync:
   import_external_state: false
 ```
 
-Non-destructive state may be synchronized into labels. Before closing an external issue, the user must be asked. External state changes never write back into `.bytetrue/` automatically.
+Non-destructive state may be synchronized into labels. Before closing an external issue, the user must be asked. External state changes never write back into `.bytetrue/` automatically. The concrete `status_sync` choices are project-specific and may be preserved or adjusted during onboarding.

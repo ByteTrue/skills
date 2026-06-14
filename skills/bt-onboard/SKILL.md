@@ -93,7 +93,7 @@ Execute the following in order, **without waiting for step-by-step user confirma
 - `.bytetrue/tools/`, copied by shell using `cp -rf` or `Copy-Item -Recurse -Force` from `bt-onboard/tools/` in the skill package, **not Read then Write**
 - `.bytetrue/reference/`, initialized from `bt-onboard/reference/` in the skill package; for new projects, copying the whole directory is fine
 
-> **Use shell copy for writing to disk**, not Read then Write — these are shared assets and templates, and Read+Write truncates large files, changes indentation, alters spacing, and wastes tokens. On migration or rerunning onboard, `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md` are project-owned configuration and must never be overwritten without confirmation. See step 4 of the migration path for concrete commands.
+> **Use shell copy for writing to disk**, not Read then Write — these are shared assets and templates, and Read+Write truncates large files, changes indentation, alters spacing, and wastes tokens. On migration or rerunning onboard, `.bytetrue/reference/domain-context.md` is project-owned and must never be overwritten without confirmation. `.bytetrue/reference/project-management.md` is refreshed from the skill package so syncable-source/status semantics stay current; preserve or reapply only project-specific label mappings after confirmation. See step 4 of the migration path for concrete commands.
 
 **Step 3: project config setup**
 
@@ -166,12 +166,13 @@ Against the standard skeleton, fill any directory or file that is still missing 
 
 **Always overwrite `.bytetrue/tools/` with the fresh skill-package version** — these are shared scripts maintained by the skill package, and the authoritative source is `bt-onboard/tools/`.
 
-**Handle `.bytetrue/reference/` in two categories**:
+**Handle `.bytetrue/reference/` in three categories**:
 
-- project-owned configuration files, namely `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md`, should only be created from template when missing; if they already exist, they must not be overwritten without explicit confirmation
-- skill-package-managed reference files, namely all other files copied from `bt-onboard/reference/`, may be overwritten from the fresh skill-package version after listing them in the report
+- project-owned files, namely `.bytetrue/reference/domain-context.md`, should only be created from template when missing; if it already exists, it must not be overwritten without explicit confirmation
+- hybrid project-management file, `.bytetrue/reference/project-management.md`, should be refreshed from the skill-package template so syncable sources, status mappings, managed-block rules, and tracker semantics stay current; if the existing file has project-specific external label names or `status_sync` choices, preserve or reapply only those project-specific mappings after confirmation
+- all other skill-package-managed reference files may be overwritten from the fresh skill-package version after listing them in the report
 
-Before overwriting, list the skill-package-managed files that will be overwritten in the report; when project-owned configuration already exists, list it as "keep existing".
+Before overwriting, list the skill-package-managed files that will be overwritten in the report; list `domain-context.md` as "keep existing" when present; list any existing project-specific tracker label mappings that will be preserved or need confirmation.
 
 **Write-to-disk commands**:
 
@@ -179,26 +180,21 @@ Before overwriting, list the skill-package-managed files that will be overwritte
 # macOS / Linux
 cp -rf <bt-onboard-skill-path>/tools/. .bytetrue/tools/
 
-# reference: overwrite skill-package-managed files, but preserve project-owned config
+# reference: refresh package-managed references and tracker contract, but preserve domain glossary
 rsync -a \
   --exclude domain-context.md \
-  --exclude project-management.md \
   <bt-onboard-skill-path>/reference/. .bytetrue/reference/
 
 test -e .bytetrue/reference/domain-context.md || \
   cp <bt-onboard-skill-path>/reference/domain-context.md .bytetrue/reference/domain-context.md
 
-test -e .bytetrue/reference/project-management.md || \
-  cp <bt-onboard-skill-path>/reference/project-management.md .bytetrue/reference/project-management.md
-
 # Windows PowerShell
 Copy-Item -Recurse -Force <bt-onboard-skill-path>\tools\* .bytetrue\tools\
-Get-ChildItem <bt-onboard-skill-path>\reference\* | Where-Object { $_.Name -notin @('domain-context.md','project-management.md') } | Copy-Item -Destination .bytetrue\reference\ -Force
+Get-ChildItem <bt-onboard-skill-path>\reference\* | Where-Object { $_.Name -ne 'domain-context.md' } | Copy-Item -Destination .bytetrue\reference\ -Force
 if (!(Test-Path .bytetrue\reference\domain-context.md)) { Copy-Item <bt-onboard-skill-path>\reference\domain-context.md .bytetrue\reference\domain-context.md }
-if (!(Test-Path .bytetrue\reference\project-management.md)) { Copy-Item <bt-onboard-skill-path>\reference\project-management.md .bytetrue\reference\project-management.md }
 ```
 
-Do not use Read+Write to move them manually. That truncates and reformats files. Do not overwrite the whole reference directory, because doing so would wipe project terminology and tracker configuration.
+Do not use Read+Write to move them manually. That truncates and reformats files. Do not overwrite the whole reference directory, because doing so would wipe project terminology; use the filtered copy above so package-managed tracker semantics are refreshed without replacing `domain-context.md`.
 
 `<bt-onboard-skill-path>` is the installed `bt-onboard` skill directory itself, such as `~/.claude/skills/bt-onboard/`, `~/.agents/skills/bt-onboard/`, or a plugin skill directory. If you only know the parent skills root, append `/bt-onboard` first. If uncertain, locate it with `ls` first. After copying, verify with `ls .bytetrue/tools/ .bytetrue/reference/`.
 
@@ -208,13 +204,13 @@ For files the user chooses to skip: **do not move them, do not delete them, and 
 
 **Step 6: project config setup**
 
-Same as in the empty-repo path. Reconfirm every current config group before writing or merging `.bytetrue/config.yaml`: workflow mode and ask-before list, tracker provider/sync policy/repository/CLI cache, dispatch preference and allow flags. Preserve existing provider, sync, and dispatch values unless the user confirms a change. If `.bytetrue/reference/project-management.md` exists, preserve label and sync semantics unless the user confirms an update.
+Same as in the empty-repo path. Reconfirm every current config group before writing or merging `.bytetrue/config.yaml`: workflow mode and ask-before list, tracker provider/sync policy/repository/CLI cache, dispatch preference and allow flags. Preserve existing provider, sync, and dispatch values unless the user confirms a change. Keep current values in config; use `.bytetrue/reference/project-management.md` for refreshed tracker semantics plus project-specific label mappings only.
 
 **Step 7: attention.md reminder**, same as step 4 in the empty-repo path
 
 **Step 8: acceptance-style summary**
 
-List: migration file map, from → to; new skeleton files; project-management provider status; non-migrated files, still kept in place; and recommended next steps.
+List: migration file map, from → to; new skeleton files; project-management contract refresh and any preserved label mappings; provider status from config; non-migrated files, still kept in place; and recommended next steps.
 
 ---
 
@@ -247,7 +243,7 @@ The placeholder template for `ARCHITECTURE.md`, the minimal template for `requir
 - **starting feature or issue work immediately after creating the skeleton** — onboard is environment setup, not feature execution
 - **executing low-confidence mappings directly** — low confidence always means you must ask
 - **treating `.bytetrue/tools/` conservatively and not overwriting it** — shared scripts must be refreshed from the skill package, otherwise users are left on stale tooling after upgrades
-- **overwriting the whole `.bytetrue/reference/` directory** — that wipes project-owned config such as `.bytetrue/reference/domain-context.md` and `.bytetrue/reference/project-management.md`
+- **overwriting the whole `.bytetrue/reference/` directory** — that wipes project-owned terminology in `.bytetrue/reference/domain-context.md`; use the filtered copy rule so package-managed tracker semantics still refresh
 - **moving files manually through Read + Write** — the tools directory and skill-package-managed reference files must be copied through shell commands
 - **forgetting to exclude `node_modules/` and `.git/` in the Glob** — the scan gets flooded with noise
 

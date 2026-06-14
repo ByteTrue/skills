@@ -56,7 +56,7 @@ dispatch:
 
 ## Tracker
 
-Tracker values moved here from `project-management.md`. `project-management.md` defines provider semantics, syncable sources, labels, and managed-block rules.
+Tracker values moved here from `project-management.md`. `project-management.md` defines package-managed provider semantics, syncable sources, managed-block rules, and project-specific external label mappings.
 
 - `tracker.provider`: configured collaboration backend, or `local` when no external tracker is used.
 - `tracker.provider_status`: onboard detection result for the chosen provider.

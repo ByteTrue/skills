@@ -103,7 +103,7 @@ There are only two exceptions: when an issue's root cause is obvious at a glance
 
 - `.bytetrue/reference/shared-conventions.md` — directory structure, YAML frontmatter conventions, `{slug}-checklist.yaml` lifecycle, close-out commit conventions, and shared rules for archival skills
 - `.bytetrue/reference/domain-context.md` — canonical terms, domain glossary, and terminology consensus formed by `bt-grill` with docs
-- `.bytetrue/reference/project-management.md` — external tracker provider, labels, sync policy, and GitHub / GitLab / local collaboration rules
+- `.bytetrue/reference/project-management.md` — external tracker semantics, syncable-source/status mapping, labels, and GitHub / GitLab / local collaboration rules
 - `.bytetrue/reference/tools.md` — usage of `search-yaml.py` and `validate-yaml.py`
 - `.bytetrue/reference/config.md` — field semantics for `.bytetrue/config.yaml`
 - `.bytetrue/reference/config.schema.yaml` — machine-readable schema and onboarding defaults for `.bytetrue/config.yaml`
