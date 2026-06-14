@@ -28,7 +28,8 @@ After startup, **do one scan first and choose the path automatically**. Do not a
 .bytetrue/
 ├── attention.md                 project notes that every ByteTrue skill must read at startup
 ├── config.yaml                  machine-readable project config
-├── requirements/               requirement aggregate root, empty directory with .gitkeep
+├── requirements/               requirement aggregate root
+│   └── VISION.md              central requirement index, initially created as a placeholder template
 ├── architecture/
 │   └── ARCHITECTURE.md         architecture entry point, initially created as a placeholder template
 ├── roadmap/                    planning-layer aggregate root
@@ -86,6 +87,7 @@ After startup, **do one scan first and choose the path automatically**. Do not a
 Execute the following in order, **without waiting for step-by-step user confirmation** — the skeleton is one whole unit:
 
 - `.bytetrue/{requirements,roadmap,features,issues,refactors,audits,compound,brainstorms,worklog}/.gitkeep`
+- `.bytetrue/requirements/VISION.md`, using the minimal template in `reference.md` in the same directory
 - `.bytetrue/attention.md`, using the minimal template in `reference.md` in the same directory
 - `.bytetrue/architecture/ARCHITECTURE.md`, using the placeholder template in `reference.md` in the same directory
 - `.bytetrue/tools/`, copied by shell using `cp -rf` or `Copy-Item -Recurse -Force` from `bt-onboard/tools/` in the skill package, **not Read then Write**
@@ -160,7 +162,7 @@ Do not ask every high-confidence item one by one, but do list them in the report
 
 **Step 4: fill the missing skeleton**
 
-Against the standard skeleton, fill any directory or file that is still missing **after user-confirmed migration decisions**. Do not overwrite existing content.
+Against the standard skeleton, fill any directory or file that is still missing **after user-confirmed migration decisions**. Do not overwrite existing content. At minimum, missing skeleton files include `.bytetrue/requirements/VISION.md`, `.bytetrue/attention.md`, `.bytetrue/architecture/ARCHITECTURE.md`, `.bytetrue/tools/`, and `.bytetrue/reference/`.
 
 **Always overwrite `.bytetrue/tools/` with the fresh skill-package version** — these are shared scripts maintained by the skill package, and the authoritative source is `bt-onboard/tools/`.
 
@@ -218,7 +220,7 @@ List: migration file map, from → to; new skeleton files; project-management pr
 
 ## Skeleton file templates
 
-The placeholder template for `ARCHITECTURE.md` and the minimal template for `attention.md` are in `reference.md` in the same directory.
+The placeholder template for `ARCHITECTURE.md`, the minimal template for `requirements/VISION.md`, and the minimal template for `attention.md` are in `reference.md` in the same directory.
 
 ---
 
@@ -226,6 +228,7 @@ The placeholder template for `ARCHITECTURE.md` and the minimal template for `att
 
 - [ ] all required `.bytetrue/` subdirectories exist, including `worklog/`, `tools/`, and `reference/`
 - [ ] `.bytetrue/attention.md` has been created
+- [ ] `.bytetrue/requirements/VISION.md` has been created
 - [ ] `.bytetrue/tools/` has been copied from the skill package
 - [ ] the skill-package-managed files under `.bytetrue/reference/` have been synchronized
 - [ ] `.bytetrue/reference/domain-context.md` exists, and any pre-existing content was not overwritten without confirmation

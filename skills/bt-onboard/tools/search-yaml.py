@@ -29,7 +29,7 @@ Usage examples:
   python .bytetrue/tools/search-yaml.py --dir .bytetrue/compound --sort-by date --order desc              # newest first
 
   # Works on any yaml-frontmatter markdown directory
-  python .bytetrue/tools/search-yaml.py --dir docs/decisions --filter status=accepted
+  python .bytetrue/tools/search-yaml.py --dir docs/decisions --filter status=active
   python .bytetrue/tools/search-yaml.py --dir content/posts --filter tags~=python --query "asyncio"
 """
 

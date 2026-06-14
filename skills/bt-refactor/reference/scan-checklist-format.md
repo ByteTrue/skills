@@ -10,7 +10,8 @@ The user should be able to scan each item in 30 seconds and decide yes or no. Th
 ---
 doc_type: refactor-scan
 refactor: {YYYY-MM-DD}-{slug}
-status: pending-user-selection | user-reviewed
+status: active | done
+review_result: pending | user-reviewed
 scope: {one-line scan scope, including files or directories}
 summary: {how many findings were found, and how they distribute by category}
 ---
@@ -158,7 +159,7 @@ If #3, #5, #8, and #11 all point to `src/UserForm.vue`, then this area needs an 
 
 ## State transition after user selection
 
-- once the user finishes marking items, the file status changes to `user-reviewed`
+- once the user finishes marking items, the file status changes to `done` and `review_result` changes to `user-reviewed`
 - items marked ✗ **remain in the file**, they are not deleted, so the record shows that they were considered and intentionally rejected
 - items marked ✓ become the input to stage 2 design
 - if every item is ✗, the refactor ends here and does not proceed into design

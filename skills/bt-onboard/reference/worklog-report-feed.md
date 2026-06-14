@@ -32,7 +32,7 @@ When a monthly worklog becomes too long for the project, continue in the next sp
 - **Summary**: {1-3 sentences}
 - **Commits**: `{hash}` / `pending same close-out` / none
 - **Verification**: {commands, manual checks, or not applicable}
-- **Status**: done | partial | blocked | follow-up
+- **Outcome**: done | partial | blocked | follow-up
 - **Next steps**:
   - ...
 ```
