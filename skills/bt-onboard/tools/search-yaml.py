@@ -33,6 +33,8 @@ Usage examples:
   python .bytetrue/tools/search-yaml.py --dir content/posts --filter tags~=python --query "asyncio"
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys

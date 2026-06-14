@@ -13,7 +13,7 @@ The code may already be written, but the workflow is not finished. This stage do
 
 1. **Check whether the implementation drifted from the design** — compare against `{slug}-design.md` layer by layer, and if a deviation is found, fix it immediately, **not just note it in the report**
 2. **Merge the feature back into the overall architecture** — following section 4 of the design, actually update the relevant docs inside the architecture directory
-3. **Write the capability back into requirement** — if the corresponding req was draft, upgrade it to current after the capability is implemented, preserving the original vision and appending a change log; if the capability never had a req, backfill one
+3. **Write the capability back into requirement** — if the corresponding req is `pending` or `active`, upgrade it to `status: done` with `current: true` after the capability is implemented, preserving the original vision and appending a change log; if the capability never had a req, backfill one
 4. **Write completion state back into roadmap** — if the design frontmatter has `roadmap` and `roadmap_item`, the corresponding item in `items.yaml` **must** be changed to `done`, and the main roadmap doc must also be synchronized
 
 The cost of missing any one of these: architecture docs go stale and the next feature reads wrong information; req drifts away from the actual capability; roadmap drifts away from actual progress and the next advance repeats work.

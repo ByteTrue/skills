@@ -3,19 +3,11 @@
 This reference defines the gate between `bt-feat-impl` and `bt-feat-accept`.
 It does not replace acceptance. It only proves that implementation has reviewed readiness before asking the user to proceed.
 
-## Gate Shape
+## Gate Section Shape
 
-Use this shape in implementation completion reports and the durable `{slug}-implementation-report.md` file:
+Implementation review evidence is stored as a required Markdown section inside the chat completion report and the durable `{slug}-implementation-report.md` file. It is not a frontmatter field or machine-readable YAML object in v1.
 
-```yaml
-implementation_review:
-  spec_compliance:
-    status: passed | failed
-    evidence: []
-  code_quality:
-    status: passed | failed
-    evidence: []
-```
+Use the required section shape defined below in **Completion Report Section**.
 
 ## Durable Report Artifact
 
