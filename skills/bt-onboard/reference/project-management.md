@@ -66,7 +66,7 @@ syncable_sources:
     external_kind: task
 
   bug_issue:
-    source: .bytetrue/issues/{issue}/{slug}-report.md
+    source: [".bytetrue/issues/{issue}/{slug}-report.md", ".bytetrue/issues/{issue}/{slug}-fix-note.md"]
     external_kind: bug
 
 not_syncable_by_default:
@@ -79,7 +79,7 @@ Syncable-status mapping:
 - `roadmap_prd`: `status: active | done` counts as reviewed planning content and may be published or updated; `pending` does not sync
 - `roadmap_item`: `status: pending | active | done` may be published or updated; `dropped` only updates the state of an already bound external issue and does not create one by default
 - `feature_design`: `status: done` with `review_result: approved` may be published or updated
-- `bug_issue`: `status: done` may be published or updated
+- `bug_issue`: `status: done` may be published or updated; standard path uses the report as source, fast path uses the fix-note as source
 
 PRD is not added as a new local entity. No `.bytetrue/prds/` directory is introduced.
 
@@ -149,7 +149,7 @@ external:
   synced_at: 2026-06-07T10:00:00Z
 ```
 
-For roadmap items, external metadata is written onto the item inside `items.yaml`. For feature, issue, or roadmap PRD, it is written into the document frontmatter.
+For roadmap items, external metadata is written onto the item inside `items.yaml`. For feature, issue, or roadmap PRD, it is written into the source document frontmatter; for fast-path bug issues, that source document is `{slug}-fix-note.md`.
 
 ---
 

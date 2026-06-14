@@ -63,7 +63,7 @@ Use this only when **all** of the following are true:
 2. The fix is very small, 1-2 changes
 3. There is no cross-module impact risk
 
-The flow compresses into: AI reads code → directly tells the user the root cause and fix plan → user confirms → AI fixes → user verifies success → AI writes `{slug}-fix-note.md`. Only one `fix-note.md` is produced, skipping `report` and `analysis`.
+The flow compresses into: AI reads code → directly tells the user the root cause and fix plan → user confirms → AI fixes → user verifies success → AI writes `{slug}-fix-note.md`. Only one `fix-note.md` is produced, skipping `report` and `analysis`; if tracker projection is needed later, the done fast-track fix-note is the syncable bug source.
 
 **Decision rule**: whether to use the fast path is formally decided only once in the startup checks of `bt-issue-report`. Once the standard path has started, do not keep re-deciding the route in later stages. Otherwise the three stages can contradict one another.
 
@@ -84,7 +84,7 @@ When entering this skill, `Glob .bytetrue/issues/` first. Read the existing file
 | `analysis.md` exists with `status: done` and `execution_mode.level: break-loop` | do not route to fix; route to analysis revision, `bt-grill`, `bt-refactor`, `bt-roadmap`, or architecture discussion |
 | `analysis.md` exists with `status: done` and code has not changed yet | `bt-issue-fix` |
 | Code is already changed, but no fix verification record yet | `bt-issue-fix` (verification flow) |
-| `fix-note.md` exists and `status: done` | the issue is already closed; do not re-enter fix flow. If collaboration projection is needed, suggest `bt-tracker` |
+| `fix-note.md` exists and `status: done` | the issue is already closed; do not re-enter fix flow. If collaboration projection is needed, suggest `bt-tracker`; for fast-track issues, the fix-note itself is the syncable bug source |
 | `fix-note.md` exists but `status: active` | first inspect the verification record in the body, related commits, and worktree. If the evidence is complete, say only that the fix note needs to be changed to `status: done`; do not directly declare the fix incomplete |
 | Not sure | read the existing files yourself and match them against the table above |
 

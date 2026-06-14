@@ -188,8 +188,10 @@ Compare against the `roadmap` and `roadmap_item` fields in design frontmatter:
 - [ ] both fields have values:
   - open `.bytetrue/roadmap/{roadmap}/{roadmap}-items.yaml`
   - find `slug: {roadmap_item}`, and confirm its current state is `status: active` plus `feature: {directory name}`; if not, stop and find out why
-  - change `status` to `done`, and validate with `validate-yaml.py`
+  - change that item `status` to `done`
+  - re-check all items; if every item is `done`, `dropped`, or `archived`, update `{roadmap}-roadmap.md` frontmatter to `status: done` and add/sync a change-log note
   - synchronize the corresponding sub-feature entry inside section 3 of `{roadmap}-roadmap.md`
+  - validate `items.yaml` with `validate-yaml.py`, and validate the roadmap frontmatter if it was changed
 - [ ] the two fields are inconsistent, only one is filled → stop and fix or clarify
 
 See section 2.5 in `.bytetrue/reference/shared-conventions.md` for the handoff protocol. Like architecture merge and req write-back, this is an actual file-writing action.
@@ -232,7 +234,7 @@ If a check-context manifest exists, verify required rows before section 1. For n
 - [ ] section 4 terminology consistency has no gaps
 - [ ] section 5 architecture merge has a clear conclusion for every item, and every needed doc update has actually been written
 - [ ] section 6 req write-back has a conclusion, skipped / unchanged / backfilled / pending|active→done with `current: true` / updated
-- [ ] section 7 roadmap write-back has a conclusion, skipped because not from roadmap, or updated with `items.yaml` plus main doc sync and YAML validation passed
+- [ ] section 7 roadmap write-back has a conclusion, skipped because not from roadmap, or updated with `items.yaml`, main doc sync, and main roadmap `status: done` when all items are terminal
 - [ ] every checklist check is `passed`
 - [ ] acceptance report frontmatter has been changed to `status: done` before exit
 - [ ] the user has done final review confirmation

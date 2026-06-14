@@ -65,7 +65,7 @@ syncable_sources:
     external_kind: task
 
   bug_issue:
-    source: .bytetrue/issues/{issue}/{slug}-report.md
+    source: [".bytetrue/issues/{issue}/{slug}-report.md", ".bytetrue/issues/{issue}/{slug}-fix-note.md"]
     external_kind: bug
 ```
 
@@ -74,7 +74,7 @@ Syncable-status mapping:
 - `roadmap_prd`: `status: active | done` counts as reviewed planning content and may be published or updated; `pending` does not sync
 - `roadmap_item`: `status: pending | active | done` may be published or updated; `dropped` only updates the state of an already bound external issue and does not create one by default
 - `feature_design`: `status: done` with `review_result: approved` may be published or updated
-- `bug_issue`: `status: done` may be published or updated
+- `bug_issue`: `status: done` may be published or updated; standard path uses the report as source, fast path uses the fix-note as source
 
 Do not sync standalone requirements by default. Requirement is only a vision input to PRD or feature issues.
 
@@ -89,7 +89,7 @@ Based on the path, slug, or roadmap name provided by the user, read the source a
 - roadmap PRD: read `roadmap.md`, `items.yaml`, and related requirements if they are referenced in frontmatter
 - roadmap item: read the item plus its parent roadmap
 - feature design: read the design plus checklist; if `{slug}-acceptance.md` already exists, also read the acceptance report as input for task completion status or acceptance-result updates
-- bug issue: read the report, analysis, and fix note, if present
+- bug issue: use the report as source when it exists; for fast-track issues without a report, use `{slug}-fix-note.md` with `path: fast-track` as the source; read analysis and fix note when present
 
 If the source artifact does not satisfy the syncable-source rule and syncable-status mapping, stop and ask the user whether they want to go back through the corresponding bt workflow and confirm it first.
 
@@ -181,7 +181,7 @@ external:
   synced_at: 2026-06-07T10:00:00Z
 ```
 
-For roadmap items, write metadata into the matching item in `items.yaml`. For feature, issue, or roadmap PRD, write it into frontmatter.
+For roadmap items, write metadata into the matching item in `items.yaml`. For feature, issue, or roadmap PRD, write it into frontmatter; for fast-track bug issues, write metadata into `{slug}-fix-note.md`.
 
 ---
 
@@ -276,7 +276,7 @@ Once the following stage outputs satisfy the syncable-source and syncable-status
 | after `bt-feat-design` | feature design with `status: done` and `review_result: approved`; if started from roadmap, also the corresponding roadmap item |
 | after `bt-feat-accept` | task completion-state updates for the feature design plus acceptance report or checklist; if started from roadmap, also the done roadmap item |
 | after `bt-issue-report` | bug issue with `status: done` |
-| after `bt-issue-fix` | updates to managed block, labels, or close-on-done for an already bound bug issue; if it was never bound before, publish or link may still be added |
+| after `bt-issue-fix` | updates to managed block, labels, or close-on-done for an already bound bug issue; if it was never bound before, publish or link may still be added, using the fix-note as source when the issue took the fast path |
 
 ---
 

@@ -125,7 +125,7 @@ Show the main doc and `items.yaml` to the user in full. Keep iterating until the
 
 **new**: create `.bytetrue/roadmap/{slug}/`; write the main doc with `status: active`, `created`, and `last_reviewed` set to today; write `items.yaml` with every entry `status: pending` and `feature: null`; validate with `validate-yaml.py`.
 
-**update**: modify the main doc with `last_reviewed` set to today, and add a change-log line at the end when the structural change is large; modify the corresponding items in `items.yaml`, and for dropped items do not delete them, set `status: dropped` and leave the reason; then validate yaml again.
+**update**: modify the main doc with `last_reviewed` set to today, and add a change-log line at the end when the structural change is large; modify the corresponding items in `items.yaml`, and for dropped items do not delete them, set `status: dropped` and leave the reason; after item changes, set the main doc `status: done` if every item is `done`, `dropped`, or `archived`, otherwise keep it `active` / `paused`; then validate yaml again.
 
 **Do not modify requirements or architecture** — roadmap is the planning layer, and those two layers describe current state. If req or architecture is outdated, write one sentence under observations in the main doc and let the user decide, rather than changing them on the side.
 
@@ -151,7 +151,7 @@ If feature-design discovers that an interface contract is unreasonable, missing,
 
 ### acceptance writes back automatically
 
-At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept` will update the corresponding `roadmap_item` to `status: done`, and will also synchronize the checkmark state in the sub-feature list of the main doc. That responsibility belongs to `bt-feat-accept`, not this skill.
+At close-out, if design frontmatter contains a `roadmap` field, `bt-feat-accept` will update the corresponding `roadmap_item` to `status: done`, synchronize the checkmark state in the sub-feature list of the main doc, and set the main roadmap frontmatter to `status: done` when all items are terminal. That responsibility belongs to `bt-feat-accept`, not this skill.
 
 ### lifecycle of roadmap itself
 

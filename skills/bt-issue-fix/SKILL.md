@@ -89,9 +89,9 @@ Use the fix report template in `reference.md` in the same directory. **Vague sta
 
 After the fix is in, check each of these:
 
-- [ ] **reproduction-step verification** — walk through section 2 of the report and confirm the issue no longer appears
-- [ ] **expected-behavior verification** — what section 3 of the report calls the expected behavior now truly happens
-- [ ] **impact-surface regression** — for every potentially affected module in section 4 of the analysis, run the most basic smoke path once
+- [ ] **reproduction-step verification** — standard path: walk through section 2 of the report; fast path: walk through the problem description and reproduction clue captured in the fix-note. Confirm the issue no longer appears
+- [ ] **expected-behavior verification** — standard path: confirm section 3 of the report; fast path: confirm the fix-note's expected behavior or user-confirmed fix plan
+- [ ] **impact-surface regression** — standard path: smoke-check every potentially affected module in section 4 of the analysis; fast path: confirm the affected scope is still local and record the evidence
 - [ ] **browser verification for frontend changes**, if applicable — execute the hard requirement from `.bytetrue/attention.md`; typecheck alone is not enough
 - [ ] **related tests pass** — if tests cover the changed area, run them
 - [ ] **regression coverage** — if there is a suitable seam, write the failing regression test first and then fix; if there is no seam, explain why in the fix note
@@ -154,13 +154,13 @@ Follow the "scoped-commit" rules in section 4 of `.bytetrue/reference/shared-con
 
 ## After Exit
 
-Tell the user: "The issue fix is complete and the workflow is closed. Report, analysis, and fix-note have all been archived."
+Tell the user: "The issue fix is complete and the workflow is closed. The fix-note has been archived; report and analysis exist only on the standard path."
 
 Following section 3 `issue-fix` of `.bytetrue/reference/shared-conventions.md`, first read `workflow.mode`, `workflow.ask_before`, `tracker.provider`, and `tracker.sync_policy` from `.bytetrue/config.yaml`. If `.bytetrue/config.yaml` is missing, stop and tell the user to rerun `bt-onboard` or repair the skeleton; do not infer defaults from prose references. Skip the tracker prompt when `tracker.provider: local` or `tracker.sync_policy: never`. In `manual`, ask one sentence for each applicable suggestion below and stop; the tracker prompt is applicable only when it was not skipped. In `auto`, prepare a tracker preview only when tracker is not skipped and `sync_policy: auto_preview`, and continue only through deterministic non-boundary suggestions that do not match any current `workflow.ask_before` operation key and do not require user choice.
 
 1. if this exposed a reusable pitfall → "Do you want to capture it as learning? (`bt-learn`)"
 2. if this surfaced a long-term constraint, convention, or technical decision → "Do you want to archive the decision? (`bt-decide`)"
-3. if this fixed bug issue needs collaboration-state projection and tracker is not skipped → "Do you want to update, bind, or request closure on the external tracker? (`bt-tracker`)" If it was never bound before, sync can still be added. With `auto_preview`, the preview may be prepared automatically; external writes still follow current `workflow.ask_before` and `bt-tracker` confirmation rules.
+3. if this fixed bug issue needs collaboration-state projection and tracker is not skipped → "Do you want to update, bind, or request closure on the external tracker? (`bt-tracker`)" If it was never bound before, sync can still be added; when the issue used the fast path, `bt-tracker` uses the done fix-note as the bug source. With `auto_preview`, the preview may be prepared automatically; external writes still follow current `workflow.ask_before` and `bt-tracker` confirmation rules.
 4. if this bug exposed a project-wide hard constraint, command pitfall, or environment setup that can be explained in one or two lines and should be known at every ByteTrue startup → "Do you want to record it in attention.md? (`bt-note`)"
 5. if a concise work record would help reporting, handoff, or recovery → "Do you want to add a concise worklog/report-feed entry for this fix?" (`.bytetrue/reference/worklog-report-feed.md`)
 6. finally ask whether they want you to commit it. If they agree, execute according to the close-out commit rules and current `workflow.ask_before`

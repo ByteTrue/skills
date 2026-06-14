@@ -223,7 +223,7 @@ Every stage close-out first reads `workflow.mode`, `workflow.ask_before`, `track
 
 1. `bt-learn`: capture the pitfall
 2. `bt-decide`: archive exposed long-term constraints
-3. `bt-tracker`: update, bind, or request closure of the external bug issue; if it was never bound before, sync can still be added
+3. `bt-tracker`: update, bind, or request closure of the external bug issue; if it was never bound before, sync can still be added, with fast-path issues using the fix-note as source
 4. `bt-note`: attention.md candidate
 5. `worklog`: optional concise report-feed entry for the issue fix session
 6. `scoped-commit`
@@ -241,7 +241,6 @@ Every stage close-out first reads `workflow.mode`, `workflow.ask_before`, `track
 ## 4. Close-out commit, `scoped-commit`
 
 After acceptance or issue-fix completes, commit the artifacts of this run as one commit:
-
 - **scope**: the code touched in this run + the related spec docs + the architecture docs actually updated this run + the roadmap `items.yaml` or main doc actually updated this run + any optional worklog entry written for this close-out
 - **must not include**: incidental changes unrelated to this run; expansions that belong in a later, separate feature or issue
 - **confirm before commit**: if the user has not explicitly agreed, do not run `git commit`
