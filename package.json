@@ -1,0 +1,20 @@
+{
+  "name": "@bytetrue/skills",
+  "version": "0.1.0",
+  "description": "Standalone Agent Skills from ByteTrue.",
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "skills",
+    "bytetrue"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ByteTrue/skills.git"
+  },
+  "pi": {
+    "skills": [
+      "./skills/*/SKILL.md"
+    ]
+  }
+}
